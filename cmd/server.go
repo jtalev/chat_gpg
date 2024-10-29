@@ -8,6 +8,8 @@ import (
 	"os/signal"
 	"sync"
 	"time"
+	"path/filepath"
+	"text/template"
 )
 
 // ----- output colours -----
@@ -50,4 +52,45 @@ func run(
 	}()
 	wg.Wait()
 	return nil
+}
+
+func Serve_index() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			path := filepath.Join("..", "ui", "pages", "index.html")
+			tmpl := template.Must(template.ParseFiles(path))
+			if err := tmpl.Execute(w, nil); err != nil {
+				fmt.Printf("error executing template: %v", err)
+				http.Error(w, "error executing tempate", http.StatusInternalServerError)
+			}
+		},
+	)
+}
+
+func Serve_login() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			path := filepath.Join("..", "ui", "pages", "login.html")
+			tmpl := template.Must(template.ParseFiles(path))
+			if err := tmpl.Execute(w, nil); err != nil {
+				fmt.Printf("error executing template: %v", err)
+				http.Error(w, "error executing tempate", http.StatusInternalServerError)
+			}
+		},
+	)
+}
+
+func Serve_dashboard() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			path := filepath.Join("..", "ui", "pages", "dashboard.html")
+			nav_path := filepath.Join("..", "ui", "components", "nav.html")
+
+			tmpl := template.Must(template.ParseFiles(path, nav_path))
+			if err := tmpl.Execute(w, nil); err != nil {
+				fmt.Printf("error executing template: %v", err)
+				http.Error(w, "error executing tempate", http.StatusInternalServerError)
+			}
+		},
+	)
 }

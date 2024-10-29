@@ -2,28 +2,18 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"net/http"
-	"path/filepath"
-	"text/template"
+
+	"github.com/jtalev/chat_gpg/validation"
 )
 
 func add_routes(mux *http.ServeMux, ctx context.Context) {
-	fileServer := http.FileServer(http.Dir("../static"))
+	fileServer := http.FileServer(http.Dir("../ui/static"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
-	mux.Handle("/", serve_index())
-}
+	mux.Handle("/", Serve_index())
+	mux.Handle("/login", Serve_login())
+	mux.Handle("/dashboard", Serve_dashboard())
 
-func serve_index() http.Handler {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			path := filepath.Join("..", "static", "index.html")
-			tmpl := template.Must(template.ParseFiles(path))
-			if err := tmpl.Execute(w, nil); err != nil {
-				fmt.Printf("error executing template: %v", err)
-				http.Error(w, "error executing tempate", http.StatusInternalServerError)
-			}
-		},
-	)
+	mux.Handle("/validate-login", validation.Handle_login_validation())
 }

@@ -1,0 +1,127 @@
+body {
+    font-family: Arial, sans-serif;
+    font-weight: 100;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    width: 100vw;
+}
+
+@media screen and (max-width: 730px) {
+    .nav-container {
+        background-color: #ccc;
+        justify-content: center;
+        width: 100vw;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100vh;
+        row-gap: 1em;
+    }
+
+    .nav-link {
+        text-decoration: none;
+        color: #333;
+        font-size: 1.5em;
+    }
+
+    .menu-icon-container {
+        width: 2em;
+        height: 2em;
+        position: absolute;
+        padding: 2em;
+    }
+
+    .bar1, .bar2, .bar3 {
+        width: 100%;
+        height: 5px;
+        background-color: #333;
+        margin: 6px 0;
+        transition: 0.4s;
+    }
+
+    .change .bar1 {
+        transform: translate(0, 11px) rotate(-45deg);
+      }
+      
+    .change .bar2 {opacity: 0;}
+    
+    .change .bar3 {
+    transform: translate(0, -11px) rotate(45deg);
+    }
+    
+    .gpg-logo {
+        display: none;
+    }
+}
+
+@media screen and (min-width: 731px) {
+    .nav-container {
+        background-color: #ccc;
+        width: 15vw;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        row-gap: 1.5em;
+        padding: 1em;
+    }
+    
+    .nav-link {
+        text-decoration: none;
+        color: #333;
+    }
+    
+    .gpg-logo {
+        width: 50%;
+    }
+}
+
+.content-container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.login-body {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    max-width: 400px;
+}
+
+
+form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+form input {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.logo {
+    height: 100%;
+    width: 100%;
+}
+.err {
+    color: red;
+    height: 30px;
+    margin-top: 0;
+    display: flex;
+    margin-left: auto;
+}

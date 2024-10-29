@@ -1,0 +1,19 @@
+{{  define "nav" }}
+<div class="menu-icon-container" onclick="toggleMenu(this)">
+    <div class="bar1"></div>
+    <div class="bar2"></div>
+    <div class="bar3"></div>
+</div>
+<nav class="nav-container">
+    <img src="../static/img/gpg-logo.jpeg" alt="gpg logo" class="gpg-logo">
+    <a class="nav-link" href="/">dashboard</a>
+    <a class="nav-link" href="/">jobs</a>
+    <a class="nav-link" href="/">timesheets</a>
+    <a class="nav-link" href="/">leave</a>
+    {{ if .isAdmin }}
+        <a class="nav-link" href="/">admin</a>
+    {{ end}}
+    <a class="nav-link" href="/">account</a>
+</nav>
+<script src="../static/js/nav.js"></script>
+{{ end }}
