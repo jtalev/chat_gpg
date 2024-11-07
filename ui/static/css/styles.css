@@ -74,6 +74,12 @@ body {
     .gpg-logo {
         width: 50%;
     }
+
+    #page-content {
+        border: #333 1px solid;
+        width: 100%;
+        height: 100%;
+    }
 }
 
 .content-container {

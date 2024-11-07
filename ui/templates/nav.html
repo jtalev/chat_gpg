@@ -1,0 +1,19 @@
+{{  define "nav" }}
+<div class="menu-icon-container" onclick="toggleMenu(this)">
+    <div class="bar1"></div>
+    <div class="bar2"></div>
+    <div class="bar3"></div>
+</div>
+<div class="nav-container">
+    <img src="../static/img/gpg-logo.jpeg" alt="gpg logo" class="gpg-logo">
+    <ul>
+        <li><a class="nav-link" href="/dashboard" hx-get="/dashboard" hx-target="#page-content" >dashboard</a>
+        <li><a class="nav-link" href="/jobs" hx-get="/jobs" hx-target="#page-content">jobs</a></li>
+        <li><a class="nav-link" href="/timesheets" hx-get="/timesheets" hx-target="#page-content">timesheets</a></li>
+        <li><a class="nav-link" href="/leave" hx-get="/leave" hx-target="#page-content">leave</a></li>
+        <li><a class="nav-link" href="/admin" hx-get="/admin" hx-target="#page-content" {{ if .IsAdmin }} style="display: block;" {{ else }} style="display: none;" {{ end }}>admin</a></li>
+        <li><a class="nav-link" href="/account" hx-get="/account" hx-target="#page-content">account</a></li>
+    </ul>
+</div>
+<script src="../static/js/nav.js"></script>
+{{ end }}
