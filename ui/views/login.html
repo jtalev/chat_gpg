@@ -9,7 +9,7 @@
 <body class="login-body">
     <div class="form-container">
         <img src="../static/images/gpg-logo.jpeg" alt="gpg logo" class="logo">
-        <form action="/validate-login" method="POST">
+        <form action="/authenticate-user" method="POST">
             <input type="text" id="username" name="username" placeholder="username" required><br>
             <input type="password" id="password" name="password" placeholder="password" required><br>
             {{ if .ErrorMsg }}

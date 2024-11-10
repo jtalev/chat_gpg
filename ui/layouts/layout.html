@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>{{ .Title }}</title>
     <script src="../static/js/htmx.min.js"></script>
     <link rel="stylesheet" href="../static/css/styles.css">
 </head>
 <body>
     {{ template "nav" . }}
     <div id="page-content" style="display: block;">
-        {{ template "page-content" . }}
+        {{ if eq .Component "dashboard" }}{{ template "dashboard" . }}{{ end }}
     </div>
 </body>
 </html>

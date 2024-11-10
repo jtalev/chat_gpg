@@ -7,14 +7,31 @@ import (
 )
 
 type validation_result struct {
-	Is_valid	bool
-	Msg			string
+	Is_valid bool
+	Msg      string
 }
 
-func render_template(w http.ResponseWriter, component string) {
-	layout_path := filepath.Join("..", "ui", "layouts", "layout.html")
-	nav_path := filepath.Join("..", "ui", "templates", "nav.html")
-	tmpl_path := filepath.Join("..", "ui", "views", component+".html")
-	tmpl := template.Must(template.ParseFiles(layout_path, nav_path, tmpl_path))
-	tmpl.ExecuteTemplate(w, "layout", nil)
+func render_template(w http.ResponseWriter, component, title string) {
+	data := struct {
+		Title			string
+		Component	string
+	}{
+		Title: 			title,
+		Component: 	component,
+	}
+
+	tmpl, err := template.ParseFiles(
+		filepath.Join("..", "ui", "layouts", "layout.html"),
+		filepath.Join("..", "ui", "templates", "nav.html"),
+		filepath.Join("..", "ui", "views", component+".html"),
+	)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	
+	err = tmpl.ExecuteTemplate(w, "layout", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }

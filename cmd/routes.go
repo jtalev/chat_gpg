@@ -14,5 +14,5 @@ func add_routes(mux *http.ServeMux, ctx context.Context) {
 	mux.HandleFunc("/login", handlers.Serve_login)
 	mux.HandleFunc("/dashboard", handlers.Serve_dashboard)
 
-	mux.HandleFunc("/validate-login", handlers.Login_handler)
+	mux.HandleFunc("/authenticate-user", handlers.Login_handler)
 }
