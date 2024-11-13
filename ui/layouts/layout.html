@@ -9,10 +9,17 @@
     <link rel="stylesheet" href="../static/css/styles.css">
 </head>
 <body>
-    {{ template "nav" . }}
-    <div id="page-content" style="display: block;">
-        {{ if eq .Component "dashboard" }}{{ template "dashboard" . }}{{ end }}
+    <div class="flex" id="flex">
+        <div>
+            {{ template "nav" . }}
+        </div>
+        <div id="page-content" class="page-content">
+            {{ if eq .Component "dashboard" }}{{ template "dashboard" . }}{{ end }}
+            
+            
+        </div>
     </div>
 </body>
+<script src="../static/js/layout.js"></script>
 </html>
 {{ end }}

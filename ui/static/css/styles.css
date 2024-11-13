@@ -3,20 +3,17 @@ body {
     font-weight: 100;
     margin: 0;
     padding: 0;
-    height: 100vh;
-    width: 100vw;
+    box-sizing: border-box;
 }
 
 @media screen and (max-width: 730px) {
     .nav-container {
         background-color: #ccc;
         justify-content: center;
-        width: 100vw;
         display: flex;
         flex-direction: column;
         align-items: center;
         height: 100vh;
-        row-gap: 1em;
     }
 
     .nav-link {
@@ -27,14 +24,15 @@ body {
         width: 2em;
         height: 2em;
         position: absolute;
-        padding: 2em;
+        top: 2em;
+        left: 2em;
     }
 
     .bar1, .bar2, .bar3 {
         width: 100%;
         height: 5px;
         background-color: #333;
-        margin: 6px 0;
+        margin: 0 0 6px 0;
         transition: 0.4s;
     }
 
@@ -48,9 +46,11 @@ body {
     transform: translate(0, -11px) rotate(45deg);
     }
     
-    .gpg-logo {
+    .gpg-logo-nav {
         display: none;
     }
+
+    
 }
 
 @media screen and (min-width: 731px) {
@@ -60,19 +60,33 @@ body {
         display: flex;
         flex-direction: column;
         height: 100vh;
-        row-gap: 1.5em;
-        padding: 1em;
-    }
-    
-    .gpg-logo {
-        width: 50%;
     }
 
-    #page-content {
-        border: #333 1px solid;
-        width: 100%;
-        height: 100%;
+    .nav-content {
+        padding-left: 1em;
+        padding-top: 1em;
     }
+    
+    .gpg-logo-nav {
+        width: 50%;
+    }
+    
+    .flex {
+        display: flex;
+    }
+}
+
+.hidden {
+    display: none;
+}
+
+.page-content {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .nav-link {
@@ -87,12 +101,6 @@ ul {
 .nav-link-text {
     text-decoration: none;
     color: #333;
-}
-
-.content-container {
-    display: flex;
-    width: 100%;
-    height: 100%;
 }
 
 .login-body {
