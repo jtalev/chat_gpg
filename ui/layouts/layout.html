@@ -14,9 +14,7 @@
             {{ template "nav" . }}
         </div>
         <div id="page-content" class="page-content">
-            {{ if eq .Component "dashboard" }}{{ template "dashboard" . }}{{ end }}
-            
-            
+            {{ .Component }}
         </div>
     </div>
 </body>
