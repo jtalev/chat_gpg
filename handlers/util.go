@@ -3,7 +3,6 @@ package handlers
 import (
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -15,21 +14,21 @@ type validation_result struct {
 }
 
 func render_template(w http.ResponseWriter, component, title string) {
-	// read template file and pass the string 
+	// read template file and pass the string
 	// version as the component in data struct below
-	componentPath := filepath.Join("..", "ui", "views", component+".html")
-	componentTemplate, err := os.ReadFile(componentPath)
+	mainContentPath := filepath.Join("..", "ui", "views", component+".html")
+	mainContent, err := os.ReadFile(mainContentPath)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	data := struct {
-		Title			string
-		Component		template.HTML
+		Title     	string
+		MainContent template.HTML
 	}{
-		Title: 			title,
-		Component: 		template.HTML(componentTemplate),
+		Title:     title,
+		MainContent: template.HTML(mainContent),
 	}
 
 	tmpl, err := template.ParseFiles(
@@ -40,7 +39,7 @@ func render_template(w http.ResponseWriter, component, title string) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	
+
 	err = tmpl.ExecuteTemplate(w, "layout", data)
 	if err != nil {
 		fmt.Println(err)
