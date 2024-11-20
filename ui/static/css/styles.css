@@ -156,6 +156,14 @@ form input {
     align-items: center;
 }
 
+.payweek-month-container {
+    width: 20%;
+    height: 5%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 .date-carousel-container {
     display: flex;
     margin-bottom: 1em;
@@ -173,6 +181,7 @@ form input {
     align-items: center;
     justify-content: center;
     transform: translate(5px);
+    cursor: pointer;
 }
 
 #right-arrow-container {
@@ -184,6 +193,7 @@ form input {
     align-items: center;
     justify-content: center;
     transform: translate(-5px);
+    cursor: pointer;
 }
 
 .arrow {
@@ -224,6 +234,7 @@ form input {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
 }
 
 .day {
