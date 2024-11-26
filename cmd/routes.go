@@ -20,4 +20,5 @@ func add_routes(mux *http.ServeMux, ctx context.Context) {
 	mux.HandleFunc("/account", handlers.Serve_account)
 
 	mux.HandleFunc("/authenticate-user", handlers.Login_handler)
+	mux.HandleFunc("/render-row", handlers.Render_timesheet_table_row)
 }

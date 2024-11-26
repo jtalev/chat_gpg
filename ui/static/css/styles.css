@@ -257,15 +257,15 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
-.project-row td {
-    height: 2em;
-    width: 5em;
+.projectRow td {
+    height: 4em;
+    width: 8em;
     text-align: center;
   }
 
 .time-input {
-    width: 80%;
-    height: 60%;
+    width: 40%;
+    height: 40%;
     text-align: center;
 }
 

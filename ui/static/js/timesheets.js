@@ -1,5 +1,21 @@
-document.addEventListener("DOMContentLoaded", fillDateCell)
-document.addEventListener("DOMContentLoaded", fillMonth)
+document.addEventListener("DOMContentLoaded", timeInputFilter) 
+function timeInputFilter() {
+    const timeInputs = document.querySelectorAll('.time-input')
+    
+    timeInputs.forEach(timeInput => {
+        timeInput.addEventListener('keydown', (event) => {
+            // Allow numbers, backspace, delete, colon, and number pad keys
+            if (!((event.key >= '0' && event.key <= '9') ||
+            event.key === 'Backspace' ||
+            event.key === 'Delete' ||
+            event.key === ':' ||
+            (event.key >= 'NumPad0' && event.key <= 'NumPad9'))) {
+                event.preventDefault();
+            }
+        })
+    })
+}
+
 
 function getDateContainerChildren() {
     const dateContainer = document.getElementById("dates-row")
@@ -11,19 +27,20 @@ function getPreviousWednesday(currentDate) {
     const dayOfWeek = currentDate.getDay()
     const daysSinceWednesday = (dayOfWeek + 4) % 7
     const dateToFill = currentDate.getDate() - daysSinceWednesday
-
+    
     const previousWednesday = new Date(currentDate)
     previousWednesday.setDate(dateToFill)
-
+    
     return previousWednesday
 }
 
-function fillDateCell() {
+document.addEventListener("DOMContentLoaded", renderDateCell)
+function renderDateCell() {
     const currentDate = new Date()
     const dateContainerChildren = getDateContainerChildren()
     let previousWednesday = getPreviousWednesday(currentDate)
     let columnIndex = 0
-
+    
     // i < datecontainerChildren.length - 1 here because the 
     // table has an extra column for total hours worked
     for (var i = 1; i < dateContainerChildren.length - 1; i++) {
@@ -37,10 +54,10 @@ function fillDateCell() {
         }
         previousWednesday.setDate(previousWednesday.getDate() + 1)
     }
-
+    
     const timesheetTable = document.querySelector("#timesheet-table")
     const timesheetRows = timesheetTable.rows
-
+    
     for (let i = 0; i < timesheetRows.length; i++) {
         const row = timesheetRows[i]
         const cells = row.cells
@@ -49,97 +66,155 @@ function fillDateCell() {
     }
 }
 
-document.querySelectorAll(".date-cell").forEach(cell => {
-    cell.addEventListener("click", function () {
-        const dateContainerChildren = getDateContainerChildren()
-        let columnIndex = 0
-
-        // i < datecontainerChildren.length - 1 here because the 
-        // table has an extra column for total hours worked
-        for (var i = 1; i < dateContainerChildren.length - 1; i++) {
-            const child = dateContainerChildren[i]
-            let dateElement = child.querySelector(".date")
-            dateElement.style.backgroundColor = "#cccccc"
-            dateElement.style.color = "black"
-
-            let dateCell = child.querySelector(".date-cell")
-            if (dateCell === this) {
-                columnIndex = i
-            }
-        }
-
-        let dateElement = this.querySelector(".date")
-        dateElement.style.backgroundColor = "#3079d1"
-        dateElement.style.color = "white"
-
-        // colour background of column
-
-        const timesheetTable = document.querySelector("#timesheet-table")
-        const timesheetRows = timesheetTable.rows
-
-        for (let i = 0; i < timesheetRows.length; i++) {
-            const row = timesheetRows[i]
-            const cells = row.cells
-
-            for (let i = 0; i < cells.length; i++) {
-                cells[i].style.backgroundColor = 'white'
+document.addEventListener("DOMContentLoaded", onDateCellClick)
+function onDateCellClick() {
+    document.querySelectorAll(".date-cell").forEach(cell => {
+        cell.addEventListener("click", function () {
+            const dateContainerChildren = getDateContainerChildren()
+            let columnIndex = 0
+            
+            // i < datecontainerChildren.length - 1 here because the 
+            // table has an extra column for total hours worked
+            for (var i = 1; i < dateContainerChildren.length - 1; i++) {
+                const child = dateContainerChildren[i]
+                let dateElement = child.querySelector(".date")
+                dateElement.style.backgroundColor = "#cccccc"
+                dateElement.style.color = "black"
+                
+                let dateCell = child.querySelector(".date-cell")
+                if (dateCell === this) {
+                    columnIndex = i
+                }
             }
             
-            cells[columnIndex].style.backgroundColor = 'gray'
+            let dateElement = this.querySelector(".date")
+            dateElement.style.backgroundColor = "#3079d1"
+            dateElement.style.color = "white"
+            
+            // colour background of column
+            
+            const timesheetTable = document.querySelector("#timesheet-table")
+            const timesheetRows = timesheetTable.rows
+            
+            for (let i = 0; i < timesheetRows.length; i++) {
+                const row = timesheetRows[i]
+                const cells = row.cells
+                
+                for (let i = 0; i < cells.length; i++) {
+                    cells[i].style.backgroundColor = 'white'
+                }
+                
+                cells[columnIndex].style.backgroundColor = 'gray'
+            }
+        })
+    })
+}
+
+document.addEventListener("DOMContentLoaded", onLeftArrowClick)
+function onLeftArrowClick() {
+    // updates the date carousel, starting from the wednesday previous to the current week
+    // converts html to Date() type to update the html again with the correct values
+    document.querySelector("#left-arrow-container").addEventListener("click", function () {
+        const wedDateElement = document.getElementById("wed-date")
+        const payweekMonthElement = document.getElementById("payweek-month")
+        const payweekYearElement = document.getElementById("payweek-year")
+        
+        // need to convert month name from string to int; currentWed.setMonth(payweekMonth)
+        // use monthNames to update html to new month also
+        monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ]
+        let payweekMonth
+        for (i = 0; i < monthNames.length; i++) {
+            if (monthNames[i] === payweekMonthElement.innerHTML) {
+                payweekMonth = i
+            }
+        }
+        
+        const wedDate = Number(wedDateElement.innerHTML)
+        const payweekYear = Number(payweekYearElement.innerHTML)
+        
+        let currentWed = new Date()
+        currentWed.setFullYear(payweekYear)
+        currentWed.setMonth(payweekMonth)
+        currentWed.setDate(wedDate - 7)
+        
+        // update month names and year
+        if (currentWed.getMonth() == 11 && payweekMonth == 0) {
+            payweekMonthElement.innerHTML = monthNames[currentWed.getMonth()]
+        }
+        if (currentWed.getMonth() < payweekMonth) {
+            payweekMonthElement.innerHTML = monthNames[currentWed.getMonth()]
+        }
+        payweekYearElement.innerHTML = currentWed.getFullYear()
+        
+        // update all dates in carousel div
+        const dateContainerChildren = getDateContainerChildren()
+        
+        for (var i = 1; i < dateContainerChildren.length - 1; i++) {
+            const child = dateContainerChildren[i]
+            const dateElement = child.querySelector(".date")
+            dateElement.textContent = currentWed.getDate()
+            currentWed.setDate(currentWed.getDate() + 1)
+        }
+        
+    })
+}
+
+document.addEventListener("DOMContentLoaded", onRightArrowClick)
+function onRightArrowClick() {
+    // updates the date carousel, starting from the wednesday previous to the current week
+    // converts html to Date() type to update the html again with the correct values
+    document.querySelector("#right-arrow-container").addEventListener("click", function () {
+        const wedDateElement = document.getElementById("wed-date")
+        const payweekMonthElement = document.getElementById("payweek-month")
+        const payweekYearElement = document.getElementById("payweek-year")
+
+        // need to convert month name from string to int; currentWed.setMonth((int)payweekMonth)
+        // use monthNames to update html to new month also
+        monthNames = [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+        ]
+        let payweekMonth
+        for (i = 0; i < monthNames.length; i++) {
+            if (monthNames[i] === payweekMonthElement.innerHTML) {
+                payweekMonth = i
+            }
+        }
+
+        const wedDate = Number(wedDateElement.innerHTML)
+        const payweekYear = Number(payweekYearElement.innerHTML)
+
+        let currentWed = new Date()
+        currentWed.setFullYear(payweekYear)
+        currentWed.setMonth(payweekMonth)
+        currentWed.setDate(wedDate + 7)
+
+        // update month names and year
+        if (currentWed.getMonth() == 0 && payweekMonth == 11) {
+            payweekMonthElement.innerHTML = monthNames[currentWed.getMonth()]
+        }
+        if (currentWed.getMonth() > payweekMonth) {
+            payweekMonthElement.innerHTML = monthNames[currentWed.getMonth()]
+        }
+        payweekYearElement.innerHTML = currentWed.getFullYear()
+
+        // update all dates in carousel div
+        const dateContainerChildren = getDateContainerChildren()
+
+        for (var i = 1; i < dateContainerChildren.length - 1; i++) {
+            const child = dateContainerChildren[i]
+            const dateElement = child.querySelector(".date")
+            dateElement.textContent = currentWed.getDate()
+            currentWed.setDate(currentWed.getDate() + 1)
         }
     })
-})
+}
 
-// updates the date carousel, starting from the wednesday previous to the current week
-// converts html to Date() type to update the html again with the correct values
-document.querySelector("#left-arrow-container").addEventListener("click", function () {
-    const wedDateElement = document.getElementById("wed-date")
-    const payweekMonthElement = document.getElementById("payweek-month")
-    const payweekYearElement = document.getElementById("payweek-year")
-
-    // need to convert month name from string to int; currentWed.setMonth(payweekMonth)
-    // use monthNames to update html to new month also
-    monthNames = [
-        "January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"
-    ]
-    let payweekMonth
-    for (i = 0; i < monthNames.length; i++) {
-        if (monthNames[i] === payweekMonthElement.innerHTML) {
-            payweekMonth = i
-        }
-    }
-    
-    const wedDate = Number(wedDateElement.innerHTML)
-    const payweekYear = Number(payweekYearElement.innerHTML)
-    
-    let currentWed = new Date()
-    currentWed.setFullYear(payweekYear)
-    currentWed.setMonth(payweekMonth)
-    currentWed.setDate(wedDate - 7)
-    
-    // update month names and year
-    if (currentWed.getMonth() == 11 && payweekMonth == 0) {
-        payweekMonthElement.innerHTML = monthNames[currentWed.getMonth()]
-    }
-    if (currentWed.getMonth() < payweekMonth) {
-        payweekMonthElement.innerHTML = monthNames[currentWed.getMonth()]
-    }
-    payweekYearElement.innerHTML = currentWed.getFullYear()
-
-    // update all dates in carousel div
-    const dateContainerChildren = getDateContainerChildren()
-    
-    for (var i = 1; i < dateContainerChildren.length - 1; i++) {
-        const child = dateContainerChildren[i]
-        const dateElement = child.querySelector(".date")
-        dateElement.textContent = currentWed.getDate()
-        currentWed.setDate(currentWed.getDate() + 1)
-    }
-
-})
-
-function fillMonth() {
+document.addEventListener("DOMContentLoaded", renderMonth)
+function renderMonth() {
     const payweekMonthElement = document.getElementById("payweek-month")
     const payweekYearElement = document.getElementById("payweek-year")
     
@@ -150,25 +225,24 @@ function fillMonth() {
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ]
-
+    
     const currentMonthName = monthNames[currentMonth]
-
+    
     payweekMonthElement.innerHTML = currentMonthName
     payweekYearElement.innerHTML = currentYear
 }
 
-
-const timeInputs = document.querySelectorAll('.time-input')
-
-timeInputs.forEach(timeInput => {
-    timeInput.addEventListener('keydown', (event) => {
-        // Allow numbers, backspace, delete, colon, and number pad keys
-        if (!((event.key >= '0' && event.key <= '9') ||
-              event.key === 'Backspace' ||
-              event.key === 'Delete' ||
-              event.key === ':' ||
-              (event.key >= 'NumPad0' && event.key <= 'NumPad9'))) {
-          event.preventDefault();
-        }
+document.addEventListener("DOMContentLoaded", addTableRow)
+function addTableRow() {
+    document.querySelector("#addTableRowBtn").addEventListener("click", function() {
+        const table = document.querySelector("#timesheet-table")
+        const newRow = document.createElement('tr')
+        newRow.classList.add("projectRow")
+    
+        const oldRow = document.querySelector("#projectRow")
+        const rowString = oldRow.innerHTML
+    
+        newRow.innerHTML = rowString
+        table.appendChild(newRow)
     })
-})
+  }
