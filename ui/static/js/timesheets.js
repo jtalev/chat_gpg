@@ -48,7 +48,7 @@ function renderDateCell() {
         const dateElement = child.querySelector(".date")
         dateElement.textContent = previousWednesday.getDate()
         if (previousWednesday.getDate() === currentDate.getDate()) {
-            dateElement.style.backgroundColor = "#3079d1"
+            dateElement.style.backgroundColor = "var(--gpg-green)"
             dateElement.style.color = "white"
             columnIndex = i
         }
@@ -62,7 +62,13 @@ function renderDateCell() {
         const row = timesheetRows[i]
         const cells = row.cells
         
+        if (i > 0) {
+            for (let j = 1; j < cells.length; j++) {
+                cells[j].style.pointerEvents = "none"
+            }
+        }
         cells[columnIndex].style.backgroundColor = 'gray'
+        cells[columnIndex].style.pointerEvents = "all"
     }
 }
 
@@ -88,7 +94,7 @@ function onDateCellClick() {
             }
             
             let dateElement = this.querySelector(".date")
-            dateElement.style.backgroundColor = "#3079d1"
+            dateElement.style.backgroundColor = "var(--gpg-green)"
             dateElement.style.color = "white"
             
             // colour background of column
@@ -103,8 +109,15 @@ function onDateCellClick() {
                 for (let i = 0; i < cells.length; i++) {
                     cells[i].style.backgroundColor = 'white'
                 }
+
+                if (i > 0) {
+                    for (let j = 1; j < cells.length; j++) {
+                        cells[j].style.pointerEvents = "none"
+                    }
+                }
                 
                 cells[columnIndex].style.backgroundColor = 'gray'
+                cells[columnIndex].style.pointerEvents = "all"
             }
         })
     })
@@ -241,8 +254,52 @@ function addTableRow() {
     
         const oldRow = document.querySelector("#projectRow")
         const rowString = oldRow.innerHTML
-    
+        
         newRow.innerHTML = rowString
+        newRow.querySelector(".total").innerHTML = "0hrs : 0mins"
         table.appendChild(newRow)
     })
-  }
+}
+
+document.addEventListener("DOMContentLoaded", calculateRowTotals)
+function calculateRowTotals() {
+    const table = document.getElementById("timesheet-table")
+    const rows = table.rows
+
+    for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].querySelectorAll(".time-input")
+        let hours = 0
+        let mins = 0
+
+        for (let j = 0; j < cells.length; j++) {
+            const cellValue = cells[j].value
+            const containsColon = cellValue.includes(":")
+            if (containsColon) {
+                const cellValueSplit = cellValue.split(":")
+                const addHrs = cellValueSplit[0]
+                const addMins = cellValueSplit[1]
+                hours += Number(addHrs)
+                mins += Number(addMins)
+            } else {
+                hours += Number(cellValue)
+            }
+        }
+
+        // convert mins to hours and minutes and add to totals
+        const extraHours = Math.floor(mins / 60)
+        hours += extraHours
+        mins = mins % 60
+
+        const total = rows[i].querySelector(".total")
+        total.innerHTML = hours + "hrs : " + mins + "mins"
+    }
+}
+
+document.addEventListener("DOMContentLoaded", updateRowTotals)
+function updateRowTotals() {
+    document.querySelectorAll(".time-input").forEach(cell => {
+        cell.addEventListener("keyup", function () {
+            calculateRowTotals()
+        })
+    })
+}

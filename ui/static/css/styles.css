@@ -6,9 +6,18 @@ body {
     box-sizing: border-box;
 }
 
+
+:root {
+    --gpg-green: #00969C;
+    --gpg-grey: #1C1C1C;
+    --main-background-color: rgb(238, 237, 237);
+}
+
+
+
 @media screen and (max-width: 730px) {
     .nav-container {
-        background-color: #ccc;
+        background-color: white;
         justify-content: center;
         display: flex;
         flex-direction: column;
@@ -21,11 +30,11 @@ body {
     }
 
     .menu-icon-container {
-        width: 2em;
-        height: 2em;
+        width: 1.5em;
+        height: 1.5em;
         position: absolute;
-        top: 2em;
-        left: 2em;
+        top: 1em;
+        left: 1em;
     }
 
     .bar1, .bar2, .bar3 {
@@ -55,20 +64,38 @@ body {
 
 @media screen and (min-width: 731px) {
     .nav-container {
-        background-color: #ccc;
-        width: 15vw;
+        background-color: white;
+        border-right: var(--gpg-green) solid 2px;
+        width: 10vw;
         display: flex;
         flex-direction: column;
         height: 100vh;
     }
 
     .nav-content {
-        padding-left: 1em;
-        padding-top: 1em;
+        height: 100%;
     }
     
+    #nav-link-container {
+        width: 100%;
+        height: 30%;
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+      }
+      
+      .nav-link {
+        border-left: var(--gpg-grey) solid 3px;
+        padding-left: 0.2em;
+        flex: 1;
+        display: flex;
+        align-items: center;
+      }
+    
     .gpg-logo-nav {
-        width: 50%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
     }
     
     .flex {
@@ -89,13 +116,11 @@ body {
     justify-content: center;
 }
 
-.nav-link {
-    margin-bottom: 1em;
-}
-
 ul {
     list-style-type: none;
     padding-left: 0;
+    margin: 0;
+    padding: 0;
 }
 
 .nav-link-text {
@@ -147,14 +172,14 @@ form input {
     margin-left: auto;
 }
 
-/* timesheets */
+/***** timesheets *****/
 .ts-container {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    
+    background-color: white;
 }
 
 .payweek-month-container {
@@ -267,8 +292,81 @@ input::-webkit-inner-spin-button {
     width: 40%;
     height: 40%;
     text-align: center;
+    cursor: pointer;
 }
 
 #projects {
     height: 100%;
 }
+
+/***** leave *****/
+
+#leaveHeader {
+    font-weight: lighter;
+    margin: 0 0 0.4em 0;
+}
+
+@media screen and (max-width: 730px) {
+
+    .leaveContainer {
+        width: 95%;
+        height: 100%;
+        margin-top: auto;
+        margin-top: 3.5em;
+        margin-bottom: 1em;
+        display: flex;
+        flex-direction: column;
+    }
+
+}
+
+@media screen and (min-width: 731px) {
+    
+    .leaveContainer {
+        height: 95%;
+        width: 95%;
+        display: flex;
+        flex-direction: column;
+    }
+
+}
+
+#leaveContentSelectorContainer {
+    display: flex;
+    height: 5%;
+}
+
+.borderBottom {
+    flex-grow: 1;
+    border-bottom: var(--gpg-green) 1px solid;
+}
+
+.leaveContentSelector {
+    width: 6em;
+    font-size: xx-small;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: var(--gpg-green) solid 1px;
+    cursor: pointer;
+    border-top-left-radius: 5%;
+    border-top-right-radius: 5%;
+}
+
+#leaveRequestSelector {
+    border-bottom: none;
+}
+
+#leaveHistorySelector {
+    border-left: none;
+}
+
+#leaveContentContainer {
+    flex-grow: 1;
+    width: 100%;
+    border-left: solid var(--gpg-green) 1px;
+    border-right: solid var(--gpg-green) 1px;
+    border-bottom: solid var(--gpg-green) 1px;
+    background-color: white;
+}
+
