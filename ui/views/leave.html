@@ -13,10 +13,38 @@
     </div>
     <div id="leaveContentContainer">
         <div class="leaveContent" id="leaveRequestContent">
-            <p>Request</p>
+            <p>Leave request</p>
+            <form hx-post="/submit-leave-request" hx-target="#leaveFormSubmitBtn" hx-swap="innerHtml" hx id="leaveForm">
+                <label for="name">Name</label><br>
+                <input type="text" id="name" name="name"><br>
+                <label for="type">Type</label><br>
+                <select name="type" id="type">
+                    <option value="annual">annual</option>
+                    <option value="sick">sick</option>
+                    <option value="stress">stress</option>
+                    <option value="carers">carers</option>
+                    <option value="unpaid">unpaid</option>
+                </select>
+                <div id="leaveDateContainer">
+                    <div>
+                        <label for="from">From</label><br>
+                        <input type="date" id="from" name="from"><br>
+                    </div>
+                    <div>
+                        <label for="to">To</label><br>
+                        <input type="date" id="to" name="to"><br>
+                    </div>
+                </div>
+                <label for="note">Note</label><br>
+                <textarea type="text" id="note" name="note"></textarea><br>
+                <div id="leaveFormButtons">
+                    <button type="reset" id="leaveFormCancelBtn" form="leaveForm">Cancel</button>
+                    <button type="submit" id="leaveFormSubmitBtn" form="leaveForm">SUBMIT</button>
+                </div>
+            </form>
         </div>
         <div class="leaveContent" id="leaveHistoryContent" style="display: none;">
-            <p>History</p>
+            <p>Leave history</p>
         </div>
     </div>
 </div>

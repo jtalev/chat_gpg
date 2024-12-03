@@ -82,6 +82,8 @@ body {
         display: flex;
         flex-direction: column;
         flex-grow: 1;
+        
+        margin-left: 1px;
       }
       
       .nav-link {
@@ -100,6 +102,17 @@ body {
     
     .flex {
         display: flex;
+    }
+}
+
+@media screen and (max-width: 920px) {
+    .nav-container {
+        background-color: white;
+        border-right: var(--gpg-green) solid 2px;
+        width: 13vw;
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
     }
 }
 
@@ -370,3 +383,19 @@ input::-webkit-inner-spin-button {
     background-color: white;
 }
 
+.leaveContent {
+    margin: 0 3% 0 3%;
+}
+
+#leaveForm {
+    font-size: smaller;
+}
+
+#leaveDateContainer {
+    display: flex;
+    column-gap: 2%;
+}
+
+#leaveFormButtons {
+    display: flex;
+}

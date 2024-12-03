@@ -31,3 +31,23 @@ function onLeaveSelectorClick() {
         })
     })
 }
+
+document.addEventListener("htmx:afterSwap", onLeaveFormSubmit)
+function onLeaveFormSubmit() {
+    const submitBtn = document.getElementById("leaveFormSubmitBtn")
+    const cancelBtn = document.getElementById("leaveFormCancelBtn")
+    if (submitBtn.textContent === "SUBMITTED") {
+        cancelBtn.textContent = "Reset"
+    }
+}
+
+document.addEventListener("DOMContentLoaded", onLeaveFormReset)
+function onLeaveFormReset() {
+    const cancelBtn = document.getElementById("leaveFormCancelBtn")
+    cancelBtn.addEventListener("click", function () {
+        const submitBtn = document.getElementById("leaveFormSubmitBtn")
+    
+        cancelBtn.textContent = "Cancel"
+        submitBtn.textContent = "SUBMIT"
+    })
+}
