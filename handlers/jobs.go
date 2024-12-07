@@ -2,8 +2,20 @@ package handlers
 
 import "net/http"
 
-func Serve_jobs(w http.ResponseWriter, r *http.Request) {
+type JobsData struct {
+
+}
+
+func getJobsData() []JobsData {
+	data := []JobsData{
+		{},
+	}
+	return data
+}
+
+func ServeJobsView(w http.ResponseWriter, r *http.Request) {
+	data := getJobsData()
 	component := "jobs"
 	title := "Jobs - GPG"
-	render_template(w, component, title)
+	renderTemplate(w, component, title, data)
 }

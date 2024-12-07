@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 )
 
-func Serve_login(w http.ResponseWriter, r *http.Request) {
+func ServeLoginView(w http.ResponseWriter, r *http.Request) {
 	login_path := filepath.Join("..", "ui", "views", "login.html")
 	tmpl := template.Must(template.ParseFiles(login_path))
 	tmpl.Execute(w, nil)
@@ -15,8 +15,8 @@ func Serve_login(w http.ResponseWriter, r *http.Request) {
 }
 
 func authenticate_user(username, password string) (validation_result, error) {
-	result := validation_result{Is_valid: true, Msg: "error"}
-	if !result.Is_valid {
+	result := validation_result{IsValid: true, Msg: "error"}
+	if !result.IsValid {
 		err := fmt.Errorf("authenticate_user: invalid credentials")
 		fmt.Println(err)
 		return result, err

@@ -1,3 +1,4 @@
+{{ define "leave" }}
 <div class="leaveContainer">
     <h2 id="leaveHeader">Leave</h2>
     <div id="leaveContentSelectorContainer">
@@ -13,39 +14,106 @@
     </div>
     <div id="leaveContentContainer">
         <div class="leaveContent" id="leaveRequestContent">
-            <p>Leave request</p>
-            <form hx-post="/submit-leave-request" hx-target="#leaveFormSubmitBtn" hx-swap="innerHtml" hx id="leaveForm">
-                <label for="name">Name</label><br>
-                <input type="text" id="name" name="name"><br>
-                <label for="type">Type</label><br>
-                <select name="type" id="type">
-                    <option value="annual">annual</option>
-                    <option value="sick">sick</option>
-                    <option value="stress">stress</option>
-                    <option value="carers">carers</option>
-                    <option value="unpaid">unpaid</option>
-                </select>
+            <p class="leaveRequestHeading">Leave request</p>
+            <form hx-post="/submit-leave-request" hx-target="#leaveFormSubmitBtn" hx-swap="innerHtml" id="leaveForm">
+                <div class="inputDiv">
+                    <label for="name">Name</label>
+                    <input type="text" class="formInput" id="name" name="name" disabled value="Slid">
+                </div>
+                <div class="inputDiv">
+                    <label for="type">Type</label>
+                    <select name="type" class="formInput" id="type">
+                        <option value="annual">annual</option>
+                        <option value="sick">sick</option>
+                        <option value="stress">stress</option>
+                        <option value="carers">carers</option>
+                        <option value="unpaid">unpaid</option>
+                    </select>
+                </div>
                 <div id="leaveDateContainer">
-                    <div>
-                        <label for="from">From</label><br>
-                        <input type="date" id="from" name="from"><br>
+                    <div class="inputDiv">
+                        <label for="from">From</label>
+                        <input type="date" class="dateInput" id="from" name="from">
                     </div>
-                    <div>
-                        <label for="to">To</label><br>
-                        <input type="date" id="to" name="to"><br>
+                    <div class="inputDiv">
+                        <label for="to">To</label>
+                        <input type="date" class="dateInput" id="to" name="to">
                     </div>
                 </div>
-                <label for="note">Note</label><br>
-                <textarea type="text" id="note" name="note"></textarea><br>
+                <div class="inputDiv">
+                    <label for="note">Note</label>
+                    <textarea type="text" class="formInput" id="note" name="note"></textarea>
+                </div>
                 <div id="leaveFormButtons">
-                    <button type="reset" id="leaveFormCancelBtn" form="leaveForm">Cancel</button>
-                    <button type="submit" id="leaveFormSubmitBtn" form="leaveForm">SUBMIT</button>
+                    <button type="reset" id="leaveFormCancelBtn" class="leaveBtn" form="leaveForm">Cancel</button>
+                    <button type="submit" id="leaveFormSubmitBtn" class="leaveBtn" form="leaveForm">SUBMIT</button>
                 </div>
             </form>
         </div>
         <div class="leaveContent" id="leaveHistoryContent" style="display: none;">
-            <p>Leave history</p>
+            <p class="leaveRequestHeading">Leave history</p>
+            <div id="history">
+                <div class="leaveHistoryRowDisplayed leaveHistoryRowHeader">
+                    <div class="leaveHistoryRowCell">
+                        <p>Type</p>
+                    </div>
+                    <div class="leaveHistoryRowCell">
+                        <p>From</p>
+                    </div>
+                    <div class="leaveHistoryRowCell">
+                        <p>To</p>
+                    </div>
+                    <div class="leaveHistoryRowCell" id="isApproved">
+                        <p>Approved</p>
+                    </div>
+                </div>
+                {{ range .Data }}
+                    <div class="leaveHistoryRow">
+                        <div class="leaveHistoryRowDisplayed">
+                            <div class="leaveHistoryRowCell">
+                                <p>{{ .Type }}</p>
+                            </div>
+                            <div class="leaveHistoryRowCell">
+                                <p>{{ .From }}</p>
+                            </div>
+                            <div class="leaveHistoryRowCell">
+                                <p>{{ .To }}</p>
+                            </div>
+                            <div class="leaveHistoryRowCell" id="isApproved">
+                                <p>{{ .IsApproved }}</p>
+                            </div>
+                        </div>
+                        <div class="leaveHistoryRowHidden hidden">
+                            <div class="leaveHistoryRowHiddenCell">
+                                <p class="leaveHistoryRowHiddenCellLabel">Name:</p>
+                                <p class="leaveHistoryRowHiddenCellContent">{{ .Name }}</p>
+                            </div>
+                            <div class="leaveHistoryRowHiddenCell">
+                                <p class="leaveHistoryRowHiddenCellLabel">Type:</p>
+                                <p class="leaveHistoryRowHiddenCellContent">{{ .Type }}</p>
+                            </div>
+                            <div class="leaveHistoryRowHiddenCell">
+                                <p class="leaveHistoryRowHiddenCellLabel">From:</p>
+                                <p class="leaveHistoryRowHiddenCellContent">{{ .From }}</p>
+                            </div>
+                            <div class="leaveHistoryRowHiddenCell">
+                                <p class="leaveHistoryRowHiddenCellLabel">To:</p>
+                                <p class="leaveHistoryRowHiddenCellContent">{{ .To }}</p>
+                            </div>
+                            <div class="leaveHistoryRowHiddenCell">
+                                <p class="leaveHistoryRowHiddenCellLabel">Note:</p>
+                                <p class="leaveHistoryRowHiddenCellContent">{{ .Note }}</p>
+                            </div>
+                            <div class="leaveHistoryRowHiddenCell">
+                                <p class="leaveHistoryRowHiddenCellLabel">Approved:</p>
+                                <p class="leaveHistoryRowHiddenCellContent">{{ .IsApproved }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {{ end }}
+            </div>
         </div>
     </div>
 </div>
 <script src="../static/js/leave.js"></script>
+{{ end }}

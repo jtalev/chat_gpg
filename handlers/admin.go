@@ -2,8 +2,19 @@ package handlers
 
 import "net/http"
 
-func Serve_admin(w http.ResponseWriter, r *http.Request) {
+type AdminData struct {
+}
+
+func getAdminData() []AdminData {
+	data := []AdminData{
+		{},
+	}
+	return data
+}
+
+func ServeAdminView(w http.ResponseWriter, r *http.Request) {
+	data := getAdminData()
 	component := "admin"
 	title := "Admin - GPG"
-	render_template(w, component, title)
+	renderTemplate(w, component, title, data)
 }

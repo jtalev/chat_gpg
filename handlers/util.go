@@ -4,37 +4,49 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
-	"os"
 	"path/filepath"
 )
 
 type validation_result struct {
-	Is_valid bool
-	Msg      string
+	IsValid bool
+	Msg     string
 }
 
-func render_template(w http.ResponseWriter, component, title string) {
-	// read template file and pass the string
-	// version as the component in data struct below
-	mainContentPath := filepath.Join("..", "ui", "views", component+".html")
-	mainContent, err := os.ReadFile(mainContentPath)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+func renderTemplate(
+	w http.ResponseWriter,
+	component, title string,
+	componentData interface{},
+) {
+	layoutPath := filepath.Join("..", "ui", "layouts", "layout.html")
+	navPath := filepath.Join("..", "ui", "templates", "nav.html")
+	dashboardPath := filepath.Join("..", "ui", "views", "dashboard.html")
+	jobsPath := filepath.Join("..", "ui", "views", "jobs.html")
+	timesheetsPath := filepath.Join("..", "ui", "views", "timesheets.html")
+	leavePath := filepath.Join("..", "ui", "views", "leave.html")
+	adminPath := filepath.Join("..", "ui", "views", "admin.html")
+	accountPath := filepath.Join("..", "ui", "views", "account.html")
 
 	data := struct {
-		Title     	string
-		MainContent template.HTML
+		Title     string
+		Component string
+		Data      interface{}
 	}{
 		Title:     title,
-		MainContent: template.HTML(mainContent),
+		Component: component,
+		Data:      componentData,
 	}
 
 	tmpl, err := template.ParseFiles(
-		filepath.Join("..", "ui", "layouts", "layout.html"),
-		filepath.Join("..", "ui", "templates", "nav.html"),
+		layoutPath,
+		navPath,
+		dashboardPath,
+		jobsPath,
+		timesheetsPath,
+		leavePath,
+		adminPath,
+		accountPath,
 	)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

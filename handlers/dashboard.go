@@ -2,8 +2,20 @@ package handlers
 
 import "net/http"
 
-func Serve_dashboard(w http.ResponseWriter, r *http.Request) {
+type DashboardData struct {
+
+}
+
+func getDashboardData() []DashboardData {
+	data := []DashboardData{
+		{},
+	}
+	return data
+}
+
+func ServeDashboardView(w http.ResponseWriter, r *http.Request) {
+	data := getDashboardData()
 	component := "dashboard"
 	title := "Dashboard - GPG"
-	render_template(w, component, title)
+	renderTemplate(w, component, title, data)
 }

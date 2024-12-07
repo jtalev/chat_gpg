@@ -38,6 +38,7 @@ function onLeaveFormSubmit() {
     const cancelBtn = document.getElementById("leaveFormCancelBtn")
     if (submitBtn.textContent === "SUBMITTED") {
         cancelBtn.textContent = "Reset"
+        submitBtn.disabled = true
     }
 }
 
@@ -49,5 +50,38 @@ function onLeaveFormReset() {
     
         cancelBtn.textContent = "Cancel"
         submitBtn.textContent = "SUBMIT"
+        submitBtn.disabled = false
     })
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+    const dateInputs = document.querySelectorAll(".dateInput")
+    dateInputs.forEach(element => {
+        element.addEventListener("blur", function () {
+            
+        })
+    })
+})
+
+document.addEventListener("DOMContentLoaded", function () {
+    const leaveHistoryRows = document.querySelectorAll(".leaveHistoryRow")
+    leaveHistoryRows.forEach(element => {
+        element.addEventListener("click", function () {
+            if (element.classList.contains("leaveHistoryRowHeader")) return
+
+            const allRowsDisplayed = document.querySelectorAll(".leaveHistoryRowDisplayed")
+            const allRowsHidden = document.querySelectorAll(".leaveHistoryRowHidden")
+            allRowsDisplayed.forEach(element => {
+                element.style.display = "flex"
+            })
+            allRowsHidden.forEach(element => {
+                element.classList.add("hidden")
+            })
+            
+            const displayedRow = element.querySelector(".leaveHistoryRowDisplayed")
+            const hiddenRow = element.querySelector(".leaveHistoryRowHidden")
+            displayedRow.style.display = "none"
+            hiddenRow.classList.remove("hidden")
+        })
+    })
+})

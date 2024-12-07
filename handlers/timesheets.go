@@ -4,8 +4,20 @@ import (
 	"net/http"
 )
 
-func Serve_timesheets(w http.ResponseWriter, r *http.Request) {
+type TimesheetData struct {
+
+}
+
+func getTimesheetData() []TimesheetData {
+	data := []TimesheetData{
+		{},
+	}
+	return data
+}
+
+func ServeTimesheetsView(w http.ResponseWriter, r *http.Request) {
+	data := getTimesheetData()
 	component := "timesheets"
 	title := "Timesheets - GPG"
-	render_template(w, component, title)
+	renderTemplate(w, component, title, data)
 }

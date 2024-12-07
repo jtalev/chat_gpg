@@ -4,6 +4,8 @@ body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    color: #474747;
+    font-size: small;
 }
 
 
@@ -11,18 +13,52 @@ body {
     --gpg-green: #00969C;
     --gpg-grey: #1C1C1C;
     --main-background-color: rgb(238, 237, 237);
+    --form-input-border-color: rgb(211, 210, 210);
+    --main-color: #474747;
 }
 
+input[type=date] {
+    font-family: Arial, sans-serif;
+}
 
+input:focus {
+    outline: none;
+    border: var(--gpg-green) solid 1px;
+}
+
+textarea {
+    font-family: Arial, sans-serif;
+}
+
+textarea:focus {
+    outline: none;
+    border: var(--gpg-green) solid 1px;
+}
+
+select:focus {
+    outline: none;
+    border: var(--gpg-green) solid 1px;
+}
+
+label {
+    margin: 0;
+    padding: 0;
+}
+
+input {
+    margin: 0;
+    padding: 0;
+}
 
 @media screen and (max-width: 730px) {
-    .nav-container {
-        background-color: white;
-        justify-content: center;
+    .nav-content {
+        background-color: var(--main-background-color);
         display: flex;
+        justify-content: center;
         flex-direction: column;
         align-items: center;
         height: 100vh;
+        width: 100vw;
     }
 
     .nav-link {
@@ -92,6 +128,10 @@ body {
         flex: 1;
         display: flex;
         align-items: center;
+      }
+
+      .nav-link-text {
+        font-size: small;
       }
     
     .gpg-logo-nav {
@@ -330,18 +370,15 @@ input::-webkit-inner-spin-button {
         display: flex;
         flex-direction: column;
     }
-
 }
 
-@media screen and (min-width: 731px) {
-    
+@media screen and (min-width: 731px) {    
     .leaveContainer {
         height: 95%;
         width: 95%;
         display: flex;
         flex-direction: column;
     }
-
 }
 
 #leaveContentSelectorContainer {
@@ -381,14 +418,22 @@ input::-webkit-inner-spin-button {
     border-right: solid var(--gpg-green) 1px;
     border-bottom: solid var(--gpg-green) 1px;
     background-color: white;
+    overflow-y: auto;
 }
 
 .leaveContent {
     margin: 0 3% 0 3%;
 }
 
+.leaveRequestHeading {
+    font-size: large;
+    width: 100%;
+    border-bottom: var(--form-input-border-color) solid 1px;
+}
+
 #leaveForm {
-    font-size: smaller;
+    
+    row-gap: 2em;
 }
 
 #leaveDateContainer {
@@ -398,4 +443,117 @@ input::-webkit-inner-spin-button {
 
 #leaveFormButtons {
     display: flex;
+}
+
+.inputDiv {
+    display: flex;
+    flex-direction: column;
+    row-gap: 0.5em;
+    color: black;
+}
+
+.formInput {
+    border: var(--form-input-border-color) solid 1px;
+    border-radius: 0%;
+    font-size: 1em;
+    color: var(--main-color);
+    padding: 0.5em;
+}
+
+.dateInput {
+    border: var(--form-input-border-color) solid 1px;
+    border-radius: 0%;
+    font-size: 1em;
+    color: var(--main-color);
+    padding: 0.5em;
+}
+
+#note {
+    height: 5em;
+}
+
+#leaveFormButtons {
+    display: flex;
+    justify-content: flex-end;
+    column-gap: 1em;
+    align-items: flex-end;
+}
+
+#leaveFormCancelBtn {
+    background-color: white;
+    border: solid 1px var(--gpg-green);
+    color: var(--gpg-green);
+    height: 1.5em;
+}
+
+#leaveFormSubmitBtn {
+    background-color: var(--gpg-green);
+    border: none;
+    color: white;
+    height: 2em;
+}
+
+.leaveHistoryRowDisplayed {
+    display: flex;
+    border: var(--form-input-border-color) solid 1px;
+    border-radius: 0%;
+    font-size: 1em;
+    color: var(--main-color);
+    height: 2.5em;
+    align-items: center;
+    background-color: var(--main-background-color);
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.leaveHistoryRowHidden {
+    border: var(--form-input-border-color) solid 1px;
+    border-radius: 0%;
+    font-size: 1em;
+    color: var(--main-color);
+    background-color: var(--main-background-color);
+    margin-bottom: 5px;
+    padding-left: 5px;
+}
+
+.leaveHistoryRowCell {
+    width: 20%;
+    height: 100%;
+    padding: 0%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    overflow-x: scroll;
+    white-space: nowrap;
+    scrollbar-width: none;
+    padding-left: 5px;
+}
+
+.leaveHistoryRowHiddenCell {
+    display: flex;
+    font-size: smaller;
+    margin: 0;
+    padding: 0;
+    height: auto;
+    column-gap: 5px;
+}
+
+.leaveHistoryRowHeader {
+    color: black;
+    background-color: white;
+    border: none;
+}
+
+.leaveHistoryRowHiddenCellLabel {
+    color: black;
+    width: 20%;
+}
+
+.leaveHistoryRowHiddenCellContent {
+    flex-grow: 1;
+    width: 80%;
+}
+
+#isApproved {
+    margin-left: auto;
 }

@@ -2,8 +2,19 @@ package handlers
 
 import "net/http"
 
-func Serve_account(w http.ResponseWriter, r *http.Request) {
+type AccountData struct {
+}
+
+func getAccountData() []AccountData {
+	data := []AccountData{
+		{},
+	}
+	return data
+}
+
+func ServeAccountView(w http.ResponseWriter, r *http.Request) {
+	data := getAccountData()
 	component := "account"
 	title := "Account - GPG"
-	render_template(w, component, title)
+	renderTemplate(w, component, title, data)
 }

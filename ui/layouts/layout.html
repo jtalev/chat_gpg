@@ -14,7 +14,21 @@
             {{ template "nav" . }}
         </div>
         <div id="page-content" class="page-content" style="background-color: var(--main-background-color);">
-            {{ .MainContent }}
+            {{ if eq .Component "dashboard" }}
+                {{ template "dashboard" . }}
+            {{ else if eq .Component "jobs" }}
+                {{ template "jobs" . }}
+            {{ else if eq .Component "timesheets" }}
+                {{ template "timesheets" . }}
+            {{ else if eq .Component "leave" }}
+                {{ template "leave" . }}
+            {{ else if eq .Component "admin" }}
+                {{ template "admin" . }}
+            {{ else if eq .Component "account" }}
+                {{ template "account" . }}
+            {{ else }}
+                <p>could not find template</p>
+            {{ end }}
         </div>
     </div>
 </body>
