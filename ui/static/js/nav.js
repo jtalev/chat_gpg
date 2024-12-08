@@ -12,6 +12,11 @@ function toggleMenu() {
         pageContent.classList.remove('page-content')
         navContainer.classList.remove('hidden')
     }
+
+    const menuIcon = document.querySelector(".menuIconArrow")
+    if (menuIcon) {
+        menuIcon.classList.toggle('rotated')
+    }
 }
 
 document.addEventListener("DOMContentLoaded", onNavLinkClick) 

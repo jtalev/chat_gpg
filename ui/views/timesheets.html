@@ -1,100 +1,104 @@
 {{ define "timesheets" }}
 <div class="ts-container">
-    <div class="payweek-month-container">
-        <p id="payweek-month">hello</p>,&nbsp
-        <p id="payweek-year"></p>
+    <div class="timesheetHeaderContainer">
+        <h2 id="timesheetHeader">Timesheet</h2>
     </div>
-    <div class="date-carousel-container">
-        <div id="left-arrow-container">
-            <div class="arrow" id="left-arrow"></div>
+    <div class="timesheetContent">
+        <div class="payweek-month-container">
+            <p id="payweek-month"></p>,&nbsp
+            <p id="payweek-year"></p>
         </div>
-        <div id="right-arrow-container">
-            <div class="arrow" id="right-arrow"></div>
+        <div class="date-carousel-container">
+            <div id="left-arrow-container">
+                <button class="arrow" id="left-arrow"><</button>
+            </div>
+            <div id="right-arrow-container">
+                <button class="arrow" id="right-arrow">></button>
+            </div>
         </div>
+        <table class="timesheet-table" id="timesheet-table">
+            <tr class="dates-row" id="dates-row">
+                <th></th>
+                <th>
+                    <div class="date-cell">
+                        <p class="day">We</p>
+                        <p class="date" id="wed-date"></p>
+                    </div>
+                </th>
+                <th>
+                    <div class="date-cell">
+                        <p class="day">Th</p>
+                        <p class="date"></p>
+                    </div>
+                </th>
+                <th>
+                    <div class="date-cell">
+                        <p class="day">Fr</p>
+                        <p class="date"></p>
+                    </div>
+                </th>
+                <th>
+                    <div class="date-cell">
+                        <p class="day">Sa</p>
+                        <p class="date"></p>
+                    </div>
+                </th>
+                <th>
+                    <div class="date-cell">
+                        <p class="day">Su</p>
+                        <p class="date"></p>
+                    </div>
+                </th>
+                <th>
+                    <div class="date-cell">
+                        <p class="day">Mo</p>
+                        <p class="date"></p>
+                    </div>
+                </th>
+                <th>
+                    <div class="date-cell">
+                        <p class="day">Tu</p>
+                        <p class="date"></p>
+                    </div>
+                </th>
+                <th>
+                    total
+                </th>
+            </tr>
+            <tr class="projectRow" id="projectRow">
+                <td>
+                    <select name="projects" id="projects">
+                        <option value="project-1">project 1</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" id="wed1" class="time-input" maxlength="5" placeholder="--:--">
+                </td>
+                <td>
+                    <input type="text" id="thu1" class="time-input" maxlength="5" placeholder="--:--">
+                </td>
+                <td>
+                    <input type="text" id="fri1" class="time-input" maxlength="5" placeholder="--:--">
+                </td>
+                <td>
+                    <input type="text" id="sat1" class="time-input" maxlength="5" placeholder="--:--">
+                </td>
+                <td>
+                    <input type="text" id="sun1" class="time-input" maxlength="5" placeholder="--:--">
+                </td>
+                <td>
+                    <input type="text" id="mon1" class="time-input" maxlength="5" placeholder="--:--">
+                </td>
+                <td>
+                    <input type="text" id="tue1" class="time-input" maxlength="5" placeholder="--:--">
+                </td>
+                <td>
+                    <p class="total">0hrs : 0mins</p>
+                </td>
+            </tr>
+        </table>
+        <button class="addTableRowBtn" id="addTableRowBtn">+</button>
     </div>
-    
-    <table class="timesheet-table" id="timesheet-table">
-        <tr class="dates-row" id="dates-row">
-            <th></th>
-            <th>
-                <div class="date-cell">
-                    <p class="day">We</p>
-                    <p class="date" id="wed-date"></p>
-                </div>
-            </th>
-            <th>
-                <div class="date-cell">
-                    <p class="day">Th</p>
-                    <p class="date"></p>
-                </div>
-            </th>
-            <th>
-                <div class="date-cell">
-                    <p class="day">Fr</p>
-                    <p class="date"></p>
-                </div>
-            </th>
-            <th>
-                <div class="date-cell">
-                    <p class="day">Sa</p>
-                    <p class="date"></p>
-                </div>
-            </th>
-            <th>
-                <div class="date-cell">
-                    <p class="day">Su</p>
-                    <p class="date"></p>
-                </div>
-            </th>
-            <th>
-                <div class="date-cell">
-                    <p class="day">Mo</p>
-                    <p class="date"></p>
-                </div>
-            </th>
-            <th>
-                <div class="date-cell">
-                    <p class="day">Tu</p>
-                    <p class="date"></p>
-                </div>
-            </th>
-            <th>
-                total
-            </th>
-        </tr>
-        <tr class="projectRow" id="projectRow">
-            <td>
-                <select name="projects" id="projects">
-                    <option value="project-1">project 1</option>
-                </select>
-            </td>
-            <td>
-                <input type="text" id="wed1" class="time-input" maxlength="5" placeholder="--:--">
-            </td>
-            <td>
-                <input type="text" id="thu1" class="time-input" maxlength="5" placeholder="--:--">
-            </td>
-            <td>
-                <input type="text" id="fri1" class="time-input" maxlength="5" placeholder="--:--">
-            </td>
-            <td>
-                <input type="text" id="sat1" class="time-input" maxlength="5" placeholder="--:--">
-            </td>
-            <td>
-                <input type="text" id="sun1" class="time-input" maxlength="5" placeholder="--:--">
-            </td>
-            <td>
-                <input type="text" id="mon1" class="time-input" maxlength="5" placeholder="--:--">
-            </td>
-            <td>
-                <input type="text" id="tue1" class="time-input" maxlength="5" placeholder="--:--">
-            </td>
-            <td>
-                <p class="total">0hrs : 0mins</p>
-            </td>
-        </tr>
-    </table>
-    <button class="addTableRowBtn" id="addTableRowBtn">+</button>
     <script src="../static/js/timesheets.js"></script>
 </div>
 {{ end }}

@@ -40,6 +40,38 @@ func getLeaveRequests() []LeaveRequest {
 			Note: 	"I'm stressed out",
 			IsApproved: false,
 		},
+		{
+			Name: 	"Slid",
+			Type: 	"stress",
+			From: 	"10/11/2024",
+			To: 	"15/11/2024",
+			Note: 	"I'm stressed out",
+			IsApproved: false,
+		},
+		{
+			Name: 	"Slid",
+			Type: 	"stress",
+			From: 	"10/11/2024",
+			To: 	"15/11/2024",
+			Note: 	"I'm stressed out",
+			IsApproved: false,
+		},
+		{
+			Name: 	"Slid",
+			Type: 	"stress",
+			From: 	"10/11/2024",
+			To: 	"15/11/2024",
+			Note: 	"I'm stressed out",
+			IsApproved: false,
+		},
+		{
+			Name: 	"Slid",
+			Type: 	"stress",
+			From: 	"10/11/2024",
+			To: 	"15/11/2024",
+			Note: 	"I'm stressed out",
+			IsApproved: false,
+		},
 	}
 	return data
 }
