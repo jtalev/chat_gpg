@@ -22,9 +22,10 @@ type LeaveRequest struct {
 var tempData = []LeaveRequest{}
 
 func ServeLeaveView(w http.ResponseWriter, r *http.Request) {
+	data := getLeaveRequestByEmployeeId(12345678)
 	component := "leave"
 	title := "Leave - GPG"
-	renderTemplate(w, component, title, nil)
+	renderTemplate(w, component, title, data)
 }
 func GetLeaveRequests(sugar *zap.SugaredLogger) http.Handler {
 	return http.HandlerFunc(
@@ -33,6 +34,13 @@ func GetLeaveRequests(sugar *zap.SugaredLogger) http.Handler {
 			responseJson(w, tempData, sugar)
 		},
 	)
+}
+
+func getLeaveRequests() []LeaveRequest {
+	if len(tempData) == 0 {
+		fmt.Println("no leave requests found")
+	}
+	return tempData
 }
 
 func GetLeaveRequestById(sugar *zap.SugaredLogger) http.Handler {
@@ -76,6 +84,22 @@ func GetLeaveRequestById(sugar *zap.SugaredLogger) http.Handler {
 			responseJson(w, tempData[requestIndex], sugar)
 		},
 	)
+}
+
+func getLeaveRequestByEmployeeId(employeeId int) []LeaveRequest {
+	var requests []LeaveRequest
+
+	for i, _ := range tempData {
+		if tempData[i].EmployeeId == employeeId {
+			requests = append(requests, tempData[i])
+		}
+	}
+
+	if len(requests) == 0 {
+		fmt.Println("handlers/leave.go getLeaveRequestsByEmployeeId: no leave requests found")
+	}
+
+	return requests
 }
 
 func PostLeaveRequest(sugar *zap.SugaredLogger) http.Handler {

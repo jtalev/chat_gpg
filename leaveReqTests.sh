@@ -1,6 +1,8 @@
 #!/bin/bash
 echo "POST"
 curl -X POST -d "name=John&type="annual"&from=2024-12-01&to=2024-12-05&note=Vacation" http://localhost/post-leave-request
+echo "POST"
+curl -X POST -d "name=John&type="annual"&from=2024-12-01&to=2024-12-05&note=Vacation" http://localhost/post-leave-request
 echo "get all"
 curl -X GET http://localhost/get-leave-requests
 echo "get by id"
