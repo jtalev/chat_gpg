@@ -11,10 +11,12 @@ body {
 
 :root {
     --gpg-green: #00969C;
+    --gpg-green-background: #00969C90;
     --gpg-grey: #1C1C1C;
     --main-background-color: rgb(238, 237, 237);
     --form-input-border-color: rgb(211, 210, 210);
     --main-color: #474747;
+    --timesheet-border: #a5a4a4;
 }
 
 input[type=date] {
@@ -33,6 +35,12 @@ textarea {
 textarea:focus {
     outline: none;
     border: var(--gpg-green) solid 1px;
+}
+
+select {
+    color: var(--main-color);
+    border-radius: 0;
+    border: var(--timesheet-border) solid 1px;
 }
 
 select:focus {
@@ -238,7 +246,7 @@ form input {
 /***** timesheets *****/
 @media screen and (max-width: 730px) {
 
-    .ts-container {
+    .timesheetContainer {
         width: 95%;
         height: 95%;
         margin-top: auto;
@@ -249,7 +257,7 @@ form input {
 }
 
 @media screen and (min-width: 731px) {    
-    .ts-container {
+    .timesheetContainer {
         height: 95%;
         width: 95%;
         display: flex;
@@ -261,7 +269,7 @@ form input {
     display: flex;
     align-items: center;
     padding: 0;
-    margin: 0;
+    margin: 0 0 0.4em 0;
 }
 
 #timesheetHeader {
@@ -273,27 +281,57 @@ form input {
     height: 100%;
 }
 
-.timesheetContent {
+.timesheetNavContainer {
+    display: flex;
+    justify-content: flex-end;
+    column-gap: 0.5em;
+    height: 7%;
+    margin-top: 1em;
+    align-items: center;
+}
+
+.timesheetContentContainer {
     height: 95%;
     width: 100%;
     border: var(--gpg-green) solid 1px;
-    margin-top: auto;
     background-color: white;
-}
-
-.payweek-month-container {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.date-carousel-container {
+.timesheetContent {
+    height: 100%;
+    width: 95%;
+    display: flex;
+    flex-direction: column;
+    row-gap: 3px;
+}
+
+.payweekMonthContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: var(--timesheet-border) solid 1px;
+    background-color: var(--main-background-color);
+    padding: 4px;
+    margin: 0;
+    width: 15em;
+    height: 50%;
+    column-gap: 0.5em;
+}
+
+#payweekMonth, #payweekYear {
+    height: 100%;
+}
+
+.payweekSelectorContainer {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-#left-arrow-container {
+#leftArrowContainer {
     width: 1.5em;
     height: 1.5em;
     display: flex;
@@ -301,9 +339,11 @@ form input {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    margin-right: 2px;
+    padding: 0;
 }
 
-#right-arrow-container {
+#rightArrowContainer {
     width: 1.5em;
     height: 1.5em;
     display: flex;
@@ -311,6 +351,8 @@ form input {
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    padding: 0;
+    margin: 0;
 }
 
 .arrow {
@@ -318,43 +360,64 @@ form input {
     height: 100%;
     padding: 0;
     margin: 0;
+    border-radius: 0;
+    border: none;
+    background-color: white;
+    color: var(--gpg-green);
+    border: var(--gpg-green) solid 1px;
 }
 
-.date-container {
-    width: 80%;
-    height: 100%;
-    flex-shrink: 0;
-    display: flex;
-    justify-content: center;
-}
-
-.ts-form-container{
-    border: #333 solid 1px;
+#timesheetTableContainer {
     width: 100%;
-    flex-grow: 1;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
 }
 
-.date-cell {
+.timesheetTable {
+    width: 100%;
+    min-width: 600px;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+.stickyCell {
+  position: sticky;
+  left: 0;
+  background-color: #f9f9f9;
+  z-index: 1;
+}
+
+.dateCell {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    margin: 0;
+    padding-top: 0;
+    width: 100%;
+    height: 90%;
+    border-collapse: collapse;
 }
 
 .day {
     margin: 0;
+    padding: 0;
     color: #a5a5a5;
+    font-weight: lighter;
 }
 
 .date {
     background-color: #cccccc;
-    width: 40px;
-    height: 40px;
+    width: 1.8em;
+    height: 2em;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
+    margin: 0;
+    padding: 0;
 }
 
 input::-webkit-outer-spin-button,
@@ -363,21 +426,64 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
-.projectRow td {
-    height: 4em;
-    width: 8em;
-    text-align: center;
-  }
+.datesRow {
+    width: 100%;
+}
 
-.time-input {
-    width: 40%;
-    height: 40%;
+.projectRow {
+    width: 100%;
+}
+
+.datesRow th {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    width: 3em;
+    height: 3em;
+    background-color: var(--main-background-color);
+    border: var(--timesheet-border) solid 1px;
+}
+
+.projectRow td {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    width: 3em;
+    height: 3em;
+    border: var(--main-background-color) solid 1px;
+}
+
+.timeInput {
+    width: 99%;
+    height: 99%;
     text-align: center;
     cursor: pointer;
+    margin: 0;
+    padding: 0;
+    border: none;
 }
 
 #projects {
-    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 80%;
+}
+
+.addRowBtnContainer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.addTableRowBtn {
+    border-radius: 0;
+    border: var(--gpg-green) solid 1px;
+    background-color: white;
+    color: var(--gpg-green);
+    width: 1.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 /***** leave *****/
@@ -584,4 +690,85 @@ input::-webkit-inner-spin-button {
 
 #isApproved {
     margin-left: auto;
+}
+
+/** ----- admin ----- **/
+@media screen and (max-width: 730px) {
+
+    .adminContainer {
+        width: 95%;
+        height: 95%;
+        margin-top: auto;
+        margin-bottom: 1em;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+@media screen and (min-width: 731px) {    
+    .adminContainer {
+        height: 95%;
+        width: 95%;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+#adminHeader {
+    font-weight: lighter;
+    margin: 0 0 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.adminHeaderContainer {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0 0 0.4em 0;
+}
+
+#adminContentSelectorContainer {
+    display: flex;
+    height: 5%;
+}
+
+.adminContentSelector {
+    width: 7em;
+    font-size: xx-small;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: var(--gpg-green) solid 1px;
+    cursor: pointer;
+    border-top-left-radius: 5%;
+    border-top-right-radius: 5%;
+}
+
+#jobsSelector {
+    border-bottom: none;
+}
+
+#timesheetSelector {
+    border-left: none;
+}
+
+#leaveSelector {
+    border-left: none;
+}
+
+#adminContentContainer {
+    flex-grow: 1;
+    width: 100%;
+    border-left: solid var(--gpg-green) 1px;
+    border-right: solid var(--gpg-green) 1px;
+    border-bottom: solid var(--gpg-green) 1px;
+    background-color: white;
+    overflow-y: auto;
+}
+
+.adminContent {
+    margin: 0 3% 0 3%;
 }

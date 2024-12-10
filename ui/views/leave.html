@@ -15,10 +15,10 @@
     <div id="leaveContentContainer">
         <div class="leaveContent" id="leaveRequestContent">
             <p class="leaveRequestHeading">Leave request</p>
-            <form hx-post="/submit-leave-request" hx-target="#leaveFormSubmitBtn" hx-swap="innerHtml" id="leaveForm">
+            <form hx-post="/post-leave-request" hx-target="#leaveFormSubmitBtn" hx-swap="innerHtml" id="leaveForm">
                 <div class="inputDiv">
                     <label for="name">Name</label>
-                    <input type="text" class="formInput" id="name" name="name" disabled value="Slid">
+                    <input type="text" class="formInput" id="name" name="name" value="Slid">
                 </div>
                 <div class="inputDiv">
                     <label for="type">Type</label>
@@ -33,16 +33,16 @@
                 <div id="leaveDateContainer">
                     <div class="inputDiv">
                         <label for="from">From</label>
-                        <input type="date" class="dateInput" id="from" name="from">
+                        <input type="date" class="dateInput" id="from" name="from" value="2024-12-10">
                     </div>
                     <div class="inputDiv">
                         <label for="to">To</label>
-                        <input type="date" class="dateInput" id="to" name="to">
+                        <input type="date" class="dateInput" id="to" name="to" value="2024-12-12">
                     </div>
                 </div>
                 <div class="inputDiv">
                     <label for="note">Note</label>
-                    <textarea type="text" class="formInput" id="note" name="note"></textarea>
+                    <textarea type="text" class="formInput" id="note" name="note">Need a break</textarea>
                 </div>
                 <div id="leaveFormButtons">
                     <button type="reset" id="leaveFormCancelBtn" class="leaveBtn" form="leaveForm">Cancel</button>

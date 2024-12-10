@@ -3,19 +3,28 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"sync"
 	"time"
+
+	"go.uber.org/zap"
 )
 
 // ----- output colours -----
 var Yellow = "\033[33m"
 
 func new_server(ctx context.Context) http.Handler {
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatal(err)
+	}
+	sugar := logger.Sugar()
+	defer logger.Sync()
 	mux := http.NewServeMux()
-	add_routes(mux, ctx)
+	add_routes(mux, ctx, sugar)
 	var handler http.Handler = mux
 	return handler
 }

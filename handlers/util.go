@@ -1,10 +1,13 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"net/http"
 	"path/filepath"
+
+	"go.uber.org/zap"
 )
 
 type validation_result struct {
@@ -56,5 +59,13 @@ func renderTemplate(
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+func responseJson(w http.ResponseWriter, data any, sugar *zap.SugaredLogger) {
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		sugar.Errorf("Error encoding leave requests: %v", err)
+		http.Error(w, "failed to fetch leave requests", http.StatusInternalServerError)
 	}
 }

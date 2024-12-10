@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", timeInputFilter) 
 function timeInputFilter() {
-    const timeInputs = document.querySelectorAll('.time-input')
+    const timeInputs = document.querySelectorAll('.timeInput')
     
     timeInputs.forEach(timeInput => {
         timeInput.addEventListener('keydown', (event) => {
@@ -18,7 +18,7 @@ function timeInputFilter() {
 
 
 function getDateContainerChildren() {
-    const dateContainer = document.getElementById("dates-row")
+    const dateContainer = document.getElementById("datesRow")
     const dateContainerChildren = dateContainer.children
     return dateContainerChildren
 }
@@ -55,82 +55,77 @@ function renderDateCell() {
         previousWednesday.setDate(previousWednesday.getDate() + 1)
     }
     
-    const timesheetTable = document.querySelector("#timesheet-table")
+    const timesheetTable = document.querySelector("#timesheetTable")
     const timesheetRows = timesheetTable.rows
     
-    for (let i = 0; i < timesheetRows.length; i++) {
-        const row = timesheetRows[i]
-        const cells = row.cells
+    // for (let i = 0; i < timesheetRows.length; i++) {
+    //     const row = timesheetRows[i]
+    //     const cells = row.cells
         
-        if (i > 0) {
-            for (let j = 1; j < cells.length; j++) {
-                cells[j].style.pointerEvents = "none"
-            }
-        }
-        cells[columnIndex].style.backgroundColor = 'gray'
-        cells[columnIndex].style.pointerEvents = "all"
-    }
+    //     cells[columnIndex].style.backgroundColor = 'gray'
+    //     cells[columnIndex].style.pointerEvents = "all"
+    // }
 }
 
-document.addEventListener("DOMContentLoaded", onDateCellClick)
-function onDateCellClick() {
-    document.querySelectorAll(".date-cell").forEach(cell => {
-        cell.addEventListener("click", function () {
-            const dateContainerChildren = getDateContainerChildren()
-            let columnIndex = 0
+// document.addEventListener("DOMContentLoaded", onDateCellClick)
+// function onDateCellClick() {
+//     document.querySelectorAll(".dateCell").forEach(cell => {
+//         cell.addEventListener("click", function () {
+//             const dateContainerChildren = getDateContainerChildren()
+//             let columnIndex = 0
             
-            // i < datecontainerChildren.length - 1 here because the 
-            // table has an extra column for total hours worked
-            for (var i = 1; i < dateContainerChildren.length - 1; i++) {
-                const child = dateContainerChildren[i]
-                let dateElement = child.querySelector(".date")
-                dateElement.style.backgroundColor = "#cccccc"
-                dateElement.style.color = "black"
+//             // i < datecontainerChildren.length - 1 here because the 
+//             // table has an extra column for total hours worked
+//             for (var i = 1; i < dateContainerChildren.length - 1; i++) {
+//                 const child = dateContainerChildren[i]
+//                 let dateElement = child.querySelector(".date")
+//                 dateElement.style.backgroundColor = "#cccccc"
+//                 dateElement.style.color = "var(--main-color)"
                 
-                let dateCell = child.querySelector(".date-cell")
-                if (dateCell === this) {
-                    columnIndex = i
-                }
-            }
+//                 let dateCell = child.querySelector(".dateCell")
+//                 if (dateCell === this) {
+//                     columnIndex = i
+//                 }
+//             }
             
-            let dateElement = this.querySelector(".date")
-            dateElement.style.backgroundColor = "var(--gpg-green)"
-            dateElement.style.color = "white"
+//             let dateElement = this.querySelector(".date")
+//             dateElement.style.backgroundColor = "var(--gpg-green)"
+//             dateElement.style.color = "white"
             
-            // colour background of column
+//             // colour background of column
             
-            const timesheetTable = document.querySelector("#timesheet-table")
-            const timesheetRows = timesheetTable.rows
+//             const timesheetTable = document.querySelector("#timesheetTable")
+//             const timesheetRows = timesheetTable.rows
             
-            for (let i = 0; i < timesheetRows.length; i++) {
-                const row = timesheetRows[i]
-                const cells = row.cells
+//             for (let i = 0; i < timesheetRows.length; i++) {
+//                 const row = timesheetRows[i]
+//                 const cells = row.cells
                 
-                for (let i = 0; i < cells.length; i++) {
-                    cells[i].style.backgroundColor = 'white'
-                }
+//                 for (let i = 0; i < cells.length; i++) {
+//                     cells[i].style.backgroundColor = 'white'
+//                 }
 
-                if (i > 0) {
-                    for (let j = 1; j < cells.length; j++) {
-                        cells[j].style.pointerEvents = "none"
-                    }
-                }
+//                 if (i > 0) {
+//                     for (let j = 1; j < cells.length; j++) {
+//                         cells[j].style.pointerEvents = "none"
+//                     }
+//                 }
                 
-                cells[columnIndex].style.backgroundColor = 'gray'
-                cells[columnIndex].style.pointerEvents = "all"
-            }
-        })
-    })
-}
+//                 cells[columnIndex].style.backgroundColor = 'gray'
+//                 cells[columnIndex].style.pointerEvents = "all"
+//             }
+//         })
+//     })
+// }
 
 document.addEventListener("DOMContentLoaded", onLeftArrowClick)
 function onLeftArrowClick() {
     // updates the date carousel, starting from the wednesday previous to the current week
     // converts html to Date() type to update the html again with the correct values
-    document.querySelector("#left-arrow-container").addEventListener("click", function () {
-        const wedDateElement = document.getElementById("wed-date")
-        const payweekMonthElement = document.getElementById("payweek-month")
-        const payweekYearElement = document.getElementById("payweek-year")
+    document.querySelector("#leftArrowContainer").addEventListener("click", function () {
+        const wedDateElement = document.getElementById("wedDate")
+        const payweekMonthElement = document.getElementById("payweekMonth")
+        const payweekYearElement = document.getElementById("payweekYear")
         
         // need to convert month name from string to int; currentWed.setMonth(payweekMonth)
         // use monthNames to update html to new month also
@@ -179,10 +174,10 @@ document.addEventListener("DOMContentLoaded", onRightArrowClick)
 function onRightArrowClick() {
     // updates the date carousel, starting from the wednesday previous to the current week
     // converts html to Date() type to update the html again with the correct values
-    document.querySelector("#right-arrow-container").addEventListener("click", function () {
-        const wedDateElement = document.getElementById("wed-date")
-        const payweekMonthElement = document.getElementById("payweek-month")
-        const payweekYearElement = document.getElementById("payweek-year")
+    document.querySelector("#rightArrowContainer").addEventListener("click", function () {
+        const wedDateElement = document.getElementById("wedDate")
+        const payweekMonthElement = document.getElementById("payweekMonth")
+        const payweekYearElement = document.getElementById("payweekYear")
 
         // need to convert month name from string to int; currentWed.setMonth((int)payweekMonth)
         // use monthNames to update html to new month also
@@ -228,8 +223,8 @@ function onRightArrowClick() {
 
 document.addEventListener("DOMContentLoaded", renderMonth)
 function renderMonth() {
-    const payweekMonthElement = document.getElementById("payweek-month")
-    const payweekYearElement = document.getElementById("payweek-year")
+    const payweekMonthElement = document.getElementById("payweekMonth")
+    const payweekYearElement = document.getElementById("payweekYear")
     
     const date = new Date()
     const currentYear = date.getFullYear()
@@ -248,7 +243,7 @@ function renderMonth() {
 document.addEventListener("DOMContentLoaded", addTableRow)
 function addTableRow() {
     document.querySelector("#addTableRowBtn").addEventListener("click", function() {
-        const table = document.querySelector("#timesheet-table")
+        const table = document.querySelector("#timesheetTable")
         const newRow = document.createElement('tr')
         newRow.classList.add("projectRow")
     
@@ -256,18 +251,18 @@ function addTableRow() {
         const rowString = oldRow.innerHTML
         
         newRow.innerHTML = rowString
-        newRow.querySelector(".total").innerHTML = "0hrs : 0mins"
+        newRow.querySelector(".total").innerHTML = "0:0"
         table.appendChild(newRow)
     })
 }
 
 document.addEventListener("DOMContentLoaded", calculateRowTotals)
 function calculateRowTotals() {
-    const table = document.getElementById("timesheet-table")
+    const table = document.getElementById("timesheetTable")
     const rows = table.rows
 
     for (let i = 1; i < rows.length; i++) {
-        const cells = rows[i].querySelectorAll(".time-input")
+        const cells = rows[i].querySelectorAll(".timeInput")
         let hours = 0
         let mins = 0
 
@@ -291,13 +286,13 @@ function calculateRowTotals() {
         mins = mins % 60
 
         const total = rows[i].querySelector(".total")
-        total.innerHTML = hours + "hrs : " + mins + "mins"
+        total.innerHTML = hours + ":" + mins
     }
 }
 
 document.addEventListener("DOMContentLoaded", updateRowTotals)
 function updateRowTotals() {
-    document.querySelectorAll(".time-input").forEach(cell => {
+    document.querySelectorAll(".timeInput").forEach(cell => {
         cell.addEventListener("keyup", function () {
             calculateRowTotals()
         })
