@@ -2,19 +2,40 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"sync"
 	"time"
 
+	"github.com/joho/godotenv"
+	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/zap"
 )
 
-// ----- output colours -----
-var Yellow = "\033[33m"
+func newDb(sugar *zap.SugaredLogger) *sql.DB {
+	env := os.Getenv("ENV")
+	var dbPath string
+	if env == "development" {
+		dbPath = filepath.Join("..", "db", "dev.db")
+	} else if env == "production" {
+		dbPath = filepath.Join("..", "db", "prod.db")
+	}
+	if dbPath == "" {
+		sugar.Error("error obtaining db path")
+	}
+
+	db, err := sql.Open("sqlite3", dbPath)
+	if err != nil {
+		sugar.Fatal(err)
+	}
+
+	return db
+}
 
 func new_server(ctx context.Context) http.Handler {
 	logger, err := zap.NewProduction()
@@ -23,8 +44,11 @@ func new_server(ctx context.Context) http.Handler {
 	}
 	sugar := logger.Sugar()
 	defer logger.Sync()
+
+	db := newDb(sugar)
+
 	mux := http.NewServeMux()
-	add_routes(mux, ctx, sugar)
+	add_routes(mux, ctx, db, sugar)
 	var handler http.Handler = mux
 	return handler
 }
@@ -32,6 +56,9 @@ func new_server(ctx context.Context) http.Handler {
 func run(
 	ctx context.Context,
 ) error {
+	if err := godotenv.Load(); err != nil {
+		fmt.Fprintf(os.Stderr, "error loading .env file: %s\n", err)
+	}
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
 	server := new_server(ctx)
@@ -41,7 +68,7 @@ func run(
 	}
 	go func() {
 		fmt.Printf(" Listening and serving on %s\n", http_server.Addr)
-		fmt.Println(string(Yellow), "Ctrl + C to exit")
+		fmt.Println("Ctrl + C to exit")
 		if err := http.ListenAndServe(http_server.Addr, http_server.Handler); err != nil && err != http.ErrServerClosed {
 			fmt.Fprintf(os.Stderr, "error listening and serving: %s", err)
 		}

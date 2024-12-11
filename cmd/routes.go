@@ -2,13 +2,14 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"net/http"
 
 	"github.com/jtalev/chat_gpg/handlers"
 	"go.uber.org/zap"
 )
 
-func add_routes(mux *http.ServeMux, ctx context.Context, sugar *zap.SugaredLogger) {
+func add_routes(mux *http.ServeMux, ctx context.Context, db *sql.DB, sugar *zap.SugaredLogger) {
 	fileServer := http.FileServer(http.Dir("../ui/static"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
