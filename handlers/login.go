@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/gorilla/sessions"
 	"github.com/jtalev/chat_gpg/auth"
-	"github.com/jtalev/chat_gpg/handlers"
 	"go.uber.org/zap"
 )
 
@@ -18,7 +18,7 @@ func ServeLoginView(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func LoginHandler(db *sql.DB, sugar *zap.SugaredLogger) http.Handler {
+func LoginHandler(db *sql.DB, store *sessions.CookieStore, sugar *zap.SugaredLogger) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			username := r.FormValue("username")
@@ -32,8 +32,33 @@ func LoginHandler(db *sql.DB, sugar *zap.SugaredLogger) http.Handler {
 				return
 			}
 
-			employee, err := handlers.GetEmployeeByEmployeeId(employeeAuth.EmployeeId)
-			sugar.Info(employee)
+			employee, err := GetEmployeeByEmployeeId(employeeAuth.EmployeeId, db)
+			if err != nil {
+				sugar.Errorf("Error getting authorised employee: %v", err)
+				http.Error(w, "Error getting authorised employee", http.StatusInternalServerError)
+				return
+			}
+
+			session, err := store.Get(r, "employee_session")
+			if err != nil {
+				sugar.Errorf("Error getting session", err)
+				http.Error(w, "Error getting session", http.StatusInternalServerError)
+				return
+			}
+			session.Values["is_authenticated"] = true
+			session.Values["username"] = employee.EmployeeId
+			if employee.IsAdmin {
+				session.Values["is_admin"] = true
+			} else {
+				session.Values["is_admin"] = false
+			}
+			err = session.Save(r, w)
+			if err != nil {
+				sugar.Errorf("Error saving session: %v", err)
+				http.Error(w, "Error saving session", http.StatusInternalServerError)
+				return
+			}
+
 			http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
 		},
 	)

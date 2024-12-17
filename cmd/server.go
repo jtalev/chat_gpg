@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
 	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/zap"
@@ -44,9 +45,24 @@ func newDb(sugar *zap.SugaredLogger) *sql.DB {
 	return db
 }
 
-func new_server(ctx context.Context, db *sql.DB, sugar *zap.SugaredLogger) http.Handler {
+func newStore(sugar *zap.SugaredLogger) *sessions.CookieStore {
+	var (
+		key = []byte(os.Getenv("SESSION_HMAC_KEY"))
+		// encryptionKey = []byte(os.Getenv("SESSION_ENC_KEY"))
+		store = sessions.NewCookieStore(key, nil)
+	)
+
+	return store
+}
+
+func new_server(
+	ctx context.Context,
+	db *sql.DB,
+	store *sessions.CookieStore,
+	sugar *zap.SugaredLogger,
+) http.Handler {
 	mux := http.NewServeMux()
-	add_routes(mux, ctx, db, sugar)
+	add_routes(mux, ctx, db, store, sugar)
 	var handler http.Handler = mux
 	return handler
 }
@@ -64,9 +80,10 @@ func run(
 	sugar := logger.Sugar()
 	defer logger.Sync()
 	db := newDb(sugar)
+	store := newStore(sugar)
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
-	server := new_server(ctx, db, sugar)
+	server := new_server(ctx, db, store, sugar)
 	http_server := &http.Server{
 		Addr:    "localhost:80",
 		Handler: server,

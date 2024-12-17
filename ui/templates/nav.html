@@ -13,7 +13,11 @@
                 <li class="nav-link"><a class="nav-link-text" href="/jobs">jobs</a></li>
                 <li class="nav-link"><a class="nav-link-text" href="/timesheets">timesheets</a></li>
                 <li class="nav-link"><a class="nav-link-text" href="/leave">leave</a></li>
-                <li class="nav-link"><a class="nav-link-text" href="/admin">admin</a></li>
+                {{ if eq .IsAdmin "true" }}
+                    <li class="nav-link"><a class="nav-link-text" href="/admin">admin</a></li>
+                {{ else }} 
+                    <p>not admin</p>
+                {{ end }}
                 <li class="nav-link"><a class="nav-link-text" href="/account">account</a></li>
             </ul>
         </div>

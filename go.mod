@@ -1,10 +1,17 @@
 module github.com/jtalev/chat_gpg
 
-go 1.22.3
+go 1.23
+
+toolchain go1.23.4
 
 require go.uber.org/zap v1.27.0
 
 require github.com/mattn/go-sqlite3 v1.14.24
+
+require (
+	github.com/gorilla/securecookie v1.1.2 // indirect
+	github.com/gorilla/sessions v1.4.0 // indirect
+)
 
 require (
 	github.com/joho/godotenv v1.5.1

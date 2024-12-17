@@ -5,24 +5,25 @@ import (
 	"database/sql"
 	"net/http"
 
+	"github.com/gorilla/sessions"
 	"github.com/jtalev/chat_gpg/handlers"
 	"go.uber.org/zap"
 )
 
-func add_routes(mux *http.ServeMux, ctx context.Context, db *sql.DB, sugar *zap.SugaredLogger) {
+func add_routes(mux *http.ServeMux, ctx context.Context, db *sql.DB, store *sessions.CookieStore, sugar *zap.SugaredLogger) {
 	fileServer := http.FileServer(http.Dir("../ui/static"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
 	mux.HandleFunc("/login", handlers.ServeLoginView)
-	mux.HandleFunc("/dashboard", handlers.ServeDashboardView)
-	mux.HandleFunc("/jobs", handlers.ServeJobsView)
-	mux.HandleFunc("/timesheets", handlers.ServeTimesheetsView)
-	mux.Handle("/leave", handlers.ServeLeaveView(sugar))
-	mux.HandleFunc("/admin", handlers.ServeAdminView)
-	mux.HandleFunc("/account", handlers.ServeAccountView)
+	mux.Handle("/dashboard", handlers.ServeDashboardView(store, sugar))
+	mux.Handle("/jobs", handlers.ServeJobsView(store, sugar))
+	mux.Handle("/timesheets", handlers.ServeTimesheetsView(store, sugar))
+	mux.Handle("/leave", handlers.ServeLeaveView(store, sugar))
+	mux.Handle("/admin", handlers.ServeAdminView(store, sugar))
+	mux.Handle("/account", handlers.ServeAccountView(store, sugar))
 
 	// login requests
-	mux.Handle("/authenticate-user", handlers.LoginHandler(db, sugar))
+	mux.Handle("/authenticate-user", handlers.LoginHandler(db, store, sugar))
 
 	// leave requests
 	mux.Handle("/get-leave-requests", handlers.GetLeaveRequests(db, sugar))

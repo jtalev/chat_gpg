@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gorilla/sessions"
 	"go.uber.org/zap"
 )
 
@@ -22,13 +23,13 @@ type LeaveRequest struct {
 
 var tempData = []LeaveRequest{}
 
-func ServeLeaveView(sugar *zap.SugaredLogger) http.Handler {
+func ServeLeaveView(store *sessions.CookieStore, sugar *zap.SugaredLogger) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			data := GetLeaveRequestById(sugar)
 			component := "leave"
 			title := "Leave - GPG"
-			renderTemplate(w, component, title, data)
+			renderTemplate(w, r, store, component, title, data)
 		},
 	)
 }

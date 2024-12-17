@@ -1,9 +1,13 @@
 package handlers
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/gorilla/sessions"
+	"go.uber.org/zap"
+)
 
 type JobsData struct {
-
 }
 
 func getJobsData() []JobsData {
@@ -13,9 +17,13 @@ func getJobsData() []JobsData {
 	return data
 }
 
-func ServeJobsView(w http.ResponseWriter, r *http.Request) {
-	data := getJobsData()
-	component := "jobs"
-	title := "Jobs - GPG"
-	renderTemplate(w, component, title, data)
+func ServeJobsView(store *sessions.CookieStore, sugar *zap.SugaredLogger) http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			data := getJobsData()
+			component := "jobs"
+			title := "Jobs - GPG"
+			renderTemplate(w, r, store, component, title, data)
+		},
+	)
 }

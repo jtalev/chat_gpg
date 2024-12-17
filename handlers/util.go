@@ -7,11 +7,14 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/gorilla/sessions"
 	"go.uber.org/zap"
 )
 
 func renderTemplate(
 	w http.ResponseWriter,
+	r *http.Request,
+	store *sessions.CookieStore,
 	component, title string,
 	componentData interface{},
 ) {
@@ -24,13 +27,27 @@ func renderTemplate(
 	adminPath := filepath.Join("..", "ui", "views", "admin.html")
 	accountPath := filepath.Join("..", "ui", "views", "account.html")
 
+	session, err := store.Get(r, "employee_session")
+	if err != nil {
+		fmt.Errorf("Error getting store: %v", err)
+		http.Error(w, "Error getting session", http.StatusInternalServerError)
+		return
+	}
+	isAdminValue := session.Values["is_admin"]
+	isAdmin := "false"
+	if isAdminValue == "true" {
+		isAdmin = "true"
+	}
+
 	data := struct {
 		Title     string
 		Component string
+		IsAdmin   string
 		Data      interface{}
 	}{
 		Title:     title,
 		Component: component,
+		IsAdmin:   isAdmin,
 		Data:      componentData,
 	}
 

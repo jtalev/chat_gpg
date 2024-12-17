@@ -17,7 +17,7 @@ type Employee struct {
 	UpdatedAt   string `json:"updated_at"`
 }
 
-func GetEmployeeByEmployeeId(employeeId int, db *sql.DB) (Employee, error) {
+func GetEmployeeByEmployeeId(employeeId string, db *sql.DB) (Employee, error) {
 	employee := Employee{}
 	q := `
 	select * from employee where employee_id = ?;
@@ -30,7 +30,7 @@ func GetEmployeeByEmployeeId(employeeId int, db *sql.DB) (Employee, error) {
 
 	if rows.Next() {
 		err := rows.Scan(&employee.ID, &employee.EmployeeId, &employee.FirstName, &employee.LastName,
-		&employee.Email, &employee.PhoneNumber, &employee.IsAdmin, &employee.CreatedAt, &employee.UpdatedAt)
+			&employee.Email, &employee.PhoneNumber, &employee.IsAdmin, &employee.CreatedAt, &employee.UpdatedAt)
 		if err != nil {
 			return employee, err
 		}
