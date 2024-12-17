@@ -26,7 +26,7 @@ func newDb(sugar *zap.SugaredLogger) *sql.DB {
 		dbPath = filepath.Join("..", "db", "prod.db")
 	}
 	if dbPath == "" {
-		sugar.Error("error obtaining db path")
+		sugar.Error("Error obtaining db path")
 	}
 
 	db, err := sql.Open("sqlite3", dbPath)
@@ -34,19 +34,17 @@ func newDb(sugar *zap.SugaredLogger) *sql.DB {
 		sugar.Fatal(err)
 	}
 
+	err = db.Ping()
+	if err != nil {
+		sugar.Error("DB connection not open:", err)
+	} else {
+		sugar.Info("DB connection is open and healthy")
+	}
+
 	return db
 }
 
-func new_server(ctx context.Context) http.Handler {
-	logger, err := zap.NewProduction()
-	if err != nil {
-		log.Fatal(err)
-	}
-	sugar := logger.Sugar()
-	defer logger.Sync()
-
-	db := newDb(sugar)
-
+func new_server(ctx context.Context, db *sql.DB, sugar *zap.SugaredLogger) http.Handler {
 	mux := http.NewServeMux()
 	add_routes(mux, ctx, db, sugar)
 	var handler http.Handler = mux
@@ -57,11 +55,18 @@ func run(
 	ctx context.Context,
 ) error {
 	if err := godotenv.Load(); err != nil {
-		fmt.Fprintf(os.Stderr, "error loading .env file: %s\n", err)
+		fmt.Fprintf(os.Stderr, "Error loading .env file: %s\n", err)
 	}
+	logger, err := zap.NewProduction()
+	if err != nil {
+		log.Fatal(err)
+	}
+	sugar := logger.Sugar()
+	defer logger.Sync()
+	db := newDb(sugar)
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
-	server := new_server(ctx)
+	server := new_server(ctx, db, sugar)
 	http_server := &http.Server{
 		Addr:    "localhost:80",
 		Handler: server,
@@ -70,7 +75,7 @@ func run(
 		fmt.Printf(" Listening and serving on %s\n", http_server.Addr)
 		fmt.Println("Ctrl + C to exit")
 		if err := http.ListenAndServe(http_server.Addr, http_server.Handler); err != nil && err != http.ErrServerClosed {
-			fmt.Fprintf(os.Stderr, "error listening and serving: %s", err)
+			sugar.Errorf("Error listening and serving: %s", err)
 		}
 	}()
 	var wg sync.WaitGroup
@@ -81,7 +86,10 @@ func run(
 		shutdownCtx, cancel := context.WithTimeout(ctx, 10*time.Second)
 		defer cancel()
 		if err := http_server.Shutdown(shutdownCtx); err != nil {
-			fmt.Fprintf(os.Stderr, "error shutting down http server: %s\n", err)
+			fmt.Fprintf(os.Stderr, "Error shutting down http server: %s\n", err)
+		}
+		if err := db.Close(); err != nil {
+			sugar.Error("Error closing DB connecion:", err)
 		}
 	}()
 	wg.Wait()

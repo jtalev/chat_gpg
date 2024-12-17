@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -21,26 +22,24 @@ type LeaveRequest struct {
 
 var tempData = []LeaveRequest{}
 
-func ServeLeaveView(w http.ResponseWriter, r *http.Request) {
-	data := getLeaveRequestByEmployeeId(12345678)
-	component := "leave"
-	title := "Leave - GPG"
-	renderTemplate(w, component, title, data)
+func ServeLeaveView(sugar *zap.SugaredLogger) http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			data := GetLeaveRequestById(sugar)
+			component := "leave"
+			title := "Leave - GPG"
+			renderTemplate(w, component, title, data)
+		},
+	)
 }
-func GetLeaveRequests(sugar *zap.SugaredLogger) http.Handler {
+
+func GetLeaveRequests(db *sql.DB, sugar *zap.SugaredLogger) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			sugar.Info("processing leave GET request")
 			responseJson(w, tempData, sugar)
 		},
 	)
-}
-
-func getLeaveRequests() []LeaveRequest {
-	if len(tempData) == 0 {
-		fmt.Println("no leave requests found")
-	}
-	return tempData
 }
 
 func GetLeaveRequestById(sugar *zap.SugaredLogger) http.Handler {
@@ -86,22 +85,6 @@ func GetLeaveRequestById(sugar *zap.SugaredLogger) http.Handler {
 	)
 }
 
-func getLeaveRequestByEmployeeId(employeeId int) []LeaveRequest {
-	var requests []LeaveRequest
-
-	for i, _ := range tempData {
-		if tempData[i].EmployeeId == employeeId {
-			requests = append(requests, tempData[i])
-		}
-	}
-
-	if len(requests) == 0 {
-		fmt.Println("handlers/leave.go getLeaveRequestsByEmployeeId: no leave requests found")
-	}
-
-	return requests
-}
-
 func PostLeaveRequest(sugar *zap.SugaredLogger) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -135,7 +118,6 @@ func PostLeaveRequest(sugar *zap.SugaredLogger) http.Handler {
 			fmt.Println(len(tempData))
 
 			sugar.Infof("successfully submitted leave request: %v", tempData[len(tempData)-1])
-			responseJson(w, leaveRequest, sugar)
 			fmt.Fprintf(w, "SUBMITTED")
 		},
 	)

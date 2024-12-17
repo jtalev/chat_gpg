@@ -214,7 +214,8 @@ ul {
     align-items: center;
     justify-content: center;
     padding: 10px;
-    max-width: 400px;
+    max-width: 300px;
+    font-size: xx-small;
 }
 
 
@@ -232,15 +233,36 @@ form input {
 }
 
 .logo {
-    height: 100%;
-    width: 100%;
+    height: 80%;
+    width: 70%;
 }
 .err {
     color: red;
-    height: 30px;
+    height: 20px;
     margin-top: 0;
+    margin-bottom: 0;
     display: flex;
     margin-left: auto;
+}
+
+.gpgBtn {
+    border-radius: 0;
+    border: var(--gpg-green) solid 1px;
+    background-color: white;
+    color: var(--gpg-green);
+    height: 2.5em;
+    padding: 0 2px;
+    font-size: xx-small;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}
+
+.loginFormInput {
+    border-radius: 0;
+    font-size: xx-small;
+    border: var(--form-input-border-color) solid 1px;
 }
 
 /***** timesheets *****/

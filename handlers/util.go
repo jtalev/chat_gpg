@@ -10,11 +10,6 @@ import (
 	"go.uber.org/zap"
 )
 
-type validation_result struct {
-	IsValid bool
-	Msg     string
-}
-
 func renderTemplate(
 	w http.ResponseWriter,
 	component, title string,

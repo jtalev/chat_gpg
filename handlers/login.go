@@ -1,10 +1,14 @@
 package handlers
 
 import (
-	"fmt"
+	"database/sql"
 	"html/template"
 	"net/http"
 	"path/filepath"
+
+	"github.com/jtalev/chat_gpg/auth"
+	"github.com/jtalev/chat_gpg/handlers"
+	"go.uber.org/zap"
 )
 
 func ServeLoginView(w http.ResponseWriter, r *http.Request) {
@@ -14,30 +18,23 @@ func ServeLoginView(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func authenticate_user(username, password string) (validation_result, error) {
-	result := validation_result{IsValid: true, Msg: "error"}
-	if !result.IsValid {
-		err := fmt.Errorf("authenticate_user: invalid credentials")
-		fmt.Println(err)
-		return result, err
-	}
-	return result, nil
-}
+func LoginHandler(db *sql.DB, sugar *zap.SugaredLogger) http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			username := r.FormValue("username")
+			password := r.FormValue("password")
 
-func Login_handler(w http.ResponseWriter, r *http.Request) {
-	username := r.FormValue("username")
-	password := r.FormValue("password")
-	// get user from database
+			employeeAuth, err := auth.AuthenticateUser(username, password, db, sugar)
+			if err != nil {
+				login_path := filepath.Join("..", "ui", "views", "login.html")
+				tmpl := template.Must(template.ParseFiles(login_path))
+				tmpl.Execute(w, map[string]interface{}{"ErrorMsg": "Invalid username or password"})
+				return
+			}
 
-	// check if usernames and passwords match
-
-	// if they do, redirect to dashboard
-	result, err := authenticate_user(username, password)
-	if err != nil {
-		login_path := filepath.Join("..", "ui", "views", "login.html")
-		tmpl := template.Must(template.ParseFiles(login_path))
-		tmpl.Execute(w, map[string]interface{}{"ErrorMsg": result.Msg})
-	} else {
-		http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
-	}
+			employee, err := handlers.GetEmployeeByEmployeeId(employeeAuth.EmployeeId)
+			sugar.Info(employee)
+			http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+		},
+	)
 }
