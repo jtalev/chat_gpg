@@ -1,9 +1,9 @@
 package auth
 
 import (
+	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -75,30 +75,28 @@ func AuthenticateUser(username, password string, db *sql.DB, sugar *zap.SugaredL
 	return employeeAuth, nil
 }
 
-func IsAuthenticated(r *http.Request, store *sessions.CookieStore) (bool, error) {
-	session, err := store.Get(r, "employee_session")
-	if err != nil {
-		return false, err
-	}
-	cookie := session.Values["is_authenticated"]
-	isAuthenticated := false
-	if cookie == true {
-		isAuthenticated = true
-	}
-	fmt.Println(isAuthenticated)
-	return isAuthenticated, nil
-}
+func AuthMiddleware(next http.Handler, store *sessions.CookieStore, sugar *zap.SugaredLogger) http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			session, err := store.Get(r, "auth_session")
+			if err != nil {
+				sugar.Errorf("Error getting auth_session: %v", err)
+				http.Error(w, "Error getting auth_session", http.StatusInternalServerError)
+				return
+			}
+			if auth, ok := session.Values["is_authenticated"].(bool); !ok || !auth {
+				sugar.Error("User is not authorized")
+				http.Error(w, "User is not authorized", http.StatusUnauthorized)
+				sugar.Info("redirected at auth middleware")
+				http.Redirect(w, r, "/login", http.StatusMovedPermanently)
+				return
+			}
 
-func RedirectUnauthorisedUser(w http.ResponseWriter, r *http.Request, store *sessions.CookieStore, sugar *zap.SugaredLogger) {
-	isAuthenticated, err := IsAuthenticated(r, store)
-	if err != nil {
-		sugar.Errorf("Error getting authentication status: %v", err)
-		http.Error(w, "Error getting authentication status", http.StatusInternalServerError)
-		return
-	}
-	if isAuthenticated == false {
-		sugar.Info("User is not authenticated")
-		http.Redirect(w, r, "/login", http.StatusMovedPermanently)
-		return
-	}
+			ctx := context.WithValue(r.Context(), "is_admin", session.Values["is_admin"])
+			ctx = context.WithValue(ctx, "employee_id", session.Values["employee_id"])
+			ctx = context.WithValue(ctx, "is_authenticated", session.Values["is_authenticated"])
+
+			next.ServeHTTP(w, r.WithContext(ctx))
+		},
+	)
 }

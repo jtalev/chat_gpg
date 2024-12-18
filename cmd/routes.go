@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/sessions"
+	"github.com/jtalev/chat_gpg/auth"
 	"github.com/jtalev/chat_gpg/handlers"
 	"go.uber.org/zap"
 )
@@ -14,22 +15,19 @@ func add_routes(mux *http.ServeMux, ctx context.Context, db *sql.DB, store *sess
 	fileServer := http.FileServer(http.Dir("../ui/static"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 
-	mux.HandleFunc("/login", handlers.ServeLoginView)
-	mux.Handle("/dashboard", handlers.ServeDashboardView(store, sugar))
-	mux.Handle("/jobs", handlers.ServeJobsView(store, sugar))
-	mux.Handle("/timesheets", handlers.ServeTimesheetsView(store, sugar))
-	mux.Handle("/leave", handlers.ServeLeaveView(store, sugar))
-	mux.Handle("/admin", handlers.ServeAdminView(store, sugar))
-	mux.Handle("/account", handlers.ServeAccountView(store, sugar))
+	mux.Handle("/dashboard", auth.AuthMiddleware(handlers.ServeDashboardView(sugar), store, sugar))
+	mux.Handle("/jobs", auth.AuthMiddleware(handlers.ServeJobsView(sugar), store, sugar))
+	mux.Handle("/timesheets", auth.AuthMiddleware(handlers.ServeTimesheetsView(sugar), store, sugar))
+	mux.Handle("/leave", auth.AuthMiddleware(handlers.ServeLeaveView(db, sugar), store, sugar))
+	mux.Handle("/admin", auth.AuthMiddleware(handlers.ServeAdminView(sugar), store, sugar))
+	mux.Handle("/account", auth.AuthMiddleware(handlers.ServeAccountView(sugar), store, sugar))
 
 	// login/logout requests
+	mux.HandleFunc("/login", handlers.ServeLoginView)
 	mux.Handle("/authenticate-user", handlers.LoginHandler(db, store, sugar))
 	mux.Handle("/logout", handlers.LogoutHandler(store, sugar))
 
 	// leave requests
-	mux.Handle("/get-leave-requests", handlers.GetLeaveRequests(db, sugar))
-	mux.Handle("/get-leave-request-by-id", handlers.GetLeaveRequestById(sugar))
-	mux.Handle("/post-leave-request", handlers.PostLeaveRequest(sugar))
-	mux.Handle("/put-leave-request", handlers.UpdateLeaveRequest(sugar))
-	mux.Handle("/delete-leave-request", handlers.DeleteLeaveRequest(sugar))
+	// mux.Handle("get-leave-requests-by-employee-id", auth.AuthMiddleware(handlers.GetLeaveRequestsByEmployee(db, sugar), store, sugar))
+	mux.Handle("/post-leave-request", auth.AuthMiddleware(handlers.PostLeaveRequest(db, sugar), store, sugar))
 }

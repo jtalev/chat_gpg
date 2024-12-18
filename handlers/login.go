@@ -32,14 +32,14 @@ func LoginHandler(db *sql.DB, store *sessions.CookieStore, sugar *zap.SugaredLog
 				return
 			}
 
-			session, err := store.Get(r, "employee_session")
+			session, err := store.Get(r, "auth_session")
 			if err != nil {
 				sugar.Errorf("Error getting session", err)
 				http.Error(w, "Error getting session", http.StatusInternalServerError)
 				return
 			}
 			session.Values["is_authenticated"] = true
-			session.Values["username"] = employee.EmployeeId
+			session.Values["employee_id"] = employee.EmployeeId
 			if employee.IsAdmin {
 				session.Values["is_admin"] = true
 			} else {
@@ -61,7 +61,7 @@ func LogoutHandler(store *sessions.CookieStore, sugar *zap.SugaredLogger) http.H
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			// set is_authenticated cookie to false
-			session, err := store.Get(r, "employee_session")
+			session, err := store.Get(r, "auth_session")
 			if err != nil {
 				sugar.Errorf("Error getting session: %v", err)
 				http.Error(w, "Error getting session", http.StatusInternalServerError)
