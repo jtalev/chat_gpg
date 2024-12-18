@@ -3,8 +3,11 @@ package auth
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
+	"net/http"
 
+	"github.com/gorilla/sessions"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -70,4 +73,32 @@ func AuthenticateUser(username, password string, db *sql.DB, sugar *zap.SugaredL
 		return employeeAuth, errors.New("invalid password")
 	}
 	return employeeAuth, nil
+}
+
+func IsAuthenticated(r *http.Request, store *sessions.CookieStore) (bool, error) {
+	session, err := store.Get(r, "employee_session")
+	if err != nil {
+		return false, err
+	}
+	cookie := session.Values["is_authenticated"]
+	isAuthenticated := false
+	if cookie == true {
+		isAuthenticated = true
+	}
+	fmt.Println(isAuthenticated)
+	return isAuthenticated, nil
+}
+
+func RedirectUnauthorisedUser(w http.ResponseWriter, r *http.Request, store *sessions.CookieStore, sugar *zap.SugaredLogger) {
+	isAuthenticated, err := IsAuthenticated(r, store)
+	if err != nil {
+		sugar.Errorf("Error getting authentication status: %v", err)
+		http.Error(w, "Error getting authentication status", http.StatusInternalServerError)
+		return
+	}
+	if isAuthenticated == false {
+		sugar.Info("User is not authenticated")
+		http.Redirect(w, r, "/login", http.StatusMovedPermanently)
+		return
+	}
 }

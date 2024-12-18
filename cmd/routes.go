@@ -22,8 +22,9 @@ func add_routes(mux *http.ServeMux, ctx context.Context, db *sql.DB, store *sess
 	mux.Handle("/admin", handlers.ServeAdminView(store, sugar))
 	mux.Handle("/account", handlers.ServeAccountView(store, sugar))
 
-	// login requests
+	// login/logout requests
 	mux.Handle("/authenticate-user", handlers.LoginHandler(db, store, sugar))
+	mux.Handle("/logout", handlers.LogoutHandler(store, sugar))
 
 	// leave requests
 	mux.Handle("/get-leave-requests", handlers.GetLeaveRequests(db, sugar))

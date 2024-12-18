@@ -11,13 +11,6 @@ import (
 	"go.uber.org/zap"
 )
 
-func ServeLoginView(w http.ResponseWriter, r *http.Request) {
-	login_path := filepath.Join("..", "ui", "views", "login.html")
-	tmpl := template.Must(template.ParseFiles(login_path))
-	tmpl.Execute(w, nil)
-
-}
-
 func LoginHandler(db *sql.DB, store *sessions.CookieStore, sugar *zap.SugaredLogger) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +52,24 @@ func LoginHandler(db *sql.DB, store *sessions.CookieStore, sugar *zap.SugaredLog
 				return
 			}
 
-			http.Redirect(w, r, "/dashboard", http.StatusSeeOther)
+			http.Redirect(w, r, "/dashboard", http.StatusMovedPermanently)
+		},
+	)
+}
+
+func LogoutHandler(store *sessions.CookieStore, sugar *zap.SugaredLogger) http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			// set is_authenticated cookie to false
+			session, err := store.Get(r, "employee_session")
+			if err != nil {
+				sugar.Errorf("Error getting session: %v", err)
+				http.Error(w, "Error getting session", http.StatusInternalServerError)
+			}
+			session.Values["is_authenticated"] = false
+
+			// redirect user to login page
+			http.Redirect(w, r, "/login", http.StatusMovedPermanently)
 		},
 	)
 }

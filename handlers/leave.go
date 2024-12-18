@@ -6,39 +6,30 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/gorilla/sessions"
 	"go.uber.org/zap"
 )
 
 type LeaveRequest struct {
-	EmployeeId int    `json:"employee_id"`
 	RequestId  int    `json:"request_id"`
-	Name       string `json:"name"`
-	Type       string `json:"type"`
-	From       string `json:"from"`
-	To         string `json:"to"`
+	EmployeeId int    `json:"employee_id"`
+	FirstName  string `json:"first_name"`
+	LastName   string `json:"last_name"`
+	Type       string `json:"leave_type"`
+	From       string `json:"from_date"`
+	To         string `json:"to_date"`
 	Note       string `json:"note"`
 	IsApproved bool   `json:"is_approved"`
 }
 
-var tempData = []LeaveRequest{}
-
-func ServeLeaveView(store *sessions.CookieStore, sugar *zap.SugaredLogger) http.Handler {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			data := GetLeaveRequestById(sugar)
-			component := "leave"
-			title := "Leave - GPG"
-			renderTemplate(w, r, store, component, title, data)
-		},
-	)
-}
+var (
+	data = make([]LeaveRequest, 0)
+)
 
 func GetLeaveRequests(db *sql.DB, sugar *zap.SugaredLogger) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			sugar.Info("processing leave GET request")
-			responseJson(w, tempData, sugar)
+			responseJson(w, data, sugar)
 		},
 	)
 }
