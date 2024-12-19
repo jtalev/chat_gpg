@@ -1,23 +1,20 @@
 package handlers
 
 import (
-	"database/sql"
 	"html/template"
 	"net/http"
 	"path/filepath"
 
-	"github.com/gorilla/sessions"
 	"github.com/jtalev/chat_gpg/auth"
-	"go.uber.org/zap"
 )
 
-func LoginHandler(db *sql.DB, store *sessions.CookieStore, sugar *zap.SugaredLogger) http.Handler {
+func (h *Handler) LoginHandler() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			username := r.FormValue("username")
 			password := r.FormValue("password")
 
-			employeeAuth, err := auth.AuthenticateUser(username, password, db, sugar)
+			employeeAuth, err := auth.AuthenticateUser(username, password, h.DB, h.Sugar)
 			if err != nil {
 				login_path := filepath.Join("..", "ui", "views", "login.html")
 				tmpl := template.Must(template.ParseFiles(login_path))
@@ -25,16 +22,16 @@ func LoginHandler(db *sql.DB, store *sessions.CookieStore, sugar *zap.SugaredLog
 				return
 			}
 
-			employee, err := GetEmployeeByEmployeeId(employeeAuth.EmployeeId, db)
+			employee, err := GetEmployeeByEmployeeId(employeeAuth.EmployeeId, h.DB)
 			if err != nil {
-				sugar.Errorf("Error getting authorised employee: %v", err)
+				h.Sugar.Errorf("Error getting authorised employee: %v", err)
 				http.Error(w, "Error getting authorised employee", http.StatusInternalServerError)
 				return
 			}
 
-			session, err := store.Get(r, "auth_session")
+			session, err := h.Store.Get(r, "auth_session")
 			if err != nil {
-				sugar.Errorf("Error getting session", err)
+				h.Sugar.Errorf("Error getting session", err)
 				http.Error(w, "Error getting session", http.StatusInternalServerError)
 				return
 			}
@@ -47,7 +44,7 @@ func LoginHandler(db *sql.DB, store *sessions.CookieStore, sugar *zap.SugaredLog
 			}
 			err = session.Save(r, w)
 			if err != nil {
-				sugar.Errorf("Error saving session: %v", err)
+				h.Sugar.Errorf("Error saving session: %v", err)
 				http.Error(w, "Error saving session", http.StatusInternalServerError)
 				return
 			}
@@ -57,13 +54,13 @@ func LoginHandler(db *sql.DB, store *sessions.CookieStore, sugar *zap.SugaredLog
 	)
 }
 
-func LogoutHandler(store *sessions.CookieStore, sugar *zap.SugaredLogger) http.Handler {
+func (h *Handler) LogoutHandler() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			// set is_authenticated cookie to false
-			session, err := store.Get(r, "auth_session")
+			session, err := h.Store.Get(r, "auth_session")
 			if err != nil {
-				sugar.Errorf("Error getting session: %v", err)
+				h.Sugar.Errorf("Error getting session: %v", err)
 				http.Error(w, "Error getting session", http.StatusInternalServerError)
 			}
 			session.Values["is_authenticated"] = false

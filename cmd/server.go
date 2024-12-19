@@ -14,6 +14,8 @@ import (
 
 	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
+	"github.com/jtalev/chat_gpg/auth"
+	"github.com/jtalev/chat_gpg/handlers"
 	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/zap"
 )
@@ -57,12 +59,13 @@ func newStore(sugar *zap.SugaredLogger) *sessions.CookieStore {
 
 func new_server(
 	ctx context.Context,
-	db *sql.DB,
+	h *handlers.Handler,
+	a *auth.Auth,
 	store *sessions.CookieStore,
 	sugar *zap.SugaredLogger,
 ) http.Handler {
 	mux := http.NewServeMux()
-	add_routes(mux, ctx, db, store, sugar)
+	add_routes(mux, ctx, h, a)
 	var handler http.Handler = mux
 	return handler
 }
@@ -81,9 +84,18 @@ func run(
 	defer logger.Sync()
 	db := newDb(sugar)
 	store := newStore(sugar)
+	h := handlers.Handler{
+		DB: db,
+		Store: store,
+		Sugar: sugar,
+	}
+	a := auth.Auth{
+		Sugar: sugar,
+		Store: store,
+	}
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
-	server := new_server(ctx, db, store, sugar)
+	server := new_server(ctx, &h, &a, store, sugar)
 	http_server := &http.Server{
 		Addr:    "localhost:80",
 		Handler: server,

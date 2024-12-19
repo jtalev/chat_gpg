@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/jtalev/chat_gpg/repository"
+	"github.com/gorilla/sessions"
 	"go.uber.org/zap"
 )
 
@@ -75,13 +77,19 @@ func renderTemplate(
 	}
 }
 
-func ServeLoginView(w http.ResponseWriter, r *http.Request) {
+type Handler struct {
+	DB *sql.DB
+	Store *sessions.CookieStore
+	Sugar *zap.SugaredLogger
+}
+
+func (h *Handler) ServeLoginView(w http.ResponseWriter, r *http.Request) {
 	login_path := filepath.Join("..", "ui", "views", "login.html")
 	tmpl := template.Must(template.ParseFiles(login_path))
 	tmpl.Execute(w, nil)
 }
 
-func ServeAccountView(sugar *zap.SugaredLogger) http.Handler {
+func (h *Handler) ServeAccountView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			data := getAccountData()
@@ -92,7 +100,7 @@ func ServeAccountView(sugar *zap.SugaredLogger) http.Handler {
 	)
 }
 
-func ServeAdminView(sugar *zap.SugaredLogger) http.Handler {
+func (h *Handler) ServeAdminView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			data := getAdminData()
@@ -103,7 +111,7 @@ func ServeAdminView(sugar *zap.SugaredLogger) http.Handler {
 	)
 }
 
-func ServeDashboardView(sugar *zap.SugaredLogger) http.Handler {
+func (h *Handler) ServeDashboardView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			data := getDashboardData()
@@ -114,7 +122,7 @@ func ServeDashboardView(sugar *zap.SugaredLogger) http.Handler {
 	)
 }
 
-func ServeJobsView(sugar *zap.SugaredLogger) http.Handler {
+func (h *Handler) ServeJobsView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			data := getJobsData()
@@ -125,12 +133,12 @@ func ServeJobsView(sugar *zap.SugaredLogger) http.Handler {
 	)
 }
 
-func ServeLeaveView(db *sql.DB, sugar *zap.SugaredLogger) http.Handler {
+func (h *Handler) ServeLeaveView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			data, err := GetLeaveRequestsByEmployee(w, r, db, sugar)
+			data, err := repository.GetLeaveRequestsByEmployee(w, r, h.DB, h.Sugar)
 			if err != nil {
-				sugar.Errorf("Error getting leave page data: %v", err)
+				h.Sugar.Errorf("Error getting leave page data: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
@@ -142,7 +150,7 @@ func ServeLeaveView(db *sql.DB, sugar *zap.SugaredLogger) http.Handler {
 	)
 }
 
-func ServeTimesheetsView(sugar *zap.SugaredLogger) http.Handler {
+func (h *Handler) ServeTimesheetsView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			data := getTimesheetData()
