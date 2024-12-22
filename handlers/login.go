@@ -1,20 +1,38 @@
 package handlers
 
 import (
+	"encoding/json"
 	"html/template"
 	"net/http"
 	"path/filepath"
 
 	"github.com/jtalev/chat_gpg/auth"
+	"github.com/jtalev/chat_gpg/repository"
 )
 
 func (h *Handler) LoginHandler() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			username := r.FormValue("username")
-			password := r.FormValue("password")
+			var username, password string
+			if r.Header.Get("Content-Type") == "application/json" {
+				var loginData struct {
+					Username string `json:"username"`
+					Password string `json:"password"`
+				}
 
-			employeeAuth, err := auth.AuthenticateUser(username, password, h.DB, h.Sugar)
+				if err := json.NewDecoder(r.Body).Decode(&loginData); err != nil {
+					http.Error(w, "Invalid JSON payload", http.StatusBadRequest)
+					return
+				}
+
+				username = loginData.Username
+				password = loginData.Password
+			} else {
+				username = r.FormValue("username")
+				password = r.FormValue("password")
+			}
+
+			employeeAuth, err := auth.AuthenticateUser(username, password, h.DB, h.Logger)
 			if err != nil {
 				login_path := filepath.Join("..", "ui", "views", "login.html")
 				tmpl := template.Must(template.ParseFiles(login_path))
@@ -22,16 +40,16 @@ func (h *Handler) LoginHandler() http.Handler {
 				return
 			}
 
-			employee, err := GetEmployeeByEmployeeId(employeeAuth.EmployeeId, h.DB)
+			employee, err := repository.GetEmployeeByEmployeeId(employeeAuth.EmployeeId, h.DB)
 			if err != nil {
-				h.Sugar.Errorf("Error getting authorised employee: %v", err)
+				h.Logger.Errorf("Error getting authorised employee: %v", err)
 				http.Error(w, "Error getting authorised employee", http.StatusInternalServerError)
 				return
 			}
 
 			session, err := h.Store.Get(r, "auth_session")
 			if err != nil {
-				h.Sugar.Errorf("Error getting session", err)
+				h.Logger.Errorf("Error getting session", err)
 				http.Error(w, "Error getting session", http.StatusInternalServerError)
 				return
 			}
@@ -44,12 +62,13 @@ func (h *Handler) LoginHandler() http.Handler {
 			}
 			err = session.Save(r, w)
 			if err != nil {
-				h.Sugar.Errorf("Error saving session: %v", err)
+				h.Logger.Errorf("Error saving session: %v", err)
 				http.Error(w, "Error saving session", http.StatusInternalServerError)
 				return
 			}
 
-			http.Redirect(w, r, "/dashboard", http.StatusMovedPermanently)
+			http.Redirect(w, r, "/dashboard", http.StatusFound)
+			return
 		},
 	)
 }
@@ -57,13 +76,25 @@ func (h *Handler) LoginHandler() http.Handler {
 func (h *Handler) LogoutHandler() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			// set is_authenticated cookie to false
+			h.Logger.Info("handling logout")
+
+			w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+			w.Header().Set("Pragma", "no-cache")
+			w.Header().Set("Expires", "0")
+
 			session, err := h.Store.Get(r, "auth_session")
 			if err != nil {
-				h.Sugar.Errorf("Error getting session: %v", err)
+				h.Logger.Errorf("Error getting session: %v", err)
 				http.Error(w, "Error getting session", http.StatusInternalServerError)
 			}
 			session.Values["is_authenticated"] = false
+			session.Options.MaxAge = -1
+			err = session.Save(r, w)
+			if err != nil {
+				h.Logger.Errorf("Error saving session: %v", err)
+				http.Error(w, "Error saving session", http.StatusInternalServerError)
+				return
+			}
 
 			// redirect user to login page
 			http.Redirect(w, r, "/login", http.StatusMovedPermanently)

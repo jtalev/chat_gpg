@@ -12,6 +12,15 @@ type Employee struct {
 	UpdatedAt   string `json:"updated_at"`
 }
 
+type EmployeeAuth struct {
+	AuthId       int    `json:"auth_id"`
+	EmployeeId   string `json:"employee_id"`
+	Username     string `json:"username"`
+	PasswordHash string `json:"password_hash"`
+	CreatedAt    string `json:"created_at"`
+	UpdatedAt    string `json:"updated_at"`
+}
+
 type LeaveRequest struct {
 	RequestId  int    `json:"request_id"`
 	EmployeeId string `json:"employee_id"`

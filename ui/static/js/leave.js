@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", onLeaveSelectorClick)
 function onLeaveSelectorClick() {
     document.querySelectorAll(".leaveContentSelector").forEach(selector => {
         selector.addEventListener("click", function () {
-
             const leaveContentSelectorChildren = document.querySelectorAll(".leaveContentSelector")
             leaveContentSelectorChildren.forEach(element => {
                 element.style.backgroundColor = "var(--main-background-color)"

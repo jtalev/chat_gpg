@@ -11,11 +11,13 @@ import (
 func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a *auth.Auth) {
 	fileServer := http.FileServer(http.Dir("../ui/static"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
-	
+
 	// login/logout requests
 	mux.HandleFunc("/login", h.ServeLoginView)
-	mux.Handle("/authenticate-user", h.LoginHandler())
 	mux.Handle("/logout", h.LogoutHandler())
+	mux.Handle("/authenticate-user", h.LoginHandler())
+
+	mux.HandleFunc("/error", h.ServeErrorView)
 
 	mux.Handle("/dashboard", a.AuthMiddleware(h.ServeDashboardView()))
 	mux.Handle("/jobs", a.AuthMiddleware(h.ServeJobsView()))
@@ -25,5 +27,9 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/account", a.AuthMiddleware(h.ServeAccountView()))
 
 	// leave requests
-	mux.Handle("/post-leave-request", a.AuthMiddleware(handlers.PostLeaveRequest(h.DB, h.Sugar)))
+	mux.Handle("/leave/get", a.AuthMiddleware(h.GetLeaveRequests()))
+	mux.Handle("/leave/get-by-employee", a.AuthMiddleware(h.GetLeaveRequestsByEmployee()))
+	mux.Handle("/leave/post", a.AuthMiddleware(h.PostLeaveRequest()))
+	mux.Handle("/leave/put", a.AuthMiddleware(h.PutLeaveRequest()))
+	mux.Handle("/leave/delete", a.AuthMiddleware(h.DeleteLeaveRequest()))
 }

@@ -20,7 +20,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func newDb(sugar *zap.SugaredLogger) *sql.DB {
+func initDb(rootPath string, sugar *zap.SugaredLogger) *sql.DB {
 	env := os.Getenv("ENV")
 	var dbPath string
 	if env == "development" {
@@ -73,8 +73,13 @@ func new_server(
 func run(
 	ctx context.Context,
 ) error {
-	if err := godotenv.Load(); err != nil {
-		fmt.Fprintf(os.Stderr, "Error loading .env file: %s\n", err)
+	rootPath, err := filepath.Abs("..")
+	if err != nil {
+		log.Fatalf("Error determinging root path: %v", err)
+	}
+	envPath := filepath.Join(rootPath, ".env")
+	if err := godotenv.Load(envPath); err != nil {
+		fmt.Printf("Error loading .env file: %v", err)
 	}
 	logger, err := zap.NewProduction()
 	if err != nil {
@@ -82,16 +87,16 @@ func run(
 	}
 	sugar := logger.Sugar()
 	defer logger.Sync()
-	db := newDb(sugar)
+	db := initDb(rootPath, sugar)
 	store := newStore(sugar)
 	h := handlers.Handler{
-		DB: db,
-		Store: store,
-		Sugar: sugar,
+		DB:     db,
+		Store:  store,
+		Logger: sugar,
 	}
 	a := auth.Auth{
-		Sugar: sugar,
-		Store: store,
+		Logger: sugar,
+		Store:  store,
 	}
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()

@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/jtalev/chat_gpg/repository"
 	"github.com/gorilla/sessions"
+	"github.com/jtalev/chat_gpg/repository"
 	"go.uber.org/zap"
 )
 
@@ -78,9 +78,9 @@ func renderTemplate(
 }
 
 type Handler struct {
-	DB *sql.DB
-	Store *sessions.CookieStore
-	Sugar *zap.SugaredLogger
+	DB     *sql.DB
+	Store  *sessions.CookieStore
+	Logger *zap.SugaredLogger
 }
 
 func (h *Handler) ServeLoginView(w http.ResponseWriter, r *http.Request) {
@@ -89,13 +89,18 @@ func (h *Handler) ServeLoginView(w http.ResponseWriter, r *http.Request) {
 	tmpl.Execute(w, nil)
 }
 
+func (h *Handler) ServeErrorView(w http.ResponseWriter, r *http.Request) {
+	errorPath := filepath.Join("..", "ui", "views", "error.html")
+	tmpl := template.Must(template.ParseFiles(errorPath))
+	tmpl.Execute(w, nil)
+}
+
 func (h *Handler) ServeAccountView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			data := getAccountData()
 			component := "account"
 			title := "Account - GPG"
-			renderTemplate(w, r, component, title, data)
+			renderTemplate(w, r, component, title, nil)
 		},
 	)
 }
@@ -136,13 +141,16 @@ func (h *Handler) ServeJobsView() http.Handler {
 func (h *Handler) ServeLeaveView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			data, err := repository.GetLeaveRequestsByEmployee(w, r, h.DB, h.Sugar)
+			employeeId, ok := r.Context().Value("employee_id").(string)
+			if !ok {
+				h.Logger.Errorf("Error getting employee_id from context: %v", employeeId)
+			}
+			data, err := repository.GetLeaveRequestsByEmployee(employeeId, h.DB)
 			if err != nil {
-				h.Sugar.Errorf("Error getting leave page data: %v", err)
+				h.Logger.Errorf("Error getting leave page data: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
-			fmt.Println(data)
 			component := "leave"
 			title := "Leave - GPG"
 			renderTemplate(w, r, component, title, data)

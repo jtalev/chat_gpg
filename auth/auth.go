@@ -4,51 +4,19 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"log"
 	"net/http"
 
 	"github.com/gorilla/sessions"
+	"github.com/jtalev/chat_gpg/models"
+	"github.com/jtalev/chat_gpg/repository"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
-
-type EmployeeAuth struct {
-	AuthId       int    `json:"auth_id"`
-	EmployeeId   string `json:"employee_id"`
-	Username     string `json:"username"`
-	PasswordHash string `json:"password_hash"`
-	CreatedAt    string `json:"created_at"`
-	UpdatedAt    string `json:"updated_at"`
-}
-
-func GetEmployeeAuthByUsername(username string, db *sql.DB) (EmployeeAuth, error) {
-	employeeAuth := EmployeeAuth{}
-	q := `
-	select * from employee_auth where username = ?;
-	`
-	rows, err := db.Query(q, username)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer rows.Close()
-
-	if rows.Next() {
-		err := rows.Scan(&employeeAuth.AuthId, &employeeAuth.EmployeeId, &employeeAuth.Username,
-			&employeeAuth.PasswordHash, &employeeAuth.CreatedAt, &employeeAuth.UpdatedAt)
-		if err != nil {
-			return employeeAuth, err
-		}
-	} else {
-		return employeeAuth, sql.ErrNoRows
-	}
-	return employeeAuth, nil
-}
 
 type ValidationResult struct {
 	IsValid bool
 	Msg     string
 }
-
 
 func HashPassword(password string) ([]byte, error) {
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), 14)
@@ -60,25 +28,25 @@ func VerifyHashedPassword(password, hash string) bool {
 	return err == nil
 }
 
-func AuthenticateUser(username, password string, db *sql.DB, sugar *zap.SugaredLogger) (EmployeeAuth, error) {
-	employeeAuth, err := GetEmployeeAuthByUsername(username, db)
+func AuthenticateUser(username, password string, db *sql.DB, sugar *zap.SugaredLogger) (models.EmployeeAuth, error) {
+	employeeAuth, err := repository.GetEmployeeAuthByUsername(username, db)
 	if err == sql.ErrNoRows {
 		sugar.Warnf("User %s not found", username)
 		return employeeAuth, err
-		} else if err != nil {
-			sugar.Errorf("Database error: %v", err)
-			return employeeAuth, err
-		}
-		if !VerifyHashedPassword(password, employeeAuth.PasswordHash) {
-			sugar.Warnf("Invalid password for user %s", username)
-			return employeeAuth, errors.New("invalid password")
-		}
-		return employeeAuth, nil
+	} else if err != nil {
+		sugar.Errorf("Database error: %v", err)
+		return employeeAuth, err
+	}
+	if !VerifyHashedPassword(password, employeeAuth.PasswordHash) {
+		sugar.Warnf("Invalid password for user %s", username)
+		return employeeAuth, errors.New("invalid password")
+	}
+	return employeeAuth, nil
 }
 
 type Auth struct {
-	Sugar *zap.SugaredLogger
-	Store *sessions.CookieStore
+	Logger *zap.SugaredLogger
+	Store  *sessions.CookieStore
 }
 
 func (a *Auth) AuthMiddleware(next http.Handler) http.Handler {
@@ -86,21 +54,20 @@ func (a *Auth) AuthMiddleware(next http.Handler) http.Handler {
 		func(w http.ResponseWriter, r *http.Request) {
 			session, err := a.Store.Get(r, "auth_session")
 			if err != nil {
-				a.Sugar.Errorf("Error getting auth_session: %v", err)
+				a.Logger.Errorf("Error getting auth_session: %v", err)
 				http.Error(w, "Error getting auth_session", http.StatusInternalServerError)
 				return
 			}
 			if auth, ok := session.Values["is_authenticated"].(bool); !ok || !auth {
-				a.Sugar.Error("User is not authorized")
-				http.Error(w, "User is not authorized", http.StatusUnauthorized)
-				a.Sugar.Info("redirected at auth middleware")
-				http.Redirect(w, r, "/login", http.StatusMovedPermanently)
+				a.Logger.Error("User is not authorized")
+				http.Redirect(w, r, "/error", http.StatusFound)
 				return
 			}
 
 			ctx := context.WithValue(r.Context(), "is_admin", session.Values["is_admin"])
 			ctx = context.WithValue(ctx, "employee_id", session.Values["employee_id"])
 			ctx = context.WithValue(ctx, "is_authenticated", session.Values["is_authenticated"])
+			session.Save(r, w)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		},
