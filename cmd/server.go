@@ -54,6 +54,21 @@ func newStore(sugar *zap.SugaredLogger) *sessions.CookieStore {
 		store = sessions.NewCookieStore(key, nil)
 	)
 
+	env := os.Getenv("ENV")
+	if env == "production" {
+		store.Options = &sessions.Options{
+			Secure:   true,
+			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode,
+		}
+	} else if env == "development" {
+		store.Options = &sessions.Options{
+			Secure:   false,
+			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode,
+		}
+	}
+
 	return store
 }
 
@@ -102,7 +117,7 @@ func run(
 	defer cancel()
 	server := new_server(ctx, &h, &a, store, sugar)
 	http_server := &http.Server{
-		Addr:    "localhost:80",
+		Addr:    ":8080",
 		Handler: server,
 	}
 	go func() {

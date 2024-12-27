@@ -1,0 +1,1 @@
+find . -type f \( -iname "*.cpp" -o -iname "*.html" -o -iname "*.js" -o -iname "*.go" \) -exec wc -l {} + | awk '{s+=$1} END {print s}'             

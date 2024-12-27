@@ -13,11 +13,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type ValidationResult struct {
-	IsValid bool
-	Msg     string
-}
-
 func HashPassword(password string) ([]byte, error) {
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	return passwordHash, err

@@ -35,10 +35,20 @@ document.addEventListener("htmx:afterSwap", onLeaveFormSubmit)
 function onLeaveFormSubmit() {
     const submitBtn = document.getElementById("leaveFormSubmitBtn")
     const cancelBtn = document.getElementById("leaveFormCancelBtn")
-    if (submitBtn.textContent === "SUBMITTED") {
-        cancelBtn.textContent = "Reset"
-        submitBtn.disabled = true
+    const errors = document.querySelectorAll(".error")
+    let isFormValid = true
+    errors.forEach(error => {
+        if (error.textContent != "") {
+            isFormValid = false
+        }
+    })
+    if (!isFormValid) {
+        return
     }
+
+    cancelBtn.textContent = "Reset"
+    submitBtn.textContent = "SUBMITTED"
+    submitBtn.disabled = true   
 }
 
 document.addEventListener("DOMContentLoaded", onLeaveFormReset)

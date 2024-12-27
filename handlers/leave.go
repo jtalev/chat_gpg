@@ -2,9 +2,12 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/jtalev/chat_gpg/models"
 	"github.com/jtalev/chat_gpg/repository"
@@ -61,6 +64,61 @@ func (h *Handler) GetLeaveRequestsByEmployee() http.Handler {
 	)
 }
 
+func stringToDate(date string) (time.Time, error) {
+	date = strings.TrimSpace(date)
+	dateArr := strings.Split(date, "-")
+	dateArrInt := make([]int, 3)
+
+	for i := range dateArr {
+		int, err := strconv.Atoi(dateArr[i])
+		if err != nil {
+			return time.Time{}, errors.New("Date value cannot be converted to integer")
+		}
+		dateArrInt[i] = int
+	}
+	month := time.Month(dateArrInt[1])
+	if month < time.January || month > time.December {
+		return time.Time{}, errors.New("Invalid month value")
+	}
+
+	dateObject := time.Date(dateArrInt[0], month, dateArrInt[2], 0, 0, 0, 0, time.Local)
+
+	return dateObject, nil
+}
+
+func validateLeaveRequest(lr models.LeaveRequest) ([]models.ValidationResult, error) {
+	results := make([]models.ValidationResult, 0)
+
+	from, err := stringToDate(lr.From)
+	if err != nil {
+		newErr := errors.New("Error converting string to date: ")
+		return results, errors.Join(newErr, err)
+	}
+	to, err := stringToDate(lr.To)
+	if err != nil {
+		newErr := errors.New("Error converting string to date: ")
+		return results, errors.Join(newErr, err)
+	}
+
+	if from.Before(time.Now()) {
+		results = append(results, models.ValidationResult{
+			Key:     "date",
+			IsValid: false,
+			Msg:     "From date must be after current date",
+		})
+	}
+
+	if !from.Before(to) {
+		results = append(results, models.ValidationResult{
+			Key:     "date",
+			IsValid: false,
+			Msg:     "From date must be before To date",
+		})
+	}
+
+	return results, nil
+}
+
 func (h *Handler) PostLeaveRequest() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -89,13 +147,25 @@ func (h *Handler) PostLeaveRequest() http.Handler {
 				To:         to,
 				Note:       note,
 			}
+
+			result, err := validateLeaveRequest(leaveRequest)
+			if err != nil {
+				h.Logger.Errorf("Error validating leave request: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+			if len(result) > 0 {
+				fmt.Fprint(w, result[0].Msg)
+				return
+			}
+
 			leaveRequest, err = repository.PostLeaveRequest(leaveRequest, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error posting leave request: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
-			fmt.Fprint(w, "SUBMITTED")
+			fmt.Fprint(w, "")
 		},
 	)
 }
@@ -162,8 +232,6 @@ func (h *Handler) PutLeaveRequest() http.Handler {
 			}
 			responseJson(w, response, h.Logger)
 		},
-
-		// update db with new updated leave request
 	)
 }
 

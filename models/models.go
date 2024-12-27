@@ -1,5 +1,11 @@
 package models
 
+type ValidationResult struct {
+	Key     string
+	IsValid bool
+	Msg     string
+}
+
 type Employee struct {
 	ID          int    `json:"id"`
 	EmployeeId  string `json:"employee_id"`

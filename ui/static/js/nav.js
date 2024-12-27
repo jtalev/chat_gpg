@@ -22,13 +22,25 @@ function toggleMenu() {
 document.addEventListener("DOMContentLoaded", onNavLinkClick) 
 function onNavLinkClick() {
     const navLinks = document.querySelectorAll(".nav-link")
+    const navLinksText = document.querySelectorAll(".nav-link-text")
     const currentUrl = new URL(window.location.href).pathname;
+    const windowWidth = window.innerWidth
 
-    navLinks.forEach(element => {
-        if ("/" + element.firstChild.textContent === currentUrl) {
-            element.style.borderLeft = "var(--gpg-green) solid 3px"
-        } else {
-            element.style.borderLeft = "var(--gpg-grey) solid 3px"
-        }
-    })
+    if (windowWidth < 730) {
+        navLinksText.forEach(element => {
+            if ("/" + element.firstChild.textContent === currentUrl) {
+                element.style.color = "var(--gpg-green)"
+            } else {
+                element.style.color = "var(--gpg-grey)"
+            }
+        })
+    } else {
+        navLinks.forEach(element => {
+            if ("/" + element.firstChild.textContent === currentUrl) {
+                element.style.borderLeft = "var(--gpg-green) solid 3px"
+            } else {
+                element.style.borderLeft = "var(--gpg-grey) solid 3px"
+            }
+        })
+    }
 }

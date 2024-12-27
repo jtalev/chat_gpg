@@ -15,10 +15,10 @@
     <div id="leaveContentContainer">
         <div class="leaveContent" id="leaveRequestContent">
             <p class="leaveRequestHeading">Leave request</p>
-            <form hx-post="/leave/post" hx-target="#leaveFormSubmitBtn" hx-swap="innerHtml" id="leaveForm">
+            <form hx-post="/leave/post" hx-target=".error" hx-swap="innerHtml" id="leaveForm">
                 <div class="inputDiv">
                     <label for="name">Name</label>
-                    <input type="text" class="formInput" id="name" name="name" value="Slid">
+                    <input type="text" class="formInput" id="leaveNameFormInput" id="name" name="name" readonly style="background-color: var(--main-background-color)" value="{{ .Data.Employee.FirstName }} {{ .Data.Employee.LastName }}">
                 </div>
                 <div class="inputDiv">
                     <label for="type">Type</label>
@@ -30,19 +30,22 @@
                         <option value="unpaid">unpaid</option>
                     </select>
                 </div>
-                <div id="leaveDateContainer">
-                    <div class="inputDiv">
-                        <label for="from">From</label>
-                        <input type="date" class="dateInput" id="from" name="from" value="2024-12-10">
+                <div>
+                    <div id="leaveDateContainer">
+                        <div class="inputDiv">
+                            <label for="from">From</label>
+                            <input type="date" class="dateInput" id="from" name="from">
+                        </div>
+                        <div class="inputDiv">
+                            <label for="to">To</label>
+                            <input type="date" class="dateInput" id="to" name="to">
+                        </div>
                     </div>
-                    <div class="inputDiv">
-                        <label for="to">To</label>
-                        <input type="date" class="dateInput" id="to" name="to" value="2024-12-12">
-                    </div>
+                    <div class="error"></div>    
                 </div>
                 <div class="inputDiv">
                     <label for="note">Note</label>
-                    <textarea type="text" class="formInput" id="note" name="note">Need a break</textarea>
+                    <textarea type="text" class="formInput" id="note" name="note"></textarea>
                 </div>
                 <div id="leaveFormButtons">
                     <button type="reset" id="leaveFormCancelBtn" class="leaveBtn" form="leaveForm">Cancel</button>
@@ -67,7 +70,7 @@
                         <p>Approved</p>
                     </div>
                 </div>
-                {{ range .Data }}
+                {{ range .Data.LeaveRequests }}
                     <div class="leaveHistoryRow">
                         <div class="leaveHistoryRowDisplayed">
                             <div class="leaveHistoryRowCell">
@@ -86,7 +89,7 @@
                         <div class="leaveHistoryRowHidden hidden">
                             <div class="leaveHistoryRowHiddenCell">
                                 <p class="leaveHistoryRowHiddenCellLabel">Name:</p>
-                                <p class="leaveHistoryRowHiddenCellContent">{{ .FirstName }}</p>
+                                <p class="leaveHistoryRowHiddenCellContent">{{ .FirstName }} {{ .LastName }}</p>
                             </div>
                             <div class="leaveHistoryRowHiddenCell">
                                 <p class="leaveHistoryRowHiddenCellLabel">Type:</p>

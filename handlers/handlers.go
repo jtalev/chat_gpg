@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/gorilla/sessions"
+	"github.com/jtalev/chat_gpg/models"
 	"github.com/jtalev/chat_gpg/repository"
 	"go.uber.org/zap"
 )
@@ -138,6 +139,12 @@ func (h *Handler) ServeJobsView() http.Handler {
 	)
 }
 
+type LeaveViewData struct {
+	Employee      models.Employee
+	LeaveRequests []models.LeaveRequest
+	DateError     string
+}
+
 func (h *Handler) ServeLeaveView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -145,12 +152,26 @@ func (h *Handler) ServeLeaveView() http.Handler {
 			if !ok {
 				h.Logger.Errorf("Error getting employee_id from context: %v", employeeId)
 			}
-			data, err := repository.GetLeaveRequestsByEmployee(employeeId, h.DB)
+
+			employee, err := repository.GetEmployeeByEmployeeId(employeeId, h.DB)
+			if err != nil {
+				h.Logger.Errorf("Error getting employee data: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+			}
+
+			leaveRequests, err := repository.GetLeaveRequestsByEmployee(employeeId, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error getting leave page data: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
+
+			data := LeaveViewData{
+				Employee:      employee,
+				LeaveRequests: leaveRequests,
+				DateError:     "",
+			}
+
 			component := "leave"
 			title := "Leave - GPG"
 			renderTemplate(w, r, component, title, data)
