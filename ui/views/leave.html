@@ -18,7 +18,15 @@
             <form hx-post="/leave/post" hx-target=".error" hx-swap="innerHtml" id="leaveForm">
                 <div class="inputDiv">
                     <label for="name">Name</label>
-                    <input type="text" class="formInput" id="leaveNameFormInput" id="name" name="name" readonly style="background-color: var(--main-background-color)" value="{{ .Data.Employee.FirstName }} {{ .Data.Employee.LastName }}">
+                    <input 
+                    type="text" 
+                    class="formInput" 
+                    id="leaveNameFormInput" 
+                    id="name" 
+                    name="name" 
+                    readonly
+                    style="background-color: var(--main-background-color)" 
+                    value="{{ .Data.Employee.FirstName }} {{ .Data.Employee.LastName }}">
                 </div>
                 <div class="inputDiv">
                     <label for="type">Type</label>
@@ -87,30 +95,47 @@
                             </div>
                         </div>
                         <div class="leaveHistoryRowHidden hidden">
-                            <div class="leaveHistoryRowHiddenCell">
-                                <p class="leaveHistoryRowHiddenCellLabel">Name:</p>
-                                <p class="leaveHistoryRowHiddenCellContent">{{ .FirstName }} {{ .LastName }}</p>
-                            </div>
-                            <div class="leaveHistoryRowHiddenCell">
-                                <p class="leaveHistoryRowHiddenCellLabel">Type:</p>
-                                <p class="leaveHistoryRowHiddenCellContent">{{ .Type }}</p>
-                            </div>
-                            <div class="leaveHistoryRowHiddenCell">
-                                <p class="leaveHistoryRowHiddenCellLabel">From:</p>
-                                <p class="leaveHistoryRowHiddenCellContent">{{ .From }}</p>
-                            </div>
-                            <div class="leaveHistoryRowHiddenCell">
-                                <p class="leaveHistoryRowHiddenCellLabel">To:</p>
-                                <p class="leaveHistoryRowHiddenCellContent">{{ .To }}</p>
-                            </div>
-                            <div class="leaveHistoryRowHiddenCell">
-                                <p class="leaveHistoryRowHiddenCellLabel">Note:</p>
-                                <p class="leaveHistoryRowHiddenCellContent">{{ .Note }}</p>
-                            </div>
-                            <div class="leaveHistoryRowHiddenCell">
-                                <p class="leaveHistoryRowHiddenCellLabel">Approved:</p>
-                                <p class="leaveHistoryRowHiddenCellContent">{{ .IsApproved }}</p>
-                            </div>
+                            <form hx-put="/leave/put" hx-target=".error" hx-swap="innerHtml" id="updateLeaveForm">
+                                <div class="leaveHistoryRowHiddenCell">
+                                    <label for="name" class="leaveHistoryRowHiddenCellLabel">Name:</label>
+                                    <input 
+                                        type="text" 
+                                        name="name" 
+                                        readonly 
+                                        class="formInput" 
+                                        style="background-color: var(--main-background-color)" 
+                                        value="{{ .FirstName }} {{ .LastName }}"
+                                        id="updateName"
+                                        disabled>
+                                </div>
+                                <div class="leaveHistoryRowHiddenCell">
+                                    <label for="type" class="leaveHistoryRowHiddenCellLabel">Type:</label>
+                                    <select name="type" class="formInput" id="updateType" {{ if .IsApproved }} disabled {{ end }}>
+                                        <option value="{{ .Type }}">{{ .Type }}</option>
+                                        <option value="annual">annual</option>
+                                        <option value="sick">sick</option>
+                                        <option value="stress">stress</option>
+                                        <option value="carers">carers</option>
+                                        <option value="unpaid">unpaid</option>
+                                    </select>
+                                </div>
+                                <div class="leaveHistoryRowHiddenCell">
+                                    <label for="from" class="leaveHistoryRowHiddenCellLabel">From:</label>
+                                    <input type="date" name="from" class="formInput" id="updateFrom" value="{{ .From }}" {{ if .IsApproved }} disabled {{ end }}>
+                                </div>
+                                <div class="leaveHistoryRowHiddenCell">
+                                    <label for="to" class="leaveHistoryRowHiddenCellLabel">To:</label>
+                                    <input type="date" name="to" class="formInput" id="updateTo" value="{{ .To }}" {{ if .IsApproved }} disabled {{ end }}>
+                                </div>
+                                <div class="leaveHistoryRowHiddenCell">
+                                    <label for="note" class="leaveHistoryRowHiddenCellLabel">Note:</label>
+                                    <input type="textarea" name="note" class="formInput" id="updateNote" value="{{ .Note }}" {{ if .IsApproved }} disabled {{ end }}>
+                                </div>
+                                <div class="leaveHistoryRowHiddenCell" id="isApproved">
+                                    <label for="isApproved" class="leaveHistoryRowHiddenCellLabel">Approved:</label>
+                                    <input type="text" name="isApproved" id="updateIsApproved" class="formInput" disabled value="{{ .IsApproved }}">
+                                </div>
+                            </form>
                         </div>
                     </div>
                 {{ end }}

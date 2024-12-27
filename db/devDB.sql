@@ -49,4 +49,4 @@ VALUES ('5972277', 'ddoss', '$2y$14$aiyzqIjN/Dyyuie6.mccdu8OC3GYB7XEPCdSU/P.UTlr
 
 /** ---- leave_request inserts ---- **/
 INSERT INTO leave_request (employee_id, leave_type, from_date, to_date, note)
-VALUES ('5972276', 'annual', '18/12/2024', '20/12/2024', 'gone fishin');
+VALUES ('5972276', 'annual', '18-12-2024', '20-12-2024', 'gone fishin');
