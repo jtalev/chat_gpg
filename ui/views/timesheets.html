@@ -77,7 +77,9 @@
                     <tr class="projectRow" id="projectRow">
                         <td class="stickyCell">
                             <select name="projects" id="projects">
-                                <option value="project-1">project 1</option>
+                                {{ range .Data.Jobs }}
+                                    <option value="{{ .Name }}">{{ .Name }}, {{ .Number }} {{ .Address }}, {{ .Suburb }}</option>
+                                {{ end }}
                             </select>
                         </td>
                         <td>

@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -165,14 +164,21 @@ func (h *Handler) PostLeaveRequest() http.Handler {
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
-			fmt.Fprint(w, "")
+			employee, err := repository.GetEmployeeByEmployeeId(employeeId, h.DB)
+			if err != nil {
+				h.Logger.Errorf("Error getting employee: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+			leaveRequest.FirstName = employee.FirstName
+			leaveRequest.LastName = employee.LastName
+			responseJson(w, leaveRequest, h.Logger)
 		},
 	)
 }
 
 func queryParamId(r *http.Request, w http.ResponseWriter, logger *zap.SugaredLogger) int {
 	queryParams := r.URL.Query()
-	logger.Info(queryParams)
 	idStr := queryParams.Get("id")
 	if idStr == "" {
 		return -1
@@ -191,21 +197,31 @@ func (h *Handler) PutLeaveRequest() http.Handler {
 		func(w http.ResponseWriter, r *http.Request) {
 			// reading rData from request, this will be the updated rData
 			var rData models.LeaveRequest
-			if err := json.NewDecoder(r.Body).Decode(&rData); err != nil {
-				http.Error(w, "Invalid JSON payload", http.StatusBadRequest)
+			err := r.ParseForm()
+			if err != nil {
+				h.Logger.Errorf("Error parsing form: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
-			h.Logger.Info(rData)
 
-			// get url parameter and add to data.RequestId
-			id := queryParamId(r, w, h.Logger)
-			rData.RequestId = id
-			h.Logger.Info(rData.RequestId)
-			if id == -1 {
-				h.Logger.Error("Error reading url parameter")
-				http.Error(w, "Invalid URL parameter 'id'", http.StatusBadRequest)
+			requestIdStr := r.FormValue("requestId")
+			requestId, err := strconv.Atoi(requestIdStr)
+			if err != nil {
+				h.Logger.Errorf("Error converting request id to int %v:", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
+			rData.RequestId = requestId
+			rData.Type = r.FormValue("type")
+			rData.From = r.FormValue("from")
+			rData.To = r.FormValue("to")
+			rData.Note = r.FormValue("note")
+			isApprovedStr := r.FormValue("isApproved")
+			isApproved := false
+			if isApprovedStr == "true" {
+				isApproved = true
+			}
+			rData.IsApproved = isApproved
 
 			// get leave request from db using data.RequestId
 			updated, err := repository.GetLeaveRequestById(rData.RequestId, h.DB)
@@ -214,7 +230,6 @@ func (h *Handler) PutLeaveRequest() http.Handler {
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
-			h.Logger.Info(updated)
 
 			// update old request
 			updated.Type = rData.Type
@@ -223,7 +238,19 @@ func (h *Handler) PutLeaveRequest() http.Handler {
 			updated.Note = rData.Note
 			updated.IsApproved = rData.IsApproved
 
-			h.Logger.Info(updated)
+			// validate updated leave request
+			result, err := validateLeaveRequest(updated)
+			fmt.Println(len(result))
+			if err != nil {
+				h.Logger.Errorf("Error validating leave request: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+			if len(result) > 0 {
+				fmt.Fprint(w, result[0].Msg)
+				return
+			}
+
 			response, err := repository.PutLeaveRequest(updated, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error updating db: %v", err)

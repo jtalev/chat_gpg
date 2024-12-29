@@ -179,10 +179,22 @@ func (h *Handler) ServeLeaveView() http.Handler {
 	)
 }
 
+type TimesheetViewData struct {
+	Jobs []models.Job
+}
+
 func (h *Handler) ServeTimesheetsView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			data := getTimesheetData()
+			jobs, err := repository.GetJobs(h.DB)
+			if err != nil {
+				h.Logger.Errorf("Error querying job database: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+			data := TimesheetViewData{
+				Jobs: jobs,
+			}
 			component := "timesheets"
 			title := "Timesheets - GPG"
 			renderTemplate(w, r, component, title, data)

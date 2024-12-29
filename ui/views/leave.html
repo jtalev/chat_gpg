@@ -95,7 +95,19 @@
                             </div>
                         </div>
                         <div class="leaveHistoryRowHidden hidden">
-                            <form hx-put="/leave/put" hx-target=".error" hx-swap="innerHtml" id="updateLeaveForm">
+                            <form hx-put="/leave/put" hx-target="#error-{{ .RequestId }}" hx-swap="innerHtml" id="updateLeaveForm-{{ .RequestId }}">
+                                <div class="leaveHistoryRowHiddenCell">
+                                    <label for="requestId" class="leaveHistoryRowHiddenCellLabel">Request ID:</label>
+                                    <input 
+                                        type="text" 
+                                        name="requestId" 
+                                        readonly 
+                                        class="formInput" 
+                                        style="background-color: var(--main-background-color)" 
+                                        value="{{ .RequestId }}"
+                                        id="requestId"
+                                        readonly>
+                                </div>
                                 <div class="leaveHistoryRowHiddenCell">
                                     <label for="name" class="leaveHistoryRowHiddenCellLabel">Name:</label>
                                     <input 
@@ -121,20 +133,27 @@
                                 </div>
                                 <div class="leaveHistoryRowHiddenCell">
                                     <label for="from" class="leaveHistoryRowHiddenCellLabel">From:</label>
-                                    <input type="date" name="from" class="formInput" id="updateFrom" value="{{ .From }}" {{ if .IsApproved }} disabled {{ end }}>
+                                    <input type="date" name="from" class="formInput" id="updateFrom" value="{{ .From }}" {{ if .IsApproved }} readonly {{ end }}>
                                 </div>
+                                <div class="error" id="error-{{ .RequestId }}" style="font-size: xx-small;"></div>
                                 <div class="leaveHistoryRowHiddenCell">
                                     <label for="to" class="leaveHistoryRowHiddenCellLabel">To:</label>
-                                    <input type="date" name="to" class="formInput" id="updateTo" value="{{ .To }}" {{ if .IsApproved }} disabled {{ end }}>
+                                    <input type="date" name="to" class="formInput" id="updateTo" value="{{ .To }}" {{ if .IsApproved }} readonly {{ end }}>
                                 </div>
                                 <div class="leaveHistoryRowHiddenCell">
                                     <label for="note" class="leaveHistoryRowHiddenCellLabel">Note:</label>
-                                    <input type="textarea" name="note" class="formInput" id="updateNote" value="{{ .Note }}" {{ if .IsApproved }} disabled {{ end }}>
+                                    <input type="textarea" name="note" class="formInput" id="updateNote" value="{{ .Note }}" {{ if .IsApproved }} readonly {{ end }}>
                                 </div>
                                 <div class="leaveHistoryRowHiddenCell" id="isApproved">
                                     <label for="isApproved" class="leaveHistoryRowHiddenCellLabel">Approved:</label>
-                                    <input type="text" name="isApproved" id="updateIsApproved" class="formInput" disabled value="{{ .IsApproved }}">
+                                    <input type="text" name="isApproved" id="updateIsApproved" class="formInput" readonly value="{{ .IsApproved }}">
                                 </div>
+                                {{ if eq .IsApproved false }}
+                                    <div id="updateLeaveFormButtons">
+                                        <button type="reset" id="updateLeaveFormCancelBtn" class="leaveBtn" form="updateLeaveForm-{{ .RequestId }}">Cancel</button>
+                                        <button type="submit" id="updateLeaveFormSubmitBtn" class="leaveBtn" form="updateLeaveForm-{{ .RequestId }}">SUBMIT</button>
+                                    </div>
+                                {{ end }}
                             </form>
                         </div>
                     </div>

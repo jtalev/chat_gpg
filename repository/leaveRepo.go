@@ -170,7 +170,7 @@ func DeleteLeaveRequest(requestId int, db *sql.DB) (models.LeaveRequest, error) 
 
 	lr, err := GetLeaveRequestById(requestId, db)
 	if err == nil {
-		return models.LeaveRequest{}, errors.New("Leave request still exists")
+		return lr, errors.New("Leave request still exists")
 	}
 
 	return lr, nil

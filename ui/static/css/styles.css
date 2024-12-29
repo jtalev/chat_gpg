@@ -173,7 +173,7 @@ input {
     }
 
     .nav-link-text {
-        font-size: x-small;
+        font-size: small;
     }
 
     #logoutBtnContainer {
@@ -264,7 +264,7 @@ ul {
     justify-content: center;
     padding: 10px;
     max-width: 300px;
-    font-size: xx-small;
+    font-size: small;
 }
 
 
@@ -282,8 +282,7 @@ form input {
 }
 
 .logo {
-    height: 80%;
-    width: 70%;
+    width: 120%;
 }
 
 .error {
@@ -310,7 +309,7 @@ form input {
     color: var(--gpg-green);
     height: 2.5em;
     padding: 0 2px;
-    font-size: xx-small;
+    font-size: small;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -319,7 +318,7 @@ form input {
 
 .loginFormInput {
     border-radius: 0;
-    font-size: xx-small;
+    font-size: small;
     border: var(--form-input-border-color) solid 1px;
 }
 
@@ -368,7 +367,6 @@ form input {
     height: 5%;
     margin-top: 1em;
     align-items: center;
-    font-size: xx-small;
 }
 
 .timesheetContentContainer {
@@ -486,7 +484,6 @@ form input {
     padding: 0;
     color: #a5a5a5;
     font-weight: lighter;
-    font-size: x-small;
 }
 
 .date {
@@ -500,7 +497,6 @@ form input {
     margin: 0;
     padding: 0;
     font-weight: lighter;
-    font-size: x-small;
 }
 
 input::-webkit-outer-spin-button,
@@ -523,7 +519,6 @@ input::-webkit-inner-spin-button {
     padding: 0;
     background-color: var(--main-background-color);
     border: var(--timesheet-border) solid 1px;
-    font-size: xx-small;
 }
 
 .projectRow td {
@@ -531,7 +526,6 @@ input::-webkit-inner-spin-button {
     margin: 0;
     padding: 0;
     border: var(--main-background-color) solid 1px;
-    font-size: x-small;
 }
 
 .timeInput {
@@ -547,7 +541,6 @@ input::-webkit-inner-spin-button {
 #projects {
     margin: 0;
     padding: 0;
-    font-size: x-small;
 }
 
 .addRowBtnContainer {
@@ -564,7 +557,6 @@ input::-webkit-inner-spin-button {
     width: 8em;
     height: 2.5em;
     padding: 0 2px;
-    font-size: xx-small;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -586,7 +578,7 @@ input::-webkit-inner-spin-button {
         margin-bottom: 1em;
         display: flex;
         flex-direction: column;
-        font-size: x-small;
+        font-size: small;
     }
 }
 
@@ -596,7 +588,7 @@ input::-webkit-inner-spin-button {
         width: 95%;
         display: flex;
         flex-direction: column;
-        font-size: x-small;
+        font-size: small;
     }
 }
 
@@ -786,6 +778,31 @@ input::-webkit-inner-spin-button {
 
 #isApproved {
     margin-bottom: 2px;
+}
+
+#updateLeaveFormButtons {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: flex-end;
+    column-gap: 5px;
+    justify-content: flex-end;
+}
+
+#updateLeaveFormCancelBtn {
+    background-color: white;
+    border: solid 1px var(--gpg-green);
+    color: var(--gpg-green);
+    height: 2em;
+    font-size: small;
+}
+
+#updateLeaveFormSubmitBtn {
+    background-color: var(--gpg-green);
+    border: none;
+    color: white;
+    height: 2em;
+    font-size: small;
 }
 
 /** ----- admin ----- **/

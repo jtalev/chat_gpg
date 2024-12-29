@@ -38,3 +38,27 @@ type LeaveRequest struct {
 	Note       string `json:"note"`
 	IsApproved bool   `json:"is_approved"`
 }
+
+type Job struct {
+	ID        int    `json:"id"`
+	Name      string `json:"name"`
+	Number    int    `json:"number"`
+	Address   string `json:"address"`
+	Suburb    string `json:"suburb"`
+	PostCode  string `json:"post_code"`
+	City      string `json:"city"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
+type Timesheet struct {
+	ID         int    `json:"id"`
+	EmployeeId string `json:"employee_id"`
+	JobId      int    `json:"job_id"`
+	WeekStart  string `json:"week_start"`
+	Date       string `json:"date"`
+	Hours      int    `json:"hours"`
+	Minutes    int    `json:"minutes"`
+	CreatedAt  string `json:"created_at"`
+	UpdatedAt  string `json:"updated_at"`
+}
