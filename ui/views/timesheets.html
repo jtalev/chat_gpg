@@ -10,10 +10,25 @@
                         <p><span id="payweekMonth"></span>, <span id="payweekYear"></span></p>
                     <div class="payweekSelectorContainer">
                         <div id="leftArrowContainer">
-                            <button class="arrow" id="leftArrow"><</button>
+                            <button 
+                            hx-get="/timesheets/render-by-week-start?arrow=left&wedDate={{ .Data.InitialWedDate }}&month={{ .Data.InitialMonth }}&year={{ .Data.InitialYear }}"
+                                hx-target="#initialProjectRow"
+                                hx-swap="innerHTML"
+                                class="arrow"
+                                id="leftArrow"
+                                data-arrow="left">
+                                <
+                            </button>
                         </div>
                         <div id="rightArrowContainer">
-                            <button class="arrow" id="rightArrow">></button>
+                            <button hx-get="/timesheets/render-by-week-start?arrow=right&wedDate={{ .Data.InitialWedDate }}&month={{ .Data.InitialMonth }}&year={{ .Data.InitialYear }}"
+                                hx-target="#initialProjectRow"
+                                hx-swap="innerHTML"
+                                class="arrow" 
+                                id="rightArrow"
+                                data-arrow="right">
+                                >
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -23,7 +38,7 @@
                     <tr class="datesRow" id="datesRow">
                         <th class="stickyCell">
                             <div class="dateCell">
-                                <p style="font-weight: lighter;">Projects</p>
+                                <p style="font-weight: lighter;">Job</p>
                             </div>
                         </th>
                         <th>
@@ -74,7 +89,24 @@
                             </div>
                         </th>
                     </tr>
-                    <tr class="projectRow" id="projectRow">
+                    <tbody id="initialProjectRow">
+                        {{ range .Data.InitialTimesheets }}
+                        <tr class="projectRow" id="projectRow">
+                            <td class="stickyCell">
+                                <p>{{ .Job }}</p>
+                            </td>
+                        {{ range .Timesheets }}
+                            <td>
+                                <input type="text" id="wed1" class="timeInput" maxlength="5" value="{{ .Hours }}:{{ .Minutes }}">
+                            </td>
+                        {{ end }}
+                            <td>
+                                <p class="total">0 : 0</p>
+                            </td>
+                        </tr>
+                        {{ end }}
+                    </tbody>
+                    <tr class="projectRow hidden" id="newProjectRow">
                         <td class="stickyCell">
                             <select name="projects" id="projects">
                                 {{ range .Data.Jobs }}

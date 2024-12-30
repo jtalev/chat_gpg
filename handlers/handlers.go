@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/gorilla/sessions"
 	"github.com/jtalev/chat_gpg/models"
@@ -75,6 +76,7 @@ func renderTemplate(
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
 	}
 }
 
@@ -150,13 +152,16 @@ func (h *Handler) ServeLeaveView() http.Handler {
 		func(w http.ResponseWriter, r *http.Request) {
 			employeeId, ok := r.Context().Value("employee_id").(string)
 			if !ok {
-				h.Logger.Errorf("Error getting employee_id from context: %v", employeeId)
+				h.Logger.Warn("Error getting employee_id from context")
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
 			}
 
 			employee, err := repository.GetEmployeeByEmployeeId(employeeId, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error getting employee data: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
 			}
 
 			leaveRequests, err := repository.GetLeaveRequestsByEmployee(employeeId, h.DB)
@@ -180,7 +185,41 @@ func (h *Handler) ServeLeaveView() http.Handler {
 }
 
 type TimesheetViewData struct {
-	Jobs []models.Job
+	Jobs              []models.Job
+	InitialTimesheets []TimesheetWeek
+	InitialWedDate    int
+	InitialMonth      int
+	InitialYear       int
+}
+
+func wednesdayDate() (int, int, int) {
+	now := time.Now()
+	weekday := now.Weekday()
+	year, month, day := now.Date()
+	date := time.Date(year, month, day, 0, 0, 0, 0, time.Local)
+
+	switch weekday {
+	case time.Sunday:
+		date = date.AddDate(0, 0, -4)
+	case time.Monday:
+		date = date.AddDate(0, 0, -5)
+	case time.Tuesday:
+		date = date.AddDate(0, 0, -6)
+	case time.Wednesday:
+		date = date.AddDate(0, 0, 0)
+	case time.Thursday:
+		date = date.AddDate(0, 0, -1)
+	case time.Friday:
+		date = date.AddDate(0, 0, -2)
+	case time.Saturday:
+		date = date.AddDate(0, 0, -3)
+	default:
+		fmt.Println("no dates added")
+	}
+
+	year, month, day = date.Date()
+
+	return year, int(month), day
 }
 
 func (h *Handler) ServeTimesheetsView() http.Handler {
@@ -192,8 +231,30 @@ func (h *Handler) ServeTimesheetsView() http.Handler {
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
+
+			employeeId, ok := r.Context().Value("employee_id").(string)
+			if !ok {
+				h.Logger.Warn("Error getting employee_id from context")
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
+
+			year, month, day := wednesdayDate()
+			weekStart := fmt.Sprintf("%v-%v-%v", year, month, day)
+			fmt.Println(weekStart)
+
+			timesheets, err := mapTimesheets(employeeId, weekStart, h.DB)
+			if err != nil {
+				h.Logger.Errorf("Error getting initial timesheet data: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+			}
+
 			data := TimesheetViewData{
-				Jobs: jobs,
+				Jobs:              jobs,
+				InitialTimesheets: timesheets,
+				InitialWedDate:    day,
+				InitialMonth:      month,
+				InitialYear:       year,
 			}
 			component := "timesheets"
 			title := "Timesheets - GPG"

@@ -94,3 +94,5 @@ INSERT INTO timesheet (employee_id, job_id, week_start, timesheet_date, hours, m
 VALUES ('5972276', 1, '2024-12-25', '2024-12-26', 8, 0);
 INSERT INTO timesheet (employee_id, job_id, week_start, timesheet_date, hours, minutes)
 VALUES ('5972276', 1, '2024-12-25', '2024-12-25', 8, 0);
+INSERT INTO timesheet (employee_id, job_id, week_start, timesheet_date, hours, minutes)
+VALUES ('5972276', 1, '2024-12-18', '2024-12-20', 8, 0);

@@ -247,12 +247,14 @@ function addTableRow() {
         const newRow = document.createElement('tr')
         newRow.classList.add("projectRow")
     
-        const oldRow = document.querySelector("#projectRow")
+        const oldRow = document.querySelector("#newProjectRow")
         const rowString = oldRow.innerHTML
         
         newRow.innerHTML = rowString
         newRow.querySelector(".total").innerHTML = "0:0"
         table.appendChild(newRow)
+
+        updateRowTotals()
     })
 }
 
@@ -291,10 +293,30 @@ function calculateRowTotals() {
 }
 
 document.addEventListener("DOMContentLoaded", updateRowTotals)
+document.addEventListener("keyup", updateRowTotals)
 function updateRowTotals() {
     document.querySelectorAll(".timeInput").forEach(cell => {
-        cell.addEventListener("keyup", function () {
-            calculateRowTotals()
-        })
+        cell.removeEventListener("keyup", calculateRowTotals)
+        cell.addEventListener("keyup", calculateRowTotals)
     })
 }
+
+document.querySelectorAll(".arrow").forEach(button => {
+    button.addEventListener("click", function(){
+        const wed = document.getElementById("wedDate").innerText.trim()
+        const month = document.getElementById("payweekMonth").innerText.trim()
+        const year = document.getElementById("payweekYear").innerText.trim()
+        
+        const buttons = document.querySelectorAll(".arrow")
+        buttons.forEach(button => {
+            button.setAttribute("hx-get", `/timesheets/render-by-week-start?arrow=${button.dataset.arrow}&wedDate=${wed}&month=${month}&year=${year}`)
+        })
+
+        // Trigger HTMX request manually
+        button.dispatchEvent(new CustomEvent('htmx:configRequest', {
+            detail: { url }
+        }));
+
+        htmx.ajax('GET', url, { target: '#initialProjectRow' });
+    })
+})

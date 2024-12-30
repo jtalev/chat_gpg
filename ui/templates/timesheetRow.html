@@ -1,0 +1,17 @@
+{{ define "timesheetRow" }}
+{{ range . }}
+    <tr class="projectRow" id="projectRow">
+        <td class="stickyCell">
+            <p>{{ .Job }}</p>
+        </td>
+    {{ range .Timesheets }}
+        <td>
+            <input type="text" id="wed1" class="timeInput" maxlength="5" value="{{ .Hours }}:{{ .Minutes }}">
+        </td>
+    {{ end }}
+        <td>
+            <p class="total">0 : 0</p>
+        </td>
+    </tr>
+{{ end }}
+{{ end }}

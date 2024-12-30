@@ -4,7 +4,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"html/template"
 	"net/http"
+	"path/filepath"
+	"strconv"
+	"time"
 
 	"github.com/jtalev/chat_gpg/models"
 	"github.com/jtalev/chat_gpg/repository"
@@ -13,7 +17,7 @@ import (
 type TimesheetWeek struct {
 	JobId      int
 	Job        string
-	Timesheets []map[string]models.Timesheet
+	Timesheets []models.Timesheet
 }
 
 func mapTimesheets(employeeId, weekStart string, db *sql.DB) ([]TimesheetWeek, error) {
@@ -27,24 +31,29 @@ func mapTimesheets(employeeId, weekStart string, db *sql.DB) ([]TimesheetWeek, e
 
 	for _, timesheet := range timesheets {
 		if timesheet.JobId != jobId {
-			newJob, err := repository.GetJobById(timesheet.JobId, db)
+			job, err := repository.GetJobById(timesheet.JobId, db)
 			if err != nil {
 				return nil, err
 			}
-			job := newJob.Name + ", " + string(newJob.Number) + " " + newJob.Address + ", " + newJob.Suburb
+			jobStr := fmt.Sprintf("%v, %v %v, %v", job.Name, job.Number, job.Address, job.Suburb)
 			timesheetWeek := TimesheetWeek{
 				JobId: timesheet.JobId,
-				Job:   job,
+				Job:   jobStr,
 			}
 			arr = append(arr, timesheetWeek)
 			jobId = timesheet.JobId
 		}
 	}
 
+	nullTimesheet := models.Timesheet{
+		Hours:   0,
+		Minutes: 00,
+	}
+
 	for i := range arr {
-		arr[i].Timesheets = make([]map[string]models.Timesheet, 7)
+		arr[i].Timesheets = make([]models.Timesheet, 7)
 		for j := range arr[i].Timesheets {
-			arr[i].Timesheets[j] = make(map[string]models.Timesheet)
+			arr[i].Timesheets[j] = nullTimesheet
 		}
 	}
 
@@ -60,19 +69,19 @@ func mapTimesheets(employeeId, weekStart string, db *sql.DB) ([]TimesheetWeek, e
 
 				switch day.String() {
 				case "Wednesday":
-					arr[i].Timesheets[0][day.String()] = timesheet
+					arr[i].Timesheets[0] = timesheet
 				case "Thursday":
-					arr[i].Timesheets[1][day.String()] = timesheet
+					arr[i].Timesheets[1] = timesheet
 				case "Friday":
-					arr[i].Timesheets[2][day.String()] = timesheet
+					arr[i].Timesheets[2] = timesheet
 				case "Saturday":
-					arr[i].Timesheets[3][day.String()] = timesheet
+					arr[i].Timesheets[3] = timesheet
 				case "Sunday":
-					arr[i].Timesheets[4][day.String()] = timesheet
+					arr[i].Timesheets[4] = timesheet
 				case "Monday":
-					arr[i].Timesheets[5][day.String()] = timesheet
+					arr[i].Timesheets[5] = timesheet
 				case "Tuesday":
-					arr[i].Timesheets[6][day.String()] = timesheet
+					arr[i].Timesheets[6] = timesheet
 				default:
 					return nil, errors.New("Unexpected value for day.String()")
 				}
@@ -80,16 +89,13 @@ func mapTimesheets(employeeId, weekStart string, db *sql.DB) ([]TimesheetWeek, e
 		}
 	}
 
-	for _, timesheetWeek := range arr {
-		fmt.Println(timesheetWeek)
-	}
-
 	return arr, nil
 }
 
-func (h *Handler) GetTimesheetsByWeekStart() http.Handler {
+func (h *Handler) RenderTimesheetByWeek() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			fmt.Println("rendering timesheet row")
 			err := r.ParseForm()
 			if err != nil {
 				h.Logger.Errorf("Error parsing form: %v", err)
@@ -104,7 +110,39 @@ func (h *Handler) GetTimesheetsByWeekStart() http.Handler {
 				return
 			}
 
-			weekStart := r.FormValue("weekStart")
+			arrow := r.FormValue("arrow")
+			wedDateStr := r.FormValue("wedDate")
+			wedDate, err := strconv.Atoi(wedDateStr)
+			if err != nil {
+				h.Logger.Error("Error converting date to int")
+				http.Error(w, "Error bad request", http.StatusBadRequest)
+				return
+			}
+			monthStr := r.FormValue("month")
+			month, err := strconv.Atoi(monthStr)
+			if err != nil {
+				h.Logger.Error("Error converting month to int")
+				http.Error(w, "Error bad request", http.StatusBadRequest)
+				return
+			}
+			timeMonth := time.Month(month)
+			yearStr := r.FormValue("year")
+			year, err := strconv.Atoi(yearStr)
+			if err != nil {
+				h.Logger.Error("Error converting year to int")
+				http.Error(w, "Error bad request", http.StatusBadRequest)
+				return
+			}
+
+			date := time.Date(year, timeMonth, wedDate, 0, 0, 0, 0, time.Local)
+			if arrow == "left" {
+				date = date.AddDate(0, 0, -7)
+			} else if arrow == "right" {
+				date = date.AddDate(0, 0, 7)
+			}
+
+			year, timeMonth, wedDate = date.Date()
+			weekStart := fmt.Sprintf("%v-%v-%v", year, int(timeMonth), wedDate)
 
 			data, err := mapTimesheets(employeeId, weekStart, h.DB)
 			if err != nil {
@@ -112,8 +150,20 @@ func (h *Handler) GetTimesheetsByWeekStart() http.Handler {
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
+			fmt.Println(data)
 
-			responseJson(w, data, h.Logger)
+			timesheetRowPath := filepath.Join("..", "ui", "templates", "timesheetRow.html")
+			tmpl, err := template.ParseFiles(timesheetRowPath)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			err = tmpl.ExecuteTemplate(w, "timesheetRow", data)
+			if err != nil {
+				h.Logger.Errorf("Error executing template: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
 		},
 	)
 }

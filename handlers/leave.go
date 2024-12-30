@@ -13,13 +13,6 @@ import (
 	"go.uber.org/zap"
 )
 
-func getLeaveData() []DashboardData {
-	data := []DashboardData{
-		{},
-	}
-	return data
-}
-
 func (h *Handler) GetLeaveRequests() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -56,6 +49,7 @@ func (h *Handler) GetLeaveRequestsByEmployee() http.Handler {
 			if err != nil {
 				h.Logger.Errorf("Error getting leave requests for employee %s: %v", employeeId, err)
 				http.Error(w, "Data not StatusNotFound", http.StatusNotFound)
+				return
 			}
 
 			responseJson(w, data, h.Logger)
