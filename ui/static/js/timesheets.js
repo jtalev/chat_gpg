@@ -320,13 +320,13 @@ function putTimesheets() {
     })
     console.log(timesheetData)
 
-    fetch('/timesheets/put', {
+    fetch('/timesheets/put-all', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({ timesheets: timesheetData })
-    }).then((response_ => {
+    }).then((response => {
         if (response.ok) {
             console.log('Timesheets saved successfully')
         } else {

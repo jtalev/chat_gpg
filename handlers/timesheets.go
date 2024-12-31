@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/jtalev/chat_gpg/models"
@@ -207,7 +208,37 @@ func (h *Handler) RenderTimesheetByWeek() http.Handler {
 	)
 }
 
-func (h *Handler) PutTimesheet() http.Handler {
+func (h *Handler) GetTimesheetById() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			err := r.ParseForm()
+			if err != nil {
+				h.Logger.Errorf("Error parsing form: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			idStr := r.FormValue("id")
+			id, err := strconv.Atoi(idStr)
+			if err != nil {
+				h.Logger.Errorf("Invalid form value: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			timesheet, err := repository.GetTimesheetById(id, h.DB)
+			if err != nil {
+				h.Logger.Errorf("Error querying timesheet from db: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			responseJson(w, timesheet, h.Logger)
+		},
+	)
+}
+
+func (h *Handler) PutTimesheetsAll() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			var payload struct {
@@ -227,6 +258,53 @@ func (h *Handler) PutTimesheet() http.Handler {
 			for _, timesheet := range payload.Timesheets {
 				fmt.Printf("ID: %s, Time: %s\n", timesheet.ID, timesheet.Time)
 			}
+		},
+	)
+}
+
+func (h *Handler) PutTimesheet() http.HandlerFunc {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			var data struct {
+				ID   int    `json:"id"`
+				Time string `json:"time"`
+			}
+
+			err := json.NewDecoder(r.Body).Decode(&data)
+			if err != nil {
+				h.Logger.Errorf("Error decoding JSON: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			time := strings.Split(data.Time, ":")
+			hours, err := strconv.Atoi(time[0])
+			if err != nil {
+				h.Logger.Errorf("Invalid hours input: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+			minutes, err := strconv.Atoi(time[1])
+			if err != nil {
+				h.Logger.Errorf("Invalid minutes input: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			timesheet := models.Timesheet{
+				ID:      data.ID,
+				Hours:   hours,
+				Minutes: minutes,
+			}
+
+			timesheet, err = repository.PutTimesheet(timesheet, h.DB)
+			if err != nil {
+				h.Logger.Errorf("Error updating timesheet: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			responseJson(w, timesheet, h.Logger)
 		},
 	)
 }

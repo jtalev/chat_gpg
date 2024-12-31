@@ -6,6 +6,40 @@ import (
 	"github.com/jtalev/chat_gpg/models"
 )
 
+func GetTimesheetById(id int, db *sql.DB) (models.Timesheet, error) {
+	q := `
+	select * from timesheet where id = ?;
+	`
+
+	rows, err := db.Query(q, id)
+	if err != nil {
+		return models.Timesheet{}, err
+	}
+	defer rows.Close()
+
+	var timesheet models.Timesheet
+	if rows.Next() {
+		err := rows.Scan(
+			&timesheet.ID,
+			&timesheet.EmployeeId,
+			&timesheet.JobId,
+			&timesheet.WeekStart,
+			&timesheet.Date,
+			&timesheet.Hours,
+			&timesheet.Minutes,
+			&timesheet.CreatedAt,
+			&timesheet.UpdatedAt,
+		)
+		if err != nil {
+			return models.Timesheet{}, err
+		}
+	} else {
+		return models.Timesheet{}, sql.ErrNoRows
+	}
+
+	return timesheet, nil
+}
+
 func GetTimesheetsByWeekStart(employeeId, weekStart string, db *sql.DB) ([]models.Timesheet, error) {
 	q := `
 	select *
@@ -40,4 +74,22 @@ func GetTimesheetsByWeekStart(employeeId, weekStart string, db *sql.DB) ([]model
 		data = append(data, timesheet)
 	}
 	return data, nil
+}
+
+func PutTimesheet(timesheet models.Timesheet, db *sql.DB) (models.Timesheet, error) {
+	q := `
+	update timesheet
+	set hours = $1, minutes = $2, updated_at = CURRENT_TIMESTAMP
+	where id = $3;
+	`
+
+	_, err := db.Exec(q, timesheet.Hours, timesheet.Minutes, timesheet.ID)
+	if err != nil {
+		return models.Timesheet{}, err
+	}
+	ts, err := GetTimesheetById(timesheet.ID, db)
+	if err != nil {
+		return models.Timesheet{}, err
+	}
+	return ts, nil
 }
