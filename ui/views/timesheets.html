@@ -4,7 +4,7 @@
         <h2 id="timesheetHeader">Timesheet</h2>
     </div>
     <div class="timesheetContentContainer">
-        <div class="timesheetContent">
+        <div class="timesheetContent" id="timesheetContent">
             <div class="timesheetNavContainer">
                 <div class="payweekMonthContainer">
                         <p><span id="payweekMonth"></span>, <span id="payweekYear"></span></p>
@@ -12,7 +12,7 @@
                         <div id="leftArrowContainer">
                             <button 
                             hx-get="/timesheets/render-by-week-start?arrow=left&wedDate={{ .Data.InitialWedDate }}&month={{ .Data.InitialMonth }}&year={{ .Data.InitialYear }}"
-                                hx-target="#initialProjectRow"
+                                hx-target="#timesheetContent"
                                 hx-swap="innerHTML"
                                 class="arrow"
                                 id="leftArrow"
@@ -22,7 +22,7 @@
                         </div>
                         <div id="rightArrowContainer">
                             <button hx-get="/timesheets/render-by-week-start?arrow=right&wedDate={{ .Data.InitialWedDate }}&month={{ .Data.InitialMonth }}&year={{ .Data.InitialYear }}"
-                                hx-target="#initialProjectRow"
+                                hx-target="#timesheetContent"
                                 hx-swap="innerHTML"
                                 class="arrow" 
                                 id="rightArrow"
@@ -97,7 +97,18 @@
                             </td>
                         {{ range .Timesheets }}
                             <td>
-                                <input type="text" id="wed1" class="timeInput" maxlength="5" value="{{ .Hours }}:{{ .Minutes }}">
+                                <form action="/timesheets/put" method="put" class="saveAllForm">
+                                    <input type="text"
+                                        id="{{ .ID }}"
+                                        class="timeInput"
+                                        maxlength="5"
+                                        name="time" 
+                                        {{ if and (eq .Hours 0) (eq .Minutes 0) }}
+                                            placeholder="--:--"
+                                        {{ else }}
+                                            value="{{ .Hours }}:{{ .Minutes }}"
+                                        {{ end }}>
+                                </form>
                             </td>
                         {{ end }}
                             <td>
@@ -110,7 +121,7 @@
                         <td class="stickyCell">
                             <select name="projects" id="projects">
                                 {{ range .Data.Jobs }}
-                                    <option value="{{ .Name }}">{{ .Name }}, {{ .Number }} {{ .Address }}, {{ .Suburb }}</option>
+                                    <option >{{ .Name }}, {{ .Number }} {{ .Address }}, {{ .Suburb }}</option>
                                 {{ end }}
                             </select>
                         </td>
@@ -143,6 +154,9 @@
             </div>
             <div class="addRowBtnContainer">
                 <button class="addTableRowBtn" id="addTableRowBtn">+ Add new row</button>
+            </div>
+            <div class="saveAllBtnContainer">
+                <button class="saveAllBtn" id="saveAllBtn">Save all</button>
             </div>
         </div>
     </div>

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"html/template"
@@ -92,11 +93,37 @@ func mapTimesheets(employeeId, weekStart string, db *sql.DB) ([]TimesheetWeek, e
 	return arr, nil
 }
 
+type TimesheetTemplateData struct {
+	Jobs              []models.Job
+	InitialTimesheets []TimesheetWeek
+	WedDate           int
+	MonthInt          int
+	MonthStr          time.Month
+	Year              int
+	PrevWeekDates     []int
+}
+
+func prevWeekDates(date time.Time) []int {
+	dates := make([]int, 7)
+	for i := range dates {
+		_, _, day := date.Date()
+		dates[i] = day
+		date = date.AddDate(0, 0, 1)
+	}
+	return dates
+}
+
 func (h *Handler) RenderTimesheetByWeek() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			fmt.Println("rendering timesheet row")
-			err := r.ParseForm()
+			jobs, err := repository.GetJobs(h.DB)
+			if err != nil {
+				h.Logger.Errorf("Error querying job database: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			err = r.ParseForm()
 			if err != nil {
 				h.Logger.Errorf("Error parsing form: %v", err)
 				http.Error(w, "Bad request", http.StatusBadRequest)
@@ -144,13 +171,25 @@ func (h *Handler) RenderTimesheetByWeek() http.Handler {
 			year, timeMonth, wedDate = date.Date()
 			weekStart := fmt.Sprintf("%v-%v-%v", year, int(timeMonth), wedDate)
 
-			data, err := mapTimesheets(employeeId, weekStart, h.DB)
+			initialTimesheets, err := mapTimesheets(employeeId, weekStart, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error mapping timesheet week data: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
-			fmt.Println(data)
+
+			prevWeekDates := prevWeekDates(date)
+
+			data := TimesheetTemplateData{
+				Jobs:              jobs,
+				InitialTimesheets: initialTimesheets,
+				WedDate:           wedDate,
+				MonthInt:          int(timeMonth),
+				MonthStr:          timeMonth,
+				Year:              year,
+				PrevWeekDates:     prevWeekDates,
+			}
+			fmt.Println(data.MonthStr, data.Year)
 
 			timesheetRowPath := filepath.Join("..", "ui", "templates", "timesheetRow.html")
 			tmpl, err := template.ParseFiles(timesheetRowPath)
@@ -163,6 +202,30 @@ func (h *Handler) RenderTimesheetByWeek() http.Handler {
 				h.Logger.Errorf("Error executing template: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
+			}
+		},
+	)
+}
+
+func (h *Handler) PutTimesheet() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			var payload struct {
+				Timesheets []struct {
+					ID   string `json:"id"`
+					Time string `json:"time"`
+				} `json:"timesheets"`
+			}
+
+			err := json.NewDecoder(r.Body).Decode(&payload)
+			if err != nil {
+				h.Logger.Errorf("Error decoding JSON: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			for _, timesheet := range payload.Timesheets {
+				fmt.Printf("ID: %s, Time: %s\n", timesheet.ID, timesheet.Time)
 			}
 		},
 	)

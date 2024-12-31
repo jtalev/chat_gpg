@@ -43,4 +43,5 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 
 	// timesheet requests
 	mux.Handle("/timesheets/render-by-week-start", a.AuthMiddleware(h.RenderTimesheetByWeek()))
+	mux.Handle("/timesheets/put", a.AuthMiddleware(h.PutTimesheet()))
 }

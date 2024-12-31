@@ -241,7 +241,6 @@ func (h *Handler) ServeTimesheetsView() http.Handler {
 
 			year, month, day := wednesdayDate()
 			weekStart := fmt.Sprintf("%v-%v-%v", year, month, day)
-			fmt.Println(weekStart)
 
 			timesheets, err := mapTimesheets(employeeId, weekStart, h.DB)
 			if err != nil {

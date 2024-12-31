@@ -118,108 +118,108 @@ function renderDateCell() {
 //     })
 // }
 
-document.addEventListener("DOMContentLoaded", onLeftArrowClick)
-function onLeftArrowClick() {
-    // updates the date carousel, starting from the wednesday previous to the current week
-    // converts html to Date() type to update the html again with the correct values
-    document.querySelector("#leftArrowContainer").addEventListener("click", function () {
-        const wedDateElement = document.getElementById("wedDate")
-        const payweekMonthElement = document.getElementById("payweekMonth")
-        const payweekYearElement = document.getElementById("payweekYear")
+// document.addEventListener("DOMContentLoaded", onLeftArrowClick)
+// function onLeftArrowClick() {
+//     // updates the date carousel, starting from the wednesday previous to the current week
+//     // converts html to Date() type to update the html again with the correct values
+//     document.querySelector("#leftArrowContainer").addEventListener("click", function () {
+//         const wedDateElement = document.getElementById("wedDate")
+//         const payweekMonthElement = document.getElementById("payweekMonth")
+//         const payweekYearElement = document.getElementById("payweekYear")
         
-        // need to convert month name from string to int; currentWed.setMonth(payweekMonth)
-        // use monthNames to update html to new month also
-        monthNames = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ]
-        let payweekMonth
-        for (i = 0; i < monthNames.length; i++) {
-            if (monthNames[i] === payweekMonthElement.innerHTML) {
-                payweekMonth = i
-            }
-        }
+//         // need to convert month name from string to int; currentWed.setMonth(payweekMonth)
+//         // use monthNames to update html to new month also
+//         monthNames = [
+//             "January", "February", "March", "April", "May", "June",
+//             "July", "August", "September", "October", "November", "December"
+//         ]
+//         let payweekMonth
+//         for (i = 0; i < monthNames.length; i++) {
+//             if (monthNames[i] === payweekMonthElement.innerHTML) {
+//                 payweekMonth = i
+//             }
+//         }
         
-        const wedDate = Number(wedDateElement.innerHTML)
-        const payweekYear = Number(payweekYearElement.innerHTML)
+//         const wedDate = Number(wedDateElement.innerHTML)
+//         const payweekYear = Number(payweekYearElement.innerHTML)
         
-        let currentWed = new Date()
-        currentWed.setFullYear(payweekYear)
-        currentWed.setMonth(payweekMonth)
-        currentWed.setDate(wedDate - 7)
+//         let currentWed = new Date()
+//         currentWed.setFullYear(payweekYear)
+//         currentWed.setMonth(payweekMonth)
+//         currentWed.setDate(wedDate - 7)
         
-        // update month names and year
-        if (currentWed.getMonth() == 11 && payweekMonth == 0) {
-            payweekMonthElement.innerHTML = monthNames[currentWed.getMonth()]
-        }
-        if (currentWed.getMonth() < payweekMonth) {
-            payweekMonthElement.innerHTML = monthNames[currentWed.getMonth()]
-        }
-        payweekYearElement.innerHTML = currentWed.getFullYear()
+//         // update month names and year
+//         if (currentWed.getMonth() == 11 && payweekMonth == 0) {
+//             payweekMonthElement.innerHTML = monthNames[currentWed.getMonth()]
+//         }
+//         if (currentWed.getMonth() < payweekMonth) {
+//             payweekMonthElement.innerHTML = monthNames[currentWed.getMonth()]
+//         }
+//         payweekYearElement.innerHTML = currentWed.getFullYear()
         
-        // update all dates in carousel div
-        const dateContainerChildren = getDateContainerChildren()
+//         // update all dates in carousel div
+//         const dateContainerChildren = getDateContainerChildren()
         
-        for (var i = 1; i < dateContainerChildren.length - 1; i++) {
-            const child = dateContainerChildren[i]
-            const dateElement = child.querySelector(".date")
-            dateElement.textContent = currentWed.getDate()
-            currentWed.setDate(currentWed.getDate() + 1)
-        }
+//         for (var i = 1; i < dateContainerChildren.length - 1; i++) {
+//             const child = dateContainerChildren[i]
+//             const dateElement = child.querySelector(".date")
+//             dateElement.textContent = currentWed.getDate()
+//             currentWed.setDate(currentWed.getDate() + 1)
+//         }
         
-    })
-}
+//     })
+// }
 
-document.addEventListener("DOMContentLoaded", onRightArrowClick)
-function onRightArrowClick() {
-    // updates the date carousel, starting from the wednesday previous to the current week
-    // converts html to Date() type to update the html again with the correct values
-    document.querySelector("#rightArrowContainer").addEventListener("click", function () {
-        const wedDateElement = document.getElementById("wedDate")
-        const payweekMonthElement = document.getElementById("payweekMonth")
-        const payweekYearElement = document.getElementById("payweekYear")
+// document.addEventListener("DOMContentLoaded", onRightArrowClick)
+// function onRightArrowClick() {
+//     // updates the date carousel, starting from the wednesday previous to the current week
+//     // converts html to Date() type to update the html again with the correct values
+//     document.querySelector("#rightArrowContainer").addEventListener("click", function () {
+//         const wedDateElement = document.getElementById("wedDate")
+//         const payweekMonthElement = document.getElementById("payweekMonth")
+//         const payweekYearElement = document.getElementById("payweekYear")
 
-        // need to convert month name from string to int; currentWed.setMonth((int)payweekMonth)
-        // use monthNames to update html to new month also
-        monthNames = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ]
-        let payweekMonth
-        for (i = 0; i < monthNames.length; i++) {
-            if (monthNames[i] === payweekMonthElement.innerHTML) {
-                payweekMonth = i
-            }
-        }
+//         // need to convert month name from string to int; currentWed.setMonth((int)payweekMonth)
+//         // use monthNames to update html to new month also
+//         monthNames = [
+//             "January", "February", "March", "April", "May", "June",
+//             "July", "August", "September", "October", "November", "December"
+//         ]
+//         let payweekMonth
+//         for (i = 0; i < monthNames.length; i++) {
+//             if (monthNames[i] === payweekMonthElement.innerHTML) {
+//                 payweekMonth = i
+//             }
+//         }
 
-        const wedDate = Number(wedDateElement.innerHTML)
-        const payweekYear = Number(payweekYearElement.innerHTML)
+//         const wedDate = Number(wedDateElement.innerHTML)
+//         const payweekYear = Number(payweekYearElement.innerHTML)
 
-        let currentWed = new Date()
-        currentWed.setFullYear(payweekYear)
-        currentWed.setMonth(payweekMonth)
-        currentWed.setDate(wedDate + 7)
+//         let currentWed = new Date()
+//         currentWed.setFullYear(payweekYear)
+//         currentWed.setMonth(payweekMonth)
+//         currentWed.setDate(wedDate + 7)
 
-        // update month names and year
-        if (currentWed.getMonth() == 0 && payweekMonth == 11) {
-            payweekMonthElement.innerHTML = monthNames[currentWed.getMonth()]
-        }
-        if (currentWed.getMonth() > payweekMonth) {
-            payweekMonthElement.innerHTML = monthNames[currentWed.getMonth()]
-        }
-        payweekYearElement.innerHTML = currentWed.getFullYear()
+//         // update month names and year
+//         if (currentWed.getMonth() == 0 && payweekMonth == 11) {
+//             payweekMonthElement.innerHTML = monthNames[currentWed.getMonth()]
+//         }
+//         if (currentWed.getMonth() > payweekMonth) {
+//             payweekMonthElement.innerHTML = monthNames[currentWed.getMonth()]
+//         }
+//         payweekYearElement.innerHTML = currentWed.getFullYear()
 
-        // update all dates in carousel div
-        const dateContainerChildren = getDateContainerChildren()
+//         // update all dates in carousel div
+//         const dateContainerChildren = getDateContainerChildren()
 
-        for (var i = 1; i < dateContainerChildren.length - 1; i++) {
-            const child = dateContainerChildren[i]
-            const dateElement = child.querySelector(".date")
-            dateElement.textContent = currentWed.getDate()
-            currentWed.setDate(currentWed.getDate() + 1)
-        }
-    })
-}
+//         for (var i = 1; i < dateContainerChildren.length - 1; i++) {
+//             const child = dateContainerChildren[i]
+//             const dateElement = child.querySelector(".date")
+//             dateElement.textContent = currentWed.getDate()
+//             currentWed.setDate(currentWed.getDate() + 1)
+//         }
+//     })
+// }
 
 document.addEventListener("DOMContentLoaded", renderMonth)
 function renderMonth() {
@@ -240,6 +240,7 @@ function renderMonth() {
     payweekYearElement.innerHTML = currentYear
 }
 
+document.addEventListener("htmx:afterSwap", addTableRow)
 document.addEventListener("DOMContentLoaded", addTableRow)
 function addTableRow() {
     document.querySelector("#addTableRowBtn").addEventListener("click", function() {
@@ -258,6 +259,7 @@ function addTableRow() {
     })
 }
 
+document.addEventListener("htmx:afterSwap", calculateRowTotals)
 document.addEventListener("DOMContentLoaded", calculateRowTotals)
 function calculateRowTotals() {
     const table = document.getElementById("timesheetTable")
@@ -301,22 +303,40 @@ function updateRowTotals() {
     })
 }
 
-document.querySelectorAll(".arrow").forEach(button => {
-    button.addEventListener("click", function(){
-        const wed = document.getElementById("wedDate").innerText.trim()
-        const month = document.getElementById("payweekMonth").innerText.trim()
-        const year = document.getElementById("payweekYear").innerText.trim()
-        
-        const buttons = document.querySelectorAll(".arrow")
-        buttons.forEach(button => {
-            button.setAttribute("hx-get", `/timesheets/render-by-week-start?arrow=${button.dataset.arrow}&wedDate=${wed}&month=${month}&year=${year}`)
+function putTimesheets() {
+    const forms = document.querySelectorAll(".saveAllForm")
+    const timesheetData = []
+
+    forms.forEach((form) => {
+        const timeInput = form.querySelectorAll("input[name='time']")
+        timeInput.forEach(input => {
+            if (input.id != 0) {
+                timesheetData.push({
+                    id: input.id,
+                    time: input.value
+                })
+            }
         })
-
-        // Trigger HTMX request manually
-        button.dispatchEvent(new CustomEvent('htmx:configRequest', {
-            detail: { url }
-        }));
-
-        htmx.ajax('GET', url, { target: '#initialProjectRow' });
     })
+    console.log(timesheetData)
+
+    fetch('/timesheets/put', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ timesheets: timesheetData })
+    }).then((response_ => {
+        if (response.ok) {
+            console.log('Timesheets saved successfully')
+        } else {
+            console.error('Failed to save timesheets')
+        }
+    })).catch((error) => {
+        console.error('Error:', error)
+    })
+}
+
+document.getElementById('saveAllBtn').addEventListener("click", function() {
+    putTimesheets()
 })
