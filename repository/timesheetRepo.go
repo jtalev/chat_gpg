@@ -114,3 +114,26 @@ func PutTimesheet(timesheet models.Timesheet, db *sql.DB) (models.Timesheet, err
 	}
 	return ts, nil
 }
+
+func DeleteTimesheet(id int, db *sql.DB) (models.Timesheet, error) {
+	q := `
+	delete from timesheet where id = ?;
+	`
+
+	timesheet, err := GetTimesheetById(id, db)
+	if err != nil {
+		return timesheet, err
+	}
+
+	_, err = db.Exec(q, id)
+	if err != nil {
+		return timesheet, err
+	}
+
+	timesheet, err = GetTimesheetById(id, db)
+	if err != nil {
+		return timesheet, err
+	}
+
+	return timesheet, nil
+}

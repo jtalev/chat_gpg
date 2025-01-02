@@ -82,6 +82,18 @@ func renderTemplate(
 	}
 }
 
+func executePartialTemplate(filepath string, data interface{}, w http.ResponseWriter) error {
+	tmpl, err := template.ParseFiles(filepath)
+	if err != nil {
+		return err
+	}
+	err = tmpl.ExecuteTemplate(w, "timesheetTable", data)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 type Handler struct {
 	DB     *sql.DB
 	Store  *sessions.CookieStore

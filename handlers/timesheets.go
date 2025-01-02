@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"html/template"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -22,20 +21,31 @@ type TimesheetWeek struct {
 	Timesheets []models.Timesheet
 }
 
-func mapTimesheets(employeeId, weekStart string, db *sql.DB) ([]TimesheetWeek, error) {
-	timesheets, err := repository.GetTimesheetsByWeekStart(employeeId, weekStart, db)
-	if err != nil {
-		return nil, err
+func populateNilTimesheets(timesheetWeekData []TimesheetWeek) []TimesheetWeek {
+	nullTimesheet := models.Timesheet{
+		Hours:   0,
+		Minutes: 00,
 	}
 
+	for i := range timesheetWeekData {
+		timesheetWeekData[i].Timesheets = make([]models.Timesheet, 7)
+		for j := range timesheetWeekData[i].Timesheets {
+			timesheetWeekData[i].Timesheets[j] = nullTimesheet
+		}
+	}
+
+	return timesheetWeekData
+}
+
+func initTimesheetWeek(timesheets []models.Timesheet, db *sql.DB) ([]TimesheetWeek, error) {
 	jobId := 0
-	var arr []TimesheetWeek
+	var timesheetWeekData []TimesheetWeek
 	isJobAdded := false
 
 	for _, timesheet := range timesheets {
 		if timesheet.JobId != jobId {
-			for i := range arr {
-				if arr[i].JobId == timesheet.JobId {
+			for i := range timesheetWeekData {
+				if timesheetWeekData[i].JobId == timesheet.JobId {
 					isJobAdded = true
 				}
 			}
@@ -52,26 +62,20 @@ func mapTimesheets(employeeId, weekStart string, db *sql.DB) ([]TimesheetWeek, e
 				JobId: timesheet.JobId,
 				Job:   jobStr,
 			}
-			arr = append(arr, timesheetWeek)
+			timesheetWeekData = append(timesheetWeekData, timesheetWeek)
 			jobId = timesheet.JobId
 		}
 	}
 
-	nullTimesheet := models.Timesheet{
-		Hours:   0,
-		Minutes: 00,
-	}
+	timesheetWeekData = populateNilTimesheets(timesheetWeekData)
 
-	for i := range arr {
-		arr[i].Timesheets = make([]models.Timesheet, 7)
-		for j := range arr[i].Timesheets {
-			arr[i].Timesheets[j] = nullTimesheet
-		}
-	}
+	return timesheetWeekData, nil
+}
 
+func populateTimesheetWeek(timesheetWeekData []TimesheetWeek, timesheets []models.Timesheet) ([]TimesheetWeek, error) {
 	for _, timesheet := range timesheets {
-		for i := range arr {
-			if timesheet.JobId == arr[i].JobId {
+		for i := range timesheetWeekData {
+			if timesheet.JobId == timesheetWeekData[i].JobId {
 				dateStr := timesheet.Date
 				date, err := stringToDate(dateStr)
 				if err != nil {
@@ -81,19 +85,19 @@ func mapTimesheets(employeeId, weekStart string, db *sql.DB) ([]TimesheetWeek, e
 
 				switch day.String() {
 				case "Wednesday":
-					arr[i].Timesheets[0] = timesheet
+					timesheetWeekData[i].Timesheets[0] = timesheet
 				case "Thursday":
-					arr[i].Timesheets[1] = timesheet
+					timesheetWeekData[i].Timesheets[1] = timesheet
 				case "Friday":
-					arr[i].Timesheets[2] = timesheet
+					timesheetWeekData[i].Timesheets[2] = timesheet
 				case "Saturday":
-					arr[i].Timesheets[3] = timesheet
+					timesheetWeekData[i].Timesheets[3] = timesheet
 				case "Sunday":
-					arr[i].Timesheets[4] = timesheet
+					timesheetWeekData[i].Timesheets[4] = timesheet
 				case "Monday":
-					arr[i].Timesheets[5] = timesheet
+					timesheetWeekData[i].Timesheets[5] = timesheet
 				case "Tuesday":
-					arr[i].Timesheets[6] = timesheet
+					timesheetWeekData[i].Timesheets[6] = timesheet
 				default:
 					return nil, errors.New("Unexpected value for day.String()")
 				}
@@ -101,7 +105,26 @@ func mapTimesheets(employeeId, weekStart string, db *sql.DB) ([]TimesheetWeek, e
 		}
 	}
 
-	return arr, nil
+	return timesheetWeekData, nil
+}
+
+func mapTimesheets(employeeId, weekStart string, db *sql.DB) ([]TimesheetWeek, error) {
+	timesheets, err := repository.GetTimesheetsByWeekStart(employeeId, weekStart, db)
+	if err != nil {
+		return nil, err
+	}
+
+	timesheetWeekData, err := initTimesheetWeek(timesheets, db)
+	if err != nil {
+		return nil, err
+	}
+
+	timesheetWeekData, err = populateTimesheetWeek(timesheetWeekData, timesheets)
+	if err != nil {
+		return nil, err
+	}
+
+	return timesheetWeekData, nil
 }
 
 type Data struct {
@@ -128,6 +151,43 @@ func prevWeekDates(date time.Time) []int {
 	return dates
 }
 
+func parseDate(w http.ResponseWriter, r *http.Request) (year, month, wedDate string, error error) {
+	err := r.ParseForm()
+	if err != nil {
+		return "", "", "", err
+	}
+
+	wedDate = r.FormValue("wedDate")
+	month = r.FormValue("month")
+	year = r.FormValue("year")
+
+	return year, month, wedDate, nil
+}
+
+func parseArrow(w http.ResponseWriter, r *http.Request) (string, error) {
+	err := r.ParseForm()
+	if err != nil {
+		return "", err
+	}
+
+	arrow := r.FormValue("arrow")
+
+	return arrow, nil
+}
+
+func strToInt(str []string) ([]int, error) {
+	res := make([]int, len(str))
+
+	for i := range str {
+		result, err := strconv.Atoi(str[i])
+		if err != nil {
+			return nil, err
+		}
+		res[i] = result
+	}
+	return res, nil
+}
+
 func (h *Handler) RenderTimesheetByWeek() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -138,13 +198,6 @@ func (h *Handler) RenderTimesheetByWeek() http.Handler {
 				return
 			}
 
-			err = r.ParseForm()
-			if err != nil {
-				h.Logger.Errorf("Error parsing form: %v", err)
-				http.Error(w, "Bad request", http.StatusBadRequest)
-				return
-			}
-
 			employeeId, ok := r.Context().Value("employee_id").(string)
 			if !ok {
 				h.Logger.Error("Error getting employee_id from context")
@@ -152,29 +205,24 @@ func (h *Handler) RenderTimesheetByWeek() http.Handler {
 				return
 			}
 
-			arrow := r.FormValue("arrow")
-			wedDateStr := r.FormValue("wedDate")
-			wedDate, err := strconv.Atoi(wedDateStr)
-			if err != nil {
-				h.Logger.Error("Error converting date to int")
-				http.Error(w, "Error bad request", http.StatusBadRequest)
+			yearStr, monthStr, wedDateStr, dateErr := parseDate(w, r)
+			arrow, arrowErr := parseArrow(w, r)
+			if dateErr != nil || arrowErr != nil {
+				h.Logger.Errorf("Error parsing form: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
-			monthStr := r.FormValue("month")
-			month, err := strconv.Atoi(monthStr)
+
+			dateIntArr, err := strToInt([]string{yearStr, monthStr, wedDateStr})
 			if err != nil {
-				h.Logger.Error("Error converting month to int")
-				http.Error(w, "Error bad request", http.StatusBadRequest)
+				h.Logger.Errorf("Error converting string to int: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
+			wedDate := dateIntArr[2]
+			month := dateIntArr[1]
 			timeMonth := time.Month(month)
-			yearStr := r.FormValue("year")
-			year, err := strconv.Atoi(yearStr)
-			if err != nil {
-				h.Logger.Error("Error converting year to int")
-				http.Error(w, "Error bad request", http.StatusBadRequest)
-				return
-			}
+			year := dateIntArr[0]
 
 			date := time.Date(year, timeMonth, wedDate, 0, 0, 0, 0, time.Local)
 			if arrow == "left" {
@@ -205,14 +253,10 @@ func (h *Handler) RenderTimesheetByWeek() http.Handler {
 			data.Data.PrevWeekDates = prevWeekDates
 
 			timesheetTablePath := filepath.Join("..", "ui", "templates", "timesheetTable.html")
-			tmpl, err := template.ParseFiles(timesheetTablePath)
+
+			err = executePartialTemplate(timesheetTablePath, data, w)
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			err = tmpl.ExecuteTemplate(w, "timesheetTable", data)
-			if err != nil {
-				h.Logger.Errorf("Error executing template: %v", err)
+				h.Logger.Errorf("Error executing partial tempalte: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
@@ -248,19 +292,6 @@ func (h *Handler) GetTimesheetById() http.Handler {
 			responseJson(w, timesheet, h.Logger)
 		},
 	)
-}
-
-func strToInt(str []string) ([]int, error) {
-	res := make([]int, len(str))
-
-	for i := range str {
-		result, err := strconv.Atoi(str[i])
-		if err != nil {
-			return nil, err
-		}
-		res[i] = result
-	}
-	return res, nil
 }
 
 func monthFromString(str string) (time.Month, error) {
@@ -320,10 +351,7 @@ func (h *Handler) PostTimesheetsAll() http.Handler {
 			for _, timesheet := range payload.PayloadTimesheets {
 				var ts models.Timesheet
 
-				dateArrStr := make([]string, 3)
-				dateArrStr[0] = timesheet.WeekStart.Date
-				dateArrStr[1] = timesheet.WeekStart.Month
-				dateArrStr[2] = timesheet.WeekStart.Year
+				dateArrStr := []string{timesheet.WeekStart.Date, timesheet.WeekStart.Month, timesheet.WeekStart.Year}
 				month, err := monthFromString(dateArrStr[1])
 				if err != nil {
 					h.Logger.Errorf("Error converting month str to time.Month: %v", err)
