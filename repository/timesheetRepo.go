@@ -76,6 +76,27 @@ func GetTimesheetsByWeekStart(employeeId, weekStart string, db *sql.DB) ([]model
 	return data, nil
 }
 
+func PostTimesheet(timesheet models.Timesheet, db *sql.DB) (models.Timesheet, error) {
+	q := `
+	INSERT INTO timesheet (employee_id, job_id, week_start, timesheet_date, hours, minutes)
+	VALUES ($1, $2, $3, $4, $5, $6);
+	`
+
+	_, err := db.Exec(
+		q,
+		timesheet.EmployeeId,
+		timesheet.JobId,
+		timesheet.WeekStart,
+		timesheet.Date,
+		timesheet.Hours,
+		timesheet.Minutes,
+	)
+	if err != nil {
+		return models.Timesheet{}, err
+	}
+	return timesheet, nil
+}
+
 func PutTimesheet(timesheet models.Timesheet, db *sql.DB) (models.Timesheet, error) {
 	q := `
 	update timesheet

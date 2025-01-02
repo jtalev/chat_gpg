@@ -34,6 +34,7 @@ func renderTemplate(
 	dashboardPath := filepath.Join("..", "ui", "views", "dashboard.html")
 	jobsPath := filepath.Join("..", "ui", "views", "jobs.html")
 	timesheetsPath := filepath.Join("..", "ui", "views", "timesheets.html")
+	timesheetTablePath := filepath.Join("..", "ui", "templates", "timesheetTable.html")
 	leavePath := filepath.Join("..", "ui", "views", "leave.html")
 	adminPath := filepath.Join("..", "ui", "views", "admin.html")
 	accountPath := filepath.Join("..", "ui", "views", "account.html")
@@ -62,6 +63,7 @@ func renderTemplate(
 		dashboardPath,
 		jobsPath,
 		timesheetsPath,
+		timesheetTablePath,
 		leavePath,
 		adminPath,
 		accountPath,
@@ -187,12 +189,14 @@ func (h *Handler) ServeLeaveView() http.Handler {
 type TimesheetViewData struct {
 	Jobs              []models.Job
 	InitialTimesheets []TimesheetWeek
-	InitialWedDate    int
-	InitialMonth      int
-	InitialYear       int
+	WedDate           int
+	MonthInt          int
+	MonthStr          string
+	Year              int
+	PrevWeekDates     []int
 }
 
-func wednesdayDate() (int, int, int) {
+func wednesdayDate() (int, time.Month, int, int) {
 	now := time.Now()
 	weekday := now.Weekday()
 	year, month, day := now.Date()
@@ -219,7 +223,7 @@ func wednesdayDate() (int, int, int) {
 
 	year, month, day = date.Date()
 
-	return year, int(month), day
+	return year, month, int(month), day
 }
 
 func (h *Handler) ServeTimesheetsView() http.Handler {
@@ -239,8 +243,8 @@ func (h *Handler) ServeTimesheetsView() http.Handler {
 				return
 			}
 
-			year, month, day := wednesdayDate()
-			weekStart := fmt.Sprintf("%v-%v-%v", year, month, day)
+			year, month, monthInt, day := wednesdayDate()
+			weekStart := fmt.Sprintf("%v-%v-%v", year, monthInt, day)
 
 			timesheets, err := mapTimesheets(employeeId, weekStart, h.DB)
 			if err != nil {
@@ -248,12 +252,16 @@ func (h *Handler) ServeTimesheetsView() http.Handler {
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 			}
 
+			prevWeekDates := prevWeekDates(time.Date(year, month, day, 0, 0, 0, 0, time.Local))
+
 			data := TimesheetViewData{
 				Jobs:              jobs,
 				InitialTimesheets: timesheets,
-				InitialWedDate:    day,
-				InitialMonth:      month,
-				InitialYear:       year,
+				WedDate:           day,
+				MonthInt:          monthInt,
+				MonthStr:          month.String(),
+				Year:              year,
+				PrevWeekDates:     prevWeekDates,
 			}
 			component := "timesheets"
 			title := "Timesheets - GPG"

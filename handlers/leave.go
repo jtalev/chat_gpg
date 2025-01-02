@@ -23,7 +23,13 @@ func (h *Handler) GetLeaveRequests() http.Handler {
 				return
 			}
 
-			data, err := repository.GetLeaveRequests(isAdmin, h.DB)
+			if !isAdmin {
+				h.Logger.Warn("Unauthorized user")
+				http.Error(w, "Unauthorized user", http.StatusUnauthorized)
+				return
+			}
+
+			data, err := repository.GetLeaveRequests(h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error getting leave requests: %v", err)
 				http.Error(w, "Data not found", http.StatusNotFound)

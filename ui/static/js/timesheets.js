@@ -1,3 +1,4 @@
+document.addEventListener("htmx:afterSwap", timeInputFilter)
 document.addEventListener("DOMContentLoaded", timeInputFilter) 
 function timeInputFilter() {
     const timeInputs = document.querySelectorAll('.timeInput')
@@ -256,6 +257,7 @@ function addTableRow() {
         table.appendChild(newRow)
 
         updateRowTotals()
+        timeInputFilter()
     })
 }
 
@@ -318,7 +320,6 @@ function putTimesheets() {
             }
         })
     })
-    console.log(timesheetData)
 
     fetch('/timesheets/put-all', {
         method: 'PUT',
@@ -328,15 +329,70 @@ function putTimesheets() {
         body: JSON.stringify({ timesheets: timesheetData })
     }).then((response => {
         if (response.ok) {
-            console.log('Timesheets saved successfully')
+            console.log('Timesheets updated successfully')
         } else {
-            console.error('Failed to save timesheets')
+            console.error('Failed to update timesheets')
         }
     })).catch((error) => {
         console.error('Error:', error)
     })
 }
 
-document.getElementById('saveAllBtn').addEventListener("click", function() {
-    putTimesheets()
-})
+function postTimesheets() {
+    const forms = document.querySelectorAll(".saveAllForm");
+    const timesheetData = [];
+    const weekStartDate = document.querySelector("#wedDate").innerText;
+    const month = document.querySelector("#payweekMonth").innerText;
+    const year = document.querySelector("#payweekYear").innerText;
+    const tableRows = document.getElementById("timesheetTable").rows;
+
+    for (let i = 1; i < tableRows.length; i++) {
+        const cells = tableRows[i].cells;
+        for (let j = 1; j < cells.length - 1; j++) {
+            const timeInput = cells[j].querySelectorAll("input[name='time']");
+            timeInput.forEach(input => {
+                if (input.id == 0 && input.value !== "") {
+                    const job = cells[0].querySelector(".projects");
+                    const jobId = job.dataset.jobid;
+                    const tsDate = tableRows[0].cells[j].querySelector(".date").innerText
+                    timesheetData.push({
+                        job: jobId,
+                        time: input.value,
+                        weekStart: {
+                            date: weekStartDate,
+                            month: month,
+                            year: year
+                        },
+                        date: tsDate
+                    });
+                }
+            });
+        }
+    }
+    
+    fetch('/timesheets/post-all', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ timesheets: timesheetData })
+    }).then((response => {
+        if (response.ok) {
+            console.log('Timesheets inserted successfully')
+        } else {
+            console.error('Failed to post timesheets')
+        }
+    })).catch((error) => {
+        console.error('Error:', error)
+    })
+}
+
+
+document.addEventListener("htmx:afterSwap", saveEventListenerMount)
+document.addEventListener("DOMContentLoaded", saveEventListenerMount) 
+function saveEventListenerMount() {
+    document.getElementById('saveAllBtn').addEventListener("click", function() {
+        putTimesheets()
+        postTimesheets()
+    })
+}

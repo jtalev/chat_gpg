@@ -30,9 +30,19 @@ func mapTimesheets(employeeId, weekStart string, db *sql.DB) ([]TimesheetWeek, e
 
 	jobId := 0
 	var arr []TimesheetWeek
+	isJobAdded := false
 
 	for _, timesheet := range timesheets {
 		if timesheet.JobId != jobId {
+			for i := range arr {
+				if arr[i].JobId == timesheet.JobId {
+					isJobAdded = true
+				}
+			}
+			if isJobAdded {
+				isJobAdded = false
+				continue
+			}
 			job, err := repository.GetJobById(timesheet.JobId, db)
 			if err != nil {
 				return nil, err
@@ -92,6 +102,10 @@ func mapTimesheets(employeeId, weekStart string, db *sql.DB) ([]TimesheetWeek, e
 	}
 
 	return arr, nil
+}
+
+type Data struct {
+	Data TimesheetTemplateData
 }
 
 type TimesheetTemplateData struct {
@@ -181,24 +195,22 @@ func (h *Handler) RenderTimesheetByWeek() http.Handler {
 
 			prevWeekDates := prevWeekDates(date)
 
-			data := TimesheetTemplateData{
-				Jobs:              jobs,
-				InitialTimesheets: initialTimesheets,
-				WedDate:           wedDate,
-				MonthInt:          int(timeMonth),
-				MonthStr:          timeMonth,
-				Year:              year,
-				PrevWeekDates:     prevWeekDates,
-			}
-			fmt.Println(data.MonthStr, data.Year)
+			var data Data
+			data.Data.Jobs = jobs
+			data.Data.InitialTimesheets = initialTimesheets
+			data.Data.WedDate = wedDate
+			data.Data.MonthInt = int(timeMonth)
+			data.Data.MonthStr = timeMonth
+			data.Data.Year = year
+			data.Data.PrevWeekDates = prevWeekDates
 
-			timesheetRowPath := filepath.Join("..", "ui", "templates", "timesheetRow.html")
-			tmpl, err := template.ParseFiles(timesheetRowPath)
+			timesheetTablePath := filepath.Join("..", "ui", "templates", "timesheetTable.html")
+			tmpl, err := template.ParseFiles(timesheetTablePath)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			err = tmpl.ExecuteTemplate(w, "timesheetRow", data)
+			err = tmpl.ExecuteTemplate(w, "timesheetTable", data)
 			if err != nil {
 				h.Logger.Errorf("Error executing template: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -238,11 +250,165 @@ func (h *Handler) GetTimesheetById() http.Handler {
 	)
 }
 
+func strToInt(str []string) ([]int, error) {
+	res := make([]int, len(str))
+
+	for i := range str {
+		result, err := strconv.Atoi(str[i])
+		if err != nil {
+			return nil, err
+		}
+		res[i] = result
+	}
+	return res, nil
+}
+
+func monthFromString(str string) (time.Month, error) {
+	monthMap := map[string]time.Month{
+		"January":   time.January,
+		"February":  time.February,
+		"March":     time.March,
+		"April":     time.April,
+		"May":       time.May,
+		"June":      time.June,
+		"July":      time.July,
+		"August":    time.August,
+		"September": time.September,
+		"October":   time.October,
+		"November":  time.November,
+		"December":  time.December,
+	}
+
+	str = strings.Title(strings.ToLower(str))
+	if month, ok := monthMap[str]; ok {
+		return month, nil
+	}
+	return 0, errors.New("input string doesn't match map")
+}
+
+func (h *Handler) PostTimesheetsAll() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			employeeId, ok := r.Context().Value("employee_id").(string)
+			if !ok {
+				h.Logger.Error("Error getting employee_id from context")
+				http.Error(w, "Error getting value context", http.StatusNotFound)
+				return
+			}
+
+			var payload struct {
+				PayloadTimesheets []struct {
+					JobId     string `json:"job"`
+					Time      string `json:"time"`
+					WeekStart struct {
+						Date  string `json:"date"`
+						Month string `json:"month"`
+						Year  string `json:"year"`
+					} `json:"weekStart"`
+					Date string `json:"date"`
+				} `json:"timesheets"`
+			}
+
+			err := json.NewDecoder(r.Body).Decode(&payload)
+			if err != nil {
+				h.Logger.Errorf("Error decoding JSON: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			var timesheetsToPost []models.Timesheet
+			for _, timesheet := range payload.PayloadTimesheets {
+				var ts models.Timesheet
+
+				dateArrStr := make([]string, 3)
+				dateArrStr[0] = timesheet.WeekStart.Date
+				dateArrStr[1] = timesheet.WeekStart.Month
+				dateArrStr[2] = timesheet.WeekStart.Year
+				month, err := monthFromString(dateArrStr[1])
+				if err != nil {
+					h.Logger.Errorf("Error converting month str to time.Month: %v", err)
+					http.Error(w, "Bad request", http.StatusBadRequest)
+					return
+				}
+				weekStart := fmt.Sprintf("%v-%v-%v", dateArrStr[2], int(month), dateArrStr[0])
+
+				dateArrStr[1] = "0"
+				dateArrInt, err := strToInt(dateArrStr)
+				if err != nil {
+					h.Logger.Error("Payload string can't be converted to int: %v", err)
+					http.Error(w, "Bad request", http.StatusBadRequest)
+					return
+				}
+
+				date := time.Date(dateArrInt[2], month, dateArrInt[0], 0, 0, 0, 0, time.Local)
+				tsDateStr := make([]string, 1)
+				tsDateStr[0] = timesheet.Date
+				tsDateInt, err := strToInt(tsDateStr)
+				if err != nil {
+					h.Logger.Error("Payload string can't be converted to int: %v", err)
+					http.Error(w, "Bad request", http.StatusBadRequest)
+					return
+				}
+				tsDate := ""
+				for tsDate == "" {
+					if date.Day() == tsDateInt[0] {
+						tsDate = fmt.Sprintf("%v-%v-%v", date.Year(), int(date.Month()), date.Day())
+					} else {
+						date = date.AddDate(0, 0, 1)
+					}
+				}
+
+				var timeStr []string
+				if strings.Contains(timesheet.Time, ":") {
+					timeStr = strings.Split(timesheet.Time, ":")
+					if timeStr[0] == "" {
+						timeStr[0] = "0"
+					} else if timeStr[1] == "" {
+						timeStr[1] = "0"
+					}
+				} else {
+					timeStr = append(timeStr, timesheet.Time)
+					timeStr = append(timeStr, "0")
+				}
+				timeInt, err := strToInt(timeStr)
+				if err != nil {
+					h.Logger.Error("Payload string can't be converted to int: %v", err)
+					http.Error(w, "Bad request", http.StatusBadRequest)
+					return
+				}
+
+				ts.EmployeeId = employeeId
+				ts.JobId, err = strconv.Atoi(timesheet.JobId)
+				if err != nil {
+					h.Logger.Error("Payload string can't be converted to int: %v", err)
+					http.Error(w, "Bad request", http.StatusBadRequest)
+					return
+				}
+				ts.WeekStart = weekStart
+				ts.Date = tsDate
+				ts.Hours = timeInt[0]
+				ts.Minutes = timeInt[1]
+
+				timesheetsToPost = append(timesheetsToPost, ts)
+			}
+
+			for _, timesheet := range timesheetsToPost {
+				_, err := repository.PostTimesheet(timesheet, h.DB)
+				if err != nil {
+					h.Logger.Errorf("Error posting timesheet to db: %v", err)
+					http.Error(w, "Internal server error", http.StatusInternalServerError)
+					return
+				}
+			}
+		},
+	)
+}
+
 func (h *Handler) PutTimesheetsAll() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			var payload struct {
-				Timesheets []struct {
+				PayloadTimesheets []struct {
 					ID   string `json:"id"`
 					Time string `json:"time"`
 				} `json:"timesheets"`
@@ -255,8 +421,31 @@ func (h *Handler) PutTimesheetsAll() http.Handler {
 				return
 			}
 
-			for _, timesheet := range payload.Timesheets {
-				fmt.Printf("ID: %s, Time: %s\n", timesheet.ID, timesheet.Time)
+			var timesheetsToUpdate []models.Timesheet
+			for _, timesheet := range payload.PayloadTimesheets {
+				str := strings.Split(timesheet.Time, ":")
+				str = append([]string{timesheet.ID}, str...)
+				intArr, err := strToInt(str)
+				if err != nil {
+					h.Logger.Error("Payload string can't be converted to int: %v", err)
+					http.Error(w, "Bad request", http.StatusBadRequest)
+					return
+				}
+				ts := models.Timesheet{
+					ID:      intArr[0],
+					Hours:   intArr[1],
+					Minutes: intArr[2],
+				}
+				timesheetsToUpdate = append(timesheetsToUpdate, ts)
+			}
+
+			for _, timesheet := range timesheetsToUpdate {
+				_, err := repository.PutTimesheet(timesheet, h.DB)
+				if err != nil {
+					h.Logger.Errorf("Error updating timesheet: %v", err)
+					http.Error(w, "Internal server error", http.StatusInternalServerError)
+					return
+				}
 			}
 		},
 	)
@@ -277,19 +466,15 @@ func (h *Handler) PutTimesheet() http.HandlerFunc {
 				return
 			}
 
-			time := strings.Split(data.Time, ":")
-			hours, err := strconv.Atoi(time[0])
+			str := strings.Split(data.Time, ":")
+			intArr, err := strToInt(str)
 			if err != nil {
-				h.Logger.Errorf("Invalid hours input: %v", err)
+				h.Logger.Error("Payload string can't be converted to int: %v", err)
 				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
-			minutes, err := strconv.Atoi(time[1])
-			if err != nil {
-				h.Logger.Errorf("Invalid minutes input: %v", err)
-				http.Error(w, "Bad request", http.StatusBadRequest)
-				return
-			}
+			hours := intArr[0]
+			minutes := intArr[1]
 
 			timesheet := models.Timesheet{
 				ID:      data.ID,

@@ -3,16 +3,11 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	"log"
 
 	"github.com/jtalev/chat_gpg/models"
 )
 
-func GetLeaveRequests(isAdmin bool, db *sql.DB) ([]models.LeaveRequest, error) {
-	if !isAdmin {
-		return nil, errors.New("Unauthorised access")
-	}
-
+func GetLeaveRequests(db *sql.DB) ([]models.LeaveRequest, error) {
 	q := `
 	select lr.request_id, lr.employee_id, e.first_name, e.last_name, lr.leave_type, lr.from_date,
 	lr.to_date, lr.note, lr.is_approved 
@@ -22,7 +17,7 @@ func GetLeaveRequests(isAdmin bool, db *sql.DB) ([]models.LeaveRequest, error) {
 	`
 	rows, err := db.Query(q)
 	if err != nil {
-		return nil, errors.New("Error querying leave requests")
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -40,7 +35,7 @@ func GetLeaveRequests(isAdmin bool, db *sql.DB) ([]models.LeaveRequest, error) {
 			&leaveRequest.Note,
 			&leaveRequest.IsApproved,
 		); err != nil {
-			return nil, errors.New("Error scanning row")
+			return nil, err
 		}
 		data = append(data, leaveRequest)
 	}
@@ -57,7 +52,7 @@ func GetLeaveRequestById(requestId int, db *sql.DB) (models.LeaveRequest, error)
 	`
 	rows, err := db.Query(q, requestId)
 	if err != nil {
-		log.Fatal(err)
+		return models.LeaveRequest{}, err
 	}
 	defer rows.Close()
 
@@ -74,7 +69,7 @@ func GetLeaveRequestById(requestId int, db *sql.DB) (models.LeaveRequest, error)
 			&data.Note,
 			&data.IsApproved,
 		); err != nil {
-			return data, errors.New("Error scanning row")
+			return data, err
 		}
 	} else {
 		return data, errors.New("No leave request with provided requestId")
@@ -93,7 +88,7 @@ func GetLeaveRequestsByEmployee(employeeId string, db *sql.DB) ([]models.LeaveRe
 	`
 	rows, err := db.Query(q, employeeId)
 	if err != nil {
-		return nil, errors.New("Error querying leave requests")
+		return nil, err
 	}
 	defer rows.Close()
 
@@ -111,7 +106,7 @@ func GetLeaveRequestsByEmployee(employeeId string, db *sql.DB) ([]models.LeaveRe
 			&leaveRequest.Note,
 			&leaveRequest.IsApproved,
 		); err != nil {
-			return nil, errors.New("Error scanning row")
+			return nil, err
 		}
 		leaveRequests = append(leaveRequests, leaveRequest)
 	}
@@ -126,7 +121,7 @@ func PostLeaveRequest(leaveRequest models.LeaveRequest, db *sql.DB) (models.Leav
 	`
 	_, err := db.Exec(q, leaveRequest.EmployeeId, leaveRequest.Type, leaveRequest.From, leaveRequest.To, leaveRequest.Note)
 	if err != nil {
-		return models.LeaveRequest{}, errors.New("Error executing db query")
+		return models.LeaveRequest{}, err
 	}
 	return models.LeaveRequest{
 		EmployeeId: leaveRequest.EmployeeId,
@@ -154,7 +149,7 @@ func PutLeaveRequest(leaveRequest models.LeaveRequest, db *sql.DB) (models.Leave
 		leaveRequest.RequestId,
 	)
 	if err != nil {
-		return models.LeaveRequest{}, errors.New("Error updating leave request")
+		return models.LeaveRequest{}, err
 	}
 	return leaveRequest, nil
 }
@@ -165,7 +160,7 @@ func DeleteLeaveRequest(requestId int, db *sql.DB) (models.LeaveRequest, error) 
 	`
 	_, err := db.Exec(q, requestId)
 	if err != nil {
-		return models.LeaveRequest{}, errors.New("Error deleting leave request")
+		return models.LeaveRequest{}, err
 	}
 
 	lr, err := GetLeaveRequestById(requestId, db)
