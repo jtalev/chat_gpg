@@ -318,6 +318,7 @@ form input {
     justify-content: center;
     align-items: center;
     margin: 0;
+    cursor: pointer;
 }
 
 .loginFormInput {
@@ -448,6 +449,7 @@ form input {
     background-color: white;
     color: var(--gpg-green);
     border: var(--gpg-green) solid 1px;
+    cursor: pointer;
 }
 
 #timesheetTableContainer {
@@ -456,27 +458,70 @@ form input {
     margin: 0;
     padding: 0;
     overflow-x: auto;
+    border: var(--timesheet-border) solid 1px;
 }
 
 .timesheetTable {
-    width: 100%;
     border-spacing: 0;
-    border-collapse: collapse;
+}
+
+.datesRow > th {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background-color: var(--main-background-color);
+}
+
+.dateContainer {
+    border-right: var(--timesheet-border) solid 1px;
+    border-bottom: var(--timesheet-border) solid 1px;
+}
+
+.inputContainer {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    border-top: var(--main-background-color) solid 1px;
+    border-right: var(--main-background-color) solid 1px;
+    border-bottom: var(--main-background-color) solid 1px;
+    font-size: small;
 }
 
 .stickyCell {
-    width: 10%;
-    height: 100%;
+    height: 3em;
     position: sticky;
     left: 0;
     background-color: #f9f9f9;
     z-index: 1;
     overflow: hidden;
     text-overflow: ellipsis; /* Add ellipsis for overflowed text */
+    border: none;
+    padding: 0;
+    margin: 0;
 }
 
-.stickyCell > p {
+.stickyCellContent > p {
     font-size: small;
+}
+
+.stickyCellContent {
+    border-bottom: var(--timesheet-border) solid 1px;
+    border-right: var(--timesheet-border) solid 1px;
+    height: 100%;
+    width: 10em;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.timesheetBorderBtm {
+    border-bottom: var(--timesheet-border) solid 1px;
+}
+
+.timesheetBorderTopLight {
+    border-top: var(--main-background-color) solid 1px;
 }
 
 .dateCell {
@@ -486,8 +531,10 @@ form input {
     justify-content: center;
     margin: 0;
     padding-top: 0;
-    width: 100%;
+    width: 3em;
+    height: 100%;
     border-collapse: collapse;
+    font-size: small;
 }
 
 .day {
@@ -498,13 +545,11 @@ form input {
 }
 
 .date {
-    background-color: #cccccc;
     width: 20%;
     height: 20%;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 50%;
     margin: 0;
     padding: 0;
     font-weight: lighter;
@@ -516,48 +561,28 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
-.datesRow {
+.saveAllForm{
     width: 100%;
-}
-
-.projectRow {
-    width: 100%;
-    height: 3em;
-}
-
-.datesRow th {
-    text-align: center;
-    width: 10%;
-    margin: 0;
-    padding: 0;
-    background-color: var(--main-background-color);
-    border: var(--timesheet-border) solid 1px;
-}
-
-.projectRow td {
-    text-align: center;
-    width: 10%;
-    margin: 0;
-    padding: 0;
-    border: var(--main-background-color) solid 1px;
+    height: 100%;
 }
 
 .timeInput {
     display: flex;
     width: 99%;
-    height: 3em;
+    height: 100%;
     text-align: center;
     cursor: pointer;
     margin: 0;
     padding: 0;
     border: none;
+    font-size: small;
 }
 
 @media screen and (max-width: 730px) {
     .projects {
         margin: 0;
         padding: 0;
-        width: 6em;
+        width: 80%;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis; /* Add ellipsis for overflowed text */
@@ -569,7 +594,7 @@ input::-webkit-inner-spin-button {
     .projects {
         margin: 0;
         padding: 0;
-        width: 10em;
+        width: 80%;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis; /* Add ellipsis for overflowed text */
@@ -577,7 +602,9 @@ input::-webkit-inner-spin-button {
     }   
 }
 
-
+.projects > select {
+    cursor: pointer;
+}
 
 #timesheetBtnContainer {
     display: flex;
@@ -596,6 +623,7 @@ input::-webkit-inner-spin-button {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .saveAllBtn {
@@ -608,6 +636,11 @@ input::-webkit-inner-spin-button {
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
+}
+
+.deleteRowBtn {
+    width: 80%;
 }
 
 /***** leave *****/
