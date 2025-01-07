@@ -6,9 +6,41 @@ import (
 	"github.com/jtalev/chat_gpg/models"
 )
 
+func GetTimesheets(db *sql.DB) ([]models.Timesheet, error) {
+	q := `
+	select * from timesheet;
+	`
+
+	rows, err := db.Query(q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var outTimesheets []models.Timesheet
+	for rows.Next() {
+		var timesheet models.Timesheet
+		err := rows.Scan(
+			&timesheet.TimesheetId,
+			&timesheet.TimesheetWeekId,
+			&timesheet.TimesheetDate,
+			&timesheet.Day,
+			&timesheet.Hours,
+			&timesheet.Minutes,
+			&timesheet.CreatedAt,
+			&timesheet.ModifiedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+		outTimesheets = append(outTimesheets, timesheet)
+	}
+	return outTimesheets, nil
+}
+
 func GetTimesheetById(id int, db *sql.DB) (models.Timesheet, error) {
 	q := `
-	select * from timesheet where id = ?;
+	select * from timesheet where timesheet_id = ?;
 	`
 
 	rows, err := db.Query(q, id)
@@ -20,15 +52,14 @@ func GetTimesheetById(id int, db *sql.DB) (models.Timesheet, error) {
 	var timesheet models.Timesheet
 	if rows.Next() {
 		err := rows.Scan(
-			&timesheet.ID,
-			&timesheet.EmployeeId,
-			&timesheet.JobId,
-			&timesheet.WeekStart,
-			&timesheet.Date,
+			&timesheet.TimesheetId,
+			&timesheet.TimesheetWeekId,
+			&timesheet.TimesheetDate,
+			&timesheet.Day,
 			&timesheet.Hours,
 			&timesheet.Minutes,
 			&timesheet.CreatedAt,
-			&timesheet.UpdatedAt,
+			&timesheet.ModifiedAt,
 		)
 		if err != nil {
 			return models.Timesheet{}, err
@@ -40,100 +71,50 @@ func GetTimesheetById(id int, db *sql.DB) (models.Timesheet, error) {
 	return timesheet, nil
 }
 
-func GetTimesheetsByWeekStart(employeeId, weekStart string, db *sql.DB) ([]models.Timesheet, error) {
+func PostTimesheet(inTimesheet models.Timesheet, db *sql.DB) (models.Timesheet, error) {
 	q := `
-	select *
-	from timesheet
-	where employee_id = $1 and week_start = $2
-	order by job_id and timesheet_date;
+	INSERT INTO timesheet (timesheet_week_id, timesheet_date, day, hours, minutes)
+	VALUES ($1, $2, $3, $4, $5);
 	`
 
-	rows, err := db.Query(q, employeeId, weekStart)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	var data []models.Timesheet
-	for rows.Next() {
-		var timesheet models.Timesheet
-		err := rows.Scan(
-			&timesheet.ID,
-			&timesheet.EmployeeId,
-			&timesheet.JobId,
-			&timesheet.WeekStart,
-			&timesheet.Date,
-			&timesheet.Hours,
-			&timesheet.Minutes,
-			&timesheet.CreatedAt,
-			&timesheet.UpdatedAt,
-		)
-		if err != nil {
-			return nil, err
-		}
-		data = append(data, timesheet)
-	}
-	return data, nil
-}
-
-func PostTimesheet(timesheet models.Timesheet, db *sql.DB) (models.Timesheet, error) {
-	q := `
-	INSERT INTO timesheet (employee_id, job_id, week_start, timesheet_date, hours, minutes)
-	VALUES ($1, $2, $3, $4, $5, $6);
-	`
-
-	_, err := db.Exec(
+	var outTimesheet models.Timesheet
+	err := db.QueryRow(
 		q,
-		timesheet.EmployeeId,
-		timesheet.JobId,
-		timesheet.WeekStart,
-		timesheet.Date,
-		timesheet.Hours,
-		timesheet.Minutes,
+		inTimesheet.TimesheetWeekId,
+		inTimesheet.TimesheetDate,
+		inTimesheet.Day,
+		inTimesheet.Hours,
+		inTimesheet.Minutes,
+	).Scan(
+		&outTimesheet.TimesheetId,
+		&outTimesheet.TimesheetWeekId,
+		&outTimesheet.TimesheetDate,
+		&outTimesheet.Day,
+		&outTimesheet.Hours,
+		&outTimesheet.Minutes,
+		&outTimesheet.CreatedAt,
+		&outTimesheet.ModifiedAt,
 	)
 	if err != nil {
 		return models.Timesheet{}, err
 	}
-	return timesheet, nil
+	return outTimesheet, nil
 }
 
-func PutTimesheet(timesheet models.Timesheet, db *sql.DB) (models.Timesheet, error) {
+func PutTimesheet(inTimesheet models.Timesheet, db *sql.DB) (models.Timesheet, error) {
 	q := `
 	update timesheet
-	set hours = $1, minutes = $2, updated_at = CURRENT_TIMESTAMP
-	where id = $3;
+	set hours = $1, minutes = $2, modified_at = CURRENT_TIMESTAMP
+	where timesheet_id = $3;
 	`
 
-	_, err := db.Exec(q, timesheet.Hours, timesheet.Minutes, timesheet.ID)
+	_, err := db.Exec(q, inTimesheet.Hours, inTimesheet.Minutes, inTimesheet.TimesheetId)
 	if err != nil {
 		return models.Timesheet{}, err
 	}
-	ts, err := GetTimesheetById(timesheet.ID, db)
+	outTimesheet, err := GetTimesheetById(inTimesheet.TimesheetId, db)
 	if err != nil {
 		return models.Timesheet{}, err
 	}
-	return ts, nil
-}
-
-func DeleteTimesheet(id int, db *sql.DB) (models.Timesheet, error) {
-	q := `
-	delete from timesheet where id = ?;
-	`
-
-	timesheet, err := GetTimesheetById(id, db)
-	if err != nil {
-		return timesheet, err
-	}
-
-	_, err = db.Exec(q, id)
-	if err != nil {
-		return timesheet, err
-	}
-
-	timesheet, err = GetTimesheetById(id, db)
-	if err != nil {
-		return timesheet, err
-	}
-
-	return timesheet, nil
+	return outTimesheet, nil
 }

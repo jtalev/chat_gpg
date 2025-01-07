@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
 	"net/http"
@@ -15,12 +16,33 @@ import (
 	"go.uber.org/zap"
 )
 
-func responseJson(w http.ResponseWriter, data any, sugar *zap.SugaredLogger) {
+func getEmployeeId(w http.ResponseWriter, r *http.Request) (string, error) {
+	employeeId, ok := r.Context().Value("employee_id").(string)
+	if !ok {
+		return "", errors.New("Error retrieving employee_id")
+	}
+	return employeeId, nil
+}
+
+func responseJSON(w http.ResponseWriter, data any, sugar *zap.SugaredLogger) {
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(data); err != nil {
 		sugar.Errorf("Error encoding leave requests: %v", err)
 		http.Error(w, "failed to fetch leave requests", http.StatusInternalServerError)
+		return
 	}
+}
+
+func executePartialTemplate(filepath string, data interface{}, w http.ResponseWriter) error {
+	tmpl, err := template.ParseFiles(filepath)
+	if err != nil {
+		return err
+	}
+	err = tmpl.ExecuteTemplate(w, "timesheetTable", data)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func renderTemplate(
@@ -80,18 +102,6 @@ func renderTemplate(
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
-}
-
-func executePartialTemplate(filepath string, data interface{}, w http.ResponseWriter) error {
-	tmpl, err := template.ParseFiles(filepath)
-	if err != nil {
-		return err
-	}
-	err = tmpl.ExecuteTemplate(w, "timesheetTable", data)
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 type Handler struct {

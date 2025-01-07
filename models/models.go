@@ -1,5 +1,13 @@
 package models
 
+import (
+	"database/sql"
+	"os"
+	"path/filepath"
+
+	"go.uber.org/zap"
+)
+
 type ValidationResult struct {
 	Key     string
 	IsValid bool
@@ -51,14 +59,56 @@ type Job struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
+type TimesheetWeek struct {
+	TimesheetWeekId int    `json:"timesheet_week_id"`
+	EmployeeId      string `json:"employee_id"`
+	JobId           int    `json:"job_id"`
+	WedTimesheetId  int    `json:"wed_timesheet_id"`
+	ThuTimesheetId  int    `json:"thu_timesheet_id"`
+	FriTimesheetId  int    `json:"fri_timesheet_id"`
+	SatTimesheetId  int    `json:"sat_timesheet_id"`
+	SunTimesheetId  int    `json:"sun_timesheet_id"`
+	MonTimesheetId  int    `json:"mon_timesheet_id"`
+	TueTimesheetId  int    `json:"tue_timesheet_id"`
+	WeekStartDate   string `json:"week_start_date"`
+	CreatedAt       string `json:"created_at"`
+	ModifiedAt      string `json:"modified_at"`
+}
+
 type Timesheet struct {
-	ID         int    `json:"id"`
-	EmployeeId string `json:"employee_id"`
-	JobId      int    `json:"job_id"`
-	WeekStart  string `json:"week_start"`
-	Date       string `json:"date"`
-	Hours      int    `json:"hours"`
-	Minutes    int    `json:"minutes"`
-	CreatedAt  string `json:"created_at"`
-	UpdatedAt  string `json:"updated_at"`
+	TimesheetId     int    `json:"timesheet_id"`
+	TimesheetWeekId int    `json:"timesheet_week_id"`
+	TimesheetDate   string `json:"timesheet_date"`
+	Day             string `json:"day"`
+	Hours           int    `json:"hours"`
+	Minutes         int    `json:"minutes"`
+	CreatedAt       string `json:"created_at"`
+	ModifiedAt      string `json:"modified_at"`
+}
+
+func InitDb(rootPath string, sugar *zap.SugaredLogger) *sql.DB {
+	env := os.Getenv("ENV")
+	var dbPath string
+	if env == "development" {
+		dbPath = filepath.Join("..", "db", "dev.db")
+	} else if env == "production" {
+		dbPath = filepath.Join("..", "db", "prod.db")
+	}
+	if dbPath == "" {
+		sugar.Error("Error obtaining db path")
+	}
+
+	db, err := sql.Open("sqlite3", dbPath)
+	if err != nil {
+		sugar.Fatal(err)
+	}
+
+	err = db.Ping()
+	if err != nil {
+		sugar.Error("DB connection not open:", err)
+	} else {
+		sugar.Info("DB connection is open and healthy")
+	}
+
+	return db
 }

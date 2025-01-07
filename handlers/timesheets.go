@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -13,7 +14,132 @@ import (
 
 	"github.com/jtalev/chat_gpg/models"
 	"github.com/jtalev/chat_gpg/repository"
+	"github.com/jtalev/chat_gpg/services"
 )
+
+func parseRequestValues(keys []string, r *http.Request) ([]string, error) {
+	out := make([]string, len(keys))
+
+	err := r.ParseForm()
+	if err != nil {
+		return out, err
+	}
+
+	for i := range keys {
+		val := r.FormValue(keys[i])
+		out[i] = val
+	}
+
+	return out, nil
+}
+
+func decodeJSON(payload interface{}, r *http.Request) error {
+	err := json.NewDecoder(r.Body).Decode(payload)
+	return err
+}
+
+func (h *Handler) GetTimesheets() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			outTimesheets, err := services.GetAllTimesheets(h.DB)
+			if err != nil {
+				log.Println("Error retrieving timesheets from db: ", err)
+				http.Error(w, "Internal server error", http.StatusNotFound)
+				return
+			}
+			responseJSON(w, outTimesheets, h.Logger)
+		},
+	)
+}
+
+func (h *Handler) GetTimesheetById() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			requestValues, err := parseRequestValues([]string{"id"}, r)
+			if err != nil {
+				log.Fatalf("Error parsing query params: ", err)
+				http.Error(w, "Bad Request", http.StatusBadRequest)
+				return
+			}
+
+			inTimesheetId := requestValues[0]
+
+			outTimesheet, err := services.GetTimesheetById(inTimesheetId, h.DB)
+			if err != nil {
+				log.Println("Error retrieving timesheet from db: ", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			responseJSON(w, outTimesheet, h.Logger)
+		},
+	)
+}
+
+func (h *Handler) PutTimesheet() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			var updateParams struct {
+				TimesheetId int    `json:"timesheet_id"`
+				Time        string `json:"time"`
+			}
+
+			err := decodeJSON(&updateParams, r)
+			if err != nil {
+				h.Logger.Errorf("Error decoding JSON: ", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			outTimesheet, err := services.PutTimesheet(updateParams.TimesheetId, updateParams.Time, h.DB)
+			if err != nil {
+				log.Println("Error updating timesheet: ", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			responseJSON(w, outTimesheet, h.Logger)
+		},
+	)
+}
+
+func (h *Handler) InitTimesheetWeek() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			employeeId, err := getEmployeeId(w, r)
+			if err != nil {
+				log.Println(err)
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
+
+			var requestParams struct {
+				JobId         int    `json:"job_id"`
+				WeekStartDate string `json:"week_start_date"`
+			}
+
+			err = decodeJSON(&requestParams, r)
+			if err != nil {
+				h.Logger.Errorf("Error decoding JSON: ", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			outTimesheetWeek, err := services.InitTimesheetWeek(
+				employeeId,
+				requestParams.JobId,
+				requestParams.WeekStartDate,
+				h.DB)
+			if err != nil {
+				log.Println("Error initializing timesheet week: ", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			responseJSON(w, outTimesheetWeek, h.Logger)
+		},
+	)
+}
 
 type TimesheetWeek struct {
 	JobId      int
@@ -43,9 +169,9 @@ func initTimesheetWeek(timesheets []models.Timesheet, db *sql.DB) ([]TimesheetWe
 	isJobAdded := false
 
 	for _, timesheet := range timesheets {
-		if timesheet.JobId != jobId {
+		if timesheet.TimesheetId != jobId {
 			for i := range timesheetWeekData {
-				if timesheetWeekData[i].JobId == timesheet.JobId {
+				if timesheetWeekData[i].JobId == timesheet.TimesheetId {
 					isJobAdded = true
 				}
 			}
@@ -53,17 +179,17 @@ func initTimesheetWeek(timesheets []models.Timesheet, db *sql.DB) ([]TimesheetWe
 				isJobAdded = false
 				continue
 			}
-			job, err := repository.GetJobById(timesheet.JobId, db)
+			job, err := repository.GetJobById(timesheet.TimesheetId, db)
 			if err != nil {
 				return nil, err
 			}
 			jobStr := fmt.Sprintf("%v, %v %v, %v", job.Name, job.Number, job.Address, job.Suburb)
 			timesheetWeek := TimesheetWeek{
-				JobId: timesheet.JobId,
+				JobId: timesheet.TimesheetId,
 				Job:   jobStr,
 			}
 			timesheetWeekData = append(timesheetWeekData, timesheetWeek)
-			jobId = timesheet.JobId
+			jobId = timesheet.TimesheetId
 		}
 	}
 
@@ -75,8 +201,8 @@ func initTimesheetWeek(timesheets []models.Timesheet, db *sql.DB) ([]TimesheetWe
 func populateTimesheetWeek(timesheetWeekData []TimesheetWeek, timesheets []models.Timesheet) ([]TimesheetWeek, error) {
 	for _, timesheet := range timesheets {
 		for i := range timesheetWeekData {
-			if timesheet.JobId == timesheetWeekData[i].JobId {
-				dateStr := timesheet.Date
+			if timesheet.TimesheetId == timesheetWeekData[i].JobId {
+				dateStr := timesheet.TimesheetDate
 				date, err := stringToDate(dateStr)
 				if err != nil {
 					return nil, err
@@ -109,10 +235,7 @@ func populateTimesheetWeek(timesheetWeekData []TimesheetWeek, timesheets []model
 }
 
 func mapTimesheets(employeeId, weekStart string, db *sql.DB) ([]TimesheetWeek, error) {
-	timesheets, err := repository.GetTimesheetsByWeekStart(employeeId, weekStart, db)
-	if err != nil {
-		return nil, err
-	}
+	timesheets, err := repository.GetTimesheets(db)
 
 	timesheetWeekData, err := initTimesheetWeek(timesheets, db)
 	if err != nil {
@@ -264,36 +387,6 @@ func (h *Handler) RenderTimesheetByWeek() http.Handler {
 	)
 }
 
-func (h *Handler) GetTimesheetById() http.Handler {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			err := r.ParseForm()
-			if err != nil {
-				h.Logger.Errorf("Error parsing form: %v", err)
-				http.Error(w, "Bad request", http.StatusBadRequest)
-				return
-			}
-
-			idStr := r.FormValue("id")
-			id, err := strconv.Atoi(idStr)
-			if err != nil {
-				h.Logger.Errorf("Invalid form value: %v", err)
-				http.Error(w, "Bad request", http.StatusBadRequest)
-				return
-			}
-
-			timesheet, err := repository.GetTimesheetById(id, h.DB)
-			if err != nil {
-				h.Logger.Errorf("Error querying timesheet from db: %v", err)
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
-
-			responseJson(w, timesheet, h.Logger)
-		},
-	)
-}
-
 func monthFromString(str string) (time.Month, error) {
 	monthMap := map[string]time.Month{
 		"January":   time.January,
@@ -320,12 +413,6 @@ func monthFromString(str string) (time.Month, error) {
 func (h *Handler) PostTimesheetsAll() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			employeeId, ok := r.Context().Value("employee_id").(string)
-			if !ok {
-				h.Logger.Error("Error getting employee_id from context")
-				http.Error(w, "Error getting value context", http.StatusNotFound)
-				return
-			}
 
 			var payload struct {
 				PayloadTimesheets []struct {
@@ -358,7 +445,6 @@ func (h *Handler) PostTimesheetsAll() http.Handler {
 					http.Error(w, "Bad request", http.StatusBadRequest)
 					return
 				}
-				weekStart := fmt.Sprintf("%v-%v-%v", dateArrStr[2], int(month), dateArrStr[0])
 
 				dateArrStr[1] = "0"
 				dateArrInt, err := strToInt(dateArrStr)
@@ -405,15 +491,7 @@ func (h *Handler) PostTimesheetsAll() http.Handler {
 					return
 				}
 
-				ts.EmployeeId = employeeId
-				ts.JobId, err = strconv.Atoi(timesheet.JobId)
-				if err != nil {
-					h.Logger.Error("Payload string can't be converted to int: %v", err)
-					http.Error(w, "Bad request", http.StatusBadRequest)
-					return
-				}
-				ts.WeekStart = weekStart
-				ts.Date = tsDate
+				ts.TimesheetDate = tsDate
 				ts.Hours = timeInt[0]
 				ts.Minutes = timeInt[1]
 
@@ -460,9 +538,9 @@ func (h *Handler) PutTimesheetsAll() http.Handler {
 					return
 				}
 				ts := models.Timesheet{
-					ID:      intArr[0],
-					Hours:   intArr[1],
-					Minutes: intArr[2],
+					TimesheetId: intArr[0],
+					Hours:       intArr[1],
+					Minutes:     intArr[2],
 				}
 				timesheetsToUpdate = append(timesheetsToUpdate, ts)
 			}
@@ -475,49 +553,6 @@ func (h *Handler) PutTimesheetsAll() http.Handler {
 					return
 				}
 			}
-		},
-	)
-}
-
-func (h *Handler) PutTimesheet() http.HandlerFunc {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			var data struct {
-				ID   int    `json:"id"`
-				Time string `json:"time"`
-			}
-
-			err := json.NewDecoder(r.Body).Decode(&data)
-			if err != nil {
-				h.Logger.Errorf("Error decoding JSON: %v", err)
-				http.Error(w, "Bad request", http.StatusBadRequest)
-				return
-			}
-
-			str := strings.Split(data.Time, ":")
-			intArr, err := strToInt(str)
-			if err != nil {
-				h.Logger.Error("Payload string can't be converted to int: %v", err)
-				http.Error(w, "Bad request", http.StatusBadRequest)
-				return
-			}
-			hours := intArr[0]
-			minutes := intArr[1]
-
-			timesheet := models.Timesheet{
-				ID:      data.ID,
-				Hours:   hours,
-				Minutes: minutes,
-			}
-
-			timesheet, err = repository.PutTimesheet(timesheet, h.DB)
-			if err != nil {
-				h.Logger.Errorf("Error updating timesheet: %v", err)
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
-
-			responseJson(w, timesheet, h.Logger)
 		},
 	)
 }

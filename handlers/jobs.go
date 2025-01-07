@@ -28,7 +28,7 @@ func (h *Handler) GetJobs() http.Handler {
 				return
 			}
 
-			responseJson(w, data, h.Logger)
+			responseJSON(w, data, h.Logger)
 		},
 	)
 }
@@ -52,7 +52,7 @@ func (h *Handler) GetJobById() http.Handler {
 			}
 			result, err := repository.GetJobById(id, h.DB)
 
-			responseJson(w, result, h.Logger)
+			responseJSON(w, result, h.Logger)
 		},
 	)
 }
@@ -70,7 +70,7 @@ func (h *Handler) GetJobByName() http.Handler {
 			name := r.FormValue("name")
 			result, err := repository.GetJobByName(name, h.DB)
 
-			responseJson(w, result, h.Logger)
+			responseJSON(w, result, h.Logger)
 		},
 	)
 }
@@ -107,7 +107,7 @@ func (h *Handler) PostJob() http.Handler {
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
-			responseJson(w, newJob, h.Logger)
+			responseJSON(w, newJob, h.Logger)
 		},
 	)
 }
@@ -151,7 +151,7 @@ func (h *Handler) PutJob() http.Handler {
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
-			responseJson(w, newJob, h.Logger)
+			responseJSON(w, newJob, h.Logger)
 		},
 	)
 }
@@ -181,7 +181,7 @@ func (h *Handler) DeleteJob() http.Handler {
 				return
 			}
 
-			responseJson(w, deletedJob, h.Logger)
+			responseJSON(w, deletedJob, h.Logger)
 		},
 	)
 }

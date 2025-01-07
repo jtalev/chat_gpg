@@ -36,7 +36,7 @@ func (h *Handler) GetLeaveRequests() http.Handler {
 				return
 			}
 
-			responseJson(w, data, h.Logger)
+			responseJSON(w, data, h.Logger)
 		},
 	)
 }
@@ -58,7 +58,7 @@ func (h *Handler) GetLeaveRequestsByEmployee() http.Handler {
 				return
 			}
 
-			responseJson(w, data, h.Logger)
+			responseJSON(w, data, h.Logger)
 		},
 	)
 }
@@ -172,7 +172,7 @@ func (h *Handler) PostLeaveRequest() http.Handler {
 			}
 			leaveRequest.FirstName = employee.FirstName
 			leaveRequest.LastName = employee.LastName
-			responseJson(w, leaveRequest, h.Logger)
+			responseJSON(w, leaveRequest, h.Logger)
 		},
 	)
 }
@@ -257,7 +257,7 @@ func (h *Handler) PutLeaveRequest() http.Handler {
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
-			responseJson(w, response, h.Logger)
+			responseJSON(w, response, h.Logger)
 		},
 	)
 }
@@ -279,7 +279,7 @@ func (h *Handler) DeleteLeaveRequest() http.Handler {
 				return
 			}
 
-			responseJson(w, lr, h.Logger)
+			responseJSON(w, lr, h.Logger)
 		},
 	)
 }
