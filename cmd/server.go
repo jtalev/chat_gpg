@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -16,38 +15,12 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/jtalev/chat_gpg/auth"
 	"github.com/jtalev/chat_gpg/handlers"
+	"github.com/jtalev/chat_gpg/models"
 	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/zap"
 )
 
-func initDb(rootPath string, sugar *zap.SugaredLogger) *sql.DB {
-	env := os.Getenv("ENV")
-	var dbPath string
-	if env == "development" {
-		dbPath = filepath.Join("..", "db", "dev.db")
-	} else if env == "production" {
-		dbPath = filepath.Join("..", "db", "prod.db")
-	}
-	if dbPath == "" {
-		sugar.Error("Error obtaining db path")
-	}
-
-	db, err := sql.Open("sqlite3", dbPath)
-	if err != nil {
-		sugar.Fatal(err)
-	}
-
-	err = db.Ping()
-	if err != nil {
-		sugar.Error("DB connection not open:", err)
-	} else {
-		sugar.Info("DB connection is open and healthy")
-	}
-
-	return db
-}
-
-func newStore(sugar *zap.SugaredLogger) *sessions.CookieStore {
+func newCookieStore() *sessions.CookieStore {
 	var (
 		key = []byte(os.Getenv("SESSION_HMAC_KEY"))
 		// encryptionKey = []byte(os.Getenv("SESSION_ENC_KEY"))
@@ -88,6 +61,7 @@ func new_server(
 func run(
 	ctx context.Context,
 ) error {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	rootPath, err := filepath.Abs("..")
 	if err != nil {
 		log.Fatalf("Error determinging root path: %v", err)
@@ -102,8 +76,8 @@ func run(
 	}
 	sugar := logger.Sugar()
 	defer logger.Sync()
-	db := initDb(rootPath, sugar)
-	store := newStore(sugar)
+	db := models.InitDb(rootPath, sugar)
+	store := newCookieStore()
 	h := handlers.Handler{
 		DB:     db,
 		Store:  store,
@@ -113,6 +87,7 @@ func run(
 		Logger: sugar,
 		Store:  store,
 	}
+
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
 	server := new_server(ctx, &h, &a, store, sugar)
@@ -143,4 +118,5 @@ func run(
 	}()
 	wg.Wait()
 	return nil
+
 }
