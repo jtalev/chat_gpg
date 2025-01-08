@@ -104,7 +104,7 @@ VALUES ('Matts House', 1, 'Trewheela Ave', 'Manifold Heights', '3218', 'Geelong'
 /** ---- timesheet_week inserts ---- **/
 INSERT INTO timesheet_week 
 (employee_id, job_id, wed_timesheet_id, thu_timesheet_id, fri_timesheet_id, sat_timesheet_id, sun_timesheet_id, mon_timesheet_id, tue_timesheet_id, week_start_date)
-VALUES ('5972276', 2, 1, 2, 3, 4, 5, 6, 7, '2025-01-01');
+VALUES ('5972276', 2, 1, 2, 3, 4, 5, 6, 7, '2025-1-1');
 
 /** ---- timesheet inserts ---- **/
 INSERT INTO timesheet (timesheet_week_id, timesheet_date, day, hours, minutes)

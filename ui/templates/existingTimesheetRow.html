@@ -1,0 +1,33 @@
+{{ define "existingTimesheetRow" }}
+	{{ range .Data.TimesheetRows }}
+		<tr class="projectRow" id="projectRow">
+		    <td class="stickyCell">
+		        <div class="stickyCellContent">
+		            <p class="projects">{{ .JobName }}</p>
+		        </div>
+		    </td>
+			{{ range .Timesheets }}
+			    <td class="inputContainer">
+			        <form class="saveAllForm">
+			            <input type="text"
+			                id="{{ .TimesheetId }}"
+			                class="timeInput"
+			                maxlength="5"
+			                name="time"
+			                {{ if and (eq .Hours 0) (eq .Minutes 0) }}
+			                    placeholder="--:--"
+			                {{ else }}
+			                    value="{{ .Hours }}:{{ .Minutes }}"
+			                {{ end }}>
+			        </form>
+			    </td>
+			{{ end }}
+		    <td class="inputContainer">
+		        <p class="total">0 : 0</p>
+		    </td>
+		    <td class="deleteRowContainer timesheetBorderTopLight">
+		        <button class="deleteRowBtn">delete</button>
+		    </td>
+		</tr>
+	{{ end }}
+{{ end }}

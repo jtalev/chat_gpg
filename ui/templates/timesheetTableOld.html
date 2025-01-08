@@ -1,0 +1,172 @@
+<div class="timesheetNavContainer">
+    <div class="payweekMonthContainer">
+        <p><span id="payweekMonth">{{ .Data.MonthStr }}</span>, <span id="payweekYear">{{ .Data.Year }}</span></p>
+        <div class="payweekSelectorContainer">
+            <div id="leftArrowContainer">
+                <button 
+                    hx-get="/timesheets/render-by-week-start?arrow=left&wedDate={{ .Data.WedDate }}&month={{ .Data.MonthInt }}&year={{ .Data.Year }}"
+                    hx-target="#timesheetContent"
+                    hx-swap="innerHTML"
+                    class="arrow"
+                    id="leftArrow"
+                    data-arrow="left">
+                    <
+                </button>
+            </div>
+            <div id="rightArrowContainer">
+                <button 
+                    hx-get="/timesheets/render-by-week-start?arrow=right&wedDate={{ .Data.WedDate }}&month={{ .Data.MonthInt }}&year={{ .Data.Year }}"
+                    hx-target="#timesheetContent"
+                    hx-swap="innerHTML"
+                    class="arrow" 
+                    id="rightArrow"
+                    data-arrow="right">
+                    >
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="timesheetTableContainer">
+    <table class="timesheetTable" id="timesheetTable">
+        <thead>
+        <tr class="datesRow" id="datesRow">
+            <th class="stickyCell">
+                <div class="stickyCellContent">
+                    <p style="font-weight: lighter;">Job</p>
+                </div>
+            </th>
+            <th class="dateContainer">
+                <div class="dateCell">
+                    <p class="day">We</p>
+                    <p class="date" id="wedDate">{{ index .Data.PrevWeekDates 0 }}</p>
+                </div>
+            </th>
+            <th class="dateContainer">
+                <div class="dateCell">
+                    <p class="day">Th</p>
+                    <p class="date">{{ index .Data.PrevWeekDates 1 }}</p>
+                </div>
+            </th>
+            <th class="dateContainer">
+                <div class="dateCell">
+                    <p class="day">Fr</p>
+                    <p class="date">{{ index .Data.PrevWeekDates 2 }}</p>
+                </div>
+            </th>
+            <th class="dateContainer">
+                <div class="dateCell">
+                    <p class="day">Sa</p>
+                    <p class="date">{{ index .Data.PrevWeekDates 3 }}</p>
+                </div>
+            </th>
+            <th class="dateContainer">
+                <div class="dateCell">
+                    <p class="day">Su</p>
+                    <p class="date">{{ index .Data.PrevWeekDates 4 }}</p>
+                </div>
+            </th>
+            <th class="dateContainer">
+                <div class="dateCell">
+                    <p class="day">Mo</p>
+                    <p class="date">{{ index .Data.PrevWeekDates 5 }}</p>
+                </div>
+            </th>
+            <th class="dateContainer">
+                <div class="dateCell">
+                    <p class="day">Tu</p>
+                    <p class="date">{{ index .Data.PrevWeekDates 6 }}</p>
+            </th>
+            <th class="dateContainer">
+                <div class="dateCell">
+                    <p style="font-weight: lighter;">Total</p>
+                </div>
+            </th>
+            <th class="deleteRowContainer timesheetBorderBtm">
+                <div class="dateCell"></div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+            {{ range .Data.InitialTimesheets }}
+            <tr class="projectRow" id="projectRow">
+                <td class="stickyCell">
+                    <div class="stickyCellContent">
+                        <p class="projects" data-jobId="{{ .JobId }}">{{ .Job }}</p>
+                        
+                    </div>
+                </td>
+            {{ range .Timesheets }}
+                <td class="inputContainer">
+                    <form class="saveAllForm">
+                        <input type="text"
+                            id="{{ .ID }}"
+                            class="timeInput"
+                            maxlength="5"
+                            name="time"
+                            data-job="{{ .JobId }}"
+                            {{ if and (eq .Hours 0) (eq .Minutes 0) }}
+                                placeholder="--:--"
+                            {{ else }}
+                                value="{{ .Hours }}:{{ .Minutes }}"
+                            {{ end }}>
+                    </form>
+                </td>
+            {{ end }}
+                <td class="inputContainer">
+                    <p class="total">0 : 0</p>
+                </td>
+                <td class="deleteRowContainer timesheetBorderTopLight">
+                    <button class="deleteRowBtn">delete</button>
+                </td>
+            </tr>
+            {{ end }}
+        <tr class="projectRow hidden" id="newProjectRow">
+            <td class="stickyCell">
+                <div class="stickyCellContent">
+                    <select name="projects" class="projects">
+                        {{ range .Data.Jobs }}
+                            <option data-jobId="{{ .ID }}">{{ .Name }}, {{ .Number }} {{ .Address }}, {{ .Suburb }}</option>
+                        {{ end }}
+                    </select>
+                </div>
+            </td>
+            <td class="inputContainer">
+                <input name="time" type="text" class="timeInput" maxlength="5" placeholder="--:--">
+            </td>
+            <td class="inputContainer">
+                <input name="time" type="text" class="timeInput" maxlength="5" placeholder="--:--">
+            </td>
+            <td class="inputContainer">
+                <input name="time" type="text" class="timeInput" maxlength="5" placeholder="--:--">
+            </td>
+            <td class="inputContainer">
+                <input name="time" type="text" class="timeInput" maxlength="5" placeholder="--:--">
+            </td>
+            <td class="inputContainer">
+                <input name="time" type="text" class="timeInput" maxlength="5" placeholder="--:--">
+            </td>
+            <td class="inputContainer">
+                <input name="time" type="text" class="timeInput" maxlength="5" placeholder="--:--">
+            </td>
+            <td class="inputContainer">
+                <input name="time" type="text" class="timeInput" maxlength="5" placeholder="--:--">
+            </td>
+            <td>
+                <p class="total inputContainer">0 : 0</p>
+            </td>
+            <td class="deleteRowContainer timesheetBorderTopLight">
+                <button class="deleteRowBtn">delete</button>
+            </td>
+        </tr>
+    </tbody>
+    </table>
+</div>
+<div id="timesheetBtnContainer">
+    <div class="saveAllBtnContainer">
+        <button class="saveAllBtn" id="saveAllBtn">UPDATE</button>
+    </div> 
+    <div class="addRowBtnContainer">
+        <button class="addTableRowBtn" id="addTableRowBtn">+ Add new row</button>
+    </div>
+</div>

@@ -1,0 +1,60 @@
+{{ define "timesheetHead" }}
+<thead>
+    <tr class="datesRow" id="datesRow">
+        <th class="stickyCell">
+            <div class="stickyCellContent">
+                <p style="font-weight: lighter;">Job</p>
+            </div>
+        </th>
+        <th class="dateContainer">
+            <div class="dateCell">
+                <p class="day">We</p>
+                <p class="date" id="wedDate">{{ index .Data.Dates 0 }}</p>
+            </div>
+        </th>
+        <th class="dateContainer">
+            <div class="dateCell">
+                <p class="day">Th</p>
+                <p class="date">{{ index .Data.Dates 1 }}</p>
+            </div>
+        </th>
+        <th class="dateContainer">
+            <div class="dateCell">
+                <p class="day">Fr</p>
+                <p class="date">{{ index .Data.Dates 2 }}</p>
+            </div>
+        </th>
+        <th class="dateContainer">
+            <div class="dateCell">
+                <p class="day">Sa</p>
+                <p class="date">{{ index .Data.Dates 3 }}</p>
+            </div>
+        </th>
+        <th class="dateContainer">
+            <div class="dateCell">
+                <p class="day">Su</p>
+                <p class="date">{{ index .Data.Dates 4 }}</p>
+            </div>
+        </th>
+        <th class="dateContainer">
+            <div class="dateCell">
+                <p class="day">Mo</p>
+                <p class="date">{{ index .Data.Dates 5 }}</p>
+            </div>
+        </th>
+        <th class="dateContainer">
+            <div class="dateCell">
+                <p class="day">Tu</p>
+                <p class="date">{{ index .Data.Dates 6 }}</p>
+        </th>
+        <th class="dateContainer">
+            <div class="dateCell">
+                <p style="font-weight: lighter;">Total</p>
+            </div>
+        </th>
+        <th class="deleteRowContainer timesheetBorderBtm">
+            <div class="dateCell"></div>
+        </th>
+    </tr>
+</thead>
+{{ end }}

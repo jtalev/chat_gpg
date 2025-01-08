@@ -49,17 +49,17 @@ func GetTimesheetById(id int, db *sql.DB) (models.Timesheet, error) {
 	}
 	defer rows.Close()
 
-	var timesheet models.Timesheet
+	var outTimesheet models.Timesheet
 	if rows.Next() {
 		err := rows.Scan(
-			&timesheet.TimesheetId,
-			&timesheet.TimesheetWeekId,
-			&timesheet.TimesheetDate,
-			&timesheet.Day,
-			&timesheet.Hours,
-			&timesheet.Minutes,
-			&timesheet.CreatedAt,
-			&timesheet.ModifiedAt,
+			&outTimesheet.TimesheetId,
+			&outTimesheet.TimesheetWeekId,
+			&outTimesheet.TimesheetDate,
+			&outTimesheet.Day,
+			&outTimesheet.Hours,
+			&outTimesheet.Minutes,
+			&outTimesheet.CreatedAt,
+			&outTimesheet.ModifiedAt,
 		)
 		if err != nil {
 			return models.Timesheet{}, err
@@ -68,13 +68,14 @@ func GetTimesheetById(id int, db *sql.DB) (models.Timesheet, error) {
 		return models.Timesheet{}, sql.ErrNoRows
 	}
 
-	return timesheet, nil
+	return outTimesheet, nil
 }
 
 func PostTimesheet(inTimesheet models.Timesheet, db *sql.DB) (models.Timesheet, error) {
 	q := `
 	INSERT INTO timesheet (timesheet_week_id, timesheet_date, day, hours, minutes)
-	VALUES ($1, $2, $3, $4, $5);
+	VALUES ($1, $2, $3, $4, $5)
+	RETURNING timesheet_id, timesheet_week_id, timesheet_date, day, hours, minutes, created_at, modified_at;
 	`
 
 	var outTimesheet models.Timesheet

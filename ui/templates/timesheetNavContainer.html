@@ -1,0 +1,31 @@
+{{ define "timesheetNavContainer" }}
+<div class="timesheetNavContainer">
+    <div class="payweekMonthContainer">
+        <p><span id="payweekMonth">{{ .Data.MonthStr }}</span>, <span id="payweekYear">{{ .Data.Year }}</span></p>
+        <div class="payweekSelectorContainer">
+            <div id="leftArrowContainer">
+                <button 
+                    hx-get="/timesheets/render-by-week-start"
+                    hx-target="#timesheetContent"
+                    hx-swap="innerHTML"
+                    class="arrow"
+                    id="leftArrow"
+                    data-arrow="left">
+                    <
+                </button>
+            </div>
+            <div id="rightArrowContainer">
+                <button 
+                    hx-get="/timesheets/render-by-week-start"
+                    hx-target="#timesheetContent"
+                    hx-swap="innerHTML"
+                    class="arrow" 
+                    id="rightArrow"
+                    data-arrow="right">
+                    >
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{{ end }}
