@@ -35,11 +35,13 @@ var days = []string{
 }
 
 func splitTime(inTime string) ([]string, error) {
+	var outTimeArr []string
 	containsColon := strings.Contains(inTime, ":")
 	if !containsColon {
-		return []string{}, errors.New("Input string doesn't contain ':'")
+		outTimeArr = append(outTimeArr, inTime, "0")
+	} else {
+		outTimeArr = strings.Split(inTime, ":")
 	}
-	outTimeArr := strings.Split(inTime, ":")
 	return outTimeArr, nil
 }
 
@@ -114,8 +116,11 @@ func PostTimesheet(inTimesheet models.Timesheet, db *sql.DB) (models.Timesheet, 
 	return outTimesheet, err
 }
 
-func PutTimesheet(id int, time string, db *sql.DB) (models.Timesheet, error) {
-
+func PutTimesheet(id, time string, db *sql.DB) (models.Timesheet, error) {
+	idConv, err := strconv.Atoi(id)
+	if err != nil {
+		return models.Timesheet{}, err
+	}
 	parsedTime, err := splitTime(time)
 	if err != nil {
 		return models.Timesheet{}, nil
@@ -127,7 +132,7 @@ func PutTimesheet(id int, time string, db *sql.DB) (models.Timesheet, error) {
 	}
 
 	inTimesheet := models.Timesheet{
-		TimesheetId: id,
+		TimesheetId: idConv,
 		Hours:       parsedTimeInt[0],
 		Minutes:     parsedTimeInt[1],
 	}
@@ -232,19 +237,17 @@ type TimesheetViewData struct {
 	Year          int //not sure if int or string yet
 	Dates         []int
 	TimesheetRows []TimesheetRow
+	WeekStartDate string
 }
 
-func InitialTimesheetViewData(employeeId string, db *sql.DB) (TimesheetViewData, error) {
+func InitialTimesheetViewData(db *sql.DB) (TimesheetViewData, error) {
 	outData := TimesheetViewData{}
 
-	outData.MonthStr = "January"
-	outData.Year = 2025
 	dates, err := currentWeekDates()
 	if err != nil {
 		log.Println("Error getting current week dates")
 		return outData, err
 	}
-	outData.Dates = dates
 
 	year, month, day := weekStartDate().Date()
 	weekStart := fmt.Sprintf("%v-%v-%v", year, int(month), day)
@@ -252,9 +255,13 @@ func InitialTimesheetViewData(employeeId string, db *sql.DB) (TimesheetViewData,
 	if err != nil {
 		return outData, err
 	}
-	timesheetRows, err := mapTimesheetWeekToTimesheets(initialTimesheetWeeks, db)
+	timesheetRows, err := mapTimesheetsToTimesheetWeek(initialTimesheetWeeks, db)
+
+	outData.MonthStr = month.String()
+	outData.Year = year
+	outData.Dates = dates
 	outData.TimesheetRows = timesheetRows
-	log.Println(outData.TimesheetRows)
+	outData.WeekStartDate = weekStart
 
 	return outData, nil
 }
@@ -264,7 +271,7 @@ type TimesheetRow struct {
 	Timesheets []models.Timesheet
 }
 
-func mapTimesheetWeekToTimesheets(inTimesheetWeeks []models.TimesheetWeek, db *sql.DB) ([]TimesheetRow, error) {
+func mapTimesheetsToTimesheetWeek(inTimesheetWeeks []models.TimesheetWeek, db *sql.DB) ([]TimesheetRow, error) {
 	outData := make([]TimesheetRow, len(inTimesheetWeeks))
 	for i := range inTimesheetWeeks {
 		job, err := GetJobById(inTimesheetWeeks[i].JobId, db)
@@ -337,4 +344,58 @@ func currentWeekDates() ([]int, error) {
 		date = date.AddDate(0, 0, 1)
 	}
 	return outDates, nil
+}
+
+type Data struct {
+	MonthStr      string
+	Year          int
+	Dates         []int
+	TimesheetRows []TimesheetRow
+	WeekStartDate string
+}
+
+type TimesheetData struct {
+	Data Data
+}
+
+func TimesheetTableData(hxVals []string, db *sql.DB) (TimesheetData, error) {
+	outData := TimesheetData{}
+
+	arrow, weekStartDate := hxVals[0], hxVals[1]
+	date, err := dateStrToDate(weekStartDate)
+	if err != nil {
+		log.Println(err)
+		return TimesheetData{}, err
+	}
+	if arrow == "left" {
+		date = date.AddDate(0, 0, -7)
+	} else if arrow == "right" {
+		date = date.AddDate(0, 0, 7)
+	} else {
+		return TimesheetData{}, err
+	}
+	monthStr := date.Month().String()
+	year := date.Year()
+	weekStartDate = fmt.Sprintf("%v-%v-%v", date.Year(), int(date.Month()), date.Day())
+	dates := make([]int, 7)
+	for i := range dates {
+		dates[i] = date.Day()
+		date = date.AddDate(0, 0, 1)
+	}
+	timesheetWeeks, err := repository.GetTimesheetWeekByWeekStart(weekStartDate, db)
+	if err != nil {
+		return outData, err
+	}
+	timesheetRows, err := mapTimesheetsToTimesheetWeek(timesheetWeeks, db)
+	if err != nil {
+		return outData, err
+	}
+
+	outData.Data.MonthStr = monthStr
+	outData.Data.Year = year
+	outData.Data.Dates = dates
+	outData.Data.TimesheetRows = timesheetRows
+	outData.Data.WeekStartDate = weekStartDate
+
+	return outData, nil
 }

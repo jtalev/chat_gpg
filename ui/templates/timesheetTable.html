@@ -1,10 +1,12 @@
 {{ define "timesheetTable" }}
-    {{ template "timesheetNavContainer" . }}
+    {{ template "timesheetNavContainer" .Data }}
     <div class="timesheetTableContainer">
         <table class="timesheetTable" id="timesheetTable">
-            {{ template "timesheetHead" . }}
+            <thead id="timesheetTableHead">
+                {{ template "timesheetHead" .Data.Dates }}
+            </thead>
             <tbody>
-                {{ template "existingTimesheetRow" . }}
+                {{ template "existingTimesheetRow" .Data }}
             </tbody>
         </table>
     </div>

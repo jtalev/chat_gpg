@@ -26,7 +26,7 @@ function onNavLinkClick() {
     const currentUrl = new URL(window.location.href).pathname;
     const windowWidth = window.innerWidth
 
-    if (windowWidth < 730) {
+    if (windowWidth < 1030) {
         navLinksText.forEach(element => {
             if ("/" + element.firstChild.textContent === currentUrl) {
                 element.style.color = "var(--gpg-green)"

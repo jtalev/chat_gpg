@@ -1,0 +1,40 @@
+{{ define "newTimesheetRow" }}
+	<tr class="projectRow hidden" id="newProjectRow">
+        <td class="stickyCell">
+            <div class="stickyCellContent">
+                <select name="projects" class="projects">
+                    
+                        <option ></option>
+                    
+                </select>
+            </div>
+        </td>
+        <td class="inputContainer">
+            <input name="time" type="text" class="timeInput" maxlength="5" placeholder="--:--">
+        </td>
+        <td class="inputContainer">
+            <input name="time" type="text" class="timeInput" maxlength="5" placeholder="--:--">
+        </td>
+        <td class="inputContainer">
+            <input name="time" type="text" class="timeInput" maxlength="5" placeholder="--:--">
+        </td>
+        <td class="inputContainer">
+            <input name="time" type="text" class="timeInput" maxlength="5" placeholder="--:--">
+        </td>
+        <td class="inputContainer">
+            <input name="time" type="text" class="timeInput" maxlength="5" placeholder="--:--">
+        </td>
+        <td class="inputContainer">
+            <input name="time" type="text" class="timeInput" maxlength="5" placeholder="--:--">
+        </td>
+        <td class="inputContainer">
+            <input name="time" type="text" class="timeInput" maxlength="5" placeholder="--:--">
+        </td>
+        <td>
+            <p class="total inputContainer">0 : 0</p>
+        </td>
+        <td class="deleteRowContainer timesheetBorderTopLight">
+            <button class="deleteRowBtn">delete</button>
+        </td>
+    </tr>
+{{ end }}

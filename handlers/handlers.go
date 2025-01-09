@@ -15,34 +15,20 @@ import (
 	"go.uber.org/zap"
 )
 
-func getEmployeeId(w http.ResponseWriter, r *http.Request) (string, error) {
-	employeeId, ok := r.Context().Value("employee_id").(string)
-	if !ok {
-		return "", errors.New("Error retrieving employee_id")
-	}
-	return employeeId, nil
-}
-
-func responseJSON(w http.ResponseWriter, data any, sugar *zap.SugaredLogger) {
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(data); err != nil {
-		sugar.Errorf("Error encoding leave requests: %v", err)
-		http.Error(w, "failed to fetch leave requests", http.StatusInternalServerError)
-		return
-	}
-}
-
-func executePartialTemplate(filepath string, data interface{}, w http.ResponseWriter) error {
-	tmpl, err := template.ParseFiles(filepath)
-	if err != nil {
-		return err
-	}
-	err = tmpl.ExecuteTemplate(w, "timesheetTable", data)
-	if err != nil {
-		return err
-	}
-	return nil
-}
+const (
+	layoutPath                = "../ui/layouts/layout.html"
+	navPath                   = "../ui/templates/nav.html"
+	dashboardPath             = "../ui/views/dashboard.html"
+	jobsPath                  = "../ui/views/jobs.html"
+	timesheetsPath            = "../ui/views/timesheets.html"
+	timesheetTablePath        = "../ui/templates/timesheetTable.html"
+	timesheetNavContainerPath = "../ui/templates/timesheetNavContainer.html"
+	timesheetHeadPath         = "../ui/templates/timesheetHead.html"
+	existingTimesheetRowPath  = "../ui/templates/existingTimesheetRow.html"
+	leavePath                 = "../ui/views/leave.html"
+	adminPath                 = "../ui/views/admin.html"
+	accountPath               = "../ui/views/account.html"
+)
 
 func renderTemplate(
 	w http.ResponseWriter,
@@ -50,19 +36,6 @@ func renderTemplate(
 	component, title string,
 	componentData interface{},
 ) {
-	layoutPath := filepath.Join("..", "ui", "layouts", "layout.html")
-	navPath := filepath.Join("..", "ui", "templates", "nav.html")
-	dashboardPath := filepath.Join("..", "ui", "views", "dashboard.html")
-	jobsPath := filepath.Join("..", "ui", "views", "jobs.html")
-	timesheetsPath := filepath.Join("..", "ui", "views", "timesheets.html")
-	timesheetTablePath := filepath.Join("..", "ui", "templates", "timesheetTable.html")
-	timesheetNavContainerPath := filepath.Join("..", "ui", "templates", "timesheetNavContainer.html")
-	timesheetHeadPath := filepath.Join("..", "ui", "templates", "timesheetHead.html")
-	existingTimesheetRowPath := filepath.Join("..", "ui", "templates", "existingTimesheetRow.html")
-	leavePath := filepath.Join("..", "ui", "views", "leave.html")
-	adminPath := filepath.Join("..", "ui", "views", "admin.html")
-	accountPath := filepath.Join("..", "ui", "views", "account.html")
-
 	isAdmin, ok := r.Context().Value("is_admin").(bool)
 	if !ok {
 		http.Error(w, "unable to retrieve is_admin", http.StatusUnauthorized)
@@ -107,6 +80,35 @@ func renderTemplate(
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
+}
+
+func getEmployeeId(w http.ResponseWriter, r *http.Request) (string, error) {
+	employeeId, ok := r.Context().Value("employee_id").(string)
+	if !ok {
+		return "", errors.New("Error retrieving employee_id")
+	}
+	return employeeId, nil
+}
+
+func responseJSON(w http.ResponseWriter, data any, sugar *zap.SugaredLogger) {
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		sugar.Errorf("Error encoding leave requests: %v", err)
+		http.Error(w, "failed to fetch leave requests", http.StatusInternalServerError)
+		return
+	}
+}
+
+func executePartialTemplate(filepath string, name string, data interface{}, w http.ResponseWriter) error {
+	tmpl, err := template.ParseFiles(filepath)
+	if err != nil {
+		return err
+	}
+	err = tmpl.ExecuteTemplate(w, name, data)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 type Handler struct {

@@ -1,5 +1,5 @@
 {{ define "existingTimesheetRow" }}
-	{{ range .Data.TimesheetRows }}
+	{{ range .TimesheetRows }}
 		<tr class="projectRow" id="projectRow">
 		    <td class="stickyCell">
 		        <div class="stickyCellContent">
@@ -8,18 +8,22 @@
 		    </td>
 			{{ range .Timesheets }}
 			    <td class="inputContainer">
-			        <form class="saveAllForm">
-			            <input type="text"
-			                id="{{ .TimesheetId }}"
-			                class="timeInput"
-			                maxlength="5"
-			                name="time"
-			                {{ if and (eq .Hours 0) (eq .Minutes 0) }}
-			                    placeholder="--:--"
-			                {{ else }}
-			                    value="{{ .Hours }}:{{ .Minutes }}"
-			                {{ end }}>
-			        </form>
+		            <input
+		            	hx-post="/timesheets/put" 
+		            	type="text"
+		                id="{{ .TimesheetId }}"
+		                class="timeInput"
+		                maxlength="5"
+		                name="time"
+		                {{ if and (eq .Hours 0) (eq .Minutes 0) }}
+		                    placeholder="--:--"
+		                {{ else }}
+		                    value="{{ .Hours }}:{{ .Minutes }}"
+		                {{ end }}
+		                hx-vals='{
+		                	"timesheet_id": "{{.TimesheetId}}"
+		                }'
+		            >
 			    </td>
 			{{ end }}
 		    <td class="inputContainer">

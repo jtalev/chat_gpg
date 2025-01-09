@@ -4,7 +4,7 @@ function togglePageContent() {
     let isPageContentHidden = pageContent.classList.contains('hidden')
     let isNavContainerHidden = navContainer.classList.contains('hidden')
 
-    if (window.innerWidth >= 730) {
+    if (window.innerWidth >= 1030) {
         if (isPageContentHidden) {
             pageContent.classList.remove('hidden')
             pageContent.classList.add('page-content')

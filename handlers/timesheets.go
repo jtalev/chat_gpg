@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"text/template"
 
 	"github.com/jtalev/chat_gpg/services"
 )
@@ -27,6 +28,64 @@ func parseRequestValues(keys []string, r *http.Request) ([]string, error) {
 func decodeJSON(payload interface{}, r *http.Request) error {
 	err := json.NewDecoder(r.Body).Decode(payload)
 	return err
+}
+
+func (h *Handler) ServeTimesheetsView() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			component := "timesheets"
+			title := "Timesheets - GPG"
+
+			timesheetViewData, err := services.InitialTimesheetViewData(h.DB)
+			if err != nil {
+				log.Println("Error retrieving initial view data: ", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			renderTemplate(w, r, component, title, timesheetViewData)
+		},
+	)
+}
+
+func (h *Handler) GetTimesheetTable() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+
+			keys := []string{"arrow", "week_start_date"}
+			hxVals, err := parseRequestValues(keys, r)
+			if err != nil {
+				log.Fatalf("Error parsing request params: ", err)
+				http.Error(w, "Bad Request", http.StatusBadRequest)
+				return
+			}
+
+			timesheetTableData, err := services.TimesheetTableData(hxVals, h.DB)
+			if err != nil {
+				log.Println("Error retrieving initial view data: ", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			tmpl, err := template.ParseFiles(
+				timesheetTablePath,
+				timesheetNavContainerPath,
+				timesheetHeadPath,
+				existingTimesheetRowPath,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			err = tmpl.ExecuteTemplate(w, "timesheetTable", timesheetTableData)
+			if err != nil {
+				log.Println(err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
 }
 
 func (h *Handler) GetTimesheets() http.Handler {
@@ -70,19 +129,16 @@ func (h *Handler) GetTimesheetById() http.Handler {
 func (h *Handler) PutTimesheet() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			var updateParams struct {
-				TimesheetId int    `json:"timesheet_id"`
-				Time        string `json:"time"`
-			}
-
-			err := decodeJSON(&updateParams, r)
+			keys := []string{"timesheet_id", "time"}
+			hxVals, err := parseRequestValues(keys, r)
 			if err != nil {
-				h.Logger.Errorf("Error decoding JSON: ", err)
+				log.Println("Error parsing request values:", err)
 				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
+			timesheetId, time := hxVals[0], hxVals[1]
 
-			outTimesheet, err := services.PutTimesheet(updateParams.TimesheetId, updateParams.Time, h.DB)
+			outTimesheet, err := services.PutTimesheet(timesheetId, time, h.DB)
 			if err != nil {
 				log.Println("Error updating timesheet: ", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -172,31 +228,6 @@ func (h *Handler) DeleteTimesheetWeek() http.Handler {
 			}
 
 			responseJSON(w, timesheetWeek, h.Logger)
-		},
-	)
-}
-
-func (h *Handler) ServeTimesheetsView() http.Handler {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			component := "timesheets"
-			title := "Timesheets - GPG"
-
-			employeeId, err := getEmployeeId(w, r)
-			if err != nil {
-				log.Println(err)
-				http.Error(w, "Unauthorized", http.StatusUnauthorized)
-				return
-			}
-
-			timesheetViewData, err := services.InitialTimesheetViewData(employeeId, h.DB)
-			if err != nil {
-				log.Println("Error retrieving initial view data: ", err)
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
-
-			renderTemplate(w, r, component, title, timesheetViewData)
 		},
 	)
 }

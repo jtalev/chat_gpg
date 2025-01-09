@@ -58,7 +58,7 @@ input {
     padding: 0;
 }
 
-@media screen and (max-width: 730px) {
+@media screen and (max-width: 1030px) {
     .nav-content {
         background-color: var(--main-background-color);
         display: flex;
@@ -141,7 +141,7 @@ input {
     }
 }
 
-@media screen and (min-width: 731px) {
+@media screen and (min-width: 1031px) {
     .nav-container {
         background-color: white;
         border-right: var(--gpg-green) solid 2px;
@@ -164,8 +164,6 @@ input {
         flex-direction: column;
         flex-grow: 1;
         align-items: flex-start;
-        
-        margin-left: 1px;
     }
     
     .nav-link {
@@ -216,7 +214,7 @@ input {
     }
 }
 
-@media screen and (max-width: 920px) {
+/*@media screen and (max-width: 920px) {
     .nav-container {
         background-color: white;
         border-right: var(--gpg-green) solid 2px;
@@ -225,7 +223,7 @@ input {
         flex-direction: column;
         height: 100vh;
     }
-}
+}*/
 
 .hidden {
     display: none;
@@ -328,7 +326,7 @@ form input {
 }
 
 /***** timesheets *****/
-@media screen and (max-width: 730px) {
+@media screen and (max-width: 1030px) {
 
     .timesheetContainer {
         width: 95%;
@@ -340,7 +338,7 @@ form input {
     }
 }
 
-@media screen and (min-width: 731px) {    
+@media screen and (min-width: 1031px) {    
     .timesheetContainer {
         height: 95%;
         width: 95%;
@@ -452,7 +450,7 @@ form input {
     cursor: pointer;
 }
 
-#timesheetTableContainer {
+.timesheetTableContainer {
     width: 100%;
     height: auto;
     margin: 0;
@@ -463,18 +461,35 @@ form input {
 
 .timesheetTable {
     border-spacing: 0;
+    width: 100%;
 }
 
-.datesRow > th {
-    text-align: center;
-    margin: 0;
-    padding: 0;
-    background-color: var(--main-background-color);
+#timesheetTableHead {
+    width: 100%;
 }
 
-.dateContainer {
-    border-right: var(--timesheet-border) solid 1px;
-    border-bottom: var(--timesheet-border) solid 1px;
+@media screen and (max-width: 1400px) {
+    .dateContainer {
+        width: 100px;
+        min-width: 60px;
+        margin: 0;
+        padding: 0;
+        background-color: var(--main-background-color);
+        border-right: var(--timesheet-border) solid 1px;
+        border-bottom: var(--timesheet-border) solid 1px;
+    }
+}
+
+@media screen and (min-width: 1401px) {
+    .dateContainer {
+        width: 150px;
+        min-width: 60px;
+        margin: 0;
+        padding: 0;
+        background-color: var(--main-background-color);
+        border-right: var(--timesheet-border) solid 1px;
+        border-bottom: var(--timesheet-border) solid 1px;
+    }
 }
 
 .inputContainer {
@@ -485,6 +500,10 @@ form input {
     border-right: var(--main-background-color) solid 1px;
     border-bottom: var(--main-background-color) solid 1px;
     font-size: small;
+}
+
+#jobHeader {
+    background-color: var(--main-background-color);
 }
 
 .stickyCell {
@@ -504,16 +523,44 @@ form input {
     font-size: small;
 }
 
-.stickyCellContent {
-    border-bottom: var(--timesheet-border) solid 1px;
-    border-right: var(--timesheet-border) solid 1px;
-    height: 100%;
-    width: 10em;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+@media screen and (max-width: 400px) {
+    .stickyCellContent {
+        border-bottom: var(--timesheet-border) solid 1px;
+        border-right: var(--timesheet-border) solid 1px;
+        height: 100%;
+        width: 140px;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+@media screen and (min-width: 401px) {
+    .stickyCellContent {
+        border-bottom: var(--timesheet-border) solid 1px;
+        border-right: var(--timesheet-border) solid 1px;
+        height: 100%;
+        width: 190px;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}
+@media screen and (min-width: 861px) {
+    .stickyCellContent {
+        border-bottom: var(--timesheet-border) solid 1px;
+        border-right: var(--timesheet-border) solid 1px;
+        height: 100%;
+        width: 260px;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }
 
 .timesheetBorderBtm {
@@ -531,7 +578,7 @@ form input {
     justify-content: center;
     margin: 0;
     padding-top: 0;
-    width: 3em;
+    width: 100%;
     height: 100%;
     border-collapse: collapse;
     font-size: small;
@@ -540,12 +587,14 @@ form input {
 .day {
     margin: 0;
     padding: 0;
+    width: 100%;
+    height: 20%;
     color: #a5a5a5;
     font-weight: lighter;
 }
 
 .date {
-    width: 20%;
+    width: 100%;
     height: 20%;
     display: flex;
     justify-content: center;
@@ -561,11 +610,6 @@ input::-webkit-inner-spin-button {
     margin: 0;
 }
 
-.saveAllForm{
-    width: 100%;
-    height: 100%;
-}
-
 .timeInput {
     display: flex;
     width: 99%;
@@ -578,28 +622,14 @@ input::-webkit-inner-spin-button {
     font-size: small;
 }
 
-@media screen and (max-width: 730px) {
-    .projects {
-        margin: 0;
-        padding: 0;
-        width: 80%;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis; /* Add ellipsis for overflowed text */
-        display: inline-block; /* Ensure ellipsis works properly */
-    }
-}
-
-@media screen and (min-width: 731px) {
-    .projects {
-        margin: 0;
-        padding: 0;
-        width: 80%;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis; /* Add ellipsis for overflowed text */
-        display: inline-block; /* Ensure ellipsis works properly */
-    }   
+.projects {
+    margin: 0;
+    padding: 0;
+    width: 80%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
 }
 
 .projects > select {
@@ -639,6 +669,28 @@ input::-webkit-inner-spin-button {
     cursor: pointer;
 }
 
+@media screen and (max-width: 1400px) {
+    .deleteRowContainer {
+        width: 100px;
+        min-width: 60px;
+        margin: 0;
+        padding: 0;
+        background-color: var(--main-background-color);
+        text-align: center;    
+    }
+}
+
+@media screen and (min-width: 1401px) {
+    .deleteRowContainer {
+        width: 150px;
+        min-width: 60px;
+        margin: 0;
+        padding: 0;
+        background-color: var(--main-background-color);
+        text-align: center;
+    }
+}
+
 .deleteRowBtn {
     width: 80%;
 }
@@ -650,7 +702,7 @@ input::-webkit-inner-spin-button {
     margin: 0 0 0.4em 0;
 }
 
-@media screen and (max-width: 730px) {
+@media screen and (max-width: 1030px) {
 
     .leaveContainer {
         width: 95%;
@@ -663,7 +715,7 @@ input::-webkit-inner-spin-button {
     }
 }
 
-@media screen and (min-width: 731px) {    
+@media screen and (min-width: 1031px) {    
     .leaveContainer {
         height: 95%;
         width: 95%;
@@ -887,7 +939,7 @@ input::-webkit-inner-spin-button {
 }
 
 /** ----- admin ----- **/
-@media screen and (max-width: 730px) {
+@media screen and (max-width: 1030px) {
 
     .adminContainer {
         width: 95%;
@@ -899,7 +951,7 @@ input::-webkit-inner-spin-button {
     }
 }
 
-@media screen and (min-width: 731px) {    
+@media screen and (min-width: 1031px) {    
     .adminContainer {
         height: 95%;
         width: 95%;
