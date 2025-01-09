@@ -1,0 +1,48 @@
+{{ define "leaveForm" }}
+<p class="leaveRequestHeading">Leave request</p>
+<form hx-post="/leave/post" hx-target=".error" hx-swap="innerHtml" id="leaveForm">
+    <div class="inputDiv">
+        <label for="name">Name</label>
+        <input 
+        type="text" 
+        class="formInput" 
+        id="leaveNameFormInput" 
+        id="name" 
+        name="name" 
+        readonly
+        style="background-color: var(--main-background-color)" 
+        value="{{ .Employee.FirstName }} {{ .Employee.LastName }}">
+    </div>
+    <div class="inputDiv">
+        <label for="type">Type</label>
+        <select name="type" class="formInput" id="type">
+            <option value="annual">annual</option>
+            <option value="sick">sick</option>
+            <option value="stress">stress</option>
+            <option value="carers">carers</option>
+            <option value="unpaid">unpaid</option>
+        </select>
+    </div>
+    <div>
+        <div id="leaveDateContainer">
+            <div class="inputDiv">
+                <label for="from">From</label>
+                <input type="date" class="dateInput" id="from" name="from">
+            </div>
+            <div class="inputDiv">
+                <label for="to">To</label>
+                <input type="date" class="dateInput" id="to" name="to">
+            </div>
+        </div>
+        <div class="error"></div>    
+    </div>
+    <div class="inputDiv">
+        <label for="note">Note</label>
+        <textarea type="text" class="formInput" id="note" name="note"></textarea>
+    </div>
+    <div id="leaveFormButtons">
+        <button type="reset" id="leaveFormCancelBtn" class="leaveBtn" form="leaveForm">Cancel</button>
+        <button type="submit" id="leaveFormSubmitBtn" class="leaveBtn" form="leaveForm">SUBMIT</button>
+    </div>
+</form>
+{{ end }}

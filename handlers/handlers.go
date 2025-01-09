@@ -26,6 +26,8 @@ const (
 	timesheetHeadPath         = "../ui/templates/timesheetHead.html"
 	existingTimesheetRowPath  = "../ui/templates/existingTimesheetRow.html"
 	leavePath                 = "../ui/views/leave.html"
+	leaveHistoryPath          = "../ui/templates/leaveHistory.html"
+	leaveFormPath             = "../ui/templates/leaveForm.html"
 	adminPath                 = "../ui/views/admin.html"
 	accountPath               = "../ui/views/account.html"
 )
@@ -65,6 +67,8 @@ func renderTemplate(
 		timesheetHeadPath,
 		existingTimesheetRowPath,
 		leavePath,
+		leaveHistoryPath,
+		leaveFormPath,
 		adminPath,
 		accountPath,
 	)

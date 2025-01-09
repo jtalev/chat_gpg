@@ -3,6 +3,8 @@ package handlers
 import (
 	"errors"
 	"fmt"
+	"html/template"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -10,8 +12,82 @@ import (
 
 	"github.com/jtalev/chat_gpg/models"
 	"github.com/jtalev/chat_gpg/repository"
+	"github.com/jtalev/chat_gpg/services"
 	"go.uber.org/zap"
 )
+
+func (h *Handler) RenderLeaveHistoryTab() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			employeeId, err := getEmployeeId(w, r)
+			if err != nil {
+				log.Println("Error retrieving employee_id:", err)
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
+
+			historyData, err := services.GetLeaveHistoryByEmployeeId(employeeId, h.DB)
+			if err != nil {
+				log.Println("Error retrieving leave history from db:", err)
+				http.Error(w, "Status not found", http.StatusNotFound)
+				return
+			}
+
+			tmpl, err := template.ParseFiles(leaveHistoryPath)
+			if err != nil {
+				log.Println("Error parsing file:", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			err = tmpl.ExecuteTemplate(w, "leaveHistory", historyData)
+			if err != nil {
+				log.Println("Error executing template:", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) RenderLeaveFormTab() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			employeeId, err := getEmployeeId(w, r)
+			if err != nil {
+				log.Println("Error retrieving employee_id:", err)
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
+
+			employee, err := services.GetEmployeeByEmployeeId(employeeId, h.DB)
+			if err != nil {
+				log.Println("Error retrieving employee from db:", err)
+				http.Error(w, "Status not found", http.StatusNotFound)
+				return
+			}
+
+			tmpl, err := template.ParseFiles(leaveFormPath)
+			if err != nil {
+				log.Println("Error parsing file:", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			type Data struct {
+				Employee models.Employee
+			}
+			outData := Data{Employee: employee}
+
+			err = tmpl.ExecuteTemplate(w, "leaveForm", outData)
+			if err != nil {
+				log.Println("Error executing template:", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
 
 func (h *Handler) GetLeaveRequests() http.Handler {
 	return http.HandlerFunc(
@@ -121,6 +197,7 @@ func validateLeaveRequest(lr models.LeaveRequest) ([]models.ValidationResult, er
 func (h *Handler) PostLeaveRequest() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			log.Println("posting leave request")
 			err := r.ParseForm()
 			if err != nil {
 				h.Logger.Errorf("Error parsing form: %v", err)

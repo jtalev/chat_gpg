@@ -8,11 +8,6 @@ function onLeaveSelectorClick() {
                 element.style.borderBottom = ("solid 1px var(--gpg-green)")
             });
 
-            const leaveContentContainerChildren = document.querySelectorAll(".leaveContent")
-            leaveContentContainerChildren.forEach(element => {
-                element.style.display = "none"
-            })
-
             this.style.backgroundColor = "white"
             this.style.borderBottom = "white"
 
@@ -72,7 +67,9 @@ document.addEventListener("DOMContentLoaded", function () {
     })
 })
 
-document.addEventListener("DOMContentLoaded", function () {
+
+document.addEventListener("htmx:afterSwap", onLeaveHistoryRowClick)
+function onLeaveHistoryRowClick() {
     const leaveHistoryRows = document.querySelectorAll(".leaveHistoryRow")
     leaveHistoryRows.forEach(element => {
         element.addEventListener("click", function () {
@@ -93,4 +90,4 @@ document.addEventListener("DOMContentLoaded", function () {
             hiddenRow.classList.remove("hidden")
         })
     })
-})
+}

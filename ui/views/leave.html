@@ -2,10 +2,26 @@
 <div class="leaveContainer">
     <h2 id="leaveHeader">Leave</h2>
     <div id="leaveContentSelectorContainer">
-        <div class="leaveContentSelector" id="leaveRequestSelector" style="background-color: white;">
+        <div 
+        hx-get="/leave/form"
+        hx-trigger="click"
+        hx-target=".leaveContent"
+        hx-swap="innerHTML"
+        class="leaveContentSelector" 
+        id="leaveRequestSelector" 
+        style="background-color: white;"
+        >
             REQUEST
         </div>
-        <div class="leaveContentSelector" id="leaveHistorySelector" style="background-color: var(--main-background-color);">
+        <div 
+        hx-get="/leave/history" 
+        hx-target=".leaveContent" 
+        hx-trigger="click" 
+        hx-swap="innerHTML"
+        class="leaveContentSelector" 
+        id="leaveHistorySelector" 
+        style="background-color: var(--main-background-color);"
+        >
             HISTORY
         </div>
         <div class="borderBottom">
@@ -14,151 +30,7 @@
     </div>
     <div id="leaveContentContainer">
         <div class="leaveContent" id="leaveRequestContent">
-            <p class="leaveRequestHeading">Leave request</p>
-            <form hx-post="/leave/post" hx-target=".error" hx-swap="innerHtml" id="leaveForm">
-                <div class="inputDiv">
-                    <label for="name">Name</label>
-                    <input 
-                    type="text" 
-                    class="formInput" 
-                    id="leaveNameFormInput" 
-                    id="name" 
-                    name="name" 
-                    readonly
-                    style="background-color: var(--main-background-color)" 
-                    value="{{ .Data.Employee.FirstName }} {{ .Data.Employee.LastName }}">
-                </div>
-                <div class="inputDiv">
-                    <label for="type">Type</label>
-                    <select name="type" class="formInput" id="type">
-                        <option value="annual">annual</option>
-                        <option value="sick">sick</option>
-                        <option value="stress">stress</option>
-                        <option value="carers">carers</option>
-                        <option value="unpaid">unpaid</option>
-                    </select>
-                </div>
-                <div>
-                    <div id="leaveDateContainer">
-                        <div class="inputDiv">
-                            <label for="from">From</label>
-                            <input type="date" class="dateInput" id="from" name="from">
-                        </div>
-                        <div class="inputDiv">
-                            <label for="to">To</label>
-                            <input type="date" class="dateInput" id="to" name="to">
-                        </div>
-                    </div>
-                    <div class="error"></div>    
-                </div>
-                <div class="inputDiv">
-                    <label for="note">Note</label>
-                    <textarea type="text" class="formInput" id="note" name="note"></textarea>
-                </div>
-                <div id="leaveFormButtons">
-                    <button type="reset" id="leaveFormCancelBtn" class="leaveBtn" form="leaveForm">Cancel</button>
-                    <button type="submit" id="leaveFormSubmitBtn" class="leaveBtn" form="leaveForm">SUBMIT</button>
-                </div>
-            </form>
-        </div>
-        <div class="leaveContent" id="leaveHistoryContent" style="display: none;">
-            <p class="leaveRequestHeading">Leave history</p>
-            <div id="history">
-                <div class="leaveHistoryRowDisplayed leaveHistoryRowHeader">
-                    <div class="leaveHistoryRowCell">
-                        <p>Type</p>
-                    </div>
-                    <div class="leaveHistoryRowCell">
-                        <p>From</p>
-                    </div>
-                    <div class="leaveHistoryRowCell">
-                        <p>To</p>
-                    </div>
-                    <div class="leaveHistoryRowCell" id="isApproved">
-                        <p>Approved</p>
-                    </div>
-                </div>
-                {{ range .Data.LeaveRequests }}
-                    <div class="leaveHistoryRow">
-                        <div class="leaveHistoryRowDisplayed">
-                            <div class="leaveHistoryRowCell">
-                                <p>{{ .Type }}</p>
-                            </div>
-                            <div class="leaveHistoryRowCell">
-                                <p>{{ .From }}</p>
-                            </div>
-                            <div class="leaveHistoryRowCell">
-                                <p>{{ .To }}</p>
-                            </div>
-                            <div class="leaveHistoryRowCell" id="isApproved">
-                                <p>{{ .IsApproved }}</p>
-                            </div>
-                        </div>
-                        <div class="leaveHistoryRowHidden hidden">
-                            <form hx-put="/leave/put" hx-target="#error-{{ .RequestId }}" hx-swap="innerHtml" id="updateLeaveForm-{{ .RequestId }}">
-                                <div class="leaveHistoryRowHiddenCell">
-                                    <label for="requestId" class="leaveHistoryRowHiddenCellLabel">Request ID:</label>
-                                    <input 
-                                        type="text" 
-                                        name="requestId" 
-                                        readonly 
-                                        class="formInput" 
-                                        style="background-color: var(--main-background-color)" 
-                                        value="{{ .RequestId }}"
-                                        id="requestId"
-                                        readonly>
-                                </div>
-                                <div class="leaveHistoryRowHiddenCell">
-                                    <label for="name" class="leaveHistoryRowHiddenCellLabel">Name:</label>
-                                    <input 
-                                        type="text" 
-                                        name="name" 
-                                        readonly 
-                                        class="formInput" 
-                                        style="background-color: var(--main-background-color)" 
-                                        value="{{ .FirstName }} {{ .LastName }}"
-                                        id="updateName"
-                                        disabled>
-                                </div>
-                                <div class="leaveHistoryRowHiddenCell">
-                                    <label for="type" class="leaveHistoryRowHiddenCellLabel">Type:</label>
-                                    <select name="type" class="formInput" id="updateType" {{ if .IsApproved }} disabled {{ end }}>
-                                        <option value="{{ .Type }}">{{ .Type }}</option>
-                                        <option value="annual">annual</option>
-                                        <option value="sick">sick</option>
-                                        <option value="stress">stress</option>
-                                        <option value="carers">carers</option>
-                                        <option value="unpaid">unpaid</option>
-                                    </select>
-                                </div>
-                                <div class="leaveHistoryRowHiddenCell">
-                                    <label for="from" class="leaveHistoryRowHiddenCellLabel">From:</label>
-                                    <input type="date" name="from" class="formInput" id="updateFrom" value="{{ .From }}" {{ if .IsApproved }} readonly {{ end }}>
-                                </div>
-                                <div class="error" id="error-{{ .RequestId }}" style="font-size: xx-small;"></div>
-                                <div class="leaveHistoryRowHiddenCell">
-                                    <label for="to" class="leaveHistoryRowHiddenCellLabel">To:</label>
-                                    <input type="date" name="to" class="formInput" id="updateTo" value="{{ .To }}" {{ if .IsApproved }} readonly {{ end }}>
-                                </div>
-                                <div class="leaveHistoryRowHiddenCell">
-                                    <label for="note" class="leaveHistoryRowHiddenCellLabel">Note:</label>
-                                    <input type="textarea" name="note" class="formInput" id="updateNote" value="{{ .Note }}" {{ if .IsApproved }} readonly {{ end }}>
-                                </div>
-                                <div class="leaveHistoryRowHiddenCell" id="isApproved">
-                                    <label for="isApproved" class="leaveHistoryRowHiddenCellLabel">Approved:</label>
-                                    <input type="text" name="isApproved" id="updateIsApproved" class="formInput" readonly value="{{ .IsApproved }}">
-                                </div>
-                                {{ if eq .IsApproved false }}
-                                    <div id="updateLeaveFormButtons">
-                                        <button type="reset" id="updateLeaveFormCancelBtn" class="leaveBtn" form="updateLeaveForm-{{ .RequestId }}">Cancel</button>
-                                        <button type="submit" id="updateLeaveFormSubmitBtn" class="leaveBtn" form="updateLeaveForm-{{ .RequestId }}">SUBMIT</button>
-                                    </div>
-                                {{ end }}
-                            </form>
-                        </div>
-                    </div>
-                {{ end }}
-            </div>
+            {{ template "leaveForm" .Data }}
         </div>
     </div>
 </div>
