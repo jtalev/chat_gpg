@@ -1,6 +1,6 @@
 {{ define "existingTimesheetRow" }}
 	{{ range .TimesheetRows }}
-		<tr class="projectRow" id="projectRow">
+		<tr class="projectRow" id="projectRow-{{ .TimesheetWeekId }}">
 		    <td class="stickyCell">
 		        <div class="stickyCellContent">
 		            <p class="projects">{{ .JobName }}</p>
@@ -30,7 +30,15 @@
 		        <p class="total">0 : 0</p>
 		    </td>
 		    <td class="deleteRowContainer timesheetBorderTopLight">
-		        <button class="deleteRowBtn">delete</button>
+		        <button 
+		        hx-delete="/timesheet-week/delete" 
+		        hx-target="#projectRow-{{ .TimesheetWeekId }}"
+		        hx-vals='{
+		        	"timesheet_week_id": "{{.TimesheetWeekId}}"
+		        }'  
+		        class="deleteRowBtn">
+		        	<img src="../static/img/delete.svg" class="deleteRowBtnImg">
+		        </button>
 		    </td>
 		</tr>
 	{{ end }}

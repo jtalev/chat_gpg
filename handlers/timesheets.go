@@ -1,34 +1,12 @@
 package handlers
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 	"text/template"
 
 	"github.com/jtalev/chat_gpg/services"
 )
-
-func parseRequestValues(keys []string, r *http.Request) ([]string, error) {
-	out := make([]string, len(keys))
-
-	err := r.ParseForm()
-	if err != nil {
-		return out, err
-	}
-
-	for i := range keys {
-		val := r.FormValue(keys[i])
-		out[i] = val
-	}
-
-	return out, nil
-}
-
-func decodeJSON(payload interface{}, r *http.Request) error {
-	err := json.NewDecoder(r.Body).Decode(payload)
-	return err
-}
 
 func (h *Handler) ServeTimesheetsView() http.Handler {
 	return http.HandlerFunc(
@@ -213,21 +191,40 @@ func (h *Handler) GetTimesheetWeekByEmployee() http.Handler {
 func (h *Handler) DeleteTimesheetWeek() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			requestVals, err := parseRequestValues([]string{"id"}, r)
+			keys := []string{"timesheet_week_id"}
+			requestParams, err := parseRequestValues(keys, r)
 			if err != nil {
-				log.Println("Error parsing query params: ", err)
-				http.Error(w, "Bad Request", http.StatusBadRequest)
+				log.Println("Error parsing request values:", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+			id := requestParams[0]
+
+			timesheetWeek, err := services.DeleteTimesheetWeek(id, h.DB)
+
+			log.Println(timesheetWeek)
+
+			w.WriteHeader(http.StatusOK)
+		},
+	)
+}
+
+func (h *Handler) RenderJobSelectModal() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			jobs, err := services.GetJobs(h.DB)
+			if err != nil {
+				log.Println("Error retrieving jobs from database:", err)
+				http.Error(w, "Not found", http.StatusNotFound)
 				return
 			}
 
-			timesheetWeek, err := services.DeleteTimesheetWeek(requestVals[0], h.DB)
+			err = executePartialTemplate(jobSelectModalPath, "jobSelectModal", jobs, w)
 			if err != nil {
-				log.Println("Error deleting timesheet_week from db: ", err)
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				log.Println("Error rendering jobSelectModal:", err)
+				http.Error(w, "Error rendering template", http.StatusInternalServerError)
 				return
 			}
-
-			responseJSON(w, timesheetWeek, h.Logger)
 		},
 	)
 }

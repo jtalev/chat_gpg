@@ -25,6 +25,7 @@ const (
 	timesheetNavContainerPath = "../ui/templates/timesheetNavContainer.html"
 	timesheetHeadPath         = "../ui/templates/timesheetHead.html"
 	existingTimesheetRowPath  = "../ui/templates/existingTimesheetRow.html"
+	jobSelectModalPath        = "../ui/templates/jobSelectModal.html"
 	leavePath                 = "../ui/views/leave.html"
 	leaveHistoryPath          = "../ui/templates/leaveHistory.html"
 	leaveFormPath             = "../ui/templates/leaveForm.html"
@@ -66,6 +67,7 @@ func renderTemplate(
 		timesheetNavContainerPath,
 		timesheetHeadPath,
 		existingTimesheetRowPath,
+		jobSelectModalPath,
 		leavePath,
 		leaveHistoryPath,
 		leaveFormPath,
@@ -84,6 +86,27 @@ func renderTemplate(
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
 	}
+}
+
+func parseRequestValues(keys []string, r *http.Request) ([]string, error) {
+	out := make([]string, len(keys))
+
+	err := r.ParseForm()
+	if err != nil {
+		return out, err
+	}
+
+	for i := range keys {
+		val := r.FormValue(keys[i])
+		out[i] = val
+	}
+
+	return out, nil
+}
+
+func decodeJSON(payload interface{}, r *http.Request) error {
+	err := json.NewDecoder(r.Body).Decode(payload)
+	return err
 }
 
 func getEmployeeId(w http.ResponseWriter, r *http.Request) (string, error) {

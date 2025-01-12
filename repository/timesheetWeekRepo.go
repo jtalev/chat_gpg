@@ -180,9 +180,18 @@ func DeleteTimesheetWeek(id int, db *sql.DB) (models.TimesheetWeek, error) {
 	q := `
 	delete from timesheet_week where timesheet_week_id = ?;
 	`
-	_, err := db.Exec(q, id)
+	result, err := db.Exec(q, id)
 	if err != nil {
 		return models.TimesheetWeek{}, err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return models.TimesheetWeek{}, err
+	}
+
+	if rowsAffected == 0 {
+		return models.TimesheetWeek{}, errors.New("no timesheet found with the provided id")
 	}
 
 	outTimesheetWeek, err := GetTimesheetWeekById(id, db)

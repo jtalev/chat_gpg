@@ -48,6 +48,7 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/timesheets/get-by-id", a.AuthMiddleware(h.GetTimesheetById()))
 	mux.Handle("/timesheets/put", a.AuthMiddleware(h.PutTimesheet()))
 	mux.Handle("/timesheets/get-timesheet-table", a.AuthMiddleware(h.GetTimesheetTable()))
+	mux.Handle("/timesheets/job-select-modal", a.AuthMiddleware(h.RenderJobSelectModal()))
 
 	// timesheet week requests
 	mux.Handle("/timesheet-week/init-timesheet-week", a.AuthMiddleware(h.InitTimesheetWeek()))

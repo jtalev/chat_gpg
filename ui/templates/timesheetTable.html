@@ -10,4 +10,14 @@
             </tbody>
         </table>
     </div>
+    <div id="addRowBtnContainer">
+        <button 
+        hx-get="/timesheets/job-select-modal" 
+        hx-target="#jobSelectModal" 
+        hx-swap="innerHTML" 
+        id="addTableRowBtn">
+            + Add new row
+        </button>    
+    </div>
+
 {{ end }}

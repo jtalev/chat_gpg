@@ -1,0 +1,18 @@
+{{ define "jobSelectModal" }}
+<div id="jobSelectModalBackground"></div>
+<div id="jobSelectModalContent">
+    <p>Select job</p>
+    <form id="jobSelectForm">
+    {{ range . }}
+	    <div class="selectJobInput">
+	    	<input 
+	    	type="radio" 
+	    	id="{{ .ID }}" 
+	    	name="jobOption" 
+	    	value="{{ .Name }}, {{ .Number }} {{ .Address }}, {{ .Suburb }}">
+	    	<label for="{{ .Name }}">{{ .Name }}, {{ .Number }} {{ .Address }}, {{ .Suburb }}</label>
+	    </div>
+    {{ end }}
+	</form>
+</div>
+{{ end }}

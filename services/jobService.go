@@ -14,3 +14,11 @@ func GetJobById(id int, db *sql.DB) (models.Job, error) {
 	}
 	return job, nil
 }
+
+func GetJobs(db *sql.DB) ([]models.Job, error) {
+	outJobs, err := repository.GetJobs(db)
+	if err != nil {
+		return outJobs, err
+	}
+	return outJobs, nil
+}

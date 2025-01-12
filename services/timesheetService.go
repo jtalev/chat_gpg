@@ -229,7 +229,21 @@ func GetTimesheetWeekByWeekStart(weekStart string, db *sql.DB) ([]models.Timeshe
 }
 
 func DeleteTimesheetWeek(id string, db *sql.DB) (models.TimesheetWeek, error) {
-	return models.TimesheetWeek{}, nil
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		return models.TimesheetWeek{}, err
+	}
+	outTimesheetWeek, err := repository.DeleteTimesheetWeek(idInt, db)
+	if err != nil {
+		return outTimesheetWeek, err
+	}
+	return outTimesheetWeek, nil
+}
+
+type TimesheetRow struct {
+	JobName         string
+	Timesheets      []models.Timesheet
+	TimesheetWeekId int
 }
 
 type TimesheetViewData struct {
@@ -266,15 +280,11 @@ func InitialTimesheetViewData(db *sql.DB) (TimesheetViewData, error) {
 	return outData, nil
 }
 
-type TimesheetRow struct {
-	JobName    string
-	Timesheets []models.Timesheet
-}
-
 func mapTimesheetsToTimesheetWeek(inTimesheetWeeks []models.TimesheetWeek, db *sql.DB) ([]TimesheetRow, error) {
 	outData := make([]TimesheetRow, len(inTimesheetWeeks))
 	for i := range inTimesheetWeeks {
 		job, err := GetJobById(inTimesheetWeeks[i].JobId, db)
+		outData[i].TimesheetWeekId = inTimesheetWeeks[i].TimesheetWeekId
 		if err != nil {
 			return nil, err
 		}

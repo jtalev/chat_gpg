@@ -60,3 +60,12 @@ function updateRowTotals() {
         cell.addEventListener("keyup", calculateRowTotals)
     })
 }
+
+document.addEventListener("DOMContentLoaded", onAddRowClick)
+document.addEventListener("htmx:afterSwap", onAddRowClick)
+function onAddRowClick() {
+    document.querySelector("#addTableRowBtn").addEventListener("click", function() {
+        const jobSelectModal = document.querySelector("#jobSelectModal")
+        jobSelectModal.style.display = "flex"
+    })
+}
