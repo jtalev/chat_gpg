@@ -45,11 +45,11 @@ func GetTimesheetWeekById(id int, db *sql.DB) (models.TimesheetWeek, error) {
 	return outTimesheetWeek, nil
 }
 
-func GetTimesheetWeekByWeekStart(weekStart string, db *sql.DB) ([]models.TimesheetWeek, error) {
+func GetTimesheetWeekByEmployeeWeekStart(employeeId, weekStart string, db *sql.DB) ([]models.TimesheetWeek, error) {
 	q := `
-	SELECT * FROM timesheet_week where week_start_date = ?;
+	SELECT * FROM timesheet_week where week_start_date = ? and employee_id = ?;
 	`
-	rows, err := db.Query(q, weekStart)
+	rows, err := db.Query(q, weekStart, employeeId)
 	if err != nil {
 		return nil, err
 	}

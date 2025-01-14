@@ -229,9 +229,9 @@ func GetTimesheetWeekByEmployee(employeeId string, db *sql.DB) ([]models.Timeshe
 	return outTimesheetWeeks, nil
 }
 
-func GetTimesheetWeekByWeekStart(weekStart string, db *sql.DB) ([]models.TimesheetWeek, error) {
+func GetTimesheetWeekByEmployeeWeekStart(employeeId, weekStart string, db *sql.DB) ([]models.TimesheetWeek, error) {
 	// TODO: validate weekStart is in correct format
-	outTimesheetWeeks, err := repository.GetTimesheetWeekByWeekStart(weekStart, db)
+	outTimesheetWeeks, err := repository.GetTimesheetWeekByEmployeeWeekStart(employeeId, weekStart, db)
 	if err != nil {
 		return nil, err
 	}
@@ -265,7 +265,7 @@ type TimesheetViewData struct {
 	WeekStartDate string
 }
 
-func InitialTimesheetViewData(db *sql.DB) (TimesheetViewData, error) {
+func InitialTimesheetViewData(employeeId string, db *sql.DB) (TimesheetViewData, error) {
 	outData := TimesheetViewData{}
 
 	dates, err := currentWeekDates()
@@ -276,7 +276,7 @@ func InitialTimesheetViewData(db *sql.DB) (TimesheetViewData, error) {
 
 	year, month, day := weekStartDate().Date()
 	weekStart := fmt.Sprintf("%v-%v-%v", year, int(month), day)
-	initialTimesheetWeeks, err := GetTimesheetWeekByWeekStart(weekStart, db)
+	initialTimesheetWeeks, err := GetTimesheetWeekByEmployeeWeekStart(employeeId, weekStart, db)
 	if err != nil {
 		return outData, err
 	}
@@ -379,7 +379,7 @@ type TimesheetData struct {
 	Data Data
 }
 
-func TimesheetTableData(hxVals []string, db *sql.DB) (TimesheetData, error) {
+func TimesheetTableData(employeeId string, hxVals []string, db *sql.DB) (TimesheetData, error) {
 	outData := TimesheetData{}
 
 	arrow, weekStartDate := hxVals[0], hxVals[1]
@@ -403,7 +403,7 @@ func TimesheetTableData(hxVals []string, db *sql.DB) (TimesheetData, error) {
 		dates[i] = date.Day()
 		date = date.AddDate(0, 0, 1)
 	}
-	timesheetWeeks, err := repository.GetTimesheetWeekByWeekStart(weekStartDate, db)
+	timesheetWeeks, err := repository.GetTimesheetWeekByEmployeeWeekStart(employeeId, weekStartDate, db)
 	if err != nil {
 		return outData, err
 	}
@@ -421,7 +421,7 @@ func TimesheetTableData(hxVals []string, db *sql.DB) (TimesheetData, error) {
 	return outData, nil
 }
 
-func GetAvailableJobs(weekStartDate string, db *sql.DB) ([]models.Job, error) {
+func GetAvailableJobs(employeeId, weekStartDate string, db *sql.DB) ([]models.Job, error) {
 	//TODO: validate weekStartDate
 
 	outJobs := []models.Job{}
@@ -431,7 +431,7 @@ func GetAvailableJobs(weekStartDate string, db *sql.DB) ([]models.Job, error) {
 		return nil, err
 	}
 
-	currTimesheetWeek, err := repository.GetTimesheetWeekByWeekStart(weekStartDate, db)
+	currTimesheetWeek, err := repository.GetTimesheetWeekByEmployeeWeekStart(employeeId, weekStartDate, db)
 	if err == sql.ErrNoRows {
 		return jobs, nil
 	} else if err != nil {

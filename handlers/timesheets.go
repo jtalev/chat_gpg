@@ -15,7 +15,14 @@ func (h *Handler) ServeTimesheetsView() http.Handler {
 			component := "timesheets"
 			title := "Timesheets - GPG"
 
-			timesheetViewData, err := services.InitialTimesheetViewData(h.DB)
+			employeeId, err := getEmployeeId(w, r)
+			if err != nil {
+				log.Println("Unauthorized:", err)
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
+
+			timesheetViewData, err := services.InitialTimesheetViewData(employeeId, h.DB)
 			if err != nil {
 				log.Println("Error retrieving initial view data: ", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -30,6 +37,12 @@ func (h *Handler) ServeTimesheetsView() http.Handler {
 func (h *Handler) GetTimesheetTable() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			employeeId, err := getEmployeeId(w, r)
+			if err != nil {
+				log.Println("Unauthorized:", err)
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
 
 			keys := []string{"arrow", "week_start_date"}
 			hxVals, err := parseRequestValues(keys, r)
@@ -39,7 +52,7 @@ func (h *Handler) GetTimesheetTable() http.Handler {
 				return
 			}
 
-			timesheetTableData, err := services.TimesheetTableData(hxVals, h.DB)
+			timesheetTableData, err := services.TimesheetTableData(employeeId, hxVals, h.DB)
 			if err != nil {
 				log.Println("Error retrieving initial view data: ", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -227,6 +240,13 @@ func (h *Handler) RenderJobSelectModal() http.Handler {
 				WeekStartDate string
 			}
 
+			employeeId, err := getEmployeeId(w, r)
+			if err != nil {
+				log.Println("Unauthorized:", err)
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
+
 			hxVals, err := parseRequestValues([]string{"week_start_date"}, r)
 			if err != nil {
 				log.Println("Error parsing request vals:", err)
@@ -234,7 +254,7 @@ func (h *Handler) RenderJobSelectModal() http.Handler {
 				return
 			}
 			weekStartDate := hxVals[0]
-			jobs, err := services.GetAvailableJobs(weekStartDate, h.DB)
+			jobs, err := services.GetAvailableJobs(employeeId, weekStartDate, h.DB)
 			if err != nil {
 				log.Println("Error retrieving jobs from database:", err)
 				http.Error(w, "Not found", http.StatusNotFound)
