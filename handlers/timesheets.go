@@ -234,7 +234,7 @@ func (h *Handler) RenderJobSelectModal() http.Handler {
 				return
 			}
 			weekStartDate := hxVals[0]
-			jobs, err := services.GetJobs(h.DB)
+			jobs, err := services.GetAvailableJobs(weekStartDate, h.DB)
 			if err != nil {
 				log.Println("Error retrieving jobs from database:", err)
 				http.Error(w, "Not found", http.StatusNotFound)

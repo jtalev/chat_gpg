@@ -420,3 +420,35 @@ func TimesheetTableData(hxVals []string, db *sql.DB) (TimesheetData, error) {
 
 	return outData, nil
 }
+
+func GetAvailableJobs(weekStartDate string, db *sql.DB) ([]models.Job, error) {
+	//TODO: validate weekStartDate
+
+	outJobs := []models.Job{}
+	isAvailable := true
+	jobs, err := repository.GetJobs(db)
+	if err != nil {
+		return nil, err
+	}
+
+	currTimesheetWeek, err := repository.GetTimesheetWeekByWeekStart(weekStartDate, db)
+	if err == sql.ErrNoRows {
+		return jobs, nil
+	} else if err != nil {
+		return nil, err
+	}
+
+	for i := range jobs {
+		for j := range currTimesheetWeek {
+			if jobs[i].ID == currTimesheetWeek[j].JobId {
+				isAvailable = false
+			}
+		}
+		if isAvailable {
+			outJobs = append(outJobs, jobs[i])
+		}
+		isAvailable = true
+	}
+
+	return outJobs, nil
+}

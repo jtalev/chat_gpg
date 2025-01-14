@@ -84,6 +84,8 @@ INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, i
 VALUES ('5972276', 'Slid', 'Kestrel', 'slid.kestrel@outlook.com', '0450579387', 1);
 INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
 VALUES ('5972277', 'Daddy', 'Doss', 'daddy.doss@outlook.com', '0450579387', 0);
+INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
+VALUES ('5972276', 'Slid', 'Kestrel', 'slid.kestrel@outlook.com', '0450579387', 1);
 
 /** ---- employee_auth inserts ---- **/
 INSERT INTO employee_auth (employee_id, username, password_hash)

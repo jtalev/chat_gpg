@@ -77,5 +77,13 @@ function onJobSelectSubmit() {
         const jobSelectModal = document.querySelector("#jobSelectModal")
         jobSelectModal.style.display = "none"
     })
+}
 
+document.addEventListener("DOMContentLoaded", onJobSelectClose)
+document.addEventListener("htmx:afterSwap", onJobSelectClose)
+function onJobSelectClose() {
+    document.querySelector("#jobSelectModalCloseBtn").addEventListener("click", function() {
+        const jobSelectModal = document.querySelector("#jobSelectModal")
+        jobSelectModal.style.display = "none"
+    })
 }
