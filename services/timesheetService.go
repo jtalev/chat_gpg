@@ -181,7 +181,12 @@ func putTimesheetWeek(inTimesheetWeek models.TimesheetWeek, db *sql.DB) (models.
 	return outTimesheetWeek, nil
 }
 
-func InitTimesheetWeek(employeeId string, jobId int, weekStartDate string, db *sql.DB) (models.TimesheetWeek, error) {
+func InitTimesheetWeek(employeeId string, jobIdStr string, weekStartDate string, db *sql.DB) ([]TimesheetRow, error) {
+	jobId, err := strconv.Atoi(jobIdStr)
+	if err != nil {
+		return nil, err
+	}
+
 	inTimesheetWeek := models.TimesheetWeek{
 		EmployeeId:    employeeId,
 		JobId:         jobId,
@@ -190,7 +195,7 @@ func InitTimesheetWeek(employeeId string, jobId int, weekStartDate string, db *s
 
 	outTimesheetWeek, err := repository.PostTimesheetWeek(inTimesheetWeek, db)
 	if err != nil {
-		return models.TimesheetWeek{}, nil
+		return nil, nil
 	}
 	initialTimesheets, err := postNilTimesheets(&outTimesheetWeek, weekStartDate, db)
 	outTimesheetWeek.WedTimesheetId = initialTimesheets[0].TimesheetId
@@ -203,10 +208,15 @@ func InitTimesheetWeek(employeeId string, jobId int, weekStartDate string, db *s
 
 	outTimesheetWeek, err = repository.PutTimesheetWeek(outTimesheetWeek, db)
 	if err != nil {
-		return models.TimesheetWeek{}, err
+		return nil, err
 	}
 
-	return outTimesheetWeek, nil
+	outTimesheetRows, err := mapTimesheetsToTimesheetWeek([]models.TimesheetWeek{outTimesheetWeek}, db)
+	if err != nil {
+		return nil, err
+	}
+
+	return outTimesheetRows, nil
 }
 
 func GetTimesheetWeekByEmployee(employeeId string, db *sql.DB) ([]models.TimesheetWeek, error) {
@@ -240,6 +250,7 @@ func DeleteTimesheetWeek(id string, db *sql.DB) (models.TimesheetWeek, error) {
 	return outTimesheetWeek, nil
 }
 
+// data needed for existingTimesheetRow.html
 type TimesheetRow struct {
 	JobName         string
 	Timesheets      []models.Timesheet

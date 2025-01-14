@@ -69,3 +69,13 @@ function onAddRowClick() {
         jobSelectModal.style.display = "flex"
     })
 }
+
+document.addEventListener("DOMContentLoaded", onJobSelectSubmit)
+document.addEventListener("htmx:afterSwap", onJobSelectSubmit)
+function onJobSelectSubmit() {
+    document.querySelector("#selectJobSubmitBtn").addEventListener("click", function() {
+        const jobSelectModal = document.querySelector("#jobSelectModal")
+        jobSelectModal.style.display = "none"
+    })
+
+}

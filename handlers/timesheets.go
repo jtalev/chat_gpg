@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"text/template"
 
+	"github.com/jtalev/chat_gpg/models"
 	"github.com/jtalev/chat_gpg/services"
 )
 
@@ -131,6 +132,7 @@ func (h *Handler) PutTimesheet() http.Handler {
 func (h *Handler) InitTimesheetWeek() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			log.Println("initialising timesheet week")
 			employeeId, err := getEmployeeId(w, r)
 			if err != nil {
 				log.Println(err)
@@ -138,22 +140,20 @@ func (h *Handler) InitTimesheetWeek() http.Handler {
 				return
 			}
 
-			var requestParams struct {
-				JobId         int    `json:"job_id"`
-				WeekStartDate string `json:"week_start_date"`
-			}
-
-			err = decodeJSON(&requestParams, r)
+			keys := []string{"job_id", "week_start_date"}
+			hxVals, err := parseRequestValues(keys, r)
 			if err != nil {
-				h.Logger.Errorf("Error decoding JSON: ", err)
+				log.Println("Error parsing request vals:", err)
 				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
+			jobId := hxVals[0]
+			weekStartDate := hxVals[1]
 
-			outTimesheetWeek, err := services.InitTimesheetWeek(
+			outTimesheetRow, err := services.InitTimesheetWeek(
 				employeeId,
-				requestParams.JobId,
-				requestParams.WeekStartDate,
+				jobId,
+				weekStartDate,
 				h.DB)
 			if err != nil {
 				log.Println("Error initializing timesheet week: ", err)
@@ -161,7 +161,17 @@ func (h *Handler) InitTimesheetWeek() http.Handler {
 				return
 			}
 
-			responseJSON(w, outTimesheetWeek, h.Logger)
+			type Data struct {
+				TimesheetRows []services.TimesheetRow
+			}
+			data := Data{TimesheetRows: outTimesheetRow}
+
+			err = executePartialTemplate(existingTimesheetRowPath, "existingTimesheetRow", data, w)
+			if err != nil {
+				log.Println("Error executing template:", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
 		},
 	)
 }
@@ -212,6 +222,18 @@ func (h *Handler) DeleteTimesheetWeek() http.Handler {
 func (h *Handler) RenderJobSelectModal() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			type Data struct {
+				Jobs          []models.Job
+				WeekStartDate string
+			}
+
+			hxVals, err := parseRequestValues([]string{"week_start_date"}, r)
+			if err != nil {
+				log.Println("Error parsing request vals:", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+			weekStartDate := hxVals[0]
 			jobs, err := services.GetJobs(h.DB)
 			if err != nil {
 				log.Println("Error retrieving jobs from database:", err)
@@ -219,7 +241,12 @@ func (h *Handler) RenderJobSelectModal() http.Handler {
 				return
 			}
 
-			err = executePartialTemplate(jobSelectModalPath, "jobSelectModal", jobs, w)
+			data := Data{
+				Jobs:          jobs,
+				WeekStartDate: weekStartDate,
+			}
+
+			err = executePartialTemplate(jobSelectModalPath, "jobSelectModal", data, w)
 			if err != nil {
 				log.Println("Error rendering jobSelectModal:", err)
 				http.Error(w, "Error rendering template", http.StatusInternalServerError)

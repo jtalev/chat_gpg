@@ -2,17 +2,27 @@
 <div id="jobSelectModalBackground"></div>
 <div id="jobSelectModalContent">
     <p>Select job</p>
-    <form id="jobSelectForm">
-    {{ range . }}
-	    <div class="selectJobInput">
-	    	<input 
-	    	type="radio" 
-	    	id="{{ .ID }}" 
-	    	name="jobOption" 
-	    	value="{{ .Name }}, {{ .Number }} {{ .Address }}, {{ .Suburb }}">
-	    	<label for="{{ .Name }}">{{ .Name }}, {{ .Number }} {{ .Address }}, {{ .Suburb }}</label>
-	    </div>
-    {{ end }}
+    <form 
+    id="jobSelectForm"
+    hx-post="/timesheet-week/init-timesheet-week"
+    hx-target="#timesheetTable" 
+    hx-swap="beforeend"
+    hx-vals='{
+    	"week_start_date": "{{ .WeekStartDate }}"
+    }'>
+    	<div class="jobSelectionsContainer">
+		    {{ range .Jobs }}
+			    <div class="selectJobInput">
+			    	<input 
+			    	type="radio" 
+			    	id="{{ .ID }}" 
+			    	name="job_id" 
+			    	value="{{ .ID }}">
+			    	<label for="{{ .Name }}">{{ .Name }}, {{ .Number }} {{ .Address }}, {{ .Suburb }}</label>
+			    </div>
+		    {{ end }}
+		</div>
+    	<button type="submit" class="gpgBtn" id="selectJobSubmitBtn" form="jobSelectForm">SELECT</button>
 	</form>
 </div>
 {{ end }}

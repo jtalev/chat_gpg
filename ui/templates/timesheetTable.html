@@ -15,7 +15,10 @@
         hx-get="/timesheets/job-select-modal" 
         hx-target="#jobSelectModal" 
         hx-swap="innerHTML" 
-        id="addTableRowBtn">
+        id="addTableRowBtn"
+        hx-vals='{
+            "week_start_date": "{{ .Data.WeekStartDate }}"
+        }'>
             + Add new row
         </button>    
     </div>

@@ -415,7 +415,7 @@ form input {
 
 #jobSelectModalContent {
     width: 70%;
-    height: 50%;
+    height: 80%;
     background-color: white;
     border: var(--gpg-green) solid 1px;
     display: flex;
@@ -425,25 +425,90 @@ form input {
     font-weight: lighter;
 }
 
-#jobSelectForm {
+@media screen and (max-width: 960px) {
+    #jobSelectForm {
+        width: 90%;
+        max-width: 450px;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+}
+
+@media screen and (min-width: 960px) {
+    #jobSelectForm {
+        width: 50%;
+        max-width: 450px;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+}
+
+.jobSelectionsContainer {
+    padding-top: 1px;
     width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.jobSelectionsContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+.jobSelectionsContainer::-webkit-scrollbar-thumb {
+    background-color: var(--gpg-green);
+    border-radius: 4px;
+}
+
+.jobSelectionsContainer::-webkit-scrollbar-track {
+    background-color: #white;
 }
 
 .selectJobInput {
     display: flex;
     justify-content: flex-start;
-    border: var(--gpg-green) solid 1px;
     height: 2em;
-    column-gap: 5px;
     align-items: center;
     margin-bottom: 5px;
     font-size: small;
+    width: 100%;
+    gap: 5px;
+}
+
+.selectJobInput > label {
+    border: var(--gpg-green) solid 1px;
     background-color: var(--main-background-color);
-    width: 50%;
-    padding-left: 1.5em;
+    height: 100%;
+    padding-left: 5px;
+    padding-right: 5px;
+    overflow-x: auto;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-grow: 1;
+}
+
+.selectJobInput > label::-webkit-scrollbar {
+    height: 2px;
+}
+
+.selectJobInput > label::-webkit-scrollbar-thumb {
+    background-color: var(--gpg-green);
+    border-radius: 4px;
+}
+
+.selectJobInput > label::-webkit-scrollbar-track {
+    background-color: #white;
 }
 
 input[type="radio"] {
@@ -597,7 +662,7 @@ input[type="radio"]:checked {
     background-color: #f9f9f9;
     z-index: 1;
     overflow: hidden;
-    text-overflow: ellipsis; /* Add ellipsis for overflowed text */
+    text-overflow: ellipsis;
     border: none;
     padding: 0;
     margin: 0;
