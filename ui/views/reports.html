@@ -1,0 +1,10 @@
+{{ define "reports" }}
+<div class="reportsContainer">
+	<h2 id="reportsHeader">Reports</h2>
+	<div id="reportsContentContainer">
+	    <div class="reportsContent" id="reportsContent">
+	    {{ template "timesheetReport" .TimesheetReportData }}
+	    </div>
+	</div>
+</div>
+{{ end }}

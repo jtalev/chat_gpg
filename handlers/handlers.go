@@ -16,21 +16,24 @@ import (
 )
 
 const (
-	layoutPath                = "../ui/layouts/layout.html"
-	navPath                   = "../ui/templates/nav.html"
-	dashboardPath             = "../ui/views/dashboard.html"
-	jobsPath                  = "../ui/views/jobs.html"
-	timesheetsPath            = "../ui/views/timesheets.html"
-	timesheetTablePath        = "../ui/templates/timesheetTable.html"
-	timesheetNavContainerPath = "../ui/templates/timesheetNavContainer.html"
-	timesheetHeadPath         = "../ui/templates/timesheetHead.html"
-	existingTimesheetRowPath  = "../ui/templates/existingTimesheetRow.html"
-	jobSelectModalPath        = "../ui/templates/jobSelectModal.html"
-	leavePath                 = "../ui/views/leave.html"
-	leaveHistoryPath          = "../ui/templates/leaveHistory.html"
-	leaveFormPath             = "../ui/templates/leaveForm.html"
-	adminPath                 = "../ui/views/admin.html"
-	accountPath               = "../ui/views/account.html"
+	layoutPath                  = "../ui/layouts/layout.html"
+	navPath                     = "../ui/templates/nav.html"
+	dashboardPath               = "../ui/views/dashboard.html"
+	jobsPath                    = "../ui/views/jobs.html"
+	timesheetsPath              = "../ui/views/timesheets.html"
+	timesheetTablePath          = "../ui/templates/timesheetTable.html"
+	timesheetNavContainerPath   = "../ui/templates/timesheetNavContainer.html"
+	timesheetHeadPath           = "../ui/templates/timesheetHead.html"
+	existingTimesheetRowPath    = "../ui/templates/existingTimesheetRow.html"
+	jobSelectModalPath          = "../ui/templates/jobSelectModal.html"
+	leavePath                   = "../ui/views/leave.html"
+	leaveHistoryPath            = "../ui/templates/leaveHistory.html"
+	leaveFormPath               = "../ui/templates/leaveForm.html"
+	reportsPath                 = "../ui/views/reports.html"
+	timesheetReportPath         = "../ui/templates/timesheetReport.html"
+	employeeTimesheetReportPath = "../ui/templates/employeeTimesheetReport.html"
+	adminPath                   = "../ui/views/admin.html"
+	accountPath                 = "../ui/views/account.html"
 )
 
 func renderTemplate(
@@ -71,6 +74,9 @@ func renderTemplate(
 		leavePath,
 		leaveHistoryPath,
 		leaveFormPath,
+		reportsPath,
+		timesheetReportPath,
+		employeeTimesheetReportPath,
 		adminPath,
 		accountPath,
 	)
@@ -115,6 +121,14 @@ func getEmployeeId(w http.ResponseWriter, r *http.Request) (string, error) {
 		return "", errors.New("Error retrieving employee_id")
 	}
 	return employeeId, nil
+}
+
+func getIsAdmin(w http.ResponseWriter, r *http.Request) (bool, error) {
+	isAdmin, ok := r.Context().Value("is_admin").(bool)
+	if !ok {
+		return false, errors.New("Error retrieving is_admin")
+	}
+	return isAdmin, nil
 }
 
 func responseJSON(w http.ResponseWriter, data any, sugar *zap.SugaredLogger) {

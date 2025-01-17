@@ -225,6 +225,10 @@ input {
     }
 }*/
 
+.bold {
+    font-weight: 600;
+}
+
 .hidden {
     display: none;
 }
@@ -823,12 +827,13 @@ input::-webkit-inner-spin-button {
     background-color: white;
     color: var(--gpg-green);
     width: 8em;
-    height: 2em;
+    height: 2.5em;
 
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
+    white-space: nowrap;
 }
 
 .saveAllBtn {
@@ -1198,3 +1203,100 @@ input::-webkit-inner-spin-button {
 .adminContent {
     margin: 0 3% 0 3%;
 }
+
+/* ----- reports ----- */
+@media screen and (max-width: 1030px) {
+
+    .reportsContainer {
+        width: 95%;
+        height: 95%;
+        margin-top: auto;
+        margin-bottom: 1em;
+        display: flex;
+        flex-direction: column;
+        font-size: small;
+    }
+}
+
+@media screen and (min-width: 1031px) {    
+    .reportsContainer {
+        height: 95%;
+        width: 95%;
+        display: flex;
+        flex-direction: column;
+        font-size: small;
+    }
+}
+
+#reportsContentContainer {
+    flex-grow: 1;
+    width: 100%;
+    border: var(--gpg-green) solid 1px;
+    background-color: white;
+    overflow-y: auto;
+    padding-top: 1em;
+}
+
+.reportsContent {
+    margin: 0 3% 0 3%;
+}
+
+#reportsHeader {
+    font-weight: lighter;
+    margin: 0 0 0.4em 0;
+}
+
+#timesheetReportNavContainer {
+    display: flex;
+    gap: 1em;
+    height: 2em;
+    padding: 0;
+    margin: 0 0 1em 0;
+}
+
+#employeeSelector {
+    height: 100%;
+    background-color: var(--main-background-color);
+}
+
+#weekSelectorContainer {
+    display: flex;
+    gap: 5px;
+    width: 4em;
+    height: 2em;
+}
+
+#leftWeekSelectorBtn, #rightWeekSelectorBtn {
+    background-color: var(--main-background-color);
+}
+
+.timesheetReportTable {
+    width: 100%;
+    margin-top: 5px;
+    border-collapse: collapse;
+}
+
+.timesheetReportTableRow > th, td {
+    border-bottom: var(--timesheet-border) solid 1px;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+.timesheetReportTableRow > th {
+    background-color: var(--main-background-color);
+}
+
+.timesheetReportTableRow:first-child > th, td {
+    width: 30px;
+    overflow: hidden;
+}
+
+ .timesheetReportDay {
+    color: var(--timesheet-border);
+ }
+
+ .timesheetReportDay, .timesheetReportDate {
+    margin: 0;
+    padding: 0;
+    font-weight: lighter;
+ }

@@ -23,6 +23,7 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/jobs", a.AuthMiddleware(h.ServeJobsView()))
 	mux.Handle("/timesheets", a.AuthMiddleware(h.ServeTimesheetsView()))
 	mux.Handle("/leave", a.AuthMiddleware(h.ServeLeaveView()))
+	mux.Handle("/reports", a.AuthMiddleware(h.ServeReportsView()))
 	mux.Handle("/admin", a.AuthMiddleware(h.ServeAdminView()))
 	mux.Handle("/account", a.AuthMiddleware(h.ServeAccountView()))
 
@@ -54,4 +55,7 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/timesheet-week/init-timesheet-week", a.AuthMiddleware(h.InitTimesheetWeek()))
 	mux.Handle("/timesheet-week/get-by-employee", a.AuthMiddleware(h.GetTimesheetWeekByEmployee()))
 	mux.Handle("/timesheet-week/delete", a.AuthMiddleware(h.DeleteTimesheetWeek()))
+
+	// reports requests
+	mux.Handle("/reports/timesheet-report", a.AuthMiddleware(h.GetEmployeeTimesheetReport()))
 }

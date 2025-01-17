@@ -71,6 +71,7 @@ type TimesheetWeek struct {
 	MonTimesheetId  int    `json:"mon_timesheet_id"`
 	TueTimesheetId  int    `json:"tue_timesheet_id"`
 	WeekStartDate   string `json:"week_start_date"`
+	Total           int    `json:"total"`
 	CreatedAt       string `json:"created_at"`
 	ModifiedAt      string `json:"modified_at"`
 }

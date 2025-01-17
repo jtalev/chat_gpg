@@ -23,6 +23,8 @@
                 {{ template "timesheets" . }}
             {{ else if eq .Component "leave" }}
                 {{ template "leave" . }}
+            {{ else if eq .Component "reports" }}
+                {{ template "reports" .Data }}
             {{ else if eq .Component "admin" }}
                 {{ template "admin" . }}
             {{ else if eq .Component "account" }}

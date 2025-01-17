@@ -1,0 +1,63 @@
+{{ define "employeeTimesheetReport" }}
+<div id="weekSelectorContainer">
+    <button class="arrow" id="leftWeekSelectorBtn"><</button>
+    <button class="arrow" id="rightWeekSelectorBtn">></button>
+</div>	
+<table class="timesheetReportTable">
+	<thead>
+		<tr class="timesheetReportTableRow">
+			<th>
+				Job
+			</th>
+			<th>
+				<p class="timesheetReportDay">We</p>
+				<p class="timesheetReportDate">{{ index .WeekDates 0 }}</p>
+			</th>
+			<th>
+				<p class="timesheetReportDay">Th</p>
+				<p class="timesheetReportDate">{{ index .WeekDates 1 }}</p>
+			</th>
+			<th>
+				<p class="timesheetReportDay">Fr</p>
+				<p class="timesheetReportDate">{{ index .WeekDates 2 }}</p>
+			</th>
+			<th>
+				<p class="timesheetReportDay">Sa</p>
+				<p class="timesheetReportDate">{{ index .WeekDates 3 }}</p>
+			</th>
+			<th>
+				<p class="timesheetReportDay">Su</p>
+				<p class="timesheetReportDate">{{ index .WeekDates 4 }}</p>
+			</th>
+			<th>
+				<p class="timesheetReportDay">Mo</p>
+				<p class="timesheetReportDate">{{ index .WeekDates 5 }}</p>
+			</th>
+			<th>
+				<p class="timesheetReportDay">Tu</p>
+				<p class="timesheetReportDate">{{ index .WeekDates 6 }}</p>
+			</th>
+			<th class="bold">
+				Total
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{ range .TimesheetRows }}
+		<tr class="timesheetReportTableRow">
+			<td>
+				{{ .JobName }}
+			</td>
+			{{ range .Timesheets }}
+				<td>
+					{{ .Hours }}:{{ .Minutes }}
+				</td>
+			{{ end }}
+			<td class="bold">
+				{{ .Total }}
+			</td>
+		</tr>
+		{{ end }}
+	</tbody>
+</table>
+{{ end }}

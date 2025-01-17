@@ -139,7 +139,7 @@ VALUES ('5972283', 'DetrasWebSolutions', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntr
 INSERT INTO employee_auth (employee_id, username, password_hash)
 VALUES ('5972284', 'SiteSlider', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
 INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972285', 'PixelId', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
+VALUES ('5972285', 'Pixeld', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
 INSERT INTO employee_auth (employee_id, username, password_hash)
 VALUES ('5972286', 'MastersOfDigital', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
 INSERT INTO employee_auth (employee_id, username, password_hash)

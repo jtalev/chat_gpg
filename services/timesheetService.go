@@ -255,6 +255,7 @@ type TimesheetRow struct {
 	JobName         string
 	Timesheets      []models.Timesheet
 	TimesheetWeekId int
+	Total           string
 }
 
 type TimesheetViewData struct {
