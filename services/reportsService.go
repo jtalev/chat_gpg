@@ -2,9 +2,11 @@ package services
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
-	"log"
+	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/jtalev/chat_gpg/models"
 )
@@ -23,6 +25,9 @@ func InitialTimesheetReportData(db *sql.DB) (TimesheetReportData, error) {
 	weekStartDate := weekStartDate()
 	weekStartDateStr := fmt.Sprintf("%v-%v-%v", weekStartDate.Year(), int(weekStartDate.Month()), weekStartDate.Day())
 
+	sort.Slice(employees, func(i, j int) bool {
+		return employees[i].FirstName < employees[j].FirstName
+	})
 	outData.Employees = employees
 	outData.WeekStartDate = weekStartDateStr
 
@@ -34,6 +39,8 @@ type EmployeeTimesheetReportData struct {
 	WeekStartDate string
 	WeekDates     []int
 	TimesheetRows []TimesheetRow
+	DayTotals     []string
+	WeekTotal     string
 }
 
 func calcTimesheetRowTotal(inTimesheetRows []TimesheetRow) []string {
@@ -52,8 +59,103 @@ func calcTimesheetRowTotal(inTimesheetRows []TimesheetRow) []string {
 		outTotals[i] = outTotal
 	}
 
-	log.Println(outTotals)
 	return outTotals
+}
+
+func formatTimesheetMatrices(inTimesheetRows []TimesheetRow) (outHoursMatrix, outMinutesMatrix [][]int) {
+	row, col := len(inTimesheetRows), 7
+
+	outHoursMatrix, outMinutesMatrix = make([][]int, row), make([][]int, row)
+	for i := range row {
+		outHoursMatrix[i] = make([]int, col)
+		outMinutesMatrix[i] = make([]int, col)
+	}
+
+	for i := range inTimesheetRows {
+		for j, timesheet := range inTimesheetRows[i].Timesheets {
+			outHoursMatrix[i][j] = timesheet.Hours
+			outMinutesMatrix[i][j] = timesheet.Minutes
+		}
+	}
+
+	return outHoursMatrix, outMinutesMatrix
+}
+
+func calcDayTotals(inHoursMatrix, inMinutesMatrix [][]int) (dayTotals []string) {
+	hourTotals := make([]int, 7)
+	minuteTotals := make([]int, 7)
+	dayTotals = make([]string, 7)
+	row, col := len(inHoursMatrix), len(inHoursMatrix[0])
+
+	for j := range col {
+		for i := range row {
+			hourTotals[j] += inHoursMatrix[i][j]
+			minuteTotals[j] += inMinutesMatrix[i][j]
+		}
+	}
+
+	for i := range col {
+		hourTotals[i] += minuteTotals[i] / 60
+		minuteTotals[i] = minuteTotals[i] % 60
+		dayTotalStr := fmt.Sprintf("%v:%v", hourTotals[i], minuteTotals[i])
+		dayTotals[i] = dayTotalStr
+	}
+
+	return dayTotals
+}
+
+func formatDayTotals(inTimesheetRows []TimesheetRow) []string {
+	hoursMatrix, minutesMatrix := formatTimesheetMatrices(inTimesheetRows)
+	return calcDayTotals(hoursMatrix, minutesMatrix)
+}
+
+func calcWeekTotal(rowTotals, dayTotals []string) (string, error) {
+	fromRowTotalsHours, fromRowTotalsMins := 0, 0
+	fromDayTotalsHours, fromDayTotalsMins := 0, 0
+
+	for i := range rowTotals {
+		arr := strings.Split(rowTotals[i], ":")
+		hours, mins := arr[0], arr[1]
+		hourInt, err := strconv.Atoi(hours)
+		if err != nil {
+			return "", err
+		}
+		minsInt, err := strconv.Atoi(mins)
+		if err != nil {
+			return "", err
+		}
+		fromRowTotalsHours += hourInt
+		fromRowTotalsMins += minsInt
+	}
+
+	for i := range dayTotals {
+		arr := strings.Split(dayTotals[i], ":")
+		hours, mins := arr[0], arr[1]
+		hourInt, err := strconv.Atoi(hours)
+		if err != nil {
+			return "", err
+		}
+		minsInt, err := strconv.Atoi(mins)
+		if err != nil {
+			return "", err
+		}
+		fromDayTotalsHours += hourInt
+		fromDayTotalsMins += minsInt
+	}
+
+	fromRowTotalsHours += fromRowTotalsMins / 60
+	fromRowTotalsMins = fromRowTotalsMins % 60
+	fromDayTotalsHours += fromDayTotalsMins / 60
+	fromDayTotalsMins = fromDayTotalsMins % 60
+
+	fromRowTotal := fmt.Sprintf("%v:%v", fromRowTotalsHours, fromRowTotalsMins)
+	fromDayTotal := fmt.Sprintf("%v:%v", fromDayTotalsHours, fromDayTotalsMins)
+
+	if fromRowTotal != fromDayTotal {
+		return "", errors.New("Mismatch between row and day total, bad logic")
+	}
+
+	return fromRowTotal, nil
 }
 
 func GetInitialEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (EmployeeTimesheetReportData, error) {
@@ -84,15 +186,22 @@ func GetInitialEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (Em
 	if err != nil {
 		return outData, err
 	}
-	totals := calcTimesheetRowTotal(timesheetRows)
+	rowTotals := calcTimesheetRowTotal(timesheetRows)
 	for i := range timesheetRows {
-		timesheetRows[i].Total = totals[i]
+		timesheetRows[i].Total = rowTotals[i]
+	}
+
+	dayTotals := formatDayTotals(timesheetRows)
+	weekTotal, err := calcWeekTotal(rowTotals, dayTotals)
+	if err != nil {
+		return outData, err
 	}
 
 	outData.EmployeeId = employee.EmployeeId
 	outData.WeekDates = weekDates
 	outData.TimesheetRows = timesheetRows
-	log.Println(timesheetWeeks)
+	outData.DayTotals = dayTotals
+	outData.WeekTotal = weekTotal
 
 	return outData, nil
 }

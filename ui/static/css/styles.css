@@ -11,8 +11,10 @@ body {
 :root {
     --gpg-green: #00969C;
     --gpg-green-background: #00969C90;
+    --gpg-light-green-background: #91c8cb90;;
     --gpg-grey: #1C1C1C;
     --main-background-color: rgb(238, 237, 237);
+    --light-background-color: #f8f8f8;
     --form-input-border-color: rgb(211, 210, 210);
     --main-color: #474747;
     --timesheet-border: #a5a4a4;
@@ -227,6 +229,17 @@ input {
 
 .bold {
     font-weight: 600;
+}
+.darkGreenBackground {
+    background-color: var(--gpg-green-background);
+}
+
+.lightGreyBackground {
+    background-color: var(--light-background-color);
+}
+
+.smallerText {
+    font-size: smaller;
 }
 
 .hidden {

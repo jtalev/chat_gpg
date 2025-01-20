@@ -45,7 +45,7 @@
 	<tbody>
 		{{ range .TimesheetRows }}
 		<tr class="timesheetReportTableRow">
-			<td>
+			<td class="smallerText">
 				{{ .JobName }}
 			</td>
 			{{ range .Timesheets }}
@@ -53,11 +53,24 @@
 					{{ .Hours }}:{{ .Minutes }}
 				</td>
 			{{ end }}
-			<td class="bold">
+			<td class="bold lightGreyBackground">
 				{{ .Total }}
 			</td>
 		</tr>
 		{{ end }}
+		<tr class="timesheetReportTableRow">
+			<th>
+				Total
+			</th>
+			{{ range .DayTotals }}
+				<td class="bold lightGreyBackground">
+					{{ . }}
+				</td>
+			{{ end }}
+			<td class="bold darkGreenBackground">
+				{{ .WeekTotal }}
+			</td>
+		</tr>
 	</tbody>
 </table>
 {{ end }}
