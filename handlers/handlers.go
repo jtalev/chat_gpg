@@ -10,8 +10,9 @@ import (
 	"path/filepath"
 
 	"github.com/gorilla/sessions"
-	"github.com/jtalev/chat_gpg/models"
-	"github.com/jtalev/chat_gpg/repository"
+	domain "github.com/jtalev/chat_gpg/domain/models"
+	infrastructure "github.com/jtalev/chat_gpg/infrastructure/repository"
+
 	"go.uber.org/zap"
 )
 
@@ -214,8 +215,8 @@ func (h *Handler) ServeJobsView() http.Handler {
 }
 
 type LeaveViewData struct {
-	Employee      models.Employee
-	LeaveRequests []models.LeaveRequest
+	Employee      domain.Employee
+	LeaveRequests []domain.LeaveRequest
 	DateError     string
 }
 
@@ -229,14 +230,14 @@ func (h *Handler) ServeLeaveView() http.Handler {
 				return
 			}
 
-			employee, err := repository.GetEmployeeByEmployeeId(employeeId, h.DB)
+			employee, err := infrastructure.GetEmployeeByEmployeeId(employeeId, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error getting employee data: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
 
-			leaveRequests, err := repository.GetLeaveRequestsByEmployee(employeeId, h.DB)
+			leaveRequests, err := infrastructure.GetLeaveRequestsByEmployee(employeeId, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error getting leave page data: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)

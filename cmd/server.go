@@ -13,9 +13,9 @@ import (
 
 	"github.com/gorilla/sessions"
 	"github.com/joho/godotenv"
-	"github.com/jtalev/chat_gpg/auth"
+	"github.com/jtalev/chat_gpg/domain/models"
 	"github.com/jtalev/chat_gpg/handlers"
-	"github.com/jtalev/chat_gpg/models"
+	"github.com/jtalev/chat_gpg/infrastructure/auth"
 	_ "github.com/mattn/go-sqlite3"
 	"go.uber.org/zap"
 )
@@ -48,7 +48,7 @@ func newCookieStore() *sessions.CookieStore {
 func new_server(
 	ctx context.Context,
 	h *handlers.Handler,
-	a *auth.Auth,
+	a *infrastructure.Auth,
 	store *sessions.CookieStore,
 	sugar *zap.SugaredLogger,
 ) http.Handler {
@@ -76,14 +76,14 @@ func run(
 	}
 	sugar := logger.Sugar()
 	defer logger.Sync()
-	db := models.InitDb(rootPath, sugar)
+	db := domain.InitDb(rootPath, sugar)
 	store := newCookieStore()
 	h := handlers.Handler{
 		DB:     db,
 		Store:  store,
 		Logger: sugar,
 	}
-	a := auth.Auth{
+	a := infrastructure.Auth{
 		Logger: sugar,
 		Store:  store,
 	}

@@ -10,9 +10,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jtalev/chat_gpg/models"
-	"github.com/jtalev/chat_gpg/repository"
-	"github.com/jtalev/chat_gpg/services"
+	"github.com/jtalev/chat_gpg/application/services"
+	"github.com/jtalev/chat_gpg/domain/models"
+	"github.com/jtalev/chat_gpg/infrastructure/repository"
 	"go.uber.org/zap"
 )
 
@@ -26,7 +26,7 @@ func (h *Handler) RenderLeaveHistoryTab() http.Handler {
 				return
 			}
 
-			historyData, err := services.GetLeaveHistoryByEmployeeId(employeeId, h.DB)
+			historyData, err := application.GetLeaveHistoryByEmployeeId(employeeId, h.DB)
 			if err != nil {
 				log.Println("Error retrieving leave history from db:", err)
 				http.Error(w, "Status not found", http.StatusNotFound)
@@ -60,7 +60,7 @@ func (h *Handler) RenderLeaveFormTab() http.Handler {
 				return
 			}
 
-			employee, err := services.GetEmployeeByEmployeeId(employeeId, h.DB)
+			employee, err := application.GetEmployeeByEmployeeId(employeeId, h.DB)
 			if err != nil {
 				log.Println("Error retrieving employee from db:", err)
 				http.Error(w, "Status not found", http.StatusNotFound)
@@ -75,7 +75,7 @@ func (h *Handler) RenderLeaveFormTab() http.Handler {
 			}
 
 			type Data struct {
-				Employee models.Employee
+				Employee domain.Employee
 			}
 			outData := Data{Employee: employee}
 
@@ -105,7 +105,7 @@ func (h *Handler) GetLeaveRequests() http.Handler {
 				return
 			}
 
-			data, err := repository.GetLeaveRequests(h.DB)
+			data, err := infrastructure.GetLeaveRequests(h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error getting leave requests: %v", err)
 				http.Error(w, "Data not found", http.StatusNotFound)
@@ -127,7 +127,7 @@ func (h *Handler) GetLeaveRequestsByEmployee() http.Handler {
 				return
 			}
 
-			data, err := repository.GetLeaveRequestsByEmployee(employeeId, h.DB)
+			data, err := infrastructure.GetLeaveRequestsByEmployee(employeeId, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error getting leave requests for employee %s: %v", employeeId, err)
 				http.Error(w, "Data not StatusNotFound", http.StatusNotFound)
@@ -161,8 +161,8 @@ func stringToDate(date string) (time.Time, error) {
 	return dateObject, nil
 }
 
-func validateLeaveRequest(lr models.LeaveRequest) ([]models.ValidationResult, error) {
-	results := make([]models.ValidationResult, 0)
+func validateLeaveRequest(lr domain.LeaveRequest) ([]domain.ValidationResult, error) {
+	results := make([]domain.ValidationResult, 0)
 
 	from, err := stringToDate(lr.From)
 	if err != nil {
@@ -176,7 +176,7 @@ func validateLeaveRequest(lr models.LeaveRequest) ([]models.ValidationResult, er
 	}
 
 	if from.Before(time.Now()) {
-		results = append(results, models.ValidationResult{
+		results = append(results, domain.ValidationResult{
 			Key:     "date",
 			IsValid: false,
 			Msg:     "From date must be after current date",
@@ -184,7 +184,7 @@ func validateLeaveRequest(lr models.LeaveRequest) ([]models.ValidationResult, er
 	}
 
 	if !from.Before(to) {
-		results = append(results, models.ValidationResult{
+		results = append(results, domain.ValidationResult{
 			Key:     "date",
 			IsValid: false,
 			Msg:     "From date must be before To date",
@@ -216,7 +216,7 @@ func (h *Handler) PostLeaveRequest() http.Handler {
 			to := r.FormValue("to")
 			note := r.FormValue("note")
 
-			leaveRequest := models.LeaveRequest{
+			leaveRequest := domain.LeaveRequest{
 				EmployeeId: employeeId,
 				Type:       leaveType,
 				From:       from,
@@ -235,13 +235,13 @@ func (h *Handler) PostLeaveRequest() http.Handler {
 				return
 			}
 
-			leaveRequest, err = repository.PostLeaveRequest(leaveRequest, h.DB)
+			leaveRequest, err = infrastructure.PostLeaveRequest(leaveRequest, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error posting leave request: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
-			employee, err := repository.GetEmployeeByEmployeeId(employeeId, h.DB)
+			employee, err := infrastructure.GetEmployeeByEmployeeId(employeeId, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error getting employee: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -273,7 +273,7 @@ func (h *Handler) PutLeaveRequest() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			// reading rData from request, this will be the updated rData
-			var rData models.LeaveRequest
+			var rData domain.LeaveRequest
 			err := r.ParseForm()
 			if err != nil {
 				h.Logger.Errorf("Error parsing form: %v", err)
@@ -301,7 +301,7 @@ func (h *Handler) PutLeaveRequest() http.Handler {
 			rData.IsApproved = isApproved
 
 			// get leave request from db using data.RequestId
-			updated, err := repository.GetLeaveRequestById(rData.RequestId, h.DB)
+			updated, err := infrastructure.GetLeaveRequestById(rData.RequestId, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error getting outdated leave request %v:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -328,7 +328,7 @@ func (h *Handler) PutLeaveRequest() http.Handler {
 				return
 			}
 
-			response, err := repository.PutLeaveRequest(updated, h.DB)
+			response, err := infrastructure.PutLeaveRequest(updated, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error updating db: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -349,7 +349,7 @@ func (h *Handler) DeleteLeaveRequest() http.Handler {
 				return
 			}
 
-			lr, err := repository.DeleteLeaveRequest(id, h.DB)
+			lr, err := infrastructure.DeleteLeaveRequest(id, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error deleting leave request: %v", err)
 				http.Error(w, "Error updating db", http.StatusInternalServerError)

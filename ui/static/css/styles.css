@@ -1191,11 +1191,11 @@ input::-webkit-inner-spin-button {
     border-top-right-radius: 5%;
 }
 
-#jobsSelector {
+#employeeTabSelector {
     border-bottom: none;
 }
 
-#timesheetSelector {
+#jobsSelector {
     border-left: none;
 }
 

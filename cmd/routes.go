@@ -4,11 +4,11 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/jtalev/chat_gpg/auth"
 	"github.com/jtalev/chat_gpg/handlers"
+	"github.com/jtalev/chat_gpg/infrastructure/auth"
 )
 
-func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a *auth.Auth) {
+func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a *infrastructure.Auth) {
 	fileServer := http.FileServer(http.Dir("../ui/static"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
 

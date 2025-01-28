@@ -19,10 +19,6 @@ function onLeaveSelectorClick() {
 
             let leaveContentElement
             switch (this.textContent.trim()) {
-                case "TIMESHEET":
-                    leaveContentElement = document.querySelector("#adminTimesheetContent")
-                    leaveContentElement.style.display = "block"
-                    break
                 case "JOBS":
                     leaveContentElement = document.querySelector("#adminJobsContent")
                     leaveContentElement.style.display = "block"

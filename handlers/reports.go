@@ -4,17 +4,17 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/jtalev/chat_gpg/services"
+	"github.com/jtalev/chat_gpg/application/services"
 )
 
 type ReportsViewData struct {
-	TimesheetReportData services.TimesheetReportData
+	TimesheetReportData application.TimesheetReportData
 }
 
 func (h *Handler) ServeReportsView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			initialTimesheetReportData, err := services.InitialTimesheetReportData(h.DB)
+			initialTimesheetReportData, err := application.InitialTimesheetReportData(h.DB)
 			if err != nil {
 				log.Println("Error getting initial timesheet report data:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -49,7 +49,7 @@ func (h *Handler) GetEmployeeTimesheetReport() http.Handler {
 			}
 			employeeId, weekStartDate := requestVals[0], requestVals[1]
 
-			outData, err := services.GetInitialEmployeeTimesheetReport(employeeId, weekStartDate, h.DB)
+			outData, err := application.GetInitialEmployeeTimesheetReport(employeeId, weekStartDate, h.DB)
 			if err != nil {
 				log.Println("Error getting employee timesheet report:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)

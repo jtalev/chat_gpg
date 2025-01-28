@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/jtalev/chat_gpg/auth"
-	"github.com/jtalev/chat_gpg/repository"
+	auth "github.com/jtalev/chat_gpg/infrastructure/auth"
+	repository "github.com/jtalev/chat_gpg/infrastructure/repository"
 )
 
 func (h *Handler) LoginHandler() http.Handler {

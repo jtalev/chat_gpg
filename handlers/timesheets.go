@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"text/template"
 
-	"github.com/jtalev/chat_gpg/models"
-	"github.com/jtalev/chat_gpg/services"
+	application "github.com/jtalev/chat_gpg/application/services"
+	"github.com/jtalev/chat_gpg/domain/models"
 )
 
 func (h *Handler) ServeTimesheetsView() http.Handler {
@@ -22,7 +22,7 @@ func (h *Handler) ServeTimesheetsView() http.Handler {
 				return
 			}
 
-			timesheetViewData, err := services.InitialTimesheetViewData(employeeId, h.DB)
+			timesheetViewData, err := application.InitialTimesheetViewData(employeeId, h.DB)
 			if err != nil {
 				log.Println("Error retrieving initial view data: ", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -52,7 +52,7 @@ func (h *Handler) GetTimesheetTable() http.Handler {
 				return
 			}
 
-			timesheetTableData, err := services.TimesheetTableData(employeeId, hxVals, h.DB)
+			timesheetTableData, err := application.TimesheetTableData(employeeId, hxVals, h.DB)
 			if err != nil {
 				log.Println("Error retrieving initial view data: ", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -83,7 +83,7 @@ func (h *Handler) GetTimesheetTable() http.Handler {
 func (h *Handler) GetTimesheets() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			outTimesheets, err := services.GetAllTimesheets(h.DB)
+			outTimesheets, err := application.GetAllTimesheets(h.DB)
 			if err != nil {
 				log.Println("Error retrieving timesheets from db: ", err)
 				http.Error(w, "Internal server error", http.StatusNotFound)
@@ -106,7 +106,7 @@ func (h *Handler) GetTimesheetById() http.Handler {
 
 			inTimesheetId := requestValues[0]
 
-			outTimesheet, err := services.GetTimesheetById(inTimesheetId, h.DB)
+			outTimesheet, err := application.GetTimesheetById(inTimesheetId, h.DB)
 			if err != nil {
 				log.Println("Error retrieving timesheet from db: ", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -130,7 +130,7 @@ func (h *Handler) PutTimesheet() http.Handler {
 			}
 			timesheetId, time := hxVals[0], hxVals[1]
 
-			outTimesheet, err := services.PutTimesheet(timesheetId, time, h.DB)
+			outTimesheet, err := application.PutTimesheet(timesheetId, time, h.DB)
 			if err != nil {
 				log.Println("Error updating timesheet: ", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -163,7 +163,7 @@ func (h *Handler) InitTimesheetWeek() http.Handler {
 			jobId := hxVals[0]
 			weekStartDate := hxVals[1]
 
-			outTimesheetRow, err := services.InitTimesheetWeek(
+			outTimesheetRow, err := application.InitTimesheetWeek(
 				employeeId,
 				jobId,
 				weekStartDate,
@@ -175,7 +175,7 @@ func (h *Handler) InitTimesheetWeek() http.Handler {
 			}
 
 			type Data struct {
-				TimesheetRows []services.TimesheetRow
+				TimesheetRows []application.TimesheetRow
 			}
 			data := Data{TimesheetRows: outTimesheetRow}
 
@@ -199,7 +199,7 @@ func (h *Handler) GetTimesheetWeekByEmployee() http.Handler {
 				return
 			}
 
-			timesheetWeeks, err := services.GetTimesheetWeekByEmployee(employeeId, h.DB)
+			timesheetWeeks, err := application.GetTimesheetWeekByEmployee(employeeId, h.DB)
 			if err != nil {
 				log.Println("Error retrieving timesheet_week from db: ", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -223,7 +223,7 @@ func (h *Handler) DeleteTimesheetWeek() http.Handler {
 			}
 			id := requestParams[0]
 
-			timesheetWeek, err := services.DeleteTimesheetWeek(id, h.DB)
+			timesheetWeek, err := application.DeleteTimesheetWeek(id, h.DB)
 
 			log.Println(timesheetWeek)
 
@@ -236,7 +236,7 @@ func (h *Handler) RenderJobSelectModal() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			type Data struct {
-				Jobs          []models.Job
+				Jobs          []domain.Job
 				WeekStartDate string
 			}
 
@@ -254,7 +254,7 @@ func (h *Handler) RenderJobSelectModal() http.Handler {
 				return
 			}
 			weekStartDate := hxVals[0]
-			jobs, err := services.GetAvailableJobs(employeeId, weekStartDate, h.DB)
+			jobs, err := application.GetAvailableJobs(employeeId, weekStartDate, h.DB)
 			if err != nil {
 				log.Println("Error retrieving jobs from database:", err)
 				http.Error(w, "Not found", http.StatusNotFound)

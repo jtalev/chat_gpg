@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/jtalev/chat_gpg/models"
-	"github.com/jtalev/chat_gpg/repository"
+	"github.com/jtalev/chat_gpg/domain/models"
+	"github.com/jtalev/chat_gpg/infrastructure/repository"
 )
 
 type JobsData struct {
@@ -21,7 +21,7 @@ func getJobsData() []JobsData {
 func (h *Handler) GetJobs() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			data, err := repository.GetJobs(h.DB)
+			data, err := infrastructure.GetJobs(h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error querying job database: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -50,7 +50,7 @@ func (h *Handler) GetJobById() http.Handler {
 				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
-			result, err := repository.GetJobById(id, h.DB)
+			result, err := infrastructure.GetJobById(id, h.DB)
 
 			responseJSON(w, result, h.Logger)
 		},
@@ -68,7 +68,7 @@ func (h *Handler) GetJobByName() http.Handler {
 			}
 
 			name := r.FormValue("name")
-			result, err := repository.GetJobByName(name, h.DB)
+			result, err := infrastructure.GetJobByName(name, h.DB)
 
 			responseJSON(w, result, h.Logger)
 		},
@@ -85,7 +85,7 @@ func (h *Handler) PostJob() http.Handler {
 				return
 			}
 
-			job := models.Job{}
+			job := domain.Job{}
 
 			job.Name = r.FormValue("name")
 			numberStr := r.FormValue("number")
@@ -101,7 +101,7 @@ func (h *Handler) PostJob() http.Handler {
 			job.Suburb = r.FormValue("suburb")
 			job.City = r.FormValue("city")
 
-			newJob, err := repository.PostJob(job, h.DB)
+			newJob, err := infrastructure.PostJob(job, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error posting job: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -122,7 +122,7 @@ func (h *Handler) PutJob() http.Handler {
 				return
 			}
 
-			job := models.Job{}
+			job := domain.Job{}
 
 			idStr := r.FormValue("id")
 			id, err := strconv.Atoi(idStr)
@@ -145,7 +145,7 @@ func (h *Handler) PutJob() http.Handler {
 			job.Suburb = r.FormValue("suburb")
 			job.City = r.FormValue("city")
 
-			newJob, err := repository.PutJob(id, job, h.DB)
+			newJob, err := infrastructure.PutJob(id, job, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error updating job: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -174,7 +174,7 @@ func (h *Handler) DeleteJob() http.Handler {
 				return
 			}
 
-			deletedJob, err := repository.DeleteJob(id, h.DB)
+			deletedJob, err := infrastructure.DeleteJob(id, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error deleting job: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
