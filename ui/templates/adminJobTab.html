@@ -1,0 +1,10 @@
+{{ define "adminJobTab" }}
+<div id="admin-job-tab-container">
+	<div id="add-job-btn-container">
+		<button id="add-job-btn">+ Add new job</button>
+	</div>
+	<div id="admin-job-list">
+		{{ template "adminJobList" . }}
+	</div>
+</div>
+{{ end }}

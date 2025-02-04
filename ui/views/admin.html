@@ -7,7 +7,14 @@
         <div class="adminContentSelector" id="employeeTabSelector" style="background-color: white;">
             EMPLOYEES
         </div>
-        <div class="adminContentSelector" id="jobsSelector" style="background-color: var(--main-background-color);">
+        <div
+        class="adminContentSelector" 
+        id="jobsSelector" 
+        style="background-color: var(--main-background-color);"
+        hx-get="/admin/render-job-tab"
+        hx-target="#adminJobsContent"
+        hx-trigger="click"
+        hx-swap="innerHTML">
             JOBS
         </div>
         <div class="adminContentSelector" id="leaveSelector" style="background-color: var(--main-background-color);">

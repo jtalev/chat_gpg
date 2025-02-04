@@ -1,0 +1,8 @@
+{{ define "adminJobList" }}
+{{ range . }}
+	<div class="admin-job-row">
+		<p class="admin-job-row-text">{{ .Name }} | {{ .Number }} {{ .Address }}, {{ .Suburb }}</p>
+		<button class="admin-job-delete-btn"><img src="../static/img/delete.svg" /></button>
+	</div>
+{{ end }}
+{{ end }}

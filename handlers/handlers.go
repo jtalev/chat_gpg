@@ -34,6 +34,8 @@ const (
 	timesheetReportPath         = "../ui/templates/timesheetReport.html"
 	employeeTimesheetReportPath = "../ui/templates/employeeTimesheetReport.html"
 	adminPath                   = "../ui/views/admin.html"
+	adminJobListPath            = "../ui/templates/adminJobList.html"
+	adminJobTabPath             = "../ui/templates/adminJobTab.html"
 	accountPath                 = "../ui/views/account.html"
 )
 
