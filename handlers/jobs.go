@@ -1,9 +1,11 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
+	application "github.com/jtalev/chat_gpg/application/services"
 	"github.com/jtalev/chat_gpg/domain/models"
 	"github.com/jtalev/chat_gpg/infrastructure/repository"
 )
@@ -174,14 +176,26 @@ func (h *Handler) DeleteJob() http.Handler {
 				return
 			}
 
-			deletedJob, err := infrastructure.DeleteJob(id, h.DB)
+			_, err = infrastructure.DeleteJob(id, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error deleting job: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
 
-			responseJSON(w, deletedJob, h.Logger)
+			jobs, err := application.GetJobs(h.DB)
+			if err != nil {
+				log.Printf("Error getting job data: %v", err)
+				http.Error(w, "Not found", http.StatusNotFound)
+				return
+			}
+
+			err = executePartialTemplate(adminJobListPath, "adminJobList", jobs, w)
+			if err != nil {
+				log.Printf("Error executing adminJobList.html: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
 		},
 	)
 }

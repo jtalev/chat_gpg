@@ -2,7 +2,17 @@
 {{ range . }}
 	<div class="admin-job-row">
 		<p class="admin-job-row-text">{{ .Name }} | {{ .Number }} {{ .Address }}, {{ .Suburb }}</p>
-		<button class="admin-job-delete-btn"><img src="../static/img/delete.svg" /></button>
+		<button
+		class="admin-job-delete-btn"
+		hx-delete="/jobs/delete"
+		hx-trigger="click"
+		hx-target="#admin-job-list"
+		hx-swap="innerHTML"
+		hx-vals='{
+			"id": {{ .ID }}
+		}'>
+			<img src="../static/img/delete.svg" />
+		</button>
 	</div>
 {{ end }}
 {{ end }}

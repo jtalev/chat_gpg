@@ -61,4 +61,5 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 
 	// admin requests
 	mux.Handle("/admin/render-job-tab", a.AuthMiddleware(h.RenderJobTab()))
+	mux.Handle("/admin/add-job-modal", a.AuthMiddleware(h.AddJobModal()))
 }

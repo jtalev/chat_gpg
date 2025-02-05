@@ -9,7 +9,7 @@ import (
 
 func GetJobs(db *sql.DB) ([]domain.Job, error) {
 	q := `
-	select * from job order by name;
+	select * from job where is_available = 1 order by name;
 	`
 
 	rows, err := db.Query(q)
@@ -29,6 +29,7 @@ func GetJobs(db *sql.DB) ([]domain.Job, error) {
 			&job.Suburb,
 			&job.PostCode,
 			&job.City,
+			&job.IsAvailable,
 			&job.CreatedAt,
 			&job.UpdatedAt,
 		); err != nil {
@@ -60,6 +61,7 @@ func GetJobById(id int, db *sql.DB) (domain.Job, error) {
 			&job.PostCode,
 			&job.Suburb,
 			&job.City,
+			&job.IsAvailable,
 			&job.CreatedAt,
 			&job.UpdatedAt,
 		); err != nil {
@@ -93,6 +95,7 @@ func GetJobByName(name string, db *sql.DB) (domain.Job, error) {
 			&job.Suburb,
 			&job.PostCode,
 			&job.City,
+			&job.IsAvailable,
 			&job.CreatedAt,
 			&job.UpdatedAt,
 		); err != nil {
@@ -155,7 +158,9 @@ func PutJob(id int, job domain.Job, db *sql.DB) (domain.Job, error) {
 
 func DeleteJob(id int, db *sql.DB) (domain.Job, error) {
 	q := `
-	delete from job where id = ?;
+	update job
+	set is_available = 0
+	where id = ?;
 	`
 
 	_, err := db.Exec(q, id)

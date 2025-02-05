@@ -1216,13 +1216,14 @@ input::-webkit-inner-spin-button {
 }
 
 .adminContent {
-    width: 95%;
-    height: 95%;
+    width: 100%;
+    height: 100%;
 }
 
 #admin-job-tab-container {
     width: 100%;
     height: 100%;
+    position: relative;
     display: flex;
     flex-direction: column;
 }
@@ -1231,6 +1232,8 @@ input::-webkit-inner-spin-button {
     height: 2em;
     display: flex;
     align-items: center;
+    padding-left: 2em;
+    padding-top: 1em;
 }
 
 #add-job-btn {
@@ -1238,6 +1241,7 @@ input::-webkit-inner-spin-button {
     background-color: white;
     color: var(--gpg-green);
     height: 70%;
+    cursor: pointer;
 }
 
 #admin-job-list {
@@ -1271,9 +1275,23 @@ input::-webkit-inner-spin-button {
 .admin-job-delete-btn {
     border: none;
     background-color: transparent;
+    cursor: pointer;
 }
 .admin-job-delete-btn img {
     width: 80%;
+}
+
+#add-job-modal-container {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    display: none;
+    justify-content: center;
+    align-items: center;
 }
 
 /* ----- reports ----- */

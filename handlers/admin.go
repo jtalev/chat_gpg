@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	application "github.com/jtalev/chat_gpg/application/services"
 	infrastructure "github.com/jtalev/chat_gpg/infrastructure/repository"
 )
 
@@ -61,6 +62,25 @@ func (h *Handler) RenderJobList() http.Handler {
 			err = executePartialTemplate(adminJobListPath, "adminJobList", data, w)
 			if err != nil {
 				log.Printf("Error executing adminJobList.html: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) AddJobModal() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			jobs, err := application.GetJobs(h.DB)
+			if err != nil {
+				log.Printf("Error getting job data: %v", err)
+				http.Error(w, "Not found", http.StatusNotFound)
+				return
+			}
+			err = executePartialTemplate(addJobModalPath, "addJobModal", jobs, w)
+			if err != nil {
+				log.Printf("Error executing addJobModal.html: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}

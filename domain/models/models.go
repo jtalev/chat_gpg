@@ -49,15 +49,16 @@ type LeaveRequest struct {
 }
 
 type Job struct {
-	ID        int    `json:"id"`
-	Name      string `json:"name"`
-	Number    int    `json:"number"`
-	Address   string `json:"address"`
-	Suburb    string `json:"suburb"`
-	PostCode  string `json:"post_code"`
-	City      string `json:"city"`
-	CreatedAt string `json:"created_at"`
-	UpdatedAt string `json:"updated_at"`
+	ID          int    `json:"id"`
+	Name        string `json:"name"`
+	Number      int    `json:"number"`
+	Address     string `json:"address"`
+	Suburb      string `json:"suburb"`
+	PostCode    string `json:"post_code"`
+	City        string `json:"city"`
+	IsAvailable bool   `json:"is_available"`
+	CreatedAt   string `json:"created_at"`
+	UpdatedAt   string `json:"updated_at"`
 }
 
 type TimesheetWeek struct {

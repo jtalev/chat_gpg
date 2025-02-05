@@ -35,3 +35,14 @@ function onLeaveSelectorClick() {
         })
     })
 }
+
+document.addEventListener("htmx:afterSwap", onAddJobClick)
+function onAddJobClick() {
+    const addJobBtn = document.querySelector("#add-job-btn")
+    console.log(addJobBtn)
+    addJobBtn.addEventListener("click", function () {
+        const addJobModalContainer = document.querySelector("#add-job-modal-container")
+        addJobModalContainer.style.display = "flex"
+        console.log(addJobModalContainer)
+    })
+}
