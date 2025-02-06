@@ -99,17 +99,30 @@ func (h *Handler) PostJob() http.Handler {
 			}
 			job.Number = number
 			job.Address = r.FormValue("address")
-			job.PostCode = r.FormValue("postCode")
+			job.PostCode = r.FormValue("post_code")
 			job.Suburb = r.FormValue("suburb")
 			job.City = r.FormValue("city")
 
-			newJob, err := infrastructure.PostJob(job, h.DB)
+			_, err = application.PostJob(job, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error posting job: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
-			responseJSON(w, newJob, h.Logger)
+
+			jobs, err := application.GetJobs(h.DB)
+			if err != nil {
+				h.Logger.Errorf("Error getting jobs: %v", err)
+				http.Error(w, "Not found", http.StatusNotFound)
+				return
+			}
+
+			err = executePartialTemplate(adminJobListPath, "adminJobList", jobs, w)
+			if err != nil {
+				h.Logger.Errorf("Error executing adminJobList.html: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
 		},
 	)
 }

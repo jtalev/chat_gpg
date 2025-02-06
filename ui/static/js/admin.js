@@ -39,10 +39,26 @@ function onLeaveSelectorClick() {
 document.addEventListener("htmx:afterSwap", onAddJobClick)
 function onAddJobClick() {
     const addJobBtn = document.querySelector("#add-job-btn")
-    console.log(addJobBtn)
     addJobBtn.addEventListener("click", function () {
         const addJobModalContainer = document.querySelector("#add-job-modal-container")
         addJobModalContainer.style.display = "flex"
-        console.log(addJobModalContainer)
+    })
+}
+
+document.addEventListener("htmx:afterSwap", onAddJobClose)
+function onAddJobClose() {
+    const addJobCloseBtn = document.querySelector("#add-form-reset-btn")
+    addJobCloseBtn.addEventListener("click", function () {
+        const addJobModalContainer = document.querySelector("#add-job-modal-container")
+        addJobModalContainer.style.display = "none"
+    })
+}
+
+document.addEventListener("htmx:afterSwap", onAddJobSubmit)
+function onAddJobSubmit() {
+    const addJobSubmitBtn = document.querySelector("#add-form-submit-btn")
+    addJobSubmitBtn.addEventListener("click", function () {
+        const addJobModalContainer = document.querySelector("#add-job-modal-container")
+        addJobModalContainer.style.display = "none"
     })
 }

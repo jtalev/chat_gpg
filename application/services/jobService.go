@@ -2,6 +2,7 @@ package application
 
 import (
 	"database/sql"
+	"log"
 
 	"github.com/jtalev/chat_gpg/domain/models"
 	"github.com/jtalev/chat_gpg/infrastructure/repository"
@@ -21,4 +22,13 @@ func GetJobs(db *sql.DB) ([]domain.Job, error) {
 		return outJobs, err
 	}
 	return outJobs, nil
+}
+
+func PostJob(inJob domain.Job, db *sql.DB) (domain.Job, error) {
+	outJob, err := infrastructure.PostJob(inJob, db)
+	if err != nil {
+		log.Printf("Error posting job: %v", err)
+		return outJob, err
+	}
+	return outJob, err
 }

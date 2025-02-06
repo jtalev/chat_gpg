@@ -1250,6 +1250,7 @@ input::-webkit-inner-spin-button {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    padding-left: 2em;
 }
 
 .admin-job-row {
@@ -1292,6 +1293,72 @@ input::-webkit-inner-spin-button {
     display: none;
     justify-content: center;
     align-items: center;
+}
+
+#add-job-form-container {
+    width: 95%;
+    max-width: 1000px;
+    height: 90%;
+    background-color: white;
+    border: var(--gpg-green) solid 1px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#add-job-form-container form {
+    gap: 10px;
+    width: 90%;
+    max-width: 500px;
+}
+
+#add-job-form-heading {
+    font-size: x-large;
+}
+
+.add-job-form-input {
+    display: flex;
+    flex-direction: column;
+}
+
+.add-job-form-input-sidebyside {
+    display: flex;
+    gap: 10px;
+}
+
+#add-job-form-input-number {
+    width: 4em;
+}
+
+#add-job-form-input-number input {
+    text-align: center;
+}
+
+#add-job-form-input-address {
+    flex-grow: 1;
+}
+
+#add-job-submit-btn-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+#add-form-reset-btn {
+    background-color: white;
+    color: var(--gpg-green);
+    height: 80%;
+    font-weight: lighter;
+    width: 4em;
+}
+
+#add-form-submit-btn {
+    width: 6em;
+    background-color: var(--gpg-green);
+    color: white;
 }
 
 /* ----- reports ----- */

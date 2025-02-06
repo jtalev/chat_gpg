@@ -1,3 +1,41 @@
 {{ define "addJobModal" }}
-add job modal
+<div id="add-job-form-container">
+	<p id="add-job-form-heading">ADD JOB</p>
+	<form 
+	id="add-job-form"
+	hx-post="/jobs/post"
+	hx-target="#admin-job-list"
+	hx-swap="innerHTML">
+	<div class="add-job-form-input">
+		<label for="name">Name:</label>
+		<input type="text" name="name">
+	</div>
+	<div class="add-job-form-input-sidebyside">
+		<div class="add-job-form-input" id="add-job-form-input-number">
+			<label for="number" id="name">Number:</label>
+			<input type="number" id="number" name="number">
+		</div>
+		<div class="add-job-form-input" id="add-job-form-input-address">
+			<label for="address">Street:</label>
+			<input type="text" id="address" name="address">
+		</div>
+	</div>
+	<div class="add-job-form-input">
+		<label for="suburb">Suburb:</label>
+		<input type="text" id="suburb" name="suburb">
+	</div>
+	<div class="add-job-form-input">
+		<label for="post-code">Post Code:</label>
+		<input type="text" id="post-code" name="post_code">
+	</div>
+	<div class="add-job-form-input">
+		<label for="city">City:</label>
+		<input type="text" id="city" name="city">
+	</div>
+	<div id="add-job-submit-btn-container">
+		<button type="reset" class="gpgBtn" id="add-form-reset-btn">close</button>
+		<button type="submit" class="gpgBtn" id="add-form-submit-btn">SUBMIT</button>
+	</div>
+	</form>
+</div>
 {{ end }}
