@@ -1,7 +1,25 @@
 {{ define "employeeTimesheetReport" }}
 <div id="weekSelectorContainer">
-    <button class="arrow" id="leftWeekSelectorBtn"><</button>
-    <button class="arrow" id="rightWeekSelectorBtn">></button>
+    <button 
+    class="arrow" 
+    id="leftWeekSelectorBtn"
+    hx-get="/reports/prev-timesheet-report"
+    hx-vals='{
+    	"id": "{{ .EmployeeId }}",
+    	"week_start_date": "{{ .WeekStartDate }}"
+    }'
+    hx-target="#timesheetReport"
+    hx-swap="innerHTML"><</button>
+    <button 
+    class="arrow" 
+    id="rightWeekSelectorBtn"
+    hx-get="/reports/next-timesheet-report"
+    hx-vals='{
+    	"id": "{{ .EmployeeId }}",
+    	"week_start_date": "{{ .WeekStartDate }}"
+    }'
+    hx-target="#timesheetReport"
+    hx-swap="innerHTML">></button>
 </div>	
 <table class="timesheetReportTable">
 	<thead>

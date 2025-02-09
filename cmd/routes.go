@@ -58,6 +58,8 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 
 	// reports requests
 	mux.Handle("/reports/timesheet-report", a.AuthMiddleware(h.GetEmployeeTimesheetReport()))
+	mux.Handle("/reports/prev-timesheet-report", a.AuthMiddleware(h.PrevEmployeeTimesheetReport()))
+	mux.Handle("/reports/next-timesheet-report", a.AuthMiddleware(h.NextEmployeeTimesheetReport()))
 
 	// admin requests
 	mux.Handle("/admin/render-job-tab", a.AuthMiddleware(h.RenderJobTab()))

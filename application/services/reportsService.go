@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strconv"
 	"strings"
+	"time"
 
 	domain "github.com/jtalev/chat_gpg/domain/models"
 )
@@ -162,7 +163,27 @@ func calcWeekTotal(rowTotals, dayTotals []string) (string, error) {
 	return fromRowTotal, nil
 }
 
-func GetInitialEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (EmployeeTimesheetReportData, error) {
+func GetCurrentWeekDates(weekStartDate string) ([]int, error) {
+	outData := make([]int, 7)
+	dateArr := strings.Split(weekStartDate, "-")
+	dateArrInt := make([]int, 3)
+	for i := range dateArr {
+		date, err := strconv.Atoi(dateArr[i])
+		if err != nil {
+			return nil, err
+		}
+		dateArrInt[i] = date
+	}
+	currentDate := time.Date(dateArrInt[0], time.Month(dateArrInt[1]), dateArrInt[2], 0, 0, 0, 0, time.Local)
+	for i := range outData {
+		outData[i] = currentDate.Day()
+		currentDate = currentDate.AddDate(0, 0, 1)
+	}
+
+	return outData, nil
+}
+
+func GetEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (EmployeeTimesheetReportData, error) {
 	outData := EmployeeTimesheetReportData{
 		WeekStartDate: weekStartDate,
 	}
@@ -177,7 +198,7 @@ func GetInitialEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (Em
 		return outData, err
 	}
 
-	weekDates, err := currentWeekDates()
+	weekDates, err := GetCurrentWeekDates(weekStartDate)
 	if err != nil {
 		return outData, err
 	}
@@ -202,6 +223,106 @@ func GetInitialEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (Em
 	}
 
 	outData.EmployeeId = employee.EmployeeId
+	outData.WeekDates = weekDates
+	outData.TimesheetRows = timesheetRows
+	outData.DayTotals = dayTotals
+	outData.WeekTotal = weekTotal
+
+	return outData, nil
+}
+
+func GetPrevEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (EmployeeTimesheetReportData, error) {
+	weekStartDateArr := strings.Split(weekStartDate, "-")
+	weekStartDateArrInt := make([]int, 3)
+	for i := range weekStartDateArr {
+		val, err := strconv.Atoi(weekStartDateArr[i])
+		if err != nil {
+			return EmployeeTimesheetReportData{}, err
+		}
+		weekStartDateArrInt[i] = val
+	}
+	date := time.Date(weekStartDateArrInt[0], time.Month(weekStartDateArrInt[1]), weekStartDateArrInt[2], 0, 0, 0, 0, time.Local)
+	date = date.AddDate(0, 0, -7)
+	weekStartDate = fmt.Sprintf("%v-%v-%v", date.Year(), int(date.Month()), date.Day())
+	outData := EmployeeTimesheetReportData{
+		WeekStartDate: weekStartDate,
+	}
+
+	weekDates, err := GetCurrentWeekDates(weekStartDate)
+	if err != nil {
+		return outData, err
+	}
+
+	timesheetWeeks, err := GetTimesheetWeekByEmployeeWeekStart(id, outData.WeekStartDate, db)
+	if err != nil {
+		return outData, err
+	}
+	timesheetRows, err := mapTimesheetsToTimesheetWeek(timesheetWeeks, db)
+	if err != nil {
+		return outData, err
+	}
+	rowTotals := calcTimesheetRowTotal(timesheetRows)
+	for i := range timesheetRows {
+		timesheetRows[i].Total = rowTotals[i]
+	}
+
+	dayTotals := formatDayTotals(timesheetRows)
+	weekTotal, err := calcWeekTotal(rowTotals, dayTotals)
+	if err != nil {
+		return outData, err
+	}
+
+	outData.EmployeeId = id
+	outData.WeekDates = weekDates
+	outData.TimesheetRows = timesheetRows
+	outData.DayTotals = dayTotals
+	outData.WeekTotal = weekTotal
+
+	return outData, nil
+}
+
+func GetNextEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (EmployeeTimesheetReportData, error) {
+	weekStartDateArr := strings.Split(weekStartDate, "-")
+	weekStartDateArrInt := make([]int, 3)
+	for i := range weekStartDateArr {
+		val, err := strconv.Atoi(weekStartDateArr[i])
+		if err != nil {
+			return EmployeeTimesheetReportData{}, err
+		}
+		weekStartDateArrInt[i] = val
+	}
+	date := time.Date(weekStartDateArrInt[0], time.Month(weekStartDateArrInt[1]), weekStartDateArrInt[2], 0, 0, 0, 0, time.Local)
+	date = date.AddDate(0, 0, 7)
+	weekStartDate = fmt.Sprintf("%v-%v-%v", date.Year(), int(date.Month()), date.Day())
+	outData := EmployeeTimesheetReportData{
+		WeekStartDate: weekStartDate,
+	}
+
+	weekDates, err := GetCurrentWeekDates(weekStartDate)
+	if err != nil {
+		return outData, err
+	}
+
+	timesheetWeeks, err := GetTimesheetWeekByEmployeeWeekStart(id, outData.WeekStartDate, db)
+	if err != nil {
+		return outData, err
+	}
+	timesheetRows, err := mapTimesheetsToTimesheetWeek(timesheetWeeks, db)
+	if err != nil {
+		return outData, err
+	}
+	rowTotals := calcTimesheetRowTotal(timesheetRows)
+	for i := range timesheetRows {
+		timesheetRows[i].Total = rowTotals[i]
+	}
+
+	dayTotals := formatDayTotals(timesheetRows)
+	weekTotal, err := calcWeekTotal(rowTotals, dayTotals)
+	if err != nil {
+		return outData, err
+	}
+
+	outData.EmployeeId = id
 	outData.WeekDates = weekDates
 	outData.TimesheetRows = timesheetRows
 	outData.DayTotals = dayTotals
