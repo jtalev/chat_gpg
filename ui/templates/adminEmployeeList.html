@@ -1,0 +1,18 @@
+{{ define "adminEmployeeList" }}
+{{ range .Employees }}
+	<div class="admin-employee-row">
+		<p class="admin-employee-row-text">{{ .EmployeeId }} | {{ .FirstName }} {{ .LastName }}</p>
+		<button
+		class="admin-employee-delete-btn"
+		hx-delete="/employee/delete"
+		hx-trigger="click"
+		hx-target="#admin-employee-list"
+		hx-swap="innerHTML"
+		hx-vals='{
+			"id": {{ .ID }}
+		}'>
+			<img src="../static/img/delete.svg" />
+		</button>
+	</div>
+{{ end }}
+{{ end }}

@@ -2,6 +2,7 @@ package application
 
 import (
 	"database/sql"
+	"strconv"
 
 	"github.com/jtalev/chat_gpg/domain/models"
 	"github.com/jtalev/chat_gpg/infrastructure/repository"
@@ -29,4 +30,20 @@ func GetEmployeeById(id int, db *sql.DB) (domain.Employee, error) {
 		return domain.Employee{}, err
 	}
 	return outEmployee, nil
+}
+
+func DeleteAndReturnEmployees(idStr string, db *sql.DB) ([]domain.Employee, error) {
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return nil, err
+	}
+	isDeleted, err := infrastructure.DeleteEmployee(id, db)
+	if !isDeleted {
+		return nil, err
+	}
+	employees, err := GetEmployees(db)
+	if err != nil {
+		return nil, err
+	}
+	return employees, nil
 }

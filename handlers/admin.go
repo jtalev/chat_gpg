@@ -1,22 +1,45 @@
 package handlers
 
 import (
+	"database/sql"
 	"html/template"
 	"log"
 	"net/http"
 
 	application "github.com/jtalev/chat_gpg/application/services"
+	domain "github.com/jtalev/chat_gpg/domain/models"
 	infrastructure "github.com/jtalev/chat_gpg/infrastructure/repository"
 )
 
 type AdminData struct {
+	Employees []domain.Employee
 }
 
-func getAdminData() []AdminData {
-	data := []AdminData{
-		{},
+func getInitialAdminData(db *sql.DB) (AdminData, error) {
+	employees, err := application.GetEmployees(db)
+	if err != nil {
+		return AdminData{}, err
 	}
-	return data
+	data := AdminData{
+		employees,
+	}
+	return data, nil
+}
+
+func (h *Handler) ServeAdminView() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			data, err := getInitialAdminData(h.DB)
+			if err != nil {
+				log.Printf("Error getting initial admin data: %v", err)
+				http.Error(w, "Not found", http.StatusNotFound)
+				return
+			}
+			component := "admin"
+			title := "Admin - GPG"
+			renderTemplate(w, r, component, title, data)
+		},
+	)
 }
 
 func (h *Handler) RenderJobTab() http.Handler {

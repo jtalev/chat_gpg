@@ -44,6 +44,9 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/jobs/put", a.AuthMiddleware(h.PutJob()))
 	mux.Handle("/jobs/delete", a.AuthMiddleware(h.DeleteJob()))
 
+	// employee requests
+	mux.Handle("/employee/delete", a.AuthMiddleware(h.DeleteEmployee()))
+
 	// timesheet requests
 	mux.Handle("/timesheets/get", a.AuthMiddleware(h.GetTimesheets()))
 	mux.Handle("/timesheets/get-by-id", a.AuthMiddleware(h.GetTimesheetById()))

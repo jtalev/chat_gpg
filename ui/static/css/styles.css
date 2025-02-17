@@ -1205,7 +1205,7 @@ input::-webkit-inner-spin-button {
 
 #adminContentContainer {
     width: 100%;
-    height: 100%;
+    height: 90%;
     border-left: solid var(--gpg-green) 1px;
     border-right: solid var(--gpg-green) 1px;
     border-bottom: solid var(--gpg-green) 1px;
@@ -1232,7 +1232,7 @@ input::-webkit-inner-spin-button {
     height: 2em;
     display: flex;
     align-items: center;
-    padding-left: 2em;
+    padding-left: 1em;
     padding-top: 1em;
 }
 
@@ -1245,12 +1245,13 @@ input::-webkit-inner-spin-button {
 }
 
 #admin-job-list {
-    flex-grow: 1;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 5px;
-    padding-left: 2em;
+    padding-left: 1em;
+    padding-right: 1em;
+    max-height: 500px;
 }
 
 .admin-job-row {
@@ -1359,6 +1360,69 @@ input::-webkit-inner-spin-button {
     width: 6em;
     background-color: var(--gpg-green);
     color: white;
+}
+
+#admin-employee-tab-container {
+    width: 100%;
+    height: 95%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+#add-employee-btn-container {
+    height: 3em;
+    display: flex;
+    align-items: center;
+    padding-left: 1em;
+    margin-top: 1em;
+}
+
+#add-employee-btn {
+    border: var(--gpg-green) solid 1px;
+    background-color: white;
+    color: var(--gpg-green);
+    height: 70%;
+    cursor: pointer;
+}
+
+#admin-employee-list {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-left: 1em;
+    padding-right: 1em;
+    flex-grow: 1;
+}
+
+.admin-employee-row {
+    border: var(--timesheet-border) solid 1px;
+    background-color: var(--light-background-color);
+    height: 2em;
+    display: flex;
+    align-items: center;
+    padding-left: 5px;
+    max-width: 500px;
+}
+
+.admin-employee-row-text {
+    overflow-x: auto;
+    white-space: nowrap;
+    flex-grow: 1;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: small;
+}
+
+.admin-employee-delete-btn {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+.admin-employee-delete-btn img {
+    width: 80%;
 }
 
 /* ----- reports ----- */

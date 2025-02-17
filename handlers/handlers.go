@@ -34,6 +34,8 @@ const (
 	timesheetReportPath         = "../ui/templates/timesheetReport.html"
 	employeeTimesheetReportPath = "../ui/templates/employeeTimesheetReport.html"
 	adminPath                   = "../ui/views/admin.html"
+	adminEmployeeTabPath        = "../ui/templates/adminEmployeeTab.html"
+	adminEmployeeListPath       = "../ui/templates/adminEmployeeList.html"
 	adminJobListPath            = "../ui/templates/adminJobList.html"
 	adminJobTabPath             = "../ui/templates/adminJobTab.html"
 	addJobModalPath             = "../ui/templates/addJobModal.html"
@@ -82,6 +84,8 @@ func renderTemplate(
 		timesheetReportPath,
 		employeeTimesheetReportPath,
 		adminPath,
+		adminEmployeeTabPath,
+		adminEmployeeListPath,
 		accountPath,
 	)
 
@@ -180,17 +184,6 @@ func (h *Handler) ServeAccountView() http.Handler {
 			component := "account"
 			title := "Account - GPG"
 			renderTemplate(w, r, component, title, nil)
-		},
-	)
-}
-
-func (h *Handler) ServeAdminView() http.Handler {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			data := getAdminData()
-			component := "admin"
-			title := "Admin - GPG"
-			renderTemplate(w, r, component, title, data)
 		},
 	)
 }

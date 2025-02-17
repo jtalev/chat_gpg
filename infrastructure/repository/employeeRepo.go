@@ -91,3 +91,16 @@ func GetEmployeeByEmployeeId(employeeId string, db *sql.DB) (domain.Employee, er
 	}
 	return employee, nil
 }
+
+func DeleteEmployee(id int, db *sql.DB) (bool, error) {
+	q := `
+	delete from employee where id = ?;
+	`
+
+	_, err := db.Exec(q, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}

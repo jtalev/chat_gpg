@@ -1,0 +1,19 @@
+{{ define "adminEmployeeTab" }}
+<div id="admin-employee-tab-container">
+	<div id="add-employee-btn-container">
+		<button
+		id="add-employee-btn"
+		hx-get="/admin/add-employee-modal"
+		hx-trigger="click"
+		hx-target="#add-employee-modal-container"
+		hx-swap="innerHTML">
+			+ Add new employee
+		</button>
+	</div>
+	<div id="admin-employee-list">
+		{{ template "adminEmployeeList" . }}
+	</div>
+	<div id="add-employee-modal-container">
+	</div>
+</div>
+{{ end }}
