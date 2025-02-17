@@ -17,7 +17,14 @@
         hx-swap="innerHTML">
             JOBS
         </div>
-        <div class="adminContentSelector" id="leaveSelector" style="background-color: var(--main-background-color);">
+        <div 
+        class="adminContentSelector" 
+        id="leaveSelector" 
+        style="background-color: var(--main-background-color);"
+        hx-get="/admin/render-leave-tab"
+        hx-target="#adminLeaveContent"
+        hx-trigger="click"
+        hx-swap="innerHTML">
             LEAVE
         </div>
         <div class="borderBottom">

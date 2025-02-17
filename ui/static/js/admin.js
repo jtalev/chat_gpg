@@ -62,3 +62,26 @@ function onAddJobSubmit() {
         addJobModalContainer.style.display = "none"
     })
 }
+
+document.addEventListener("htmx:afterSwap", onLeaveHeaderClick)
+function onLeaveHeaderClick() {
+    const leaveHeaders = document.querySelectorAll(".admin-leave-headers");
+
+    leaveHeaders.forEach(header => {
+        header.addEventListener("click", function () {
+            const leaveRequestContainers = document.querySelectorAll(".admin-leave-request-container");
+            leaveRequestContainers.forEach(container => {
+                container.style.display = "none";
+                if (this.id === "pending" && container.id === "leave-pending-requests") {
+                    container.style.display = "flex"
+                }
+                if (this.id === "approved" && container.id === "leave-approved-requests") {
+                    container.style.display = "flex"
+                }
+                if (this.id === "denied" && container.id === "leave-denied-requests") {
+                    container.style.display = "flex"
+                }
+            });
+        });
+    });
+}

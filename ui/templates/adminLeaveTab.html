@@ -1,0 +1,45 @@
+{{ define "adminLeaveTab" }}
+<div id="admin-leave-container">
+	<div id="admin-leave-content">
+		<div id="leave-pending-container">
+			<div class="admin-leave-headers" id="pending">
+				<span class="header-arrow" id="pending-arrow"><img src="../static/img/nav-down-arrow.svg"></span>
+				Pending
+			</div>
+			<div class="admin-leave-request-container" id="leave-pending-requests">
+				{{ range . }}
+				<p class="admin-leave-request">
+					{{ .EmployeeId }}
+				</p>
+				{{ end }}
+			</div>
+		</div>
+		<div id="leave-approved-container">
+			<div class="admin-leave-headers" id="approved">
+				<span class="header-arrow" id="approved-arrow"><img src="../static/img/nav-down-arrow.svg"></span>
+				Approved
+			</div>
+			<div class="admin-leave-request-container" id="leave-approved-requests">
+				{{ range . }}
+				<p class="admin-leave-request">
+					{{ .EmployeeId }}
+				</p>
+				{{ end }}
+			</div>
+		</div>
+		<div id="leave-denied-container">
+			<div  class="admin-leave-headers" id="denied">
+				<span class="header-arrow" id="denied-arrow"><img src="../static/img/nav-down-arrow.svg"></span>
+				Denied
+			</div>
+			<div class="admin-leave-request-container" id="leave-denied-requests">
+				{{ range . }}
+				<p class="admin-leave-request">
+					{{ .EmployeeId }}
+				</p>
+				{{ end }}
+			</div>
+		</div>
+	</div>
+</div>
+{{ end }}
