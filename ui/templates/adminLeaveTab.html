@@ -7,10 +7,8 @@
 				Pending
 			</div>
 			<div class="admin-leave-request-container" id="leave-pending-requests">
-				{{ range . }}
-				<p class="admin-leave-request">
-					{{ .EmployeeId }}
-				</p>
+				{{ range .Pending }}
+				{{ template "adminPendingLeaveRequest" . }}
 				{{ end }}
 			</div>
 		</div>
@@ -20,9 +18,10 @@
 				Approved
 			</div>
 			<div class="admin-leave-request-container" id="leave-approved-requests">
-				{{ range . }}
+				{{ range .Approved }}
 				<p class="admin-leave-request">
-					{{ .EmployeeId }}
+					Pending: {{ .IsPending }}
+					Approved: {{ .IsApproved }}
 				</p>
 				{{ end }}
 			</div>
@@ -33,9 +32,10 @@
 				Denied
 			</div>
 			<div class="admin-leave-request-container" id="leave-denied-requests">
-				{{ range . }}
+				{{ range .Denied }}
 				<p class="admin-leave-request">
-					{{ .EmployeeId }}
+					Pending: {{ .IsPending }}
+					Approved: {{ .IsApproved }}
 				</p>
 				{{ end }}
 			</div>

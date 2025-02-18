@@ -114,7 +114,7 @@ func (h *Handler) AddJobModal() http.Handler {
 func (h *Handler) RenderLeaveTab() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			data, err := infrastructure.GetLeaveRequests(h.DB)
+			data, err := application.GetLeaveRequestsForAdmin(h.DB)
 			if err != nil {
 				log.Printf("Error querying leave database: %v", err)
 				http.Error(w, "Not found", http.StatusNotFound)
@@ -123,6 +123,7 @@ func (h *Handler) RenderLeaveTab() http.Handler {
 
 			tmpl, err := template.ParseFiles(
 				adminLeaveTabPath,
+				adminPendingLeaveRequestPath,
 			)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)

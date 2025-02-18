@@ -45,6 +45,7 @@ type LeaveRequest struct {
 	From       string `json:"from_date"`
 	To         string `json:"to_date"`
 	Note       string `json:"note"`
+	IsPending  bool   `json:"is_pending"`
 	IsApproved bool   `json:"is_approved"`
 }
 

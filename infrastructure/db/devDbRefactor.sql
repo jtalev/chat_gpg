@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS leave_request (
     from_date TEXT NOT NULL,
     to_date TEXT NOT NULL,
     note TEXT,
+    is_pending INTEGER DEFAULT 1,
     is_approved INTEGER DEFAULT 0,
     FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 );
@@ -163,6 +164,10 @@ VALUES ('5972294', 'InSiteLogic', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6Fhq
 /** ---- leave_request inserts ---- **/
 INSERT INTO leave_request (employee_id, leave_type, from_date, to_date, note)
 VALUES ('5972276', 'annual', '2024-12-18', '2024-12-20', 'gone fishin');
+INSERT INTO leave_request (employee_id, leave_type, from_date, to_date, note, is_pending, is_approved)
+VALUES ('5972276', 'sick', '2024-12-18', '2024-12-20', 'gone fishin', 0, 0);
+INSERT INTO leave_request (employee_id, leave_type, from_date, to_date, note, is_pending, is_approved)
+VALUES ('5972276', 'annual', '2024-12-18', '2024-12-20', 'gone fishin', 0, 1);
 
 /** ---- job inserts ---- **/
 INSERT INTO job (name, number, address, suburb, post_code, city)

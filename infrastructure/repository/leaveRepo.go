@@ -10,7 +10,7 @@ import (
 func GetLeaveRequests(db *sql.DB) ([]domain.LeaveRequest, error) {
 	q := `
 	select lr.request_id, lr.employee_id, e.first_name, e.last_name, lr.leave_type, lr.from_date,
-	lr.to_date, lr.note, lr.is_approved 
+	lr.to_date, lr.note, lr.is_approved, lr.is_pending 
 	from leave_request lr 
 	join employee e on lr.employee_id = e.employee_id
 	order by e.employee_id asc;
@@ -34,6 +34,7 @@ func GetLeaveRequests(db *sql.DB) ([]domain.LeaveRequest, error) {
 			&leaveRequest.To,
 			&leaveRequest.Note,
 			&leaveRequest.IsApproved,
+			&leaveRequest.IsPending,
 		); err != nil {
 			return nil, err
 		}
@@ -45,7 +46,7 @@ func GetLeaveRequests(db *sql.DB) ([]domain.LeaveRequest, error) {
 func GetLeaveRequestById(requestId int, db *sql.DB) (domain.LeaveRequest, error) {
 	q := `
 	select lr.request_id, lr.employee_id, e.first_name, e.last_name, lr.leave_type, lr.from_date,
-	lr.to_date, lr.note, lr.is_approved 
+	lr.to_date, lr.note, lr.is_approved, lr.is_pending 
 	from leave_request lr 
 	join employee e on lr.employee_id = e.employee_id
 	where lr.request_id = ?;
@@ -68,6 +69,7 @@ func GetLeaveRequestById(requestId int, db *sql.DB) (domain.LeaveRequest, error)
 			&data.To,
 			&data.Note,
 			&data.IsApproved,
+			&data.IsPending,
 		); err != nil {
 			return data, err
 		}
@@ -81,7 +83,7 @@ func GetLeaveRequestById(requestId int, db *sql.DB) (domain.LeaveRequest, error)
 func GetLeaveRequestsByEmployee(employeeId string, db *sql.DB) ([]domain.LeaveRequest, error) {
 	q := `
 	select lr.request_id, lr.employee_id, e.first_name, e.last_name, lr.leave_type, lr.from_date,
-	lr.to_date, lr.note, lr.is_approved 
+	lr.to_date, lr.note, lr.is_approved, lr.is_pending 
 	from leave_request lr 
 	join employee e on lr.employee_id = e.employee_id
 	where lr.employee_id = ?;
@@ -105,6 +107,7 @@ func GetLeaveRequestsByEmployee(employeeId string, db *sql.DB) ([]domain.LeaveRe
 			&leaveRequest.To,
 			&leaveRequest.Note,
 			&leaveRequest.IsApproved,
+			&leaveRequest.IsPending,
 		); err != nil {
 			return nil, err
 		}
@@ -135,8 +138,8 @@ func PostLeaveRequest(leaveRequest domain.LeaveRequest, db *sql.DB) (domain.Leav
 func PutLeaveRequest(leaveRequest domain.LeaveRequest, db *sql.DB) (domain.LeaveRequest, error) {
 	q := `
 	update leave_request
-	set leave_type = $1, from_date = $2, to_date = $3, note = $4, is_approved = $5
-	where request_id = $6;
+	set leave_type = $1, from_date = $2, to_date = $3, note = $4, is_approved = $5, is_pending = $6
+	where request_id = $7;
 	`
 
 	_, err := db.Exec(
@@ -146,6 +149,7 @@ func PutLeaveRequest(leaveRequest domain.LeaveRequest, db *sql.DB) (domain.Leave
 		leaveRequest.To,
 		leaveRequest.Note,
 		leaveRequest.IsApproved,
+		leaveRequest.IsPending,
 		leaveRequest.RequestId,
 	)
 	if err != nil {
