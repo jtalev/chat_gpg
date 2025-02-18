@@ -1459,20 +1459,25 @@ input::-webkit-inner-spin-button {
     align-items: center;
 }
 
-.admin-leave-header-arrow {
+#pending-arrow img {
+    height: 1em;
+}
+
+#pending-arrow {
     display: flex;
     justify-content: center;
     align-items: center;
-}
-
-#pending-arrow img {
-    height: 1em;
     rotate: 0deg;
 }
 
-
 #approved-arrow img, #denied-arrow img {
     height: 1em;
+}
+
+#approved-arrow, #denied-arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     rotate: -90deg;
 }
 

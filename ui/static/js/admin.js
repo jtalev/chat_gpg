@@ -70,16 +70,22 @@ function onLeaveHeaderClick() {
     leaveHeaders.forEach(header => {
         header.addEventListener("click", function () {
             const leaveRequestContainers = document.querySelectorAll(".admin-leave-request-container");
+            document.querySelector("#pending-arrow").style.rotate = "-90deg"
+            document.querySelector("#approved-arrow").style.rotate = "-90deg"
+            document.querySelector("#denied-arrow").style.rotate = "-90deg"
             leaveRequestContainers.forEach(container => {
                 container.style.display = "none";
                 if (this.id === "pending" && container.id === "leave-pending-requests") {
                     container.style.display = "flex"
+                    document.querySelector("#pending-arrow").style.rotate = "0deg"
                 }
                 if (this.id === "approved" && container.id === "leave-approved-requests") {
                     container.style.display = "flex"
+                    document.querySelector("#approved-arrow").style.rotate = "0deg"
                 }
                 if (this.id === "denied" && container.id === "leave-denied-requests") {
                     container.style.display = "flex"
+                    document.querySelector("#denied-arrow").style.rotate = "0deg"
                 }
             });
         });
