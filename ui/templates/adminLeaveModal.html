@@ -30,8 +30,32 @@
 	<div id="admin-lr-modal-btn-container">
 		{{ if eq .LeaveRequest.IsPending true}}
 		<div id="admin-lr-modal-approvedeny-btn-container">
-			<button class="admin-lr-modal-approvedeny-btn" id="admin-lr-modal-approve-btn">Approve</button>
-			<button class="admin-lr-modal-approvedeny-btn" id="admin-lr-modal-deny-btn">Deny</button>
+			<button 
+			class="admin-lr-modal-approvedeny-btn" 
+			id="admin-lr-modal-approve-btn"
+			hx-put="/admin/leave-finalise"
+			hx-trigger="click"
+			hx-target="#admin-leave-content"
+			hx-swap="innerHTML"
+			hx-vals='{
+				"id":"{{ .LeaveRequest.RequestId }}",
+				"approved":"true"
+			}'
+			onclick="onModalClose()"
+			>Approve</button>
+			<button 
+			class="admin-lr-modal-approvedeny-btn" 
+			id="admin-lr-modal-deny-btn"
+			hx-put="/admin/leave-finalise"
+			hx-trigger="click"
+			hx-target="#admin-leave-content"
+			hx-swap="innerHTML"
+			hx-vals='{
+				"id":"{{ .LeaveRequest.RequestId }}",
+				"approved":"false"
+			}'
+			onclick="onModalClose()"
+			>Deny</button>
 		</div>
 		<button id="admin-lr-modal-close-btn" onclick="onModalClose()">Close</button>
 		{{ else if eq .LeaveRequest.IsPending false }}

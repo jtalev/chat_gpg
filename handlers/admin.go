@@ -166,3 +166,47 @@ func (h *Handler) LeaveRequestModal() http.Handler {
 		},
 	)
 }
+
+func (h *Handler) LeaveRequestFinalise() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			hxvals, err := parseRequestValues([]string{"id", "approved"}, r)
+			if err != nil {
+				log.Printf("Error parsing request values: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			id, isApproved := hxvals[0], hxvals[1]
+			_, err = application.AdminUpdateLeaveRequest(id, isApproved, h.DB)
+			if err != nil {
+				log.Printf("Error finalising leave request: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			data, err := application.GetLeaveRequestsForAdmin(h.DB)
+			if err != nil {
+				log.Printf("Error querying leave database: %v", err)
+				http.Error(w, "Not found", http.StatusNotFound)
+				return
+			}
+
+			tmpl, err := template.ParseFiles(
+				adminLeaveTabPath,
+				adminLeaveRequestPath,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			err = tmpl.ExecuteTemplate(w, "adminLeaveTab", data)
+			if err != nil {
+				log.Printf("Error executing template: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}

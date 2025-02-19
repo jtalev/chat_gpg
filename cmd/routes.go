@@ -69,4 +69,5 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/admin/render-leave-tab", a.AuthMiddleware(h.RenderLeaveTab()))
 	mux.Handle("/admin/add-job-modal", a.AuthMiddleware(h.AddJobModal()))
 	mux.Handle("/admin/leave-request-modal", a.AuthMiddleware(h.LeaveRequestModal()))
+	mux.Handle("/admin/leave-finalise", a.AuthMiddleware(h.LeaveRequestFinalise()))
 }

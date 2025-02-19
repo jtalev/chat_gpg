@@ -88,3 +88,32 @@ func GetLeaveRequestByIdForAdmin(idStr string, db *sql.DB) (AdminLeaveModalData,
 
 	return outData, nil
 }
+
+func AdminUpdateLeaveRequest(idStr, isApprovedStr string, db *sql.DB) (domain.LeaveRequest, error) {
+	var isApproved bool
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return domain.LeaveRequest{}, err
+	}
+	if isApprovedStr == "true" {
+		isApproved = true
+	} else if isApprovedStr == "false" {
+		isApproved = false
+	} else {
+		return domain.LeaveRequest{}, nil
+	}
+
+	lr, err := infrastructure.GetLeaveRequestById(id, db)
+	if err != nil {
+		return domain.LeaveRequest{}, nil
+	}
+	lr.IsApproved = isApproved
+	lr.IsPending = false
+
+	outLr, err := infrastructure.PutLeaveRequest(lr, db)
+	if err != nil {
+		return domain.LeaveRequest{}, nil
+	}
+
+	return outLr, nil
+}
