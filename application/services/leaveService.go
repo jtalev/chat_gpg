@@ -47,16 +47,44 @@ func GetLeaveRequestsForAdmin(db *sql.DB) (AdminLeaveData, error) {
 	return adminLeaveData, nil
 }
 
-func GetLeaveRequestById(idStr string, db *sql.DB) (domain.LeaveRequest, error) {
+type AdminLeaveModalData struct {
+	LeaveRequest domain.LeaveRequest
+	TotalDays    int
+}
+
+func calcLeaveDaysFromRequest(lr domain.LeaveRequest) (int, error) {
+	dayCounter := 1 // add one for the date the leave request starts on
+	startDate, err := dateStrToDate(lr.From)
+	endDate, err := dateStrToDate(lr.To)
+	if err != nil {
+		return -1, err
+	}
+
+	for startDate.Day() != endDate.Day() {
+		startDate = startDate.AddDate(0, 0, 1)
+		dayCounter += 1
+	}
+
+	return dayCounter, nil
+}
+
+func GetLeaveRequestByIdForAdmin(idStr string, db *sql.DB) (AdminLeaveModalData, error) {
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		return domain.LeaveRequest{}, err
+		return AdminLeaveModalData{}, err
 	}
 
 	outLr, err := infrastructure.GetLeaveRequestById(id, db)
 	if err != nil {
-		return domain.LeaveRequest{}, err
+		return AdminLeaveModalData{}, err
 	}
 
-	return outLr, nil
+	totalDays, err := calcLeaveDaysFromRequest(outLr)
+
+	outData := AdminLeaveModalData{
+		outLr,
+		totalDays,
+	}
+
+	return outData, nil
 }

@@ -1589,6 +1589,131 @@ input::-webkit-inner-spin-button {
     border: solid 1px var(--gpg-green);
     background-color: white;
     max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 2em;
+    gap: 1em;
+}
+
+.admin-lr-modal-icon {
+    width: 50px;
+    padding: 0;
+    margin: 0;
+}
+
+#admin-lr-modal-form {
+    width: 90%;
+    height: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    max-width: 550px;
+    max-height: 750px;
+}
+
+@media screen and (max-width: 365px) {
+    #admin-lr-modal-label-container {
+        height: 100%;
+        width: 35%;
+        padding-right: 5px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        font-size: smaller;
+    }
+
+    #admin-lr-modal-value-container {
+        height: 100%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        font-size: smaller;
+    }
+}
+
+#admin-lr-modal-label-container {
+    height: 100%;
+    width: 35%;
+    padding-right: 5px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#admin-lr-modal-value-container {
+    height: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.admin-lr-modal-row {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 10%;
+    display: flex;
+    align-items: flex-end;
+}
+
+.admin-lr-modal-label {
+    justify-content: flex-end;
+}
+
+.admin-lr-modal-value {
+    justify-content: center;
+    border-bottom: var(--gpg-green) solid 1px;
+}
+
+#admin-lr-modal-btn-container {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 5em;
+    gap: 20px;
+    padding-top: 15px;
+}
+
+#admin-lr-modal-approvedeny-btn-container {
+    display: flex;
+    width: 80%;
+    gap: 15px;
+}
+
+.admin-lr-modal-approvedeny-btn {
+    background-color: transparent;
+    width: 50%;
+    height: 3em;
+    font-size: 16px;
+    border: none;
+}
+
+#admin-lr-modal-approve-btn {
+    background-color: #40C05780;
+    border: solid 1px #40C057;
+    color: #40C057;
+}
+
+#admin-lr-modal-deny-btn {
+    background-color: #D22B2B80;
+    border: solid 1px #D22B2B;
+    color: #D22B2B;
+}
+
+#admin-lr-modal-close-btn {
+    width: 5em;
+    height: 2em;
+    border-radius: 0;
+    border: solid 1px var(--gpg-green);
+    background-color: transparent;
+    color: var(--gpg-green);
+    cursor: pointer;
 }
 
 /* ----- reports ----- */{{ end }}

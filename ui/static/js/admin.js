@@ -95,3 +95,7 @@ function onLeaveHeaderClick() {
 function onLeaveRequestClick() {
     document.querySelector("#admin-leave-modal-container").style.display = "flex"
 }
+
+function onModalClose() {
+    document.querySelector("#admin-leave-modal-container").style.display = "none"
+}

@@ -150,7 +150,7 @@ func (h *Handler) LeaveRequestModal() http.Handler {
 				return
 			}
 
-			modalData, err := application.GetLeaveRequestById(hxvals[0], h.DB)
+			modalData, err := application.GetLeaveRequestByIdForAdmin(hxvals[0], h.DB)
 			if err != nil {
 				log.Printf("Error getting admin leave modal data: %v", err)
 				http.Error(w, "Not found", http.StatusNotFound)
