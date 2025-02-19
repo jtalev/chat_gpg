@@ -123,7 +123,7 @@ func (h *Handler) RenderLeaveTab() http.Handler {
 
 			tmpl, err := template.ParseFiles(
 				adminLeaveTabPath,
-				adminPendingLeaveRequestPath,
+				adminLeaveRequestPath,
 			)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -131,6 +131,19 @@ func (h *Handler) RenderLeaveTab() http.Handler {
 			}
 
 			err = tmpl.ExecuteTemplate(w, "adminLeaveTab", data)
+			if err != nil {
+				log.Printf("Error executing template: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) LeaveRequestModal() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			err := executePartialTemplate(adminLeaveRequestModalPath, "adminLeaveModal", nil, w)
 			if err != nil {
 				log.Printf("Error executing template: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)

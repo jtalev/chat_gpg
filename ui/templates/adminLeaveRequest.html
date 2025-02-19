@@ -1,0 +1,20 @@
+{{ define "adminLeaveRequest" }}
+<div 
+class="admin-leave-request-row"
+hx-get="/admin/leave-request-modal"
+hx-trigger="click"
+hx-target="#admin-leave-modal-container"
+hx-swap="innerHTML"
+onclick="onLeaveRequestClick()">
+	<p class="admin-lr-row-name">{{ .FirstName }} {{ .LastName }} | </p>
+	<p class="admin-lr-row-dates">{{ .From }} - {{ .To }} | </p>
+	<p class="admin-lr-row-dates">{{ .Type }}</p>
+	{{ if and .IsPending (not .IsApproved) }}
+	<div class="admin-lr-icon"><img src="../static/img/pending.svg"></div>
+	{{ else if and (not .IsPending) .IsApproved }}
+	<div class="admin-lr-icon"><img id="admin-lr-approved-icon" src="../static/img/approved.svg"></div>
+	{{ else if and (not .IsPending) (not .IsApproved) }}
+	<div class="admin-lr-icon"><img id="admin-lr-denied-icon" src="../static/img/denied.svg"></div>
+	{{ end }}
+</div>
+{{ end }}

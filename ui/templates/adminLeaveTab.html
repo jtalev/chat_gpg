@@ -8,7 +8,7 @@
 			</div>
 			<div class="admin-leave-request-container" id="leave-pending-requests">
 				{{ range .Pending }}
-				{{ template "adminPendingLeaveRequest" . }}
+				{{ template "adminLeaveRequest" . }}
 				{{ end }}
 			</div>
 		</div>
@@ -19,10 +19,7 @@
 			</div>
 			<div class="admin-leave-request-container" id="leave-approved-requests">
 				{{ range .Approved }}
-				<p class="admin-leave-request">
-					Pending: {{ .IsPending }}
-					Approved: {{ .IsApproved }}
-				</p>
+				{{ template "adminLeaveRequest" . }}
 				{{ end }}
 			</div>
 		</div>
@@ -33,13 +30,11 @@
 			</div>
 			<div class="admin-leave-request-container" id="leave-denied-requests">
 				{{ range .Denied }}
-				<p class="admin-leave-request">
-					Pending: {{ .IsPending }}
-					Approved: {{ .IsApproved }}
-				</p>
+				{{ template "adminLeaveRequest" . }}
 				{{ end }}
 			</div>
 		</div>
 	</div>
+	<div id="admin-leave-modal-container"></div>
 </div>
 {{ end }}
