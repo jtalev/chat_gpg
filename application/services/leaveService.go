@@ -2,6 +2,7 @@ package application
 
 import (
 	"database/sql"
+	"strconv"
 
 	"github.com/jtalev/chat_gpg/domain/models"
 	"github.com/jtalev/chat_gpg/infrastructure/repository"
@@ -44,4 +45,18 @@ func GetLeaveRequestsForAdmin(db *sql.DB) (AdminLeaveData, error) {
 
 	adminLeaveData := sortLeaveDataForAdmin(leaveRequests)
 	return adminLeaveData, nil
+}
+
+func GetLeaveRequestById(idStr string, db *sql.DB) (domain.LeaveRequest, error) {
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		return domain.LeaveRequest{}, err
+	}
+
+	outLr, err := infrastructure.GetLeaveRequestById(id, db)
+	if err != nil {
+		return domain.LeaveRequest{}, err
+	}
+
+	return outLr, nil
 }

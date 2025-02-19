@@ -143,7 +143,21 @@ func (h *Handler) RenderLeaveTab() http.Handler {
 func (h *Handler) LeaveRequestModal() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			err := executePartialTemplate(adminLeaveRequestModalPath, "adminLeaveModal", nil, w)
+			hxvals, err := parseRequestValues([]string{"id"}, r)
+			if err != nil {
+				log.Printf("Error parsing request values: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			modalData, err := application.GetLeaveRequestById(hxvals[0], h.DB)
+			if err != nil {
+				log.Printf("Error getting admin leave modal data: %v", err)
+				http.Error(w, "Not found", http.StatusNotFound)
+				return
+			}
+
+			err = executePartialTemplate(adminLeaveRequestModalPath, "adminLeaveModal", modalData, w)
 			if err != nil {
 				log.Printf("Error executing template: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)

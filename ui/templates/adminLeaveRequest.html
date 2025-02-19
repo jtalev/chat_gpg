@@ -5,6 +5,9 @@ hx-get="/admin/leave-request-modal"
 hx-trigger="click"
 hx-target="#admin-leave-modal-container"
 hx-swap="innerHTML"
+hx-vals='{
+	"id":"{{ .RequestId }}"
+}'
 onclick="onLeaveRequestClick()">
 	<p class="admin-lr-row-name">{{ .FirstName }} {{ .LastName }} | </p>
 	<p class="admin-lr-row-dates">{{ .From }} - {{ .To }} | </p>
