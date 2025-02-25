@@ -45,3 +45,37 @@ func (h *Handler) DeleteEmployee() http.Handler {
 		},
 	)
 }
+
+func (h *Handler) PostEmployee() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			isAdmin, err := getIsAdmin(w, r)
+			if err != nil {
+				log.Printf("Error getting admin cookie: %v", err)
+				http.Error(w, "Not found", http.StatusNotFound)
+				return
+			}
+			if !isAdmin {
+				log.Printf("Unauthorized: isAdmin = %v", isAdmin)
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
+
+			keys := []string{"employee_id", "first_name", "last_name", "email", "phone_number", "is_admin", "username", "password"}
+			hxVals, err := parseRequestValues(keys, r)
+			if err != nil {
+				log.Printf("Error parsing request values: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+			employees, err := application.PostAndReturnEmployees(hxVals, h.DB)
+			data := EmployeeData{employees}
+			err = executePartialTemplate(adminEmployeeListPath, "adminEmployeeList", data, w)
+			if err != nil {
+				log.Printf("Error executing template: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}

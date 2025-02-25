@@ -35,7 +35,7 @@
 			id="admin-lr-modal-approve-btn"
 			hx-put="/admin/leave-finalise"
 			hx-trigger="click"
-			hx-target="#admin-leave-content"
+			hx-target="#admin-leave-container"
 			hx-swap="innerHTML"
 			hx-vals='{
 				"id":"{{ .LeaveRequest.RequestId }}",
@@ -48,7 +48,7 @@
 			id="admin-lr-modal-deny-btn"
 			hx-put="/admin/leave-finalise"
 			hx-trigger="click"
-			hx-target="#admin-leave-content"
+			hx-target="#admin-leave-container"
 			hx-swap="innerHTML"
 			hx-vals='{
 				"id":"{{ .LeaveRequest.RequestId }}",

@@ -99,3 +99,18 @@ function onLeaveRequestClick() {
 function onModalClose() {
     document.querySelector("#admin-leave-modal-container").style.display = "none"
 }
+
+function onAddEmployeeClick() {
+    document.querySelector("#add-employee-modal-container").style.display = "flex"
+}
+
+function onAddEmployeeSubmit() {
+    const err = document.querySelector("#add-employee-err")
+    if (err.textContent === "") {
+        onAddEmployeeClose()
+    }
+}
+
+function onAddEmployeeClose() {
+    document.querySelector("#add-employee-modal-container").style.display = "none"
+}

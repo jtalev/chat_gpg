@@ -29,3 +29,22 @@ func GetEmployeeAuthByUsername(username string, db *sql.DB) (domain.EmployeeAuth
 	}
 	return employeeAuth, nil
 }
+
+func PostEmployeeAuth(employeeAuth domain.EmployeeAuth, db *sql.DB) (domain.EmployeeAuth, error) {
+	q := `
+	INSERT INTO employee_auth (employee_id, username, password_hash)
+	VALUES ($1, $2, $3);
+	`
+
+	_, err := db.Exec(q, employeeAuth.EmployeeId, employeeAuth.Username, employeeAuth.PasswordHash)
+	if err != nil {
+		return domain.EmployeeAuth{}, err
+	}
+
+	outEmployee, err := GetEmployeeAuthByUsername(employeeAuth.Username, db)
+	if err != nil {
+		return domain.EmployeeAuth{}, err
+	}
+
+	return outEmployee, nil
+}

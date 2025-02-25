@@ -210,3 +210,16 @@ func (h *Handler) LeaveRequestFinalise() http.Handler {
 		},
 	)
 }
+
+func (h *Handler) AddEmployeeModal() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			err := executePartialTemplate(adminAddEmployeeModalPath, "adminAddEmployeeModal", nil, w)
+			if err != nil {
+				log.Printf("Error executing template: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}

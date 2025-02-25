@@ -1,0 +1,43 @@
+{{ define "adminAddEmployeeModal" }}
+<div id="admin-add-employee-modal-content-container">
+	<div id="add-employee-modal-content">
+		<p id="add-employee-modal-header">ADD EMPLOYEE</p>
+		<div id="add-employee-form-container">
+			<form hx-post="/employee/post" hx-trigger="submit" hx-target="#admin-employee-list" hx-swap="innerHTML" id="add-employee-form">
+				<div id="add-employee-form-main-container">
+					<div id="add-employee-form-label-container">
+						<label for="employee-id" class="add-emmployee-form-item add-employee-form-label">Employee ID:</label>
+						<label for="first-name" class="add-emmployee-form-item add-employee-form-label">First Name:</label>
+						<label for="last-name" class="add-emmployee-form-item add-employee-form-label">Last Name:</label>
+						<label for="username" class="add-emmployee-form-item add-employee-form-label">Username:</label>
+						<label for="password" class="add-emmployee-form-item add-employee-form-label">Password:</label>
+						<label for="email" class="add-emmployee-form-item add-employee-form-label">Email:</label>
+						<label for="phone-number" class="add-emmployee-form-item add-employee-form-label">Phone Number:</label>
+						<label for="is-admin" class="add-emmployee-form-item add-employee-form-label">Admin?</label>
+					</div>
+					<div id="add-employee-form-input-container">
+						<input type="text" name="employee_id" id="employee-id" class="add-emmployee-form-item add-employee-form-input"></input>
+						<input type="text" name="first_name" id="first-name" class="add-emmployee-form-item add-employee-form-input"></input>
+						<input type="text" name="last_name" id="last-name" class="add-emmployee-form-item add-employee-form-input"></input>
+						<input type="text" name="username" id="username" class="add-emmployee-form-item add-employee-form-input"></input>
+						<input type="text" name="password" id="password" class="add-emmployee-form-item add-employee-form-input"></input>
+						<input type="text" name="email" id="email" class="add-emmployee-form-item add-employee-form-input"></input>
+						<input type="text" name="phone_number" id="phone-number" class="add-emmployee-form-item add-employee-form-input"></input>
+						<div class="add-emmployee-form-item add-employee-form-input">
+							<input type="radio" name="is_admin" id="is-admin" value="true">true</input>
+							<input type="radio" name="is_admin" id="is-admin" value="false">false</input>
+						</div>
+					</div>
+				</div>
+				<div id="add-employee-err-container">
+					<p id="add-employee-err"></p>
+				</div>
+				<div id="add-employee-form-btn-container">
+					<button type="reset" id="add-employee-cancel-btn" onclick="onAddEmployeeClose()">Cancel</button>
+					<button type="submit" id="add-employee-submit-btn" onclick="onAddEmployeeSubmit()">SUBMIT</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{{ end }}

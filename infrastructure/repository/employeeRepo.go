@@ -104,3 +104,22 @@ func DeleteEmployee(id int, db *sql.DB) (bool, error) {
 
 	return true, nil
 }
+
+func PostEmployee(employee domain.Employee, db *sql.DB) (domain.Employee, error) {
+	q := `
+	INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
+	VALUES ($1, $2, $3, $4, $5, $6);
+	`
+
+	_, err := db.Exec(q, employee.EmployeeId, employee.FirstName, employee.LastName, employee.Email, employee.PhoneNumber, employee.IsAdmin)
+	if err != nil {
+		return domain.Employee{}, err
+	}
+
+	outEmployee, err := GetEmployeeByEmployeeId(employee.EmployeeId, db)
+	if err != nil {
+		return domain.Employee{}, err
+	}
+
+	return outEmployee, nil
+}

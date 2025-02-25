@@ -36,6 +36,7 @@ const (
 	adminPath                   = "../ui/views/admin.html"
 	adminEmployeeTabPath        = "../ui/templates/adminEmployeeTab.html"
 	adminEmployeeListPath       = "../ui/templates/adminEmployeeList.html"
+	adminAddEmployeeModalPath   = "../ui/templates/adminAddEmployeeModal.html"
 	adminJobListPath            = "../ui/templates/adminJobList.html"
 	adminJobTabPath             = "../ui/templates/adminJobTab.html"
 	addJobModalPath             = "../ui/templates/addJobModal.html"
