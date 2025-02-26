@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 	"path/filepath"
 
@@ -20,6 +21,7 @@ const (
 	layoutPath                  = "../ui/layouts/layout.html"
 	navPath                     = "../ui/templates/nav.html"
 	dashboardPath               = "../ui/views/dashboard.html"
+	dashboardTilePath           = "../ui/templates/dashboardTile.html"
 	jobsPath                    = "../ui/views/jobs.html"
 	timesheetsPath              = "../ui/views/timesheets.html"
 	timesheetTablePath          = "../ui/templates/timesheetTable.html"
@@ -74,6 +76,7 @@ func renderTemplate(
 		layoutPath,
 		navPath,
 		dashboardPath,
+		dashboardTilePath,
 		jobsPath,
 		timesheetsPath,
 		timesheetTablePath,
@@ -195,7 +198,12 @@ func (h *Handler) ServeAccountView() http.Handler {
 func (h *Handler) ServeDashboardView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			data := getDashboardData()
+			data, err := getDashboardData(w, r)
+			if err != nil {
+				log.Println("Error getting dashboard data: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
 			component := "dashboard"
 			title := "Dashboard - GPG"
 			renderTemplate(w, r, component, title, data)

@@ -1,5 +1,14 @@
 {{ define "dashboard" }}
-<h1 class="dashboard">
-    dashboard
-</h1>
+<div id="dashboard-container">
+    <div id="dashboard-header-container">
+        <h2 id="dashboard-header">Dashboard</h2>
+    </div>
+    <div id="dashboard-content-container">
+        <div id="dashboard-content">
+            {{ range .Data.Pages }}
+                {{ template "dashboardTile" . }}
+            {{ end }}
+        </div>
+    </div>
+</div>
 {{ end }}

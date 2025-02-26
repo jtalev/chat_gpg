@@ -1,12 +1,22 @@
 package handlers
 
-type DashboardData struct {
-	IsAdmin bool
+import "net/http"
+
+type InitialDashboardData struct {
+	Pages []string
 }
 
-func getDashboardData() []DashboardData {
-	data := []DashboardData{
-		{},
+func getDashboardData(w http.ResponseWriter, r *http.Request) (InitialDashboardData, error) {
+	pages := []string{"TIMESHEETS", "LEAVE"}
+	isAdmin, err := getIsAdmin(w, r)
+	if err != nil {
+		return InitialDashboardData{}, err
 	}
-	return data
+	if isAdmin {
+		pages = append(pages, "REPORTS", "ADMIN")
+	}
+	data := InitialDashboardData{
+		Pages: pages,
+	}
+	return data, nil
 }

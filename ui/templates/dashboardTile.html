@@ -1,0 +1,31 @@
+{{ define "dashboardTile" }}
+	{{ if eq . "TIMESHEETS" }}
+	<div class="dashboard-tile-container">
+		<a class="dashboard-tile-content" href="/timesheets">
+	{{ else if eq . "LEAVE" }}
+	<div class="dashboard-tile-container">
+		<a class="dashboard-tile-content" href="leave">
+	{{ else if eq . "REPORTS" }}
+	<div class="dashboard-tile-container">
+		<a class="dashboard-tile-content" href="reports">
+	{{ else if eq . "ADMIN" }}
+	<div class="dashboard-tile-container">
+		<a class="dashboard-tile-content" href="admin">
+	{{ end }}	
+			<div id="dashboard-tile-icon-container">
+				{{ if eq . "TIMESHEETS" }}
+				<img src="../static/img/timesheet-icon.svg">
+				{{ else if eq . "LEAVE" }}
+				<img src="../static/img/leave-icon.svg">
+				{{ else if eq . "REPORTS" }}
+				<img src="../static/img/reports-icon.svg">
+				{{ else if eq . "ADMIN" }}
+				<img src="../static/img/admin-icon.svg">
+				{{ end }}
+			</div>
+			<div id="dashboard-tile-title-container">
+				<p>{{ . }}</p>
+			</div>
+		</a>
+	</div>
+{{ end }}
