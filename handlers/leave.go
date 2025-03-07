@@ -33,7 +33,7 @@ func (h *Handler) RenderLeaveHistoryTab() http.Handler {
 				return
 			}
 
-			tmpl, err := template.ParseFiles(leaveHistoryPath)
+			tmpl, err := template.ParseFiles(leaveHistoryPath, employeeLeaveRequestPath)
 			if err != nil {
 				log.Println("Error parsing file:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -43,6 +43,33 @@ func (h *Handler) RenderLeaveHistoryTab() http.Handler {
 			err = tmpl.ExecuteTemplate(w, "leaveHistory", historyData)
 			if err != nil {
 				log.Println("Error executing template:", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) EmployeeLeaveModal() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			hxvals, err := parseRequestValues([]string{"id"}, r)
+			if err != nil {
+				log.Printf("Error parsing request values: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			modalData, err := application.GetLeaveRequestByIdForAdmin(hxvals[0], h.DB)
+			if err != nil {
+				log.Printf("Error getting admin leave modal data: %v", err)
+				http.Error(w, "Not found", http.StatusNotFound)
+				return
+			}
+
+			err = executePartialTemplate(employeeLeaveModalPath, "employeeLeaveModal", modalData, w)
+			if err != nil {
+				log.Printf("Error executing template: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
@@ -235,21 +262,14 @@ func (h *Handler) PostLeaveRequest() http.Handler {
 				return
 			}
 
-			leaveRequest, err = infrastructure.PostLeaveRequest(leaveRequest, h.DB)
+			_, err = infrastructure.PostLeaveRequest(leaveRequest, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error posting leave request: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
-			employee, err := infrastructure.GetEmployeeByEmployeeId(employeeId, h.DB)
-			if err != nil {
-				h.Logger.Errorf("Error getting employee: %v", err)
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
-			leaveRequest.FirstName = employee.FirstName
-			leaveRequest.LastName = employee.LastName
-			responseJSON(w, leaveRequest, h.Logger)
+
+			fmt.Fprint(w, "")
 		},
 	)
 }

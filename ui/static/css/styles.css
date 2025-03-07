@@ -962,6 +962,7 @@ input::-webkit-inner-spin-button {
 }
 
 #leaveContentContainer {
+    position: relative;
     flex-grow: 1;
     width: 100%;
     border-left: solid var(--gpg-green) 1px;
@@ -973,6 +974,8 @@ input::-webkit-inner-spin-button {
 
 .leaveContent {
     margin: 0 3% 0 3%;
+    height: 84%;
+
 }
 
 .leaveRequestHeading {
@@ -982,7 +985,7 @@ input::-webkit-inner-spin-button {
 }
 
 #leaveForm {
-    
+    width: 100%;
     row-gap: 2em;
 }
 
@@ -1001,6 +1004,8 @@ input::-webkit-inner-spin-button {
     flex-direction: column;
     row-gap: 0.5em;
     color: black;
+    margin: 0;
+    padding: 0;
 }
 
 .formInput {
@@ -1008,7 +1013,13 @@ input::-webkit-inner-spin-button {
     border-radius: 0%;
     font-size: 1em;
     color: var(--main-color);
-    padding: 0.5em;
+    padding: 5px;
+    margin: 0;
+    width: 99%;
+    height: 30px;
+}
+
+.formInput select {
     width: 100%;
 }
 
@@ -1050,98 +1061,78 @@ input::-webkit-inner-spin-button {
     height: 2em;
 }
 
-.leaveHistoryRowDisplayed {
-    display: flex;
-    border: var(--form-input-border-color) solid 1px;
-    border-radius: 0%;
-    font-size: 1em;
-    color: var(--main-color);
-    height: 2.5em;
+#leave-submit-alert-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 30%;
+    display: none;
+    justify-content: center;
     align-items: center;
-    background-color: var(--main-background-color);
-    margin-bottom: 5px;
-    cursor: pointer;
+    margin-top: 5px;
 }
 
-.leaveHistoryRowHidden {
-    border: var(--form-input-border-color) solid 1px;
-    border-radius: 0%;
-    font-size: 1em;
-    color: var(--main-color);
-    background-color: var(--main-background-color);
-    margin-bottom: 5px;
-    padding-left: 5px;
-    padding-right: 5px;
-}
-
-.leaveHistoryRowCell {
-    width: 20%;
+#leave-submit-alert {
+    width: 80%;
     height: 100%;
-    padding: 0%;
-    margin: 0;
+    border: var(--gpg-green) solid 1px;
+    max-width: 500px;
+    background-color: white;
     display: flex;
     align-items: center;
-    overflow-x: scroll;
-    white-space: nowrap;
-    scrollbar-width: none;
-    padding-left: 5px;
+    justify-content: center;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.leaveHistoryRowHiddenCell {
+#leave-submit-alert-text {
+    color: var(--gpg-green);
+    width: 60%;
+    text-align: center;
+}
+
+#employee-leave-history-container {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
     display: flex;
-    align-items: center;
-    font-size: small;
-    margin: 0;
-    padding: 0;
-    height: auto;
-    column-gap: 5px;
-    margin-top: 2px;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.employee-leave-container {
     width: 100%;
 }
 
-.leaveHistoryRowHeader {
-    color: black;
-    background-color: white;
-    border: none;
-}
-
-.leaveHistoryRowHiddenCellLabel {
-    color: black;
-    width: 20%;
-}
-
-.leaveHistoryRowHiddenCellContent {
-    flex-grow: 1;
-    width: 80%;
-}
-
-#isApproved {
-    margin-bottom: 2px;
-}
-
-#updateLeaveFormButtons {
-    margin-top: 3px;
-    margin-bottom: 3px;
+.employee-leave-container-header {
+    font-size: large;
+    margin-bottom: 10px;
     display: flex;
-    align-items: flex-end;
-    column-gap: 5px;
-    justify-content: flex-end;
+    cursor: pointer;
 }
 
-#updateLeaveFormCancelBtn {
-    background-color: white;
-    border: solid 1px var(--gpg-green);
-    color: var(--gpg-green);
-    height: 2em;
-    font-size: small;
+.employee-leave-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
 }
 
-#updateLeaveFormSubmitBtn {
-    background-color: var(--gpg-green);
-    border: none;
-    color: white;
-    height: 2em;
-    font-size: small;
+#employee-approved-leave-list, #employee-denied-leave-list {
+    display: none;
+}
+
+#employee-leave-modal-container {
+    display: none;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
 }
 
 /** ----- admin ----- **/
@@ -1689,7 +1680,7 @@ input::-webkit-inner-spin-button {
 
 .admin-leave-request-row {
     height: 2em;
-    width: 99.7%;
+    width: 99.5%;
     max-width: 600px;
     border: solid 1px var(--timesheet-border);
     background-color: var(--light-background-color);
@@ -1965,7 +1956,7 @@ input::-webkit-inner-spin-button {
 }
 
 .timesheetReportTableRow:first-child > th, td {
-    width: 30px;
+    width: 50px;
     overflow: hidden;
 }
 
@@ -2097,4 +2088,23 @@ input::-webkit-inner-spin-button {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+/* ----- error ----- */
+#nav-to-login-btn-container {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+}
+
+#nav-to-login-btn {
+    cursor: pointer;
+    width: 100px;
+    height: 80%;
+    border: solid 1px var(--gpg-green);
+    background: transparent;
+    color: var(--gpg-green);
 }

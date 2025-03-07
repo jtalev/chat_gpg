@@ -1,0 +1,34 @@
+{{ define "employeeLeaveModal" }}
+<div id="admin-leave-modal-content">
+	{{ if and .LeaveRequest.IsPending (not .LeaveRequest.IsApproved) }}
+	<div><img class="admin-lr-modal-icon" src="../static/img/pending.svg"></div>
+	{{ else if and (not .LeaveRequest.IsPending) .LeaveRequest.IsApproved }}
+	<div><img class="admin-lr-modal-icon" src="../static/img/approved.svg"></div>
+	{{ else if and (not .LeaveRequest.IsPending) (not .LeaveRequest.IsApproved) }}
+	<div><img class="admin-lr-modal-icon" src="../static/img/denied.svg"></div>
+	{{ end }}
+	<div id="admin-lr-modal-form">
+		<div id="admin-lr-modal-label-container">
+			<p class="admin-lr-modal-row admin-lr-modal-label">Employee ID:</p>
+			<p class="admin-lr-modal-row admin-lr-modal-label">Name:</p>
+			<p class="admin-lr-modal-row admin-lr-modal-label">Type:</p>
+			<p class="admin-lr-modal-row admin-lr-modal-label">Start Date:</p>
+			<p class="admin-lr-modal-row admin-lr-modal-label">End Date:</p>
+			<p class="admin-lr-modal-row admin-lr-modal-label">Total Days:</p>
+			<p class="admin-lr-modal-row admin-lr-modal-label">Note:</p>
+		</div>
+		<div id="admin-lr-modal-value-container">
+			<p class="admin-lr-modal-row admin-lr-modal-value">{{ .LeaveRequest.EmployeeId }}</p>
+			<p class="admin-lr-modal-row admin-lr-modal-value">{{ .LeaveRequest.FirstName }} {{ .LeaveRequest.LastName }}</p>
+			<p class="admin-lr-modal-row admin-lr-modal-value">{{ .LeaveRequest.Type }}</p>
+			<p class="admin-lr-modal-row admin-lr-modal-value">{{ .LeaveRequest.From }}</p>
+			<p class="admin-lr-modal-row admin-lr-modal-value">{{ .LeaveRequest.To }}</p>
+			<p class="admin-lr-modal-row admin-lr-modal-value">{{ .TotalDays }}</p>
+			<p class="admin-lr-modal-row admin-lr-modal-value">{{ .LeaveRequest.Note }}</p>
+		</div>
+	</div>
+	<div id="admin-lr-modal-btn-container">
+		<button id="admin-lr-modal-close-btn" onclick="onModalClose()">Close</button>
+	</div>
+</div>
+{{ end }}

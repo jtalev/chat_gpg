@@ -32,6 +32,8 @@ const (
 	leavePath                   = "../ui/views/leave.html"
 	leaveHistoryPath            = "../ui/templates/leaveHistory.html"
 	leaveFormPath               = "../ui/templates/leaveForm.html"
+	employeeLeaveRequestPath    = "../ui/templates/employeeLeaveRequest.html"
+	employeeLeaveModalPath      = "../ui/templates/employeeLeaveModal.html"
 	reportsPath                 = "../ui/views/reports.html"
 	timesheetReportPath         = "../ui/templates/timesheetReport.html"
 	employeeTimesheetReportPath = "../ui/templates/employeeTimesheetReport.html"

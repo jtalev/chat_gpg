@@ -1,1 +1,4 @@
 .env
+gpg-dev-keypair.pem
+deploy
+deploy.sh

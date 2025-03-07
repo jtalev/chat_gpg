@@ -26,36 +26,44 @@ function onLeaveSelectorClick() {
     })
 }
 
-document.addEventListener("htmx:afterSwap", onLeaveFormSubmit)
+document.getElementById("leaveForm").addEventListener("htmx:afterSwap", function(event) {
+    console.log("after swap")
+    onLeaveFormSubmit()
+})
+
 function onLeaveFormSubmit() {
     const submitBtn = document.getElementById("leaveFormSubmitBtn")
     const cancelBtn = document.getElementById("leaveFormCancelBtn")
-    const errors = document.querySelectorAll(".error")
+    const error = document.querySelector(".error")
     let isFormValid = true
-    errors.forEach(error => {
-        if (error.textContent != "") {
-            isFormValid = false
-        }
-    })
+    
+    if (error.textContent != "") {
+        isFormValid = false
+    }
+
+    console.log(error.textContent)
+    console.log(isFormValid)
+    
     if (!isFormValid) {
         return
     }
 
-    cancelBtn.textContent = "Reset"
+    const leaveSubmitAlert = document.getElementById("leave-submit-alert-container").style.display = "flex"
+    cancelBtn.style.display = "none"
     submitBtn.textContent = "SUBMITTED"
     submitBtn.disabled = true   
 }
 
-document.addEventListener("DOMContentLoaded", onLeaveFormReset)
 function onLeaveFormReset() {
+    const submitBtn = document.getElementById("leaveFormSubmitBtn")
     const cancelBtn = document.getElementById("leaveFormCancelBtn")
-    cancelBtn.addEventListener("click", function () {
-        const submitBtn = document.getElementById("leaveFormSubmitBtn")
-    
-        cancelBtn.textContent = "Cancel"
-        submitBtn.textContent = "SUBMIT"
-        submitBtn.disabled = false
-    })
+    const errors = document.querySelector(".error")
+
+    const leaveSubmitAlert = document.getElementById("leave-submit-alert-container").style.display = "none"
+    cancelBtn.style.display = "flex"
+    submitBtn.textContent = "SUBMIT"
+    submitBtn.disabled = false
+    errors.textContent = ""
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -90,4 +98,43 @@ function onLeaveHistoryRowClick() {
             hiddenRow.classList.remove("hidden")
         })
     })
+}
+
+document.addEventListener("htmx:afterSwap", onLeaveHeaderClick);
+function onLeaveHeaderClick() {
+    const leaveHeaders = document.querySelectorAll(".employee-leave-container-header");
+    console.log(leaveHeaders)
+
+    leaveHeaders.forEach(header => {
+        header.addEventListener("click", function () {
+            console.log("click")
+            const leaveRequestContainers = document.querySelectorAll(".employee-leave-list-container");
+            document.querySelector("#pending-arrow").style.rotate = "-90deg"
+            document.querySelector("#approved-arrow").style.rotate = "-90deg"
+            document.querySelector("#denied-arrow").style.rotate = "-90deg"
+            leaveRequestContainers.forEach(container => {
+                container.style.display = "none";
+                if (this.id === "pending" && container.id === "leave-pending-requests") {
+                    container.style.display = "flex"
+                    document.querySelector("#pending-arrow").style.rotate = "0deg"
+                }
+                if (this.id === "approved" && container.id === "leave-approved-requests") {
+                    container.style.display = "flex"
+                    document.querySelector("#approved-arrow").style.rotate = "0deg"
+                }
+                if (this.id === "denied" && container.id === "leave-denied-requests") {
+                    container.style.display = "flex"
+                    document.querySelector("#denied-arrow").style.rotate = "0deg"
+                }
+            });
+        });
+    });
+}
+
+function onLeaveRequestClick() {
+    document.querySelector("#employee-leave-modal-container").style.display = "flex"
+}
+
+function onModalClose() {
+    document.querySelector("#employee-leave-modal-container").style.display = "none"
 }

@@ -8,12 +8,36 @@ import (
 	"github.com/jtalev/chat_gpg/infrastructure/repository"
 )
 
-func GetLeaveHistoryByEmployeeId(employeeId string, db *sql.DB) ([]domain.LeaveRequest, error) {
-	outLeaveHistory, err := infrastructure.GetLeaveRequestsByEmployee(employeeId, db)
-	if err != nil {
-		return nil, err
+type EmployeeLeaveHistory struct {
+	Pending  []domain.LeaveRequest
+	Approved []domain.LeaveRequest
+	Denied   []domain.LeaveRequest
+}
+
+func sortLeaveHistoryForEmployee(leaveRequests []domain.LeaveRequest) EmployeeLeaveHistory {
+	outData := EmployeeLeaveHistory{}
+	for _, lr := range leaveRequests {
+		if lr.IsPending == true {
+			outData.Pending = append(outData.Pending, lr)
+		} else if lr.IsPending == false && lr.IsApproved == true {
+			outData.Approved = append(outData.Approved, lr)
+		} else if lr.IsPending == false && lr.IsApproved == false {
+			outData.Denied = append(outData.Denied, lr)
+		}
 	}
-	return outLeaveHistory, nil
+
+	return outData
+}
+
+func GetLeaveHistoryByEmployeeId(employeeId string, db *sql.DB) (EmployeeLeaveHistory, error) {
+	empLeaveHistory, err := infrastructure.GetLeaveRequestsByEmployee(employeeId, db)
+	if err != nil {
+		return EmployeeLeaveHistory{}, err
+	}
+
+	employeeLeaveHistory := sortLeaveHistoryForEmployee(empLeaveHistory)
+
+	return employeeLeaveHistory, nil
 }
 
 type AdminLeaveData struct {

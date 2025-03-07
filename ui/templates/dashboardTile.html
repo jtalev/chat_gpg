@@ -4,13 +4,13 @@
 		<a class="dashboard-tile-content" href="/timesheets">
 	{{ else if eq . "LEAVE" }}
 	<div class="dashboard-tile-container">
-		<a class="dashboard-tile-content" href="leave">
+		<a class="dashboard-tile-content" href="/leave">
 	{{ else if eq . "REPORTS" }}
 	<div class="dashboard-tile-container">
-		<a class="dashboard-tile-content" href="reports">
+		<a class="dashboard-tile-content" href="/reports">
 	{{ else if eq . "ADMIN" }}
 	<div class="dashboard-tile-container">
-		<a class="dashboard-tile-content" href="admin">
+		<a class="dashboard-tile-content" href="/admin">
 	{{ end }}	
 			<div id="dashboard-tile-icon-container">
 				{{ if eq . "TIMESHEETS" }}

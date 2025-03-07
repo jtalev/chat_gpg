@@ -84,7 +84,7 @@ func formatTimesheetMatrices(inTimesheetRows []TimesheetRow) (outHoursMatrix, ou
 
 func calcDayTotals(inHoursMatrix, inMinutesMatrix [][]int) (dayTotals []string) {
 	if len(inHoursMatrix) == 0 || len(inHoursMatrix[0]) == 0 {
-		return []string{} // Return an empty slice if there's no data
+		return []string{"0:0", "0:0", "0:0", "0:0", "0:0", "0:0", "0:0"}
 	}
 
 	hourTotals := make([]int, 7)

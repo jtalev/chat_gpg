@@ -41,8 +41,16 @@
         <textarea type="text" class="formInput" id="note" name="note"></textarea>
     </div>
     <div id="leaveFormButtons">
-        <button type="reset" id="leaveFormCancelBtn" class="leaveBtn" form="leaveForm">Cancel</button>
+        <button type="reset" id="leaveFormCancelBtn" class="leaveBtn" form="leaveForm" onclick="onLeaveFormReset()">Cancel</button>
         <button type="submit" id="leaveFormSubmitBtn" class="leaveBtn" form="leaveForm">SUBMIT</button>
     </div>
 </form>
+<div id="leave-submit-alert-container">
+    <div id="leave-submit-alert">
+        <div id="leave-submit-alert-text">
+            Leave request submitted successfully!
+        </div>
+        <button type="reset" form="leaveForm" id="leave-submit-alert-reset" onclick="onLeaveFormReset()">Reset</button>
+    </div>
+</div>
 {{ end }}
