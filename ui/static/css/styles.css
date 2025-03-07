@@ -1908,6 +1908,9 @@ input::-webkit-inner-spin-button {
 
 .reportsContent {
     margin: 0 3% 0 3%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 #reportsHeader {
@@ -1939,6 +1942,13 @@ input::-webkit-inner-spin-button {
     background-color: var(--main-background-color);
 }
 
+#timesheetReport {
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
 .timesheetReportTable {
     width: 100%;
     margin-top: 5px;
@@ -1968,6 +1978,52 @@ input::-webkit-inner-spin-button {
     margin: 0;
     padding: 0;
     font-weight: lighter;
+ }
+
+ #timesheet-report-additional-info-container {
+    width: 100%;
+    flex-grow: 1;
+    margin-top: 1em;
+    margin-bottom: 1em;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+ }
+
+ #timesheet-report-info-header {
+    width: 100%;
+    border-bottom: solid 1px var(--timesheet-border);
+    padding-bottom: 5px;
+    font-weight: bold;
+ }
+
+ #timesheet-report-summary-container {
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+ }
+
+ #timesheet-report-summary-label-container {
+    width: 30%;
+    max-width: 150px;
+    height: 100%;
+ }
+
+ #timesheet-report-summary-info-container {
+    flex-grow: 1;
+    height: 100%;
+ }
+
+ .timesheet-report-summary-row {
+    height: 2em;
+    display: flex;
+    align-items: flex-end;
+ }
+
+ .timesheet-report-summary-label {
+    font-weight: bold;
  }
 
 /* ----- dashboard ----- */

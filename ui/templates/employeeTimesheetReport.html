@@ -91,4 +91,27 @@
 		</tr>
 	</tbody>
 </table>
+<div id="timesheet-report-additional-info-container">
+	<div id="timesheet-report-info-header">
+		Summary:
+	</div>
+	<div id="timesheet-report-summary-container">
+		<div id="timesheet-report-summary-label-container">
+			<div class="timesheet-report-summary-row timesheet-report-summary-label">
+				Hours Payable:
+			</div>
+			<div class="timesheet-report-summary-row timesheet-report-summary-label">
+				Leave Payable:
+			</div>
+		</div>
+		<div id="timesheet-report-summary-info-container">
+			<div class="timesheet-report-summary-row timesheet-report-summary-info">
+				{{ .WeekTotal }}
+			</div>
+			<div class="timesheet-report-summary-row timesheet-report-summary-info">
+				get leave hours for the current week
+			</div>
+		</div>
+	</div>
+</div>
 {{ end }}
