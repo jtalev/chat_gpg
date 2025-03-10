@@ -2026,6 +2026,13 @@ input::-webkit-inner-spin-button {
     font-weight: bold;
  }
 
+ #leave-submit-alert-reset-btn {
+    background: transparent;
+    color: var(--gpg-green);
+    border: solid 1px var(--gpg-green);
+    border-radius: 0;
+ }
+
 /* ----- dashboard ----- */
 @media screen and (max-width: 1030px) {
 

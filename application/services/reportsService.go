@@ -4,12 +4,14 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"sort"
 	"strconv"
 	"strings"
 	"time"
 
 	domain "github.com/jtalev/chat_gpg/domain/models"
+	repo "github.com/jtalev/chat_gpg/infrastructure/repository"
 )
 
 type TimesheetReportData struct {
@@ -36,12 +38,13 @@ func InitialTimesheetReportData(db *sql.DB) (TimesheetReportData, error) {
 }
 
 type EmployeeTimesheetReportData struct {
-	EmployeeId    string
-	WeekStartDate string
-	WeekDates     []int
-	TimesheetRows []TimesheetRow
-	DayTotals     []string
-	WeekTotal     string
+	EmployeeId        string
+	WeekStartDate     string
+	WeekDates         []int
+	TimesheetRows     []TimesheetRow
+	DayTotals         []string
+	WeekTotal         string
+	LeaveHoursPayable string
 }
 
 func calcTimesheetRowTotal(inTimesheetRows []TimesheetRow) []string {
@@ -222,11 +225,17 @@ func GetEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (EmployeeT
 		return outData, err
 	}
 
+	leaveHrsPayable, err := ProcessLeavePayable(weekStartDate, id, db)
+	if err != nil {
+		return outData, err
+	}
+
 	outData.EmployeeId = employee.EmployeeId
 	outData.WeekDates = weekDates
 	outData.TimesheetRows = timesheetRows
 	outData.DayTotals = dayTotals
 	outData.WeekTotal = weekTotal
+	outData.LeaveHoursPayable = leaveHrsPayable
 
 	return outData, nil
 }
@@ -272,11 +281,17 @@ func GetPrevEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (Emplo
 		return outData, err
 	}
 
+	leaveHrsPayable, err := ProcessLeavePayable(weekStartDate, id, db)
+	if err != nil {
+		return outData, err
+	}
+
 	outData.EmployeeId = id
 	outData.WeekDates = weekDates
 	outData.TimesheetRows = timesheetRows
 	outData.DayTotals = dayTotals
 	outData.WeekTotal = weekTotal
+	outData.LeaveHoursPayable = leaveHrsPayable
 
 	return outData, nil
 }
@@ -322,11 +337,110 @@ func GetNextEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (Emplo
 		return outData, err
 	}
 
+	leaveHrsPayable, err := ProcessLeavePayable(weekStartDate, id, db)
+	if err != nil {
+		return outData, err
+	}
+
 	outData.EmployeeId = id
 	outData.WeekDates = weekDates
 	outData.TimesheetRows = timesheetRows
 	outData.DayTotals = dayTotals
 	outData.WeekTotal = weekTotal
+	outData.LeaveHoursPayable = leaveHrsPayable
 
 	return outData, nil
+}
+
+func GetLeaveByEmployeeId(employeeId string, db *sql.DB) ([]domain.LeaveRequest, error) {
+	leaveRequests, err := repo.GetLeaveRequestsByEmployee(employeeId, db)
+	if err != nil {
+		return nil, err
+	}
+
+	return leaveRequests, nil
+}
+
+func FilterEmployeeLeaveByWeek(leaveRequests []domain.LeaveRequest, weekStartDate string) ([]domain.LeaveRequest, error) {
+	outLeaveRequests := []domain.LeaveRequest{}
+	startDate, err := dateStrToDate(weekStartDate)
+	if err != nil {
+		return nil, err
+	}
+	endDate := startDate.AddDate(0, 0, 7)
+
+	for _, lr := range leaveRequests {
+		if !lr.IsApproved || lr.Type == "unpaid" {
+			continue
+		}
+
+		lrStart, err := dateStrToDate(lr.From)
+		lrEnd, err := dateStrToDate(lr.To)
+		if err != nil {
+			return nil, err
+		}
+
+		for lrStart.Before(lrEnd.AddDate(0, 0, 1)) {
+			if lrStart.After(startDate.AddDate(0, 0, -1)) && lrStart.Before(endDate) {
+				outLeaveRequests = append(outLeaveRequests, lr)
+				break
+			}
+			lrStart = lrStart.AddDate(0, 0, 1)
+		}
+
+	}
+
+	return outLeaveRequests, nil
+}
+
+func CalcLeavePayable(filteredLeaveRequests []domain.LeaveRequest, weekStartDate string) (string, error) {
+	hrs := 0
+
+	startDate, err := dateStrToDate(weekStartDate)
+	if err != nil {
+		return "", nil
+	}
+	endDate := startDate.AddDate(0, 0, 7)
+	log.Println(endDate)
+
+	for _, lr := range filteredLeaveRequests {
+		lrStart, err := dateStrToDate(lr.From)
+		lrEnd, err := dateStrToDate(lr.To)
+		if err != nil {
+			return "", err
+		}
+
+		for lrStart.Before(lrEnd.AddDate(0, 0, 1)) {
+			log.Println(lrStart)
+			if lrStart.Weekday() == time.Saturday || lrStart.Weekday() == time.Sunday {
+				lrStart = lrStart.AddDate(0, 0, 1)
+				continue
+			}
+			if lrStart.After(startDate.AddDate(0, 0, -1)) && lrStart.Before(endDate) {
+				hrs += 8
+			}
+			lrStart = lrStart.AddDate(0, 0, 1)
+		}
+	}
+
+	return strconv.Itoa(hrs), nil
+}
+
+func ProcessLeavePayable(weekStartDate, employeeId string, db *sql.DB) (string, error) {
+	employeesLeaveRequests, err := GetLeaveByEmployeeId(employeeId, db)
+	if err != nil {
+		return "", err
+	}
+
+	filteredLeaveRequests, err := FilterEmployeeLeaveByWeek(employeesLeaveRequests, weekStartDate)
+	if err != nil {
+		return "", err
+	}
+
+	leavePayableStr, err := CalcLeavePayable(filteredLeaveRequests, weekStartDate)
+	if err != nil {
+		return "", err
+	}
+
+	return leavePayableStr, nil
 }
