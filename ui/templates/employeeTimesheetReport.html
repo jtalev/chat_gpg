@@ -113,5 +113,13 @@
 			</div>
 		</div>
 	</div>
+	<div id="timesheet-report-info-header">
+		Relevant Leave Requests:
+	</div>
+	<div id="report-leave-request-container">
+		{{ range .RelevantLeaveRequests }}
+			{{ template "employeeLeaveRequest" . }}
+		{{ end }}
+	</div>
 </div>
 {{ end }}

@@ -1135,6 +1135,13 @@ input::-webkit-inner-spin-button {
     align-items: center;
 }
 
+ #leave-submit-alert-reset-btn {
+    background: transparent;
+    color: var(--gpg-green);
+    border: solid 1px var(--gpg-green);
+    border-radius: 0;
+ }
+
 /** ----- admin ----- **/
 @media screen and (max-width: 1030px) {
 
@@ -2001,8 +2008,10 @@ input::-webkit-inner-spin-button {
 
  #timesheet-report-summary-container {
     width: 100%;
-    flex-grow: 1;
     display: flex;
+    padding-bottom: 5px;
+    margin-bottom: 10px;
+    border-bottom: solid 1px var(--timesheet-border);
  }
 
  #timesheet-report-summary-label-container {
@@ -2026,12 +2035,13 @@ input::-webkit-inner-spin-button {
     font-weight: bold;
  }
 
- #leave-submit-alert-reset-btn {
-    background: transparent;
-    color: var(--gpg-green);
-    border: solid 1px var(--gpg-green);
-    border-radius: 0;
- }
+#report-leave-request-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    gap: 5px;
+}
 
 /* ----- dashboard ----- */
 @media screen and (max-width: 1030px) {

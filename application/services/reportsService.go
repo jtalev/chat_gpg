@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 	"sort"
 	"strconv"
 	"strings"
@@ -38,13 +37,14 @@ func InitialTimesheetReportData(db *sql.DB) (TimesheetReportData, error) {
 }
 
 type EmployeeTimesheetReportData struct {
-	EmployeeId        string
-	WeekStartDate     string
-	WeekDates         []int
-	TimesheetRows     []TimesheetRow
-	DayTotals         []string
-	WeekTotal         string
-	LeaveHoursPayable string
+	EmployeeId            string
+	WeekStartDate         string
+	WeekDates             []int
+	TimesheetRows         []TimesheetRow
+	DayTotals             []string
+	WeekTotal             string
+	LeaveHoursPayable     string
+	RelevantLeaveRequests []domain.LeaveRequest
 }
 
 func calcTimesheetRowTotal(inTimesheetRows []TimesheetRow) []string {
@@ -230,12 +230,19 @@ func GetEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (EmployeeT
 		return outData, err
 	}
 
+	employeeLeaveRequests, err := GetLeaveByEmployeeId(id, db)
+	if err != nil {
+		return outData, err
+	}
+	relevantLeaveRequests, err := FilterEmployeeLeaveByWeek(employeeLeaveRequests, weekStartDate)
+
 	outData.EmployeeId = employee.EmployeeId
 	outData.WeekDates = weekDates
 	outData.TimesheetRows = timesheetRows
 	outData.DayTotals = dayTotals
 	outData.WeekTotal = weekTotal
 	outData.LeaveHoursPayable = leaveHrsPayable
+	outData.RelevantLeaveRequests = relevantLeaveRequests
 
 	return outData, nil
 }
@@ -286,12 +293,19 @@ func GetPrevEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (Emplo
 		return outData, err
 	}
 
+	employeeLeaveRequests, err := GetLeaveByEmployeeId(id, db)
+	if err != nil {
+		return outData, err
+	}
+	relevantLeaveRequests, err := FilterEmployeeLeaveByWeek(employeeLeaveRequests, weekStartDate)
+
 	outData.EmployeeId = id
 	outData.WeekDates = weekDates
 	outData.TimesheetRows = timesheetRows
 	outData.DayTotals = dayTotals
 	outData.WeekTotal = weekTotal
 	outData.LeaveHoursPayable = leaveHrsPayable
+	outData.RelevantLeaveRequests = relevantLeaveRequests
 
 	return outData, nil
 }
@@ -342,12 +356,19 @@ func GetNextEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (Emplo
 		return outData, err
 	}
 
+	employeeLeaveRequests, err := GetLeaveByEmployeeId(id, db)
+	if err != nil {
+		return outData, err
+	}
+	relevantLeaveRequests, err := FilterEmployeeLeaveByWeek(employeeLeaveRequests, weekStartDate)
+
 	outData.EmployeeId = id
 	outData.WeekDates = weekDates
 	outData.TimesheetRows = timesheetRows
 	outData.DayTotals = dayTotals
 	outData.WeekTotal = weekTotal
 	outData.LeaveHoursPayable = leaveHrsPayable
+	outData.RelevantLeaveRequests = relevantLeaveRequests
 
 	return outData, nil
 }
@@ -401,7 +422,6 @@ func CalcLeavePayable(filteredLeaveRequests []domain.LeaveRequest, weekStartDate
 		return "", nil
 	}
 	endDate := startDate.AddDate(0, 0, 7)
-	log.Println(endDate)
 
 	for _, lr := range filteredLeaveRequests {
 		lrStart, err := dateStrToDate(lr.From)
@@ -411,7 +431,6 @@ func CalcLeavePayable(filteredLeaveRequests []domain.LeaveRequest, weekStartDate
 		}
 
 		for lrStart.Before(lrEnd.AddDate(0, 0, 1)) {
-			log.Println(lrStart)
 			if lrStart.Weekday() == time.Saturday || lrStart.Weekday() == time.Sunday {
 				lrStart = lrStart.AddDate(0, 0, 1)
 				continue

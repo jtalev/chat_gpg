@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"html/template"
 	"log"
 	"net/http"
 
@@ -56,9 +57,16 @@ func (h *Handler) GetEmployeeTimesheetReport() http.Handler {
 				return
 			}
 
-			err = executePartialTemplate(employeeTimesheetReportPath, "employeeTimesheetReport", outData, w)
+			tmpl, err := template.ParseFiles(employeeTimesheetReportPath, employeeLeaveRequestPath)
 			if err != nil {
-				log.Println("Error rendering template:", err)
+				log.Println("Error parsing file:", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			err = tmpl.ExecuteTemplate(w, "employeeTimesheetReport", outData)
+			if err != nil {
+				log.Println("Error executing template:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
@@ -92,9 +100,16 @@ func (h *Handler) PrevEmployeeTimesheetReport() http.Handler {
 				return
 			}
 
-			err = executePartialTemplate(employeeTimesheetReportPath, "employeeTimesheetReport", outData, w)
+			tmpl, err := template.ParseFiles(employeeTimesheetReportPath, employeeLeaveRequestPath)
 			if err != nil {
-				log.Println("Error rendering template:", err)
+				log.Println("Error parsing file:", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			err = tmpl.ExecuteTemplate(w, "employeeTimesheetReport", outData)
+			if err != nil {
+				log.Println("Error executing template:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
@@ -128,9 +143,16 @@ func (h *Handler) NextEmployeeTimesheetReport() http.Handler {
 				return
 			}
 
-			err = executePartialTemplate(employeeTimesheetReportPath, "employeeTimesheetReport", outData, w)
+			tmpl, err := template.ParseFiles(employeeTimesheetReportPath, employeeLeaveRequestPath)
 			if err != nil {
-				log.Println("Error rendering template:", err)
+				log.Println("Error parsing file:", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			err = tmpl.ExecuteTemplate(w, "employeeTimesheetReport", outData)
+			if err != nil {
+				log.Println("Error executing template:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
