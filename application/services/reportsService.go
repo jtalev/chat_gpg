@@ -230,11 +230,14 @@ func GetEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (EmployeeT
 		return outData, err
 	}
 
-	employeeLeaveRequests, err := GetLeaveByEmployeeId(id, db)
+	employeeLeaveRequests, err := GetLeaveByEmployeeId(employee.EmployeeId, db)
 	if err != nil {
 		return outData, err
 	}
 	relevantLeaveRequests, err := FilterEmployeeLeaveByWeek(employeeLeaveRequests, weekStartDate)
+	if err != nil {
+		return outData, err
+	}
 
 	outData.EmployeeId = employee.EmployeeId
 	outData.WeekDates = weekDates
@@ -298,6 +301,9 @@ func GetPrevEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (Emplo
 		return outData, err
 	}
 	relevantLeaveRequests, err := FilterEmployeeLeaveByWeek(employeeLeaveRequests, weekStartDate)
+	if err != nil {
+		return outData, err
+	}
 
 	outData.EmployeeId = id
 	outData.WeekDates = weekDates
@@ -361,6 +367,9 @@ func GetNextEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (Emplo
 		return outData, err
 	}
 	relevantLeaveRequests, err := FilterEmployeeLeaveByWeek(employeeLeaveRequests, weekStartDate)
+	if err != nil {
+		return outData, err
+	}
 
 	outData.EmployeeId = id
 	outData.WeekDates = weekDates

@@ -88,6 +88,8 @@ func (h *Handler) LogoutHandler() http.Handler {
 				http.Error(w, "Error getting session", http.StatusInternalServerError)
 			}
 			session.Values["is_authenticated"] = false
+			session.Values["is_admin"] = false
+			session.Values["employee_id"] = -1
 			session.Options.MaxAge = -1
 			err = session.Save(r, w)
 			if err != nil {
