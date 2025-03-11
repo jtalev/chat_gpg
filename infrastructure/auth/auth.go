@@ -48,7 +48,7 @@ type Auth struct {
 	Store  *sessions.CookieStore
 }
 
-func (a *Auth) AuthMiddleware(next http.Handler) http.Handler {
+func (a *Auth) AuthorizeUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			session, err := a.Store.Get(r, "auth_session")
@@ -58,6 +58,40 @@ func (a *Auth) AuthMiddleware(next http.Handler) http.Handler {
 				return
 			}
 			if auth, ok := session.Values["is_authenticated"].(bool); !ok || !auth {
+				a.Logger.Error("User is not authorized")
+				http.Redirect(w, r, "/error", http.StatusFound)
+				return
+			}
+
+			ctx := context.WithValue(r.Context(), "is_admin", session.Values["is_admin"])
+			ctx = context.WithValue(ctx, "employee_id", session.Values["employee_id"])
+			ctx = context.WithValue(ctx, "is_authenticated", session.Values["is_authenticated"])
+			session.Save(r, w)
+
+			next.ServeHTTP(w, r.WithContext(ctx))
+		},
+	)
+}
+
+func (a *Auth) AuthorizeAdmin(next http.Handler) http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+			w.Header().Set("Pragma", "no-cache")
+			w.Header().Set("Expires", "0")
+
+			session, err := a.Store.Get(r, "auth_session")
+			if err != nil {
+				a.Logger.Errorf("Error getting auth_session: %v", err)
+				http.Error(w, "Error getting auth_session", http.StatusInternalServerError)
+				return
+			}
+			if auth, ok := session.Values["is_authenticated"].(bool); !ok || !auth {
+				a.Logger.Error("User is not authorized")
+				http.Redirect(w, r, "/error", http.StatusFound)
+				return
+			}
+			if isAdmin, ok := session.Values["is_admin"].(bool); !ok || !isAdmin {
 				a.Logger.Error("User is not authorized")
 				http.Redirect(w, r, "/error", http.StatusFound)
 				return
