@@ -114,3 +114,23 @@ function onAddEmployeeSubmit() {
 function onAddEmployeeClose() {
     document.querySelector("#add-employee-modal-container").style.display = "none"
 }
+
+document.addEventListener("DOMContentLoaded", onAdminEmployeeRowClick)
+document.addEventListener("htmx:afterSwap", onAdminEmployeeRowClick)
+function onAdminEmployeeRowClick() {
+    document.querySelectorAll(".admin-employee-row p").forEach(function (p) {
+        p.addEventListener("click", onPutEmployeeClick);
+    })
+}
+
+function onPutEmployeeClick() {
+    document.querySelector("#admin-employee-put-modal-container").style.display = "flex"
+}
+
+function onPutEmployeeClose() {
+    document.querySelector("#admin-employee-put-modal-container").style.display = "none"
+}
+
+function onPutEmployeeSuccessful() {
+    document.querySelector("#admin-employee-put-modal-container").style.display = "none"
+}

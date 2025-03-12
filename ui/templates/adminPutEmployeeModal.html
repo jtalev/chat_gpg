@@ -1,0 +1,65 @@
+{{ define "adminPutEmployeeModal" }}
+<div id="admin-put-employee-modal-content-container">
+	<div id="admin-put-employee-modal-content">
+		<div id="admin-put-employee-modal-header">
+			{{ .FirstName }} {{.LastName}}
+		</div>
+		<div id="admin-put-employee-form-container">
+			<form 
+			id="admin-put-employee-form"
+			hx-post="/employee/put"
+			hx-target="#admin-employee-row-{{ .EmployeeId }}"
+			hx-swap="outerHTML"
+			hx-vals='{
+				"id": {{ .ID }},
+				"employee_id": {{ .EmployeeId }}
+			}'>
+				<div class="admin-put-employee-form-row">
+					<label class="admin-put-employee-form-label" for="username">
+						Username:
+					</label>
+					<input class="admin-put-employee-form-input" id="username" type="text" name="username" value="{{ .Username }}">
+				</div>
+				<div class="admin-put-employee-form-row">
+					<label class="admin-put-employee-form-label" for="password">
+						Password:
+					</label>
+					<input class="admin-put-employee-form-input" id="password" type="text" name="password" value="">
+				</div>
+				<div class="admin-put-employee-form-row">
+					<label class="admin-put-employee-form-label" for="first-name">
+						First Name:
+					</label>
+					<input class="admin-put-employee-form-input" id="first-name" type="text" name="first_name" value="{{ .FirstName }}">
+				</div>
+				<div class="admin-put-employee-form-row">
+					<label class="admin-put-employee-form-label" for="last-name">
+						Last Name:
+					</label>
+					<input class="admin-put-employee-form-input" id="last-name" type="text" name="last_name" value="{{ .LastName }}">
+				</div>
+				<div class="admin-put-employee-form-row">
+					<label class="admin-put-employee-form-label" for="email">
+						Email:
+					</label>
+					<input class="admin-put-employee-form-input" id="email" type="text" name="email" value="{{ .Email }}">
+				</div>
+				<div class="admin-put-employee-form-row">
+					<label class="admin-put-employee-form-label" for="phone">
+						Phone:
+					</label>
+					<input class="admin-put-employee-form-input" id="phone" type="text" name="phone" value="{{ .PhoneNumber }}">
+				</div>
+				<div class="gpg-form-btn-container">
+					<button class="gpg-close-btn" type="button" id="admin-put-employee-close" onclick="onPutEmployeeClose()">
+						Close
+					</button>
+					<button type="submit" form="admin-put-employee-form" class="gpg-submit-btn" id="admin-put-employee-submit" onclick="onPutEmployeeSuccessful()">
+						SUBMIT
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{{ end }}

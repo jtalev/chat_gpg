@@ -48,6 +48,7 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	// employee requests
 	mux.Handle("/employee/delete", a.AuthorizeAdmin(h.DeleteEmployee()))
 	mux.Handle("/employee/post", a.AuthorizeAdmin(h.PostEmployee()))
+	mux.Handle("/employee/put", a.AuthorizeAdmin(h.PutEmployee()))
 
 	// timesheet requests
 	mux.Handle("/timesheets/get", a.AuthorizeUser(h.GetTimesheets()))
@@ -73,4 +74,5 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/admin/leave-request-modal", a.AuthorizeAdmin(h.LeaveRequestModal()))
 	mux.Handle("/admin/leave-finalise", a.AuthorizeAdmin(h.LeaveRequestFinalise()))
 	mux.Handle("/admin/add-employee-modal", a.AuthorizeAdmin(h.AddEmployeeModal()))
+	mux.Handle("/admin/employee-put-modal", a.AuthorizeAdmin(h.PutEmployeeModal()))
 }

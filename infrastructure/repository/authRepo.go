@@ -30,6 +30,29 @@ func GetEmployeeAuthByUsername(username string, db *sql.DB) (domain.EmployeeAuth
 	return employeeAuth, nil
 }
 
+func GetEmployeeAuthByEmployeeId(employeeId string, db *sql.DB) (domain.EmployeeAuth, error) {
+	employeeAuth := domain.EmployeeAuth{}
+	q := `
+	select * from employee_auth where employee_id = ?;
+	`
+	rows, err := db.Query(q, employeeId)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer rows.Close()
+
+	if rows.Next() {
+		err := rows.Scan(&employeeAuth.AuthId, &employeeAuth.EmployeeId, &employeeAuth.Username,
+			&employeeAuth.PasswordHash, &employeeAuth.CreatedAt, &employeeAuth.UpdatedAt)
+		if err != nil {
+			return employeeAuth, err
+		}
+	} else {
+		return employeeAuth, sql.ErrNoRows
+	}
+	return employeeAuth, nil
+}
+
 func PostEmployeeAuth(employeeAuth domain.EmployeeAuth, db *sql.DB) (domain.EmployeeAuth, error) {
 	q := `
 	INSERT INTO employee_auth (employee_id, username, password_hash)
@@ -47,4 +70,22 @@ func PostEmployeeAuth(employeeAuth domain.EmployeeAuth, db *sql.DB) (domain.Empl
 	}
 
 	return outEmployee, nil
+}
+
+func PutEmployeeAuth(employeeAuth domain.EmployeeAuth, db *sql.DB) (domain.EmployeeAuth, error) {
+	q := `
+	update employee_auth
+	set username = $1, password_hash = $2, updated_at = CURRENT_TIMESTAMP
+	where employee_id = $3
+	`
+
+	_, err := db.Exec(q, employeeAuth.Username, employeeAuth.PasswordHash, employeeAuth.EmployeeId)
+	if err != nil {
+		return domain.EmployeeAuth{}, err
+	}
+	outEmployeeAuth, err := GetEmployeeAuthByEmployeeId(employeeAuth.EmployeeId, db)
+	if err != nil {
+		return domain.EmployeeAuth{}, err
+	}
+	return outEmployeeAuth, nil
 }

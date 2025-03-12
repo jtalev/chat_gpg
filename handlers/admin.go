@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 
 	application "github.com/jtalev/chat_gpg/application/services"
 	domain "github.com/jtalev/chat_gpg/domain/models"
@@ -215,6 +216,69 @@ func (h *Handler) AddEmployeeModal() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			err := executePartialTemplate(adminAddEmployeeModalPath, "adminAddEmployeeModal", nil, w)
+			if err != nil {
+				log.Printf("Error executing template: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) PutEmployeeModal() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			keys := []string{"id", "employee_id"}
+			vals, err := parseRequestValues(keys, r)
+			if err != nil {
+				log.Println("Error parsing request values: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			id, err := strconv.Atoi(vals[0])
+			if err != nil {
+				log.Println("Error converting request value to int: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			employee, err := application.GetEmployeeById(id, h.DB)
+			if err != nil {
+				log.Println("Error getting employee: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+			employeeAuth, err := infrastructure.GetEmployeeAuthByEmployeeId(vals[1], h.DB)
+			if err != nil {
+				log.Println("Error getting employee auth: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			data := struct {
+				ID          int
+				EmployeeId  string
+				FirstName   string
+				LastName    string
+				Email       string
+				PhoneNumber string
+				IsAdmin     bool
+				Username    string
+				Password    string
+			}{
+				ID:          employee.ID,
+				EmployeeId:  employee.EmployeeId,
+				FirstName:   employee.FirstName,
+				LastName:    employee.LastName,
+				Email:       employee.Email,
+				PhoneNumber: employee.PhoneNumber,
+				IsAdmin:     employee.IsAdmin,
+				Username:    employeeAuth.Username,
+				Password:    employeeAuth.PasswordHash,
+			}
+
+			err = executePartialTemplate(adminPutEmployeeModalPath, "adminPutEmployeeModal", data, w)
 			if err != nil {
 				log.Printf("Error executing template: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)

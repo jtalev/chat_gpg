@@ -51,6 +51,8 @@ func DeleteAndReturnEmployees(idStr string, db *sql.DB) ([]domain.Employee, erro
 }
 
 func PostAndReturnEmployees(hxVals []string, db *sql.DB) ([]domain.Employee, error) {
+	log.Println("posting employee")
+
 	employeeId := hxVals[0]
 	firstName := hxVals[1]
 	lastName := hxVals[2]
@@ -75,12 +77,12 @@ func PostAndReturnEmployees(hxVals []string, db *sql.DB) ([]domain.Employee, err
 		Username:     username,
 		PasswordHash: passwordHash,
 	}
+	log.Println("finished posting employee")
 
 	employeeAuth, err = infrastructure.PostEmployeeAuth(employeeAuth, db)
 	if err != nil {
 		return nil, err
 	}
-	log.Println(employeeAuth)
 
 	employee := domain.Employee{
 		EmployeeId:  employeeId,
@@ -102,4 +104,65 @@ func PostAndReturnEmployees(hxVals []string, db *sql.DB) ([]domain.Employee, err
 	}
 
 	return employees, nil
+}
+
+type PutEmployeeDto struct {
+	ID         string
+	Username   string
+	Password   string
+	EmployeeId string
+	FirstName  string
+	LastName   string
+	Email      string
+	Phone      string
+}
+
+func returnEmployeeAndAuth(id, employeeId string, db *sql.DB) (domain.Employee, domain.EmployeeAuth, error) {
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		return domain.Employee{}, domain.EmployeeAuth{}, err
+	}
+	log.Println("got here")
+	outEmployee, err := infrastructure.GetEmployeeById(idInt, db)
+	if err != nil {
+		return outEmployee, domain.EmployeeAuth{}, err
+	}
+	outEmployeeAuth, err := infrastructure.GetEmployeeAuthByEmployeeId(employeeId, db)
+	if err != nil {
+		return outEmployee, outEmployeeAuth, err
+	}
+
+	return outEmployee, outEmployeeAuth, nil
+}
+
+func PutEmployee(employeeDto PutEmployeeDto, db *sql.DB) (domain.Employee, error) {
+	employee, employeeAuth, err := returnEmployeeAndAuth(employeeDto.ID, employeeDto.EmployeeId, db)
+	if err != nil {
+		return employee, err
+	}
+
+	employee.FirstName = employeeDto.FirstName
+	employee.LastName = employeeDto.LastName
+	employee.Email = employeeDto.Email
+	employee.PhoneNumber = employeeDto.Phone
+	employeeAuth.Username = employeeDto.Username
+	if employeeDto.Password != "" {
+		passwordHash, err := auth.HashPassword(employeeDto.Password)
+		if err != nil {
+			return employee, err
+		}
+		employeeAuth.PasswordHash = passwordHash
+	}
+
+	employeeAuth, err = infrastructure.PutEmployeeAuth(employeeAuth, db)
+	if err != nil {
+		return employee, err
+	}
+
+	employee, err = infrastructure.PutEmployee(employee, db)
+	if err != nil {
+		return employee, err
+	}
+
+	return employee, err
 }

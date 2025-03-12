@@ -225,7 +225,7 @@ func GetEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (EmployeeT
 		return outData, err
 	}
 
-	leaveHrsPayable, err := ProcessLeavePayable(weekStartDate, id, db)
+	leaveHrsPayable, err := ProcessLeavePayable(weekStartDate, employee.EmployeeId, db)
 	if err != nil {
 		return outData, err
 	}

@@ -1,7 +1,18 @@
 {{ define "adminEmployeeList" }}
 {{ range .Employees }}
-	<div class="admin-employee-row">
-		<p class="admin-employee-row-text">{{ .EmployeeId }} | {{ .FirstName }} {{ .LastName }}</p>
+	<div class="admin-employee-row" id="admin-employee-row-{{ .EmployeeId }}">
+		<p 
+		class="admin-employee-row-text"
+		hx-get="/admin/employee-put-modal"
+		hx-trigger="click"
+		hx-target="#admin-employee-put-modal-container"
+		hx-swap="innerHTML"
+		hx-vals='{
+			"id": {{ .ID }},
+			"employee_id": {{ .EmployeeId }}
+		}'>
+			{{ .EmployeeId }} | {{ .FirstName }} {{ .LastName }}
+		</p>
 		<button
 		class="admin-employee-delete-btn"
 		hx-delete="/employee/delete"

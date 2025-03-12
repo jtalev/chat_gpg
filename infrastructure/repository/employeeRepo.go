@@ -123,3 +123,21 @@ func PostEmployee(employee domain.Employee, db *sql.DB) (domain.Employee, error)
 
 	return outEmployee, nil
 }
+
+func PutEmployee(employee domain.Employee, db *sql.DB) (domain.Employee, error) {
+	q := `
+	update employee
+	set employee_id = $1, first_name = $2, last_name = $3, email = $4, phone_number = $5, updated_at = CURRENT_TIMESTAMP
+	where id = $6
+	`
+
+	_, err := db.Exec(q, employee.EmployeeId, employee.FirstName, employee.LastName, employee.Email, employee.PhoneNumber, employee.ID)
+	if err != nil {
+		return domain.Employee{}, err
+	}
+	outEmployee, err := GetEmployeeById(employee.ID, db)
+	if err != nil {
+		return domain.Employee{}, err
+	}
+	return outEmployee, nil
+}

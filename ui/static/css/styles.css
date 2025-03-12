@@ -349,6 +349,62 @@ form input {
     cursor: pointer;
 }
 
+@media screen and (max-width: 499px) {
+    .gpg-form-btn-container {
+        width: 100%;
+        height: 35px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 15px;
+    }    
+}
+
+@media screen and (min-width: 500px) {
+    .gpg-form-btn-container {
+        width: 100%;
+        height: 70px;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 15px;
+    }
+}
+
+
+
+.gpg-close-btn {
+    border-radius: 0;
+    border: var(--gpg-green) solid 1px;
+    background-color: white;
+    color: var(--gpg-green);
+    height: 25px;
+    width: 60px;
+    padding: 0 2px;
+    font-size: small;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    cursor: pointer;
+}
+
+.gpg-submit-btn {
+    border-radius: 0;
+    border: var(--gpg-green) solid 1px;
+    background-color: var(--gpg-green);
+    color: white;
+    height: 30px;
+    width: 80px;
+    padding: 0 2px;
+    font-size: small;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    cursor: pointer;
+}
+
 .loginFormInput {
     border-radius: 0;
     font-size: small;
@@ -1449,6 +1505,7 @@ input::-webkit-inner-spin-button {
         display: flex;
         align-items: center;
         font-size: small;
+        cursor: pointer;
     }
 }
 
@@ -1459,6 +1516,7 @@ input::-webkit-inner-spin-button {
     height: 100%;
     display: flex;
     align-items: center;
+    cursor: pointer;
 }
 
 .admin-employee-delete-btn {
@@ -1614,6 +1672,113 @@ input::-webkit-inner-spin-button {
     height: 35px;
     width: 80px;
     font-weight: lighter;
+}
+
+#admin-employee-put-modal-container {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+#admin-put-employee-modal-content-container {
+    width: 90%;
+    height: 90%;
+    max-width: 600px;
+    max-height: 900px;
+    border: solid 1px var(--gpg-green);
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#admin-put-employee-modal-content {
+    width: 90%;
+    height: 90%;
+}
+
+#admin-put-employee-modal-header {
+    width: 100%;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    font-size: large;
+    border-bottom: solid 1px var(--timesheet-border);
+    margin-bottom: 15px;
+}
+
+#admin-put-employee-form-container {
+    width: 100%;
+}
+
+#admin-put-employee-form {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+}
+
+.admin-put-employee-form-row {
+    width: 100%;
+    height: 40px;
+    display: flex;
+}
+
+@media screen and (max-width: 500px) {
+    .admin-put-employee-form-label {
+        width: 30%;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        font-size: small;
+    }
+
+    .admin-put-employee-form-input {
+        flex-grow: 1;
+        font-size: small;
+        border-radius: 0;
+        color: var(--main-color);
+    }
+}
+
+.admin-put-employee-form-label {
+    width: 30%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.admin-put-employee-form-input {
+    flex-grow: 1;
+    border-radius: 0;
+    color: var(--main-color);
+}
+
+#admin-put-employee-btn-container {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: solid 1px black;
+    gap: 15px;
+}
+
+#admin-put-employee-close {
+
+}
+
+#admin-put-employee-submit {
+
 }
 
 #admin-leave-container {
