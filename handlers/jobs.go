@@ -127,46 +127,42 @@ func (h *Handler) PostJob() http.Handler {
 	)
 }
 
+var putJobKeys = []string{"id", "name", "number", "address", "suburb", "post_code", "city", "is_available"}
+
 func (h *Handler) PutJob() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			err := r.ParseForm()
+			reqVals, err := parseRequestValues(putJobKeys, r)
 			if err != nil {
-				h.Logger.Errorf("Error parsing form: %v", err)
+				log.Printf("Error parsing request values: %v", err)
 				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
 
-			job := domain.Job{}
+			jobDto := application.JobDto{
+				ID:         reqVals[0],
+				Name:       reqVals[1],
+				Number:     reqVals[2],
+				Address:    reqVals[3],
+				Suburb:     reqVals[4],
+				PostCode:   reqVals[5],
+				City:       reqVals[6],
+				IsComplete: reqVals[7],
+			}
 
-			idStr := r.FormValue("id")
-			id, err := strconv.Atoi(idStr)
+			outJobDto, err := application.PutJob(jobDto, h.DB)
 			if err != nil {
-				h.Logger.Errorf("Error parsing job id value: %v", err)
-				http.Error(w, "Bad request", http.StatusBadRequest)
+				log.Printf("Error updating job: %v", err)
+				http.Error(w, "Not modified", http.StatusNotModified)
 				return
 			}
-			job.Name = r.FormValue("name")
-			numberStr := r.FormValue("number")
-			number, err := strconv.Atoi(numberStr)
-			if err != nil {
-				h.Logger.Errorf("Error parsing job number value: %v", err)
-				http.Error(w, "Bad request", http.StatusBadRequest)
-				return
-			}
-			job.Number = number
-			job.Address = r.FormValue("address")
-			job.PostCode = r.FormValue("postCode")
-			job.Suburb = r.FormValue("suburb")
-			job.City = r.FormValue("city")
 
-			newJob, err := infrastructure.PutJob(id, job, h.DB)
+			err = executePartialTemplate(putJobModalPath, "putJobModal", outJobDto, w)
 			if err != nil {
-				h.Logger.Errorf("Error updating job: %v", err)
+				log.Printf("Error executing template: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
-			responseJSON(w, newJob, h.Logger)
 		},
 	)
 }

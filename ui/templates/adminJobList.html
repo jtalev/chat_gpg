@@ -1,18 +1,66 @@
 {{ define "adminJobList" }}
+<div class="admin-job-list-headers">
+	Available
+</div>
 {{ range . }}
-	<div class="admin-job-row">
-		<p class="admin-job-row-text">{{ .Name }} | {{ .Number }} {{ .Address }}, {{ .Suburb }}</p>
-		<button
-		class="admin-job-delete-btn"
-		hx-delete="/jobs/delete"
-		hx-trigger="click"
-		hx-target="#admin-job-list"
-		hx-swap="innerHTML"
-		hx-vals='{
-			"id": {{ .ID }}
-		}'>
-			<img src="../static/img/delete.svg" />
-		</button>
-	</div>
+{{ if eq .IsComplete false }}
+<div class="admin-job-row">
+	<p 
+	hx-get="/admin/put-modal"
+	hx-trigger="click"
+	hx-swap="innerHTML"
+	hx-target="#put-job-modal-container"
+	class="admin-job-row-text"
+	hx-vals='{
+		"id": {{ .ID }}
+	}'
+	onclick="onPutJobClick()">
+		{{ .Name }} | {{ .Number }} {{ .Address }}, {{ .Suburb }}, {{ .PostCode }}
+	</p>
+	<button
+	class="admin-job-delete-btn"
+	hx-delete="/jobs/delete"
+	hx-trigger="click"
+	hx-target="#admin-job-list"
+	hx-swap="innerHTML"
+	hx-vals='{
+		"id": {{ .ID }}
+	}'>
+		<img src="../static/img/delete.svg" />
+	</button>
+</div>
+{{ end }}
+{{ end }}
+<div class="admin-job-list-headers">
+	Complete
+</div>
+{{ range . }}
+{{ if eq .IsComplete true }}
+<div class="admin-job-row">
+	<p 
+	hx-get="/admin/put-modal"
+	hx-trigger="click"
+	hx-swap="innerHTML"
+	hx-target="#put-job-modal-container"
+	class="admin-job-row-text"
+	hx-vals='{
+		"id": {{ .ID }}
+	}'
+	onclick="onPutJobClick()">
+		{{ .Name }} | {{ .Number }} {{ .Address }}, {{ .Suburb }}, {{ .PostCode }}
+	</p>
+	<button
+	class="admin-job-delete-btn"
+	hx-delete="/jobs/delete"
+	hx-trigger="click"
+	hx-target="#admin-job-list"
+	hx-swap="innerHTML"
+	hx-vals='{
+		"id": {{ .ID }}
+	}'>
+		<img src="../static/img/delete.svg" />
+	</button>
+</div>
+{{ end }}
 {{ end }}
 {{ end }}

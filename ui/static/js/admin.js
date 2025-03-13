@@ -45,13 +45,8 @@ function onAddJobClick() {
     })
 }
 
-document.addEventListener("htmx:afterSwap", onAddJobClose)
 function onAddJobClose() {
-    const addJobCloseBtn = document.querySelector("#add-form-reset-btn")
-    addJobCloseBtn.addEventListener("click", function () {
-        const addJobModalContainer = document.querySelector("#add-job-modal-container")
-        addJobModalContainer.style.display = "none"
-    })
+    document.querySelector("#add-job-modal-container").style.display = "none"
 }
 
 document.addEventListener("htmx:afterSwap", onAddJobSubmit)
@@ -133,4 +128,12 @@ function onPutEmployeeClose() {
 
 function onPutEmployeeSuccessful() {
     document.querySelector("#admin-employee-put-modal-container").style.display = "none"
+}
+
+function onPutJobClick() {
+    document.querySelector("#put-job-modal-container").style.display = "flex"
+}
+
+function onPutJobModalClose() {
+    document.querySelector("#put-job-modal-container").style.display = "none"
 }

@@ -1,19 +1,23 @@
 {{ define "adminJobTab" }}
 <div id="admin-job-tab-container">
-	<div id="add-job-btn-container">
-		<button
-		id="add-job-btn"
-		hx-get="/admin/add-job-modal"
-		hx-trigger="click"
-		hx-target="#add-job-modal-container"
-		hx-swap="innerHTML">
-			+ Add new job
-		</button>
-	</div>
-	<div id="admin-job-list">
-		{{ template "adminJobList" . }}
-	</div>
-	<div id="add-job-modal-container">
+	<div id="admin-job-tab-content">
+		<div id="add-job-btn-container">
+			<button
+			id="add-job-btn"
+			hx-get="/admin/add-job-modal"
+			hx-trigger="click"
+			hx-target="#add-job-modal-container"
+			hx-swap="innerHTML">
+				+ Add new job
+			</button>
+		</div>
+		<div id="admin-job-list">
+			{{ template "adminJobList" . }}
+		</div>
+		<div id="add-job-modal-container">
+		</div>
+		<div id="put-job-modal-container">
+		</div>
 	</div>
 </div>
 {{ end }}

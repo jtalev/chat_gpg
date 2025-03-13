@@ -122,7 +122,6 @@ func returnEmployeeAndAuth(id, employeeId string, db *sql.DB) (domain.Employee, 
 	if err != nil {
 		return domain.Employee{}, domain.EmployeeAuth{}, err
 	}
-	log.Println("got here")
 	outEmployee, err := infrastructure.GetEmployeeById(idInt, db)
 	if err != nil {
 		return outEmployee, domain.EmployeeAuth{}, err

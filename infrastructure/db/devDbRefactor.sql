@@ -47,7 +47,7 @@ CREATE TABLE IF NOT EXISTS job (
     suburb TEXT NOT NULL,
     post_code TEXT NOT NULL,
     city TEXT NOT NULL,
-    is_available INTEGER DEFAULT 1,
+    is_complete INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

@@ -1,41 +1,90 @@
 {{ define "addJobModal" }}
-<div id="add-job-form-container">
-	<p id="add-job-form-heading">ADD JOB</p>
-	<form 
-	id="add-job-form"
-	hx-post="/jobs/post"
-	hx-target="#admin-job-list"
-	hx-swap="innerHTML">
-	<div class="add-job-form-input">
-		<label for="name">Name:</label>
-		<input type="text" name="name">
-	</div>
-	<div class="add-job-form-input-sidebyside">
-		<div class="add-job-form-input" id="add-job-form-input-number">
-			<label for="number" id="name">Number:</label>
-			<input type="number" id="number" name="number">
+<div class="modal-container">
+	<div class="modal-content-container">
+		<div class="modal-header-container">
+			<p>Add Job</p>		
 		</div>
-		<div class="add-job-form-input" id="add-job-form-input-address">
-			<label for="address">Street:</label>
-			<input type="text" id="address" name="address">
+		<div class="modal-form-container">
+			<form 
+			class="modal-form" 
+			id="add-job-form"
+			hx-post="/jobs/post"
+			hx-target="#admin-job-list"
+			hx-swap="innerHTML">
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="name">Name:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="name" id="name">
+					</div>
+					<div class="error-container">
+						
+					</div>
+				</div>
+				<div id="put-job-modal-number-address-row">
+					<div id="put-job-modal-number-container">
+						<div class="put-job-label-container">
+							<label class="modal-form-label" for="number">Number:</label>
+						</div>
+						<div class="put-job-input-container">
+							<input class="modal-form-input" type="number" id="number" name="number">
+						</div>
+						<div class="error-container">
+
+						</div>
+					</div>
+					<div id="put-job-modal-address-container">
+						<div class="put-job-label-container">
+							<label class="modal-form-label" for="address">Address:</label>
+						</div>
+						<div class="put-job-input-container">
+							<input class="modal-form-input" type="text" id="address" name="address">
+						</div>
+						<div class="error-container">
+
+						</div>
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="suburb">Suburb:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="suburb" id="suburb">
+					</div>
+					<div class="error-container">
+						
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="post_code">Post Code:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="post_code" id="post-code">
+					</div>
+					<div class="error-container">
+						
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="city">City:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="city" id="city">
+					</div>
+					<div class="error-container">
+						
+					</div>
+				</div>
+				<div class="gpg-form-btn-container">
+					<button type="button" class="gpg-close-btn" onclick="onAddJobClose()">Close</button>
+					<button class="gpg-submit-btn" type="submit">SUBMIT</button>
+				</div>
+			</form>
 		</div>
 	</div>
-	<div class="add-job-form-input">
-		<label for="suburb">Suburb:</label>
-		<input type="text" id="suburb" name="suburb">
-	</div>
-	<div class="add-job-form-input">
-		<label for="post-code">Post Code:</label>
-		<input type="text" id="post-code" name="post_code">
-	</div>
-	<div class="add-job-form-input">
-		<label for="city">City:</label>
-		<input type="text" id="city" name="city">
-	</div>
-	<div id="add-job-submit-btn-container">
-		<button type="reset" class="gpgBtn" id="add-form-reset-btn">close</button>
-		<button type="submit" class="gpgBtn" id="add-form-submit-btn">SUBMIT</button>
-	</div>
-	</form>
 </div>
 {{ end }}

@@ -41,9 +41,9 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/jobs/get", a.AuthorizeUser(h.GetJobs()))
 	mux.Handle("/jobs/get-by-id", a.AuthorizeUser(h.GetJobById()))
 	mux.Handle("/jobs/get-by-name", a.AuthorizeUser(h.GetJobByName()))
-	mux.Handle("/jobs/post", a.AuthorizeUser(h.PostJob()))
-	mux.Handle("/jobs/put", a.AuthorizeUser(h.PutJob()))
-	mux.Handle("/jobs/delete", a.AuthorizeUser(h.DeleteJob()))
+	mux.Handle("/jobs/post", a.AuthorizeAdmin(h.PostJob()))
+	mux.Handle("/jobs/put", a.AuthorizeAdmin(h.PutJob()))
+	mux.Handle("/jobs/delete", a.AuthorizeAdmin(h.DeleteJob()))
 
 	// employee requests
 	mux.Handle("/employee/delete", a.AuthorizeAdmin(h.DeleteEmployee()))
@@ -71,6 +71,7 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/admin/render-job-tab", a.AuthorizeAdmin(h.RenderJobTab()))
 	mux.Handle("/admin/render-leave-tab", a.AuthorizeAdmin(h.RenderLeaveTab()))
 	mux.Handle("/admin/add-job-modal", a.AuthorizeAdmin(h.AddJobModal()))
+	mux.Handle("/admin/put-modal", a.AuthorizeAdmin(h.PutJobModal()))
 	mux.Handle("/admin/leave-request-modal", a.AuthorizeAdmin(h.LeaveRequestModal()))
 	mux.Handle("/admin/leave-finalise", a.AuthorizeAdmin(h.LeaveRequestFinalise()))
 	mux.Handle("/admin/add-employee-modal", a.AuthorizeAdmin(h.AddEmployeeModal()))

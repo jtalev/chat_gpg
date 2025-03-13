@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"go.uber.org/zap"
 )
@@ -50,16 +51,47 @@ type LeaveRequest struct {
 }
 
 type Job struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Number      int    `json:"number"`
-	Address     string `json:"address"`
-	Suburb      string `json:"suburb"`
-	PostCode    string `json:"post_code"`
-	City        string `json:"city"`
-	IsAvailable bool   `json:"is_available"`
-	CreatedAt   string `json:"created_at"`
-	UpdatedAt   string `json:"updated_at"`
+	ID         int    `json:"id"`
+	Name       string `json:"name"`
+	Number     int    `json:"number"`
+	Address    string `json:"address"`
+	Suburb     string `json:"suburb"`
+	PostCode   string `json:"post_code"`
+	City       string `json:"city"`
+	IsComplete bool   `json:"is_available"`
+	CreatedAt  string `json:"created_at"`
+	UpdatedAt  string `json:"updated_at"`
+}
+
+type JobErrors struct {
+	NameErr      string
+	NumberErr    string
+	AddressErr   string
+	SuburbErr    string
+	PostCodeErr  string
+	CityErr      string
+	IsSuccessful bool
+}
+
+func (j *Job) Validate() JobErrors {
+	errors := JobErrors{}
+	errors.IsSuccessful = true
+	errors = j.ValidatePostCode(errors)
+	return errors
+}
+
+func (j *Job) ValidatePostCode(errors JobErrors) JobErrors {
+	_, err := strconv.Atoi(j.PostCode)
+	if err != nil {
+		errors.IsSuccessful = false
+		errors.PostCodeErr = "Numbers only"
+	}
+	if len(j.PostCode) != 4 {
+		errors.IsSuccessful = false
+		errors.PostCodeErr = "Must be 4 characters long"
+	}
+
+	return errors
 }
 
 type TimesheetWeek struct {

@@ -3,13 +3,14 @@ package infrastructure
 import (
 	"database/sql"
 	"errors"
+	"log"
 
 	"github.com/jtalev/chat_gpg/domain/models"
 )
 
 func GetJobs(db *sql.DB) ([]domain.Job, error) {
 	q := `
-	select * from job where is_available = 1 order by name;
+	select * from job order by name;
 	`
 
 	rows, err := db.Query(q)
@@ -29,7 +30,7 @@ func GetJobs(db *sql.DB) ([]domain.Job, error) {
 			&job.Suburb,
 			&job.PostCode,
 			&job.City,
-			&job.IsAvailable,
+			&job.IsComplete,
 			&job.CreatedAt,
 			&job.UpdatedAt,
 		); err != nil {
@@ -58,10 +59,10 @@ func GetJobById(id int, db *sql.DB) (domain.Job, error) {
 			&job.Name,
 			&job.Number,
 			&job.Address,
-			&job.PostCode,
 			&job.Suburb,
+			&job.PostCode,
 			&job.City,
-			&job.IsAvailable,
+			&job.IsComplete,
 			&job.CreatedAt,
 			&job.UpdatedAt,
 		); err != nil {
@@ -95,7 +96,7 @@ func GetJobByName(name string, db *sql.DB) (domain.Job, error) {
 			&job.Suburb,
 			&job.PostCode,
 			&job.City,
-			&job.IsAvailable,
+			&job.IsComplete,
 			&job.CreatedAt,
 			&job.UpdatedAt,
 		); err != nil {
@@ -141,11 +142,12 @@ func PutJob(id int, job domain.Job, db *sql.DB) (domain.Job, error) {
 	    suburb = $4, 
 	    post_code = $5, 
 	    city = $6, 
+	    is_complete = $7,
 	    updated_at = CURRENT_TIMESTAMP
-	where id = $7;
+	where id = $8;
 	`
 
-	_, err = db.Exec(q, job.Name, job.Number, job.Address, job.Suburb, job.PostCode, job.City, id)
+	_, err = db.Exec(q, job.Name, job.Number, job.Address, job.Suburb, job.PostCode, job.City, job.IsComplete, id)
 	if err != nil {
 		return domain.Job{}, err
 	}
@@ -153,13 +155,13 @@ func PutJob(id int, job domain.Job, db *sql.DB) (domain.Job, error) {
 	if err != nil {
 		return domain.Job{}, err
 	}
+	log.Println(newJob.IsComplete)
 	return newJob, nil
 }
 
 func DeleteJob(id int, db *sql.DB) (domain.Job, error) {
 	q := `
-	update job
-	set is_available = 0
+	delete from job
 	where id = ?;
 	`
 

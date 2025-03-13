@@ -112,6 +112,58 @@ func (h *Handler) AddJobModal() http.Handler {
 	)
 }
 
+var putJobModalKeys = []string{"id"}
+
+func (h *Handler) PutJobModal() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			rVals, err := parseRequestValues(putJobModalKeys, r)
+			if err != nil {
+				log.Printf("Error parsing request values: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			id, err := strconv.Atoi(rVals[0])
+			if err != nil {
+				log.Printf("Error converting string id to int: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+
+			job, err := application.GetJobById(id, h.DB)
+			if err != nil {
+				log.Printf("Error getting job: %v", err)
+				http.Error(w, "Not found", http.StatusNotFound)
+				return
+			}
+
+			isAvailable := "true"
+			if !job.IsComplete {
+				isAvailable = "false"
+			}
+
+			jobDto := application.JobDto{
+				ID:         strconv.Itoa(job.ID),
+				Name:       job.Name,
+				Number:     strconv.Itoa(job.Number),
+				Address:    job.Address,
+				Suburb:     job.Suburb,
+				PostCode:   job.PostCode,
+				City:       job.City,
+				IsComplete: isAvailable,
+			}
+
+			err = executePartialTemplate(putJobModalPath, "putJobModal", jobDto, w)
+			if err != nil {
+				log.Printf("Error executing putJobModal.html: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
 func (h *Handler) RenderLeaveTab() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {

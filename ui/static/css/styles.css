@@ -411,6 +411,119 @@ form input {
     border: var(--form-input-border-color) solid 1px;
 }
 
+.modal-container {
+    width: 90%;
+    height: 90%;
+    background: white;
+    border: solid 1px var(--gpg-green);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 550px;
+}
+
+.modal-content-container {
+    width: 90%;
+    height: 98%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.modal-header-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: lighter;
+    border-bottom: 1px solid var(--timesheet-border);
+    margin-bottom: 20px;
+}
+
+.modal-form-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+@media screen and (max-width: 550px) {
+    .modal-form-row {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 50px;
+    }    
+}
+
+@media screen and (min-width: 551px) {
+    .modal-form-row {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 70px;
+    }    
+}
+
+.modal-form-label-container {
+    width: 30%;
+    height: 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-form-input-container {
+    flex-grow: 1;
+    height: 40%;
+}
+
+.modal-form-label {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: small;
+}
+
+.modal-form-input {
+    width: 98%;
+    height: 100%;
+    padding: 0;
+    padding-left: 5px;
+    margin: 0;
+    border: solid 1px var(--timesheet-border);
+    border-radius: 0;
+    color: var(--main-color);
+    font-size: small;
+}
+
+.error-container {
+    color: red;
+    width: 100%;
+    height: 10px;
+    font-size: small;
+    padding-left: 5px;
+    margin-top: 5px;
+}
+
+.success-msg-container {
+    width: 100%;
+    height: 10px;
+    color: var(--gpg-green);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: smaller;
+}
+
 /***** timesheets *****/
 @media screen and (max-width: 1030px) {
 
@@ -1290,7 +1403,14 @@ input::-webkit-inner-spin-button {
     height: 100%;
     position: relative;
     display: flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
+}
+
+#admin-job-tab-content {
+    width: 97%;
+    height: 100%;
 }
 
 #add-job-btn-container {
@@ -1319,6 +1439,15 @@ input::-webkit-inner-spin-button {
     max-height: 500px;
 }
 
+.admin-job-list-headers {
+    border-bottom: solid 1px var(--timesheet-border);
+    height: 30px;
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 3px;
+}
+
+
 .admin-job-row {
     border: var(--timesheet-border) solid 1px;
     background-color: var(--light-background-color);
@@ -1327,20 +1456,6 @@ input::-webkit-inner-spin-button {
     align-items: center;
     padding-left: 5px;
     max-width: 600px;
-}
-
-@media screen and (max-width: 450px) {
-    .admin-job-row-text {
-        overflow-x: auto;
-        white-space: nowrap;
-        flex-grow: 1;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        font-size: small;
-        padding: 0;
-        margin: 0;
-    }
 }
 
 .admin-job-row-text {
@@ -1352,6 +1467,8 @@ input::-webkit-inner-spin-button {
     align-items: center;
     padding: 0;
     margin: 0;
+    cursor: pointer;
+    font-size: small;
 }
 
 .admin-job-delete-btn {
@@ -1442,6 +1559,91 @@ input::-webkit-inner-spin-button {
     color: white;
 }
 
+#put-job-modal-container {
+    display: none;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+#put-job-modal-content-container {
+    width: 90%;
+    height: 90%;
+    max-width: 550px;
+    border: solid 1px var(--gpg-green);
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#put-job-modal-number-address-row {
+    width: 100%;
+    display: flex;
+    height: 50px;
+    gap: 15px;
+}
+
+#put-job-modal-number-container {
+    width: 15%;
+    height: 100%;
+}
+
+#put-job-modal-address-container {
+    flex-grow: 1;
+    height: 100%;
+}
+
+#number {
+    text-align: center;
+    padding: 0;
+    margin: 0;
+}
+
+.put-job-label-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 50%;
+}
+
+.put-job-input-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 50%;
+}
+
+#put-job-is-complete-input-row {
+    width: 100%;
+    height: 50%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+.put-job-is-complete-input-container {
+    width: auto;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    font-size: small;
+}
+
+.put-job-is-complete-input {
+    height: 100%;
+    width: 20px;
+}
+
 #admin-employee-tab-container {
     width: 100%;
     height: 100%;
@@ -1454,7 +1656,7 @@ input::-webkit-inner-spin-button {
 }
 
 #admin-employee-content {
-    height: 97%;
+    height: 96%;
     width: 95%;
     display: flex;
     flex-direction: column;
@@ -1496,19 +1698,6 @@ input::-webkit-inner-spin-button {
     max-width: 600px;
 }
 
-@media screen and (max-width: 450px) {
-    .admin-employee-row-text {
-        overflow-x: auto;
-        white-space: nowrap;
-        flex-grow: 1;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        font-size: small;
-        cursor: pointer;
-    }
-}
-
 .admin-employee-row-text {
     overflow-x: auto;
     white-space: nowrap;
@@ -1517,6 +1706,7 @@ input::-webkit-inner-spin-button {
     display: flex;
     align-items: center;
     cursor: pointer;
+    font-size: small;
 }
 
 .admin-employee-delete-btn {
@@ -1689,7 +1879,7 @@ input::-webkit-inner-spin-button {
 #admin-put-employee-modal-content-container {
     width: 90%;
     height: 90%;
-    max-width: 600px;
+    max-width: 550px;
     max-height: 900px;
     border: solid 1px var(--gpg-green);
     background: white;
@@ -1851,7 +2041,7 @@ input::-webkit-inner-spin-button {
 }
 
 .admin-leave-request-row {
-    height: 2em;
+    height: 2.3em;
     width: 99.5%;
     max-width: 600px;
     border: solid 1px var(--timesheet-border);
@@ -1859,6 +2049,7 @@ input::-webkit-inner-spin-button {
     display: flex;
     align-items: center;
     cursor: pointer;
+    font-size: small;
 }
 
 @media screen and (max-width: 450px) {
