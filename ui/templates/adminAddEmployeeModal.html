@@ -1,43 +1,126 @@
 {{ define "adminAddEmployeeModal" }}
-<div id="admin-add-employee-modal-content-container">
-	<div id="add-employee-modal-content">
-		<p id="add-employee-modal-header">ADD EMPLOYEE</p>
-		<div id="add-employee-form-container">
-			<form hx-post="/employee/post" hx-trigger="submit" hx-target="#admin-employee-list" hx-swap="innerHTML" id="add-employee-form">
-				<div id="add-employee-form-main-container">
-					<div id="add-employee-form-label-container">
-						<label for="employee-id" class="add-emmployee-form-item add-employee-form-label">Employee ID:</label>
-						<label for="first-name" class="add-emmployee-form-item add-employee-form-label">First Name:</label>
-						<label for="last-name" class="add-emmployee-form-item add-employee-form-label">Last Name:</label>
-						<label for="username" class="add-emmployee-form-item add-employee-form-label">Username:</label>
-						<label for="password" class="add-emmployee-form-item add-employee-form-label">Password:</label>
-						<label for="email" class="add-emmployee-form-item add-employee-form-label">Email:</label>
-						<label for="phone-number" class="add-emmployee-form-item add-employee-form-label">Phone Number:</label>
-						<label for="is-admin" class="add-emmployee-form-item add-employee-form-label">Admin?</label>
-					</div>
-					<div id="add-employee-form-input-container">
-						<input type="text" name="employee_id" id="employee-id" class="add-emmployee-form-item add-employee-form-input"></input>
-						<input type="text" name="first_name" id="first-name" class="add-emmployee-form-item add-employee-form-input"></input>
-						<input type="text" name="last_name" id="last-name" class="add-emmployee-form-item add-employee-form-input"></input>
-						<input type="text" name="username" id="username" class="add-emmployee-form-item add-employee-form-input"></input>
-						<input type="text" name="password" id="password" class="add-emmployee-form-item add-employee-form-input"></input>
-						<input type="text" name="email" id="email" class="add-emmployee-form-item add-employee-form-input"></input>
-						<input type="text" name="phone_number" id="phone-number" class="add-emmployee-form-item add-employee-form-input"></input>
-						<div class="add-emmployee-form-item add-employee-form-input">
-							<input type="radio" name="is_admin" id="is-admin" value="true">true</input>
-							<input type="radio" name="is_admin" id="is-admin" value="false">false</input>
-						</div>
-					</div>
-				</div>
-				<div id="add-employee-err-container">
-					<p id="add-employee-err"></p>
-				</div>
-				<div id="add-employee-form-btn-container">
-					<button type="reset" id="add-employee-cancel-btn" onclick="onAddEmployeeClose()">Cancel</button>
-					<button type="submit" id="add-employee-submit-btn" onclick="onAddEmployeeSubmit()">SUBMIT</button>
-				</div>
-			</form>
+<div class="modal-container">
+	<div class="modal-content-container">
+		<div class="modal-header-container">
+			<p>Add Employee</p>
 		</div>
+		<div class="modal-form-container">
+			<form
+			class="modal-form"
+			id="add-employee-form"
+			hx-post="/employee/post"
+			hx-target="#add-employee-modal-container"
+			hx-swap="innerHTML"
+			hx-vals='{
+				"id": "0"
+			}'
+			>
+			<div class="modal-form-row">
+				<div class="modal-form-label-container">
+					<label class="modal-form-label" for="employee_id">Employee ID:</label>
+				</div>
+				<div class="modal-form-input-container">
+					<input class="modal-form-input" type="text" name="employee_id" id="employee-id" value="{{ .EmployeeId }}">
+				</div>
+				<div class="error-container">
+					{{ .EmployeeIdErr }}
+				</div>
+			</div>
+			<div class="modal-form-row">
+				<div class="modal-form-label-container">
+					<label class="modal-form-label" for="first_name">First Name:</label>
+				</div>
+				<div class="modal-form-input-container">
+					<input class="modal-form-input" type="text" name="first_name" id="first-name" value="{{ .FirstName }}">
+				</div>
+				<div class="error-container">
+					{{ .FirstNameErr }}
+				</div>
+			</div>
+			<div class="modal-form-row">
+				<div class="modal-form-label-container">
+					<label class="modal-form-label" for="last_name">Last Name:</label>
+				</div>
+				<div class="modal-form-input-container">
+					<input class="modal-form-input" type="text" name="last_name" id="last-name" value="{{ .LastName }}">
+				</div>
+				<div class="error-container">
+					{{ .LastNameErr }}
+				</div>
+			</div>
+			<div class="modal-form-row">
+				<div class="modal-form-label-container">
+					<label class="modal-form-label" for="username">Username:</label>
+				</div>
+				<div class="modal-form-input-container">
+					<input class="modal-form-input" type="text" name="username" id="username" value="{{ .Username }}">
+				</div>
+				<div class="error-container">
+					{{ .UsernameErr }}
+				</div>
+			</div>
+			<div class="modal-form-row">
+				<div class="modal-form-label-container">
+					<label class="modal-form-label" for="password">Password:</label>
+				</div>
+				<div class="modal-form-input-container">
+					<input class="modal-form-input" type="text" name="password" id="password" value="{{ .Password }}">
+				</div>
+				<div class="error-container">
+					{{ .PasswordErr }}
+				</div>
+			</div>
+			<div class="modal-form-row">
+				<div class="modal-form-label-container">
+					<label class="modal-form-label" for="email">Email:</label>
+				</div>
+				<div class="modal-form-input-container">
+					<input class="modal-form-input" type="text" name="email" id="email" value="{{ .Email }}">
+				</div>
+				<div class="error-container">
+					{{ .EmailErr }}
+				</div>
+			</div>
+			<div class="modal-form-row">
+				<div class="modal-form-label-container">
+					<label class="modal-form-label" for="phone_number">Phone Number:</label>
+				</div>
+				<div class="modal-form-input-container">
+					<input class="modal-form-input" type="text" name="phone_number" id="phone-number" value="{{ .PhoneNumber }}">
+				</div>
+				<div class="error-container">
+					{{ .PhoneNumberErr }}
+				</div>
+			</div>
+			<div class="modal-form-row">
+				<div class="modal-form-label-container">
+					<label class="modal-form-label" for="is_admin">Is Admin?</label>
+				</div>
+				<div id="put-job-is-complete-input-row">
+					<div class="put-job-is-complete-input-container">
+						<input class="put-job-is-complete-input" type="radio" id="true" name="is_admin" value="true" {{ if eq (printf "%v" .IsAdmin) "true" }} checked {{ end }}>true</input>
+					</div>
+					<div class="put-job-is-complete-input-container">
+						<input class="put-job-is-complete-input" type="radio" id="false" name="is_admin" value="false" {{ if eq (printf "%v" .IsAdmin) "false" }} checked {{ end }}>false</input>
+					</div>
+				</div>
+			</div>
+			<div class="success-msg-container">
+				{{ .SuccessMsg }}
+			</div>
+			<div class="gpg-form-btn-container">
+				<button
+				hx-get="/admin/render-employee-tab"
+				hx-trigger="click"
+				hx-target="#adminEmployeesContent"
+				hx-swap="innerHTML" 
+				class="gpg-close-btn" 
+				type="button" 
+				onclick="onAddEmployeeClose()">Close</button>
+				<button class="gpg-submit-btn" type="submit" form="add-employee-form">SUBMIT</button>
+			</div>
+		</form>
 	</div>
+</div>
 </div>
 {{ end }}

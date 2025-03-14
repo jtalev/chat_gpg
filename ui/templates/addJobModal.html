@@ -9,17 +9,20 @@
 			class="modal-form" 
 			id="add-job-form"
 			hx-post="/jobs/post"
-			hx-target="#admin-job-list"
-			hx-swap="innerHTML">
+			hx-target="#add-job-modal-container"
+			hx-swap="innerHTML"
+			hx-vals='{
+				"id": "0"
+			}'>
 				<div class="modal-form-row">
 					<div class="modal-form-label-container">
 						<label class="modal-form-label" for="name">Name:</label>
 					</div>
 					<div class="modal-form-input-container">
-						<input class="modal-form-input" type="text" name="name" id="name">
+						<input class="modal-form-input" type="text" name="name" id="name" value="{{ .Name }}">
 					</div>
 					<div class="error-container">
-						
+						{{ .NameErr }}
 					</div>
 				</div>
 				<div id="put-job-modal-number-address-row">
@@ -28,10 +31,10 @@
 							<label class="modal-form-label" for="number">Number:</label>
 						</div>
 						<div class="put-job-input-container">
-							<input class="modal-form-input" type="number" id="number" name="number">
+							<input class="modal-form-input" type="number" id="number" name="number" value="{{ .Number }}">
 						</div>
 						<div class="error-container">
-
+							{{ .NumberErr }}
 						</div>
 					</div>
 					<div id="put-job-modal-address-container">
@@ -39,10 +42,10 @@
 							<label class="modal-form-label" for="address">Address:</label>
 						</div>
 						<div class="put-job-input-container">
-							<input class="modal-form-input" type="text" id="address" name="address">
+							<input class="modal-form-input" type="text" id="address" name="address" value="{{ .Address }}">
 						</div>
 						<div class="error-container">
-
+							{{ .AddressErr }}
 						</div>
 					</div>
 				</div>
@@ -51,10 +54,10 @@
 						<label class="modal-form-label" for="suburb">Suburb:</label>
 					</div>
 					<div class="modal-form-input-container">
-						<input class="modal-form-input" type="text" name="suburb" id="suburb">
+						<input class="modal-form-input" type="text" name="suburb" id="suburb" value="{{ .Suburb }}">
 					</div>
 					<div class="error-container">
-						
+						{{ .SuburbErr }}
 					</div>
 				</div>
 				<div class="modal-form-row">
@@ -62,10 +65,10 @@
 						<label class="modal-form-label" for="post_code">Post Code:</label>
 					</div>
 					<div class="modal-form-input-container">
-						<input class="modal-form-input" type="text" name="post_code" id="post-code">
+						<input class="modal-form-input" type="text" name="post_code" id="post-code" value="{{ .PostCode }}">
 					</div>
 					<div class="error-container">
-						
+						{{ .PostCodeErr }}
 					</div>
 				</div>
 				<div class="modal-form-row">
@@ -73,14 +76,25 @@
 						<label class="modal-form-label" for="city">City:</label>
 					</div>
 					<div class="modal-form-input-container">
-						<input class="modal-form-input" type="text" name="city" id="city">
+						<input class="modal-form-input" type="text" name="city" id="city" value="{{ .City }}">
 					</div>
 					<div class="error-container">
-						
+						{{ .CityErr }}
 					</div>
 				</div>
+				<div class="success-msg-container">
+					{{ .SuccessMsg }}
+				</div>
 				<div class="gpg-form-btn-container">
-					<button type="button" class="gpg-close-btn" onclick="onAddJobClose()">Close</button>
+					<button
+					hx-get="/admin/render-job-tab"
+					hx-target="#adminJobsContent"
+					hx-swap="innerHTML"
+					type="button" 
+					class="gpg-close-btn" 
+					onclick="onAddJobClose()">
+						Close
+					</button>
 					<button class="gpg-submit-btn" type="submit">SUBMIT</button>
 				</div>
 			</form>

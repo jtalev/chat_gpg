@@ -43,6 +43,42 @@ func (h *Handler) ServeAdminView() http.Handler {
 	)
 }
 
+func (h *Handler) RenderEmployeeTab() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			employees, err := infrastructure.GetEmployees(h.DB)
+			if err != nil {
+				log.Printf("Error querying employee database: %v", err)
+				http.Error(w, "Not Found", http.StatusNotFound)
+				return
+			}
+
+			data := struct {
+				Employees []domain.Employee
+			}{
+				Employees: employees,
+			}
+
+			tmpl, err := template.ParseFiles(
+				adminEmployeeTabPath,
+				adminEmployeeListPath,
+			)
+			if err != nil {
+				log.Printf("Error parsing templates: %v", err)
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			err = tmpl.ExecuteTemplate(w, "adminEmployeeTab", data)
+			if err != nil {
+				log.Printf("Error executing template: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
 func (h *Handler) RenderJobTab() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -57,8 +93,8 @@ func (h *Handler) RenderJobTab() http.Handler {
 				adminJobTabPath,
 				adminJobListPath,
 			)
-
 			if err != nil {
+				log.Printf("Error parsing templates: %v", err)
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
@@ -96,13 +132,9 @@ func (h *Handler) RenderJobList() http.Handler {
 func (h *Handler) AddJobModal() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			jobs, err := application.GetJobs(h.DB)
-			if err != nil {
-				log.Printf("Error getting job data: %v", err)
-				http.Error(w, "Not found", http.StatusNotFound)
-				return
-			}
-			err = executePartialTemplate(addJobModalPath, "addJobModal", jobs, w)
+			jobDto := application.JobDto{}
+			jobDto.ID = "-1"
+			err := executePartialTemplate(addJobModalPath, "addJobModal", jobDto, w)
 			if err != nil {
 				log.Printf("Error executing addJobModal.html: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -308,29 +340,17 @@ func (h *Handler) PutEmployeeModal() http.Handler {
 				return
 			}
 
-			data := struct {
-				ID          int
-				EmployeeId  string
-				FirstName   string
-				LastName    string
-				Email       string
-				PhoneNumber string
-				IsAdmin     bool
-				Username    string
-				Password    string
-			}{
-				ID:          employee.ID,
-				EmployeeId:  employee.EmployeeId,
+			employeeDto := application.EmployeeDto{
+				ID:          vals[0],
+				EmployeeId:  vals[1],
 				FirstName:   employee.FirstName,
 				LastName:    employee.LastName,
+				Username:    employeeAuth.Username,
 				Email:       employee.Email,
 				PhoneNumber: employee.PhoneNumber,
-				IsAdmin:     employee.IsAdmin,
-				Username:    employeeAuth.Username,
-				Password:    employeeAuth.PasswordHash,
 			}
 
-			err = executePartialTemplate(adminPutEmployeeModalPath, "adminPutEmployeeModal", data, w)
+			err = executePartialTemplate(adminPutEmployeeModalPath, "adminPutEmployeeModal", employeeDto, w)
 			if err != nil {
 				log.Printf("Error executing template: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)

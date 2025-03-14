@@ -6,7 +6,6 @@ import (
 	"strconv"
 
 	application "github.com/jtalev/chat_gpg/application/services"
-	"github.com/jtalev/chat_gpg/domain/models"
 	"github.com/jtalev/chat_gpg/infrastructure/repository"
 )
 
@@ -77,49 +76,38 @@ func (h *Handler) GetJobByName() http.Handler {
 	)
 }
 
+var postJobKeys = []string{"id", "name", "number", "address", "suburb", "post_code", "city"}
+
 func (h *Handler) PostJob() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			err := r.ParseForm()
+			reqVals, err := parseRequestValues(postJobKeys, r)
 			if err != nil {
-				h.Logger.Errorf("Error parsing form: %v", err)
+				log.Printf("Error parsing request values: %v", err)
 				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
 
-			job := domain.Job{}
-
-			job.Name = r.FormValue("name")
-			numberStr := r.FormValue("number")
-			number, err := strconv.Atoi(numberStr)
-			if err != nil {
-				h.Logger.Errorf("Error parsing job number value: %v", err)
-				http.Error(w, "Bad request", http.StatusBadRequest)
-				return
+			jobDto := application.JobDto{
+				ID:       reqVals[0],
+				Name:     reqVals[1],
+				Number:   reqVals[2],
+				Address:  reqVals[3],
+				Suburb:   reqVals[4],
+				PostCode: reqVals[5],
+				City:     reqVals[6],
 			}
-			job.Number = number
-			job.Address = r.FormValue("address")
-			job.PostCode = r.FormValue("post_code")
-			job.Suburb = r.FormValue("suburb")
-			job.City = r.FormValue("city")
 
-			_, err = application.PostJob(job, h.DB)
+			jobDto, err = application.PostJob(jobDto, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error posting job: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
 
-			jobs, err := application.GetJobs(h.DB)
+			err = executePartialTemplate(addJobModalPath, "addJobModal", jobDto, w)
 			if err != nil {
-				h.Logger.Errorf("Error getting jobs: %v", err)
-				http.Error(w, "Not found", http.StatusNotFound)
-				return
-			}
-
-			err = executePartialTemplate(adminJobListPath, "adminJobList", jobs, w)
-			if err != nil {
-				h.Logger.Errorf("Error executing adminJobList.html: %v", err)
+				h.Logger.Errorf("Error executing addJobModal.html: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
@@ -127,7 +115,7 @@ func (h *Handler) PostJob() http.Handler {
 	)
 }
 
-var putJobKeys = []string{"id", "name", "number", "address", "suburb", "post_code", "city", "is_available"}
+var putJobKeys = []string{"id", "name", "number", "address", "suburb", "post_code", "city", "is_complete"}
 
 func (h *Handler) PutJob() http.Handler {
 	return http.HandlerFunc(

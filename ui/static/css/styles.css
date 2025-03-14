@@ -357,6 +357,7 @@ form input {
         justify-content: center;
         align-items: flex-end;
         gap: 15px;
+        padding-bottom: 20px;
     }    
 }
 
@@ -368,10 +369,9 @@ form input {
         justify-content: center;
         align-items: flex-end;
         gap: 15px;
+        padding-bottom: 20px;
     }
 }
-
-
 
 .gpg-close-btn {
     border-radius: 0;
@@ -420,6 +420,7 @@ form input {
     justify-content: center;
     align-items: center;
     max-width: 550px;
+    overflow-y: auto;
 }
 
 .modal-content-container {
@@ -1872,6 +1873,7 @@ input::-webkit-inner-spin-button {
     top: 0;
     left: 0;
     display: none;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }

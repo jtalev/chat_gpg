@@ -6,7 +6,7 @@
 		</div>
 		<div class="modal-form-container">
 			<form
-			hx-post="/jobs/put"
+			hx-put="/jobs/put"
 			hx-swap="innerHTML"
 			hx-target="#put-job-modal-container"
 			hx-vals='{
@@ -84,14 +84,14 @@
 				</div>
 				<div class="modal-form-row">
 					<div class="modal-form-label-container">
-						<label class="modal-form-label" for="is_available">Is Complete?</label>
+						<label class="modal-form-label" for="is_complete">Is Complete?</label>
 					</div>
 					<div id="put-job-is-complete-input-row">
 						<div class="put-job-is-complete-input-container">
-							<input class="put-job-is-complete-input" type="radio" id="true" name="is_available" value="true" {{ if eq (printf "%v" .IsComplete) "true" }} checked {{ end }}>true</input>
+							<input class="put-job-is-complete-input" type="radio" id="true" name="is_complete" value="true" {{ if eq (printf "%v" .IsComplete) "true" }} checked {{ end }}>true</input>
 						</div>
 						<div class="put-job-is-complete-input-container">
-							<input class="put-job-is-complete-input" type="radio" id="false" name="is_available" value="false" {{ if eq (printf "%v" .IsComplete) "false" }} checked {{ end }}>false</input>
+							<input class="put-job-is-complete-input" type="radio" id="false" name="is_complete" value="false" {{ if eq (printf "%v" .IsComplete) "false" }} checked {{ end }}>false</input>
 						</div>
 					</div>
 				</div>

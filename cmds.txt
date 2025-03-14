@@ -1,3 +1,3 @@
-find . -type f \( -iname "*.cpp" -o -iname "*.html" -o -iname "*.js" -o -iname "*.go" \) -exec wc -l {} + | awk '{s+=$1} END {print s}'
+find . -type d -name "deploy" -prune -o -type f \( -iname "*.cpp" -o -iname "*.html" -o -iname "*.js" -o -iname "*.go" \) -exec wc -l {} + | awk '{s+=$1} END {print s}'
 scp -i gpg-dev-keypair.pem -r ../chat_gpg/ ec2-user@ec2-3-107-197-21.ap-southeast-2.compute.amazonaws.com:
 CGO_ENABLED=1 GOOS=linux go build -o /chat_gpg/cmd/chat_gpg ./cmd

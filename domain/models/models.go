@@ -28,6 +28,21 @@ type Employee struct {
 	UpdatedAt   string `json:"updated_at"`
 }
 
+type EmployeeErrors struct {
+	EmployeeIdErr  string
+	FirstNameErr   string
+	LastNameErr    string
+	EmailErr       string
+	PhoneNumberErr string
+	IsSuccessful   bool
+}
+
+type EmployeeAuthErrors struct {
+	UsernameErr  string
+	PasswordErr  string
+	IsSuccessful bool
+}
+
 type EmployeeAuth struct {
 	AuthId       int    `json:"auth_id"`
 	EmployeeId   string `json:"employee_id"`
@@ -35,6 +50,12 @@ type EmployeeAuth struct {
 	PasswordHash string `json:"password_hash"`
 	CreatedAt    string `json:"created_at"`
 	UpdatedAt    string `json:"updated_at"`
+}
+
+func (e *Employee) Validate() EmployeeErrors {
+	errors := EmployeeErrors{}
+	errors.IsSuccessful = true
+	return errors
 }
 
 type LeaveRequest struct {
@@ -86,6 +107,7 @@ func (j *Job) ValidatePostCode(errors JobErrors) JobErrors {
 		errors.IsSuccessful = false
 		errors.PostCodeErr = "Numbers only"
 	}
+	log.Println(len(j.PostCode))
 	if len(j.PostCode) != 4 {
 		errors.IsSuccessful = false
 		errors.PostCodeErr = "Must be 4 characters long"

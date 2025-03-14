@@ -50,71 +50,92 @@ func DeleteAndReturnEmployees(idStr string, db *sql.DB) ([]domain.Employee, erro
 	return employees, nil
 }
 
-func PostAndReturnEmployees(hxVals []string, db *sql.DB) ([]domain.Employee, error) {
-	log.Println("posting employee")
-
-	employeeId := hxVals[0]
-	firstName := hxVals[1]
-	lastName := hxVals[2]
-	email := hxVals[3]
-	phoneNumber := hxVals[4]
-	isAdminStr := hxVals[5]
-	var isAdmin bool
-	if isAdminStr == "true" {
-		isAdmin = true
-	} else {
-		isAdmin = false
-	}
-	username := hxVals[6]
-	password := hxVals[7]
-	passwordHash, err := auth.HashPassword(password)
-	if err != nil {
-		return nil, err
-	}
-
-	employeeAuth := domain.EmployeeAuth{
-		EmployeeId:   employeeId,
-		Username:     username,
-		PasswordHash: passwordHash,
-	}
-	log.Println("finished posting employee")
-
-	employeeAuth, err = infrastructure.PostEmployeeAuth(employeeAuth, db)
-	if err != nil {
-		return nil, err
-	}
-
-	employee := domain.Employee{
-		EmployeeId:  employeeId,
-		FirstName:   firstName,
-		LastName:    lastName,
-		Email:       email,
-		PhoneNumber: phoneNumber,
-		IsAdmin:     isAdmin,
-	}
-
-	employee, err = infrastructure.PostEmployee(employee, db)
-	if err != nil {
-		return nil, err
-	}
-
-	employees, err := GetEmployees(db)
-	if err != nil {
-		return nil, err
-	}
-
-	return employees, nil
+type EmployeeDto struct {
+	ID             string
+	EmployeeId     string
+	FirstName      string
+	LastName       string
+	Username       string
+	Password       string
+	Email          string
+	PhoneNumber    string
+	IsAdmin        string
+	EmployeeIdErr  string
+	FirstNameErr   string
+	LastNameErr    string
+	UsernameErr    string
+	PasswordErr    string
+	EmailErr       string
+	PhoneNumberErr string
+	SuccessMsg     string
 }
 
-type PutEmployeeDto struct {
-	ID         string
-	Username   string
-	Password   string
-	EmployeeId string
-	FirstName  string
-	LastName   string
-	Email      string
-	Phone      string
+func employeeDtoToEmployee(employeeDto EmployeeDto) (domain.Employee, error) {
+	id, err := strconv.Atoi(employeeDto.ID)
+	if err != nil {
+		log.Println("strconv")
+		return domain.Employee{}, err
+	}
+	isAdmin := false
+	if employeeDto.IsAdmin == "true" {
+		isAdmin = true
+	}
+	employee := domain.Employee{
+		ID:          id,
+		EmployeeId:  employeeDto.EmployeeId,
+		FirstName:   employeeDto.FirstName,
+		LastName:    employeeDto.LastName,
+		Email:       employeeDto.Email,
+		PhoneNumber: employeeDto.PhoneNumber,
+		IsAdmin:     isAdmin,
+	}
+	return employee, nil
+}
+
+func employeeDtoToEmployeeAuth(employeeDto EmployeeDto) domain.EmployeeAuth {
+	employeeAuth := domain.EmployeeAuth{
+		EmployeeId:   employeeDto.EmployeeId,
+		Username:     employeeDto.Username,
+		PasswordHash: employeeDto.Password,
+	}
+	return employeeAuth
+}
+
+func mapErrorsToEmployeeDto(errors domain.EmployeeErrors, employeeDto EmployeeDto) EmployeeDto {
+	employeeDto.EmployeeIdErr = errors.EmployeeIdErr
+	employeeDto.FirstNameErr = errors.FirstNameErr
+	employeeDto.LastNameErr = errors.LastNameErr
+	employeeDto.EmailErr = errors.EmailErr
+	employeeDto.PhoneNumberErr = errors.PhoneNumberErr
+	return employeeDto
+}
+
+func PostEmployee(employeeDto EmployeeDto, db *sql.DB) (EmployeeDto, error) {
+	employee, err := employeeDtoToEmployee(employeeDto)
+	if err != nil {
+		return EmployeeDto{}, err
+	}
+
+	employeeAuth := employeeDtoToEmployeeAuth(employeeDto)
+
+	errors := employee.Validate()
+	if errors.IsSuccessful == false {
+		employeeDto = mapErrorsToEmployeeDto(errors, employeeDto)
+		return employeeDto, nil
+	} else {
+		log.Println(employee.PhoneNumber)
+		employee, err = infrastructure.PostEmployee(employee, db)
+		if err != nil {
+			return EmployeeDto{}, err
+		}
+		employeeAuth.PasswordHash, err = auth.HashPassword(employeeAuth.PasswordHash)
+		if err != nil {
+			return EmployeeDto{}, err
+		}
+		employeeAuth, err = infrastructure.PostEmployeeAuth(employeeAuth, db)
+		employeeDto.SuccessMsg = "Employee submitted successfully."
+		return employeeDto, nil
+	}
 }
 
 func returnEmployeeAndAuth(id, employeeId string, db *sql.DB) (domain.Employee, domain.EmployeeAuth, error) {
@@ -134,34 +155,29 @@ func returnEmployeeAndAuth(id, employeeId string, db *sql.DB) (domain.Employee, 
 	return outEmployee, outEmployeeAuth, nil
 }
 
-func PutEmployee(employeeDto PutEmployeeDto, db *sql.DB) (domain.Employee, error) {
-	employee, employeeAuth, err := returnEmployeeAndAuth(employeeDto.ID, employeeDto.EmployeeId, db)
+func PutEmployee(employeeDto EmployeeDto, db *sql.DB) (EmployeeDto, error) {
+	employee, err := employeeDtoToEmployee(employeeDto)
 	if err != nil {
-		return employee, err
+		return EmployeeDto{}, err
 	}
 
-	employee.FirstName = employeeDto.FirstName
-	employee.LastName = employeeDto.LastName
-	employee.Email = employeeDto.Email
-	employee.PhoneNumber = employeeDto.Phone
-	employeeAuth.Username = employeeDto.Username
-	if employeeDto.Password != "" {
-		passwordHash, err := auth.HashPassword(employeeDto.Password)
+	employeeAuth := employeeDtoToEmployeeAuth(employeeDto)
+
+	errors := employee.Validate()
+	if errors.IsSuccessful == false {
+		employeeDto = mapErrorsToEmployeeDto(errors, employeeDto)
+		return employeeDto, nil
+	} else {
+		employee, err = infrastructure.PutEmployee(employee, db)
 		if err != nil {
-			return employee, err
+			return EmployeeDto{}, err
 		}
-		employeeAuth.PasswordHash = passwordHash
+		employeeAuth.PasswordHash, err = auth.HashPassword(employeeAuth.PasswordHash)
+		if err != nil {
+			return EmployeeDto{}, err
+		}
+		_, err = infrastructure.PutEmployeeAuth(employeeAuth, db)
+		employeeDto.SuccessMsg = "Employee submitted successfully."
+		return employeeDto, nil
 	}
-
-	employeeAuth, err = infrastructure.PutEmployeeAuth(employeeAuth, db)
-	if err != nil {
-		return employee, err
-	}
-
-	employee, err = infrastructure.PutEmployee(employee, db)
-	if err != nil {
-		return employee, err
-	}
-
-	return employee, err
 }

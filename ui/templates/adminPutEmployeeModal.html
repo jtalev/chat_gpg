@@ -1,62 +1,97 @@
 {{ define "adminPutEmployeeModal" }}
-<div id="admin-put-employee-modal-content-container">
-	<div id="admin-put-employee-modal-content">
-		<div id="admin-put-employee-modal-header">
-			{{ .FirstName }} {{.LastName}}
+<div class="modal-container">
+	<div class="modal-content-container">
+		<div class="modal-header-container">
+			<p>Update Employee</p>
 		</div>
-		<div id="admin-put-employee-form-container">
-			<form 
-			id="admin-put-employee-form"
-			hx-post="/employee/put"
-			hx-target="#admin-employee-row-{{ .EmployeeId }}"
-			hx-swap="outerHTML"
-			hx-vals='{
-				"id": {{ .ID }},
-				"employee_id": {{ .EmployeeId }}
-			}'>
-				<div class="admin-put-employee-form-row">
-					<label class="admin-put-employee-form-label" for="username">
-						Username:
-					</label>
-					<input class="admin-put-employee-form-input" id="username" type="text" name="username" value="{{ .Username }}">
+		<div class="modal-form-container">
+			<form
+			hx-put="/employee/put"
+			hx-swap="innerHTML"
+			hx-target="#admin-employee-put-modal-container"
+			class="modal-form" 
+			id="put-employee-form">
+				<input type="hidden" name="id" value="{{ .ID }}">
+			    <input type="hidden" name="employee_id" value="{{ .EmployeeId }}">
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="first_name">First Name:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="first_name" id="first-name" value="{{ .FirstName }}">
+					</div>
+					<div class="error-container">
+						{{ .FirstNameErr }}
+					</div>
 				</div>
-				<div class="admin-put-employee-form-row">
-					<label class="admin-put-employee-form-label" for="password">
-						Password:
-					</label>
-					<input class="admin-put-employee-form-input" id="password" type="text" name="password" value="">
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="last_name">Last Name:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="last_name" id="last-name" value="{{ .LastName }}">
+					</div>
+					<div class="error-container">
+						{{ .LastNameErr }}
+					</div>
 				</div>
-				<div class="admin-put-employee-form-row">
-					<label class="admin-put-employee-form-label" for="first-name">
-						First Name:
-					</label>
-					<input class="admin-put-employee-form-input" id="first-name" type="text" name="first_name" value="{{ .FirstName }}">
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="username">Username:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="username" id="username" value="{{ .Username }}">
+					</div>
+					<div class="error-container">
+						{{ .UsernameErr }}
+					</div>
 				</div>
-				<div class="admin-put-employee-form-row">
-					<label class="admin-put-employee-form-label" for="last-name">
-						Last Name:
-					</label>
-					<input class="admin-put-employee-form-input" id="last-name" type="text" name="last_name" value="{{ .LastName }}">
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="password">Password:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="password" id="password" value="{{ .Password }}">
+					</div>
+					<div class="error-container">
+						{{ .PasswordErr }}
+					</div>
 				</div>
-				<div class="admin-put-employee-form-row">
-					<label class="admin-put-employee-form-label" for="email">
-						Email:
-					</label>
-					<input class="admin-put-employee-form-input" id="email" type="text" name="email" value="{{ .Email }}">
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="email">Email:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="email" id="email" value="{{ .Email }}">
+					</div>
+					<div class="error-container">
+						{{ .EmailErr }}
+					</div>
 				</div>
-				<div class="admin-put-employee-form-row">
-					<label class="admin-put-employee-form-label" for="phone">
-						Phone:
-					</label>
-					<input class="admin-put-employee-form-input" id="phone" type="text" name="phone" value="{{ .PhoneNumber }}">
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="phone">Phone Number:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="phone" id="phone" value="{{ .PhoneNumber }}">
+					</div>
+					<div class="error-container">
+						{{ .PhoneNumberErr }}
+					</div>
+				</div>
+				<div class="success-msg-container">
+					{{ .SuccessMsg }}
 				</div>
 				<div class="gpg-form-btn-container">
-					<button class="gpg-close-btn" type="button" id="admin-put-employee-close" onclick="onPutEmployeeClose()">
-						Close
-					</button>
-					<button type="submit" form="admin-put-employee-form" class="gpg-submit-btn" id="admin-put-employee-submit" onclick="onPutEmployeeSuccessful()">
-						SUBMIT
-					</button>
+					<button
+					hx-get="/admin/render-employee-tab"
+					hx-trigger="click"
+					hx-target="#adminEmployeesContent"
+					hx-swap="innerHTML" 
+					class="gpg-close-btn" 
+					type="button" 
+					onclick="onPutEmployeeClose()">Close</button>
+					<button class="gpg-submit-btn" type="submit" form="put-employee-form">SUBMIT</button>
 				</div>
 			</form>
 		</div>
