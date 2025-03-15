@@ -164,6 +164,9 @@ func PutEmployee(employeeDto EmployeeDto, db *sql.DB) (EmployeeDto, error) {
 	employeeAuth := employeeDtoToEmployeeAuth(employeeDto)
 
 	errors := employee.Validate()
+	empAuthErrors := employeeAuth.Validate()
+	errors.UsernameErr = empAuthErrors.UsernameErr
+	errors.PasswordErr = empAuthErrors.PasswordErr
 	if errors.IsSuccessful == false {
 		employeeDto = mapErrorsToEmployeeDto(errors, employeeDto)
 		return employeeDto, nil

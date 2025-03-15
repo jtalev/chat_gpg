@@ -46,13 +46,6 @@ type JobDto struct {
 func jobDtoToJob(jobDto JobDto) (domain.Job, error) {
 	id, err := strconv.Atoi(jobDto.ID)
 	if err != nil {
-		log.Println("strconv")
-		return domain.Job{}, err
-	}
-	number, err := strconv.Atoi(jobDto.Number)
-	if err != nil {
-		log.Println("number check")
-		jobDto.NumberErr = "Numbers only"
 		return domain.Job{}, err
 	}
 	isComplete := false
@@ -62,13 +55,20 @@ func jobDtoToJob(jobDto JobDto) (domain.Job, error) {
 	job := domain.Job{
 		ID:         id,
 		Name:       jobDto.Name,
-		Number:     number,
 		Address:    jobDto.Address,
 		Suburb:     jobDto.Suburb,
 		PostCode:   jobDto.PostCode,
 		City:       jobDto.City,
 		IsComplete: isComplete,
 	}
+
+	number, err := strconv.Atoi(jobDto.Number)
+	if err != nil {
+		job.Number = number
+		jobDto.NumberErr = "Numbers only"
+		return job, nil
+	}
+	job.Number = number
 
 	return job, nil
 }
