@@ -2413,14 +2413,14 @@ input::-webkit-inner-spin-button {
     font-size: small;
 }
 
-#report-leave-request-row-unclicked {
+.report-leave-request-row-unclicked {
     height: 2.3em;
     width: 100%;
     display: flex;
     align-items: center;
 }
 
-#report-leave-request-row-expanded {
+.report-leave-request-row-expanded {
     width: 100%;
     height: 150px;
     display: none;
@@ -2429,7 +2429,7 @@ input::-webkit-inner-spin-button {
 }
 
 @media screen and (max-width: 550px) {
-    #report-leave-expanded-label-container {
+    .report-leave-expanded-label-container {
         width: 25%;
         gap: 5px;
         display: flex;
@@ -2439,7 +2439,7 @@ input::-webkit-inner-spin-button {
 }
 
 @media screen and (min-width: 551px) {
-    #report-leave-expanded-label-container {
+    .report-leave-expanded-label-container {
         width: 15%;
         gap: 5px;
         display: flex;
@@ -2449,7 +2449,7 @@ input::-webkit-inner-spin-button {
 
 }
 
-#report-leave-expanded-info-container {
+.report-leave-expanded-info-container {
     flex-grow: 1;
     gap: 5px;
     display: flex;
