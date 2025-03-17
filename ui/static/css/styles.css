@@ -2401,6 +2401,87 @@ input::-webkit-inner-spin-button {
     gap: 5px;
 }
 
+.report-leave-request-row {
+    width: 99.5%;
+    max-width: 600px;
+    border: solid 1px var(--timesheet-border);
+    background-color: var(--light-background-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    font-size: small;
+}
+
+#report-leave-request-row-unclicked {
+    height: 2.3em;
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+#report-leave-request-row-expanded {
+    width: 100%;
+    height: 150px;
+    display: none;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+@media screen and (max-width: 550px) {
+    #report-leave-expanded-label-container {
+        width: 25%;
+        gap: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media screen and (min-width: 551px) {
+    #report-leave-expanded-label-container {
+        width: 15%;
+        gap: 5px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+}
+
+#report-leave-expanded-info-container {
+    flex-grow: 1;
+    gap: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+@media screen and (max-width: 550px) {
+    .report-leave-expanded-content {
+        padding-left: 5px;
+        height: 2.3em;
+        width: 100%;
+        font-size: smaller;
+        align-items: center;
+    }
+}
+
+
+.report-leave-expanded-content {
+    padding-left: 5px;
+    height: 2.3em;
+    height: 95%;
+    width: 95%;
+    display: flex;
+    align-items: center;
+}
+
+.report-leave-info {
+    border: solid 1px var(--timesheet-border);
+    background: white;
+}
+
 /* ----- dashboard ----- */
 @media screen and (max-width: 1030px) {
 

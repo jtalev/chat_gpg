@@ -57,7 +57,7 @@ func (h *Handler) GetEmployeeTimesheetReport() http.Handler {
 				return
 			}
 
-			tmpl, err := template.ParseFiles(employeeTimesheetReportPath, employeeLeaveRequestPath)
+			tmpl, err := template.ParseFiles(employeeTimesheetReportPath, reportEmployeeLeaveRequestPath)
 			if err != nil {
 				log.Println("Error parsing file:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -100,7 +100,7 @@ func (h *Handler) PrevEmployeeTimesheetReport() http.Handler {
 				return
 			}
 
-			tmpl, err := template.ParseFiles(employeeTimesheetReportPath, employeeLeaveRequestPath)
+			tmpl, err := template.ParseFiles(employeeTimesheetReportPath, reportEmployeeLeaveRequestPath)
 			if err != nil {
 				log.Println("Error parsing file:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -143,7 +143,7 @@ func (h *Handler) NextEmployeeTimesheetReport() http.Handler {
 				return
 			}
 
-			tmpl, err := template.ParseFiles(employeeTimesheetReportPath, employeeLeaveRequestPath)
+			tmpl, err := template.ParseFiles(employeeTimesheetReportPath, reportEmployeeLeaveRequestPath)
 			if err != nil {
 				log.Println("Error parsing file:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)

@@ -1,0 +1,60 @@
+{{ define "reportEmployeeLeaveRequest" }}
+<div 
+class="report-leave-request-row"
+onclick="onLeaveRequestClick()">
+	<div id="report-leave-request-row-unclicked">
+		<p class="admin-lr-row-name">{{ .FirstName }} {{ .LastName }} | </p>
+		<p class="admin-lr-row-dates">{{ .From }} - {{ .To }} | </p>
+		<p class="admin-lr-row-dates">{{ .Type }}</p>
+		{{ if and .IsPending (not .IsApproved) }}
+		<div class="admin-lr-icon"><img src="../static/img/pending.svg"></div>
+		{{ else if and (not .IsPending) .IsApproved }}
+		<div class="admin-lr-icon"><img id="admin-lr-approved-icon" src="../static/img/approved.svg"></div>
+		{{ else if and (not .IsPending) (not .IsApproved) }}
+		<div class="admin-lr-icon"><img id="admin-lr-denied-icon" src="../static/img/denied.svg"></div>
+		{{ end }}
+	</div>
+	<div id="report-leave-request-row-expanded">
+		<div id="report-leave-expanded-label-container">
+			<div class="report-leave-expanded-content">
+				Employee ID:
+			</div>
+			<div class="report-leave-expanded-content">
+				Name:
+			</div>
+			<div class="report-leave-expanded-content">
+				Type:
+			</div>
+			<div class="report-leave-expanded-content">
+				Start Date:
+			</div>
+			<div class="report-leave-expanded-content">
+				End Date:
+			</div>
+			<div class="report-leave-expanded-content">
+				Note:
+			</div>
+		</div>
+		<div id="report-leave-expanded-info-container">
+			<div class="report-leave-expanded-content report-leave-info">
+				{{ .EmployeeId }}
+			</div>
+			<div class="report-leave-expanded-content report-leave-info">
+				{{ .FirstName }} {{ .LastName }}
+			</div>
+			<div class="report-leave-expanded-content report-leave-info">
+				{{ .Type }}
+			</div>
+			<div class="report-leave-expanded-content report-leave-info">
+				{{ .From }}
+			</div>
+			<div class="report-leave-expanded-content report-leave-info">
+				{{ .To }}
+			</div>
+			<div class="report-leave-expanded-content report-leave-info">
+				{{ .Note }}
+			</div>
+		</div>
+	</div>
+</div>
+{{ end }}
