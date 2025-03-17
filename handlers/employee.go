@@ -51,7 +51,6 @@ var postEmployeeKeys = []string{"id", "employee_id", "first_name", "last_name", 
 func (h *Handler) PostEmployee() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			log.Println("posting employee")
 			reqVals, err := parseRequestValues(postEmployeeKeys, r)
 			if err != nil {
 				log.Printf("Error parsing request values: %v", err)

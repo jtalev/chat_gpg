@@ -2,7 +2,6 @@ package application
 
 import (
 	"database/sql"
-	"log"
 	"strconv"
 
 	"github.com/jtalev/chat_gpg/domain/models"
@@ -127,7 +126,6 @@ func PutJob(jobDto JobDto, db *sql.DB) (JobDto, error) {
 	} else {
 		job, err = infrastructure.PutJob(job.ID, job, db)
 		jobDto.SuccessMsg = "Job successfully updated."
-		log.Println(job.IsComplete)
 		return jobDto, nil
 	}
 }

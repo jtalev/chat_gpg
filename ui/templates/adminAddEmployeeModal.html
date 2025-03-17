@@ -101,8 +101,11 @@
 						<input class="put-job-is-complete-input" type="radio" id="true" name="is_admin" value="true" {{ if eq (printf "%v" .IsAdmin) "true" }} checked {{ end }}>true</input>
 					</div>
 					<div class="put-job-is-complete-input-container">
-						<input class="put-job-is-complete-input" type="radio" id="false" name="is_admin" value="false" {{ if eq (printf "%v" .IsAdmin) "false" }} checked {{ end }}>false</input>
+						<input class="put-job-is-complete-input" type="radio" id="false" name="is_admin" value="false" {{ if eq (printf "%v" .IsAdmin) "false" }} checked {{ else if ne (printf "%v" .IsAdmin) "true" }} checked {{ end }}>false</input>
 					</div>
+				</div>
+				<div class="error-container">
+					{{ .IsAdminErr }}
 				</div>
 			</div>
 			<div class="success-msg-container">

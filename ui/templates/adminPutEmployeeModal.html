@@ -51,7 +51,7 @@
 						<label class="modal-form-label" for="password">Password:</label>
 					</div>
 					<div class="modal-form-input-container">
-						<input class="modal-form-input" type="text" name="password" id="password" value="{{ .Password }}">
+						<input class="modal-form-input" type="text" name="password" id="password" {{ if and .IsSuccess (.IsDifferentPassword) }} value="{{ .Password }}" {{ end }}>
 					</div>
 					<div class="error-container">
 						{{ .PasswordErr }}

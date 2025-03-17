@@ -86,80 +86,12 @@ INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, i
 VALUES ('5972276', 'Slid', 'Kestrel', 'slid.kestrel@outlook.com', '0450579387', 1);
 INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
 VALUES ('5972277', 'Daddy', 'Doss', 'daddy.doss@outlook.com', '0450579387', 0);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972278', 'Vitech', 'Solutions', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972279', 'Aprika', 'MissionCtrl', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972280', 'Gieman', 'IT', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972281', 'Dobble', 'WebDesign', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972282', 'Crest', 'Projects', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972283', 'Detras', 'WebSolutions', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972284', 'Site', 'Slider', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972285', 'Pixel', 'Id', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972286', 'Masters', 'OfDigital', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972287', 'Distinct', 'ICT', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972288', 'YourBusiness', 'App', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972289', 'Enterprise', 'Monkey', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972290', 'Hordern', 'IT', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972291', 'Mainstay', 'Digital', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972292', 'Orchestrated', 'Geelong', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972293', 'Rocketpack', 'Geelong', 'info@outlook.com', '0483928938', 1);
-INSERT INTO employee (employee_id, first_name, last_name, email, phone_number, is_admin)
-VALUES ('5972294', 'InSite', 'Logic', 'info@outlook.com', '0483928938', 1);
 
 /** ---- employee_auth inserts ---- **/
 INSERT INTO employee_auth (employee_id, username, password_hash)
 VALUES ('5972276', 'skestrel', '$2y$14$aiyzqIjN/Dyyuie6.mccdu8OC3GYB7XEPCdSU/P.UTlrRwR9ktIjq');
 INSERT INTO employee_auth (employee_id, username, password_hash)
 VALUES ('5972277', 'ddoss', '$2y$14$aiyzqIjN/Dyyuie6.mccdu8OC3GYB7XEPCdSU/P.UTlrRwR9ktIjq');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972278', 'VitechSolutions', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972279', 'Aprika', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972280', 'GiemanIT', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972281', 'Dobble', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972282', 'CrestProjects', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972283', 'DetrasWebSolutions', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972284', 'SiteSlider', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972285', 'Pixeld', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972286', 'MastersOfDigital', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972287', 'DistinctICT', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972288', 'YourBusinessApp', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972289', 'EnterpriseMonkey', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972290', 'HordernIT', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972291', 'MainstayDigital', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972292', 'Orchestrated', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972293', 'Rocketpack', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
-INSERT INTO employee_auth (employee_id, username, password_hash)
-VALUES ('5972294', 'InSiteLogic', '$2y$14$ZHt7GElD8s/sirTlNGmAQekCRklOntrQ/H6FhqrvRNQLVHkIJMuqa');
 
 /** ---- leave_request inserts ---- **/
 INSERT INTO leave_request (employee_id, leave_type, from_date, to_date, note)

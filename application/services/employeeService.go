@@ -50,24 +50,44 @@ func DeleteAndReturnEmployees(idStr string, db *sql.DB) ([]domain.Employee, erro
 	return employees, nil
 }
 
+func returnEmployeeAndAuth(id, employeeId string, db *sql.DB) (domain.Employee, domain.EmployeeAuth, error) {
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		return domain.Employee{}, domain.EmployeeAuth{}, err
+	}
+	outEmployee, err := infrastructure.GetEmployeeById(idInt, db)
+	if err != nil {
+		return outEmployee, domain.EmployeeAuth{}, err
+	}
+	outEmployeeAuth, err := infrastructure.GetEmployeeAuthByEmployeeId(employeeId, db)
+	if err != nil {
+		return outEmployee, outEmployeeAuth, err
+	}
+
+	return outEmployee, outEmployeeAuth, nil
+}
+
 type EmployeeDto struct {
-	ID             string
-	EmployeeId     string
-	FirstName      string
-	LastName       string
-	Username       string
-	Password       string
-	Email          string
-	PhoneNumber    string
-	IsAdmin        string
-	EmployeeIdErr  string
-	FirstNameErr   string
-	LastNameErr    string
-	UsernameErr    string
-	PasswordErr    string
-	EmailErr       string
-	PhoneNumberErr string
-	SuccessMsg     string
+	ID                  string
+	EmployeeId          string
+	FirstName           string
+	LastName            string
+	Username            string
+	Password            string
+	Email               string
+	PhoneNumber         string
+	IsAdmin             string
+	EmployeeIdErr       string
+	FirstNameErr        string
+	LastNameErr         string
+	UsernameErr         string
+	PasswordErr         string
+	EmailErr            string
+	PhoneNumberErr      string
+	IsAdminErr          string
+	IsSuccess           bool
+	IsDifferentPassword bool
+	SuccessMsg          string
 }
 
 func employeeDtoToEmployee(employeeDto EmployeeDto) (domain.Employee, error) {
@@ -76,9 +96,11 @@ func employeeDtoToEmployee(employeeDto EmployeeDto) (domain.Employee, error) {
 		log.Println("strconv")
 		return domain.Employee{}, err
 	}
-	isAdmin := false
+	var isAdmin bool
 	if employeeDto.IsAdmin == "true" {
 		isAdmin = true
+	} else if employeeDto.IsAdmin == "false" {
+		isAdmin = false
 	}
 	employee := domain.Employee{
 		ID:          id,
@@ -101,12 +123,15 @@ func employeeDtoToEmployeeAuth(employeeDto EmployeeDto) domain.EmployeeAuth {
 	return employeeAuth
 }
 
-func mapErrorsToEmployeeDto(errors domain.EmployeeErrors, employeeDto EmployeeDto) EmployeeDto {
-	employeeDto.EmployeeIdErr = errors.EmployeeIdErr
-	employeeDto.FirstNameErr = errors.FirstNameErr
-	employeeDto.LastNameErr = errors.LastNameErr
-	employeeDto.EmailErr = errors.EmailErr
-	employeeDto.PhoneNumberErr = errors.PhoneNumberErr
+func mapErrorsToEmployeeDto(empErrors domain.EmployeeErrors, empAuthErrors domain.EmployeeAuthErrors, employeeDto EmployeeDto) EmployeeDto {
+	employeeDto.EmployeeIdErr = empErrors.EmployeeIdErr
+	employeeDto.FirstNameErr = empErrors.FirstNameErr
+	employeeDto.LastNameErr = empErrors.LastNameErr
+	employeeDto.EmailErr = empErrors.EmailErr
+	employeeDto.PhoneNumberErr = empErrors.PhoneNumberErr
+	employeeDto.UsernameErr = empAuthErrors.UsernameErr
+	employeeDto.PasswordErr = empAuthErrors.PasswordErr
+	employeeDto.IsAdminErr = empErrors.IsAdminErr
 	return employeeDto
 }
 
@@ -118,12 +143,12 @@ func PostEmployee(employeeDto EmployeeDto, db *sql.DB) (EmployeeDto, error) {
 
 	employeeAuth := employeeDtoToEmployeeAuth(employeeDto)
 
-	errors := employee.Validate()
-	if errors.IsSuccessful == false {
-		employeeDto = mapErrorsToEmployeeDto(errors, employeeDto)
+	empErrors := employee.Validate()
+	empAuthErrors := employeeAuth.Validate()
+	if empErrors.IsSuccessful == false || empAuthErrors.IsSuccessful == false {
+		employeeDto = mapErrorsToEmployeeDto(empErrors, empAuthErrors, employeeDto)
 		return employeeDto, nil
 	} else {
-		log.Println(employee.PhoneNumber)
 		employee, err = infrastructure.PostEmployee(employee, db)
 		if err != nil {
 			return EmployeeDto{}, err
@@ -134,28 +159,22 @@ func PostEmployee(employeeDto EmployeeDto, db *sql.DB) (EmployeeDto, error) {
 		}
 		employeeAuth, err = infrastructure.PostEmployeeAuth(employeeAuth, db)
 		employeeDto.SuccessMsg = "Employee submitted successfully."
+		employeeDto.IsSuccess = true
 		return employeeDto, nil
 	}
 }
 
-func returnEmployeeAndAuth(id, employeeId string, db *sql.DB) (domain.Employee, domain.EmployeeAuth, error) {
-	idInt, err := strconv.Atoi(id)
-	if err != nil {
-		return domain.Employee{}, domain.EmployeeAuth{}, err
-	}
-	outEmployee, err := infrastructure.GetEmployeeById(idInt, db)
-	if err != nil {
-		return outEmployee, domain.EmployeeAuth{}, err
-	}
-	outEmployeeAuth, err := infrastructure.GetEmployeeAuthByEmployeeId(employeeId, db)
-	if err != nil {
-		return outEmployee, outEmployeeAuth, err
-	}
-
-	return outEmployee, outEmployeeAuth, nil
-}
-
 func PutEmployee(employeeDto EmployeeDto, db *sql.DB) (EmployeeDto, error) {
+	isSamePassword := false
+	if employeeDto.Password == "" {
+		employeeAuth, err := infrastructure.GetEmployeeAuthByEmployeeId(employeeDto.EmployeeId, db)
+		if err != nil {
+			return employeeDto, err
+		}
+		employeeDto.Password = employeeAuth.PasswordHash
+		isSamePassword = true
+	}
+
 	employee, err := employeeDtoToEmployee(employeeDto)
 	if err != nil {
 		return EmployeeDto{}, err
@@ -163,24 +182,27 @@ func PutEmployee(employeeDto EmployeeDto, db *sql.DB) (EmployeeDto, error) {
 
 	employeeAuth := employeeDtoToEmployeeAuth(employeeDto)
 
-	errors := employee.Validate()
+	empErrors := employee.Validate()
 	empAuthErrors := employeeAuth.Validate()
-	errors.UsernameErr = empAuthErrors.UsernameErr
-	errors.PasswordErr = empAuthErrors.PasswordErr
-	if errors.IsSuccessful == false {
-		employeeDto = mapErrorsToEmployeeDto(errors, employeeDto)
+	if empErrors.IsSuccessful == false || empAuthErrors.IsSuccessful == false {
+		employeeDto = mapErrorsToEmployeeDto(empErrors, empAuthErrors, employeeDto)
 		return employeeDto, nil
 	} else {
+
 		employee, err = infrastructure.PutEmployee(employee, db)
 		if err != nil {
 			return EmployeeDto{}, err
 		}
-		employeeAuth.PasswordHash, err = auth.HashPassword(employeeAuth.PasswordHash)
-		if err != nil {
-			return EmployeeDto{}, err
+		if isSamePassword == false {
+			employeeDto.IsDifferentPassword = true
+			employeeAuth.PasswordHash, err = auth.HashPassword(employeeAuth.PasswordHash)
+			if err != nil {
+				return EmployeeDto{}, err
+			}
 		}
 		_, err = infrastructure.PutEmployeeAuth(employeeAuth, db)
 		employeeDto.SuccessMsg = "Employee submitted successfully."
+		employeeDto.IsSuccess = true
 		return employeeDto, nil
 	}
 }

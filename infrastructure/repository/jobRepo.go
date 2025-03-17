@@ -3,7 +3,6 @@ package infrastructure
 import (
 	"database/sql"
 	"errors"
-	"log"
 
 	"github.com/jtalev/chat_gpg/domain/models"
 )
@@ -155,7 +154,6 @@ func PutJob(id int, job domain.Job, db *sql.DB) (domain.Job, error) {
 	if err != nil {
 		return domain.Job{}, err
 	}
-	log.Println(newJob.IsComplete)
 	return newJob, nil
 }
 

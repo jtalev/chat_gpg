@@ -93,11 +93,15 @@ func GetEmployeeByEmployeeId(employeeId string, db *sql.DB) (domain.Employee, er
 }
 
 func DeleteEmployee(id int, db *sql.DB) (bool, error) {
+	isAuthDeleted, err := DeleteEmployeeAuth(id, db)
+	if err != nil || !isAuthDeleted {
+		return false, err
+	}
+
 	q := `
 	delete from employee where id = ?;
 	`
-
-	_, err := db.Exec(q, id)
+	_, err = db.Exec(q, id)
 	if err != nil {
 		return false, err
 	}

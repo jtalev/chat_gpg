@@ -89,3 +89,16 @@ func PutEmployeeAuth(employeeAuth domain.EmployeeAuth, db *sql.DB) (domain.Emplo
 	}
 	return outEmployeeAuth, nil
 }
+
+func DeleteEmployeeAuth(id int, db *sql.DB) (bool, error) {
+	q := `
+	delete from employee_auth where auth_id = ?;
+	`
+
+	_, err := db.Exec(q, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}

@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"strconv"
 
+	"github.com/badoux/checkmail"
+	"github.com/nyaruka/phonenumbers"
 	"go.uber.org/zap"
 )
 
@@ -43,8 +45,7 @@ type EmployeeErrors struct {
 	LastNameErr    string
 	EmailErr       string
 	PhoneNumberErr string
-	UsernameErr    string
-	PasswordErr    string
+	IsAdminErr     string
 	IsSuccessful   bool
 }
 
@@ -62,12 +63,24 @@ func (e *Employee) Validate() EmployeeErrors {
 	errors = e.validateLastName(errors)
 	errors = e.validateEmail(errors)
 	errors = e.validatePhoneNumber(errors)
+	errors = e.validateIsAdmin(errors)
 	return errors
 }
 
 func (e *Employee) validateEmployeeId(errors EmployeeErrors) EmployeeErrors {
 	if len(e.EmployeeId) <= 0 {
 		errors.EmployeeIdErr = "*required"
+		errors.IsSuccessful = false
+		return errors
+	}
+	_, err := strconv.Atoi(e.EmployeeId)
+	if err != nil {
+		errors.EmployeeIdErr = "*must only contain numerical characters"
+		errors.IsSuccessful = false
+		return errors
+	}
+	if len(e.EmployeeId) != 7 {
+		errors.EmployeeIdErr = "*must be 7 characters long"
 		errors.IsSuccessful = false
 		return errors
 	}
@@ -98,12 +111,38 @@ func (e *Employee) validateEmail(errors EmployeeErrors) EmployeeErrors {
 		errors.IsSuccessful = false
 		return errors
 	}
+	err := checkmail.ValidateFormat(e.Email)
+	if err != nil {
+		errors.EmailErr = "*invalid format"
+		errors.IsSuccessful = false
+		return errors
+	}
 	return errors
 }
 
 func (e *Employee) validatePhoneNumber(errors EmployeeErrors) EmployeeErrors {
 	if len(e.PhoneNumber) <= 0 {
 		errors.PhoneNumberErr = "*required"
+		errors.IsSuccessful = false
+		return errors
+	}
+	num, err := phonenumbers.Parse(e.PhoneNumber, "AU")
+	if err != nil {
+		errors.PhoneNumberErr = "*contains invalid characters"
+		errors.IsSuccessful = false
+		return errors
+	}
+	if !phonenumbers.IsValidNumber(num) {
+		errors.PhoneNumberErr = "*invalid phone number"
+		errors.IsSuccessful = false
+		return errors
+	}
+	return errors
+}
+
+func (e *Employee) validateIsAdmin(errors EmployeeErrors) EmployeeErrors {
+	if e.IsAdmin != true && e.IsAdmin != false {
+		errors.IsAdminErr = "*required"
 		errors.IsSuccessful = false
 		return errors
 	}
@@ -130,6 +169,11 @@ func (e *EmployeeAuth) validateUsername(errors EmployeeAuthErrors) EmployeeAuthE
 func (e *EmployeeAuth) validatePassword(errors EmployeeAuthErrors) EmployeeAuthErrors {
 	if len(e.PasswordHash) <= 0 {
 		errors.PasswordErr = "*required"
+		errors.IsSuccessful = false
+		return errors
+	}
+	if len(e.PasswordHash) >= 0 && len(e.PasswordHash) <= 7 {
+		errors.PasswordErr = "*password must be at least 8 characters long"
 		errors.IsSuccessful = false
 		return errors
 	}
@@ -194,9 +238,14 @@ func (j *Job) validateName(errors JobErrors) JobErrors {
 }
 
 func (j *Job) validateNumber(errors JobErrors) JobErrors {
-	if len(j.Address) <= 0 {
+	if strconv.Itoa(j.Number) == "0" {
 		errors.IsSuccessful = false
 		errors.NumberErr = "*required"
+		return errors
+	}
+	if strconv.Itoa(j.Number) < "0" {
+		errors.IsSuccessful = false
+		errors.NumberErr = "*invalid"
 		return errors
 	}
 	return errors
