@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 
 	"github.com/gorilla/sessions"
+	application "github.com/jtalev/chat_gpg/application/services"
 	domain "github.com/jtalev/chat_gpg/domain/models"
 	infrastructure "github.com/jtalev/chat_gpg/infrastructure/repository"
 
@@ -229,9 +230,8 @@ func (h *Handler) ServeJobsView() http.Handler {
 }
 
 type LeaveViewData struct {
-	Employee      domain.Employee
 	LeaveRequests []domain.LeaveRequest
-	DateError     string
+	LeaveFormDto  application.LeaveFormDto
 }
 
 func (h *Handler) ServeLeaveView() http.Handler {
@@ -251,6 +251,13 @@ func (h *Handler) ServeLeaveView() http.Handler {
 				return
 			}
 
+			leaveFormDto := application.LeaveFormDto{
+				EmployeeId: employee.EmployeeId,
+				FirstName:  employee.FirstName,
+				LastName:   employee.LastName,
+				DateErr:    "",
+			}
+
 			leaveRequests, err := infrastructure.GetLeaveRequestsByEmployee(employeeId, h.DB)
 			if err != nil {
 				h.Logger.Errorf("Error getting leave page data: %v", err)
@@ -259,9 +266,8 @@ func (h *Handler) ServeLeaveView() http.Handler {
 			}
 
 			data := LeaveViewData{
-				Employee:      employee,
+				LeaveFormDto:  leaveFormDto,
 				LeaveRequests: leaveRequests,
-				DateError:     "",
 			}
 
 			component := "leave"

@@ -1,56 +1,85 @@
 {{ define "leaveForm" }}
-<p class="leaveRequestHeading">Leave request</p>
-<form hx-post="/leave/post" hx-target=".error" hx-swap="innerHtml" id="leaveForm">
-    <div class="inputDiv">
-        <label for="name">Name</label>
-        <input 
-        type="text" 
-        class="formInput" 
-        id="leaveNameFormInput" 
-        id="name" 
-        name="name" 
-        readonly
-        style="background-color: var(--main-background-color)" 
-        value="{{ .Employee.FirstName }} {{ .Employee.LastName }}">
+<div class="form-container" id="leave-form-container">
+    <div class="form-header">
+        <p>Leave Request</p>
     </div>
-    <div class="inputDiv">
-        <label for="type">Type</label>
-        <select name="type" class="formInput" id="type">
-            <option value="annual">annual</option>
-            <option value="sick">sick</option>
-            <option value="stress">stress</option>
-            <option value="carers">carers</option>
-            <option value="unpaid">unpaid</option>
-        </select>
-    </div>
-    <div>
-        <div id="leaveDateContainer">
-            <div class="inputDiv">
-                <label for="from">From</label>
-                <input type="date" class="dateInput" id="from" name="from">
+    <form 
+    hx-post="/leave/post" 
+    hx-target="#leaveRequestContent"
+    hx-swap="innerHtml" 
+    class="form" 
+    id="leave-form">
+        <div class="form-row-container">
+            <div class="form-label-container">
+                <label class="form-label" for="name">Name:</label>
             </div>
-            <div class="inputDiv">
-                <label for="to">To</label>
-                <input type="date" class="dateInput" id="to" name="to">
+            <div class="form-input-container">
+                <input 
+                type="text" 
+                class="form-input" 
+                id="name" 
+                name="name" 
+                readonly
+                style="background-color: var(--main-background-color)" 
+                value="{{ .LeaveFormDto.FirstName }} {{ .LeaveFormDto.LastName }}">
+            </div>
+            <div class="error-container">
             </div>
         </div>
-        <div class="error"></div>    
-    </div>
-    <div class="inputDiv">
-        <label for="note">Note</label>
-        <textarea type="text" class="formInput" id="note" name="note"></textarea>
-    </div>
-    <div id="leaveFormButtons">
-        <button type="reset" id="leaveFormCancelBtn" class="leaveBtn" form="leaveForm" onclick="onLeaveFormReset()">Cancel</button>
-        <button type="submit" id="leaveFormSubmitBtn" class="leaveBtn" form="leaveForm">SUBMIT</button>
-    </div>
-</form>
-<div id="leave-submit-alert-container">
-    <div id="leave-submit-alert">
-        <div id="leave-submit-alert-text">
-            Leave request submitted successfully!
+        <div class="form-row-container">
+            <div class="form-label-container">
+                <label class="form-label" for="type">Type:</label>
+            </div>
+            <div class="form-input-container">
+                <select name="type" class="form-input" id="type">
+                    <option value="annual">annual</option>
+                    <option value="sick">sick</option>
+                    <option value="stress">stress</option>
+                    <option value="carers">carers</option>
+                    <option value="unpaid">unpaid</option>
+                </select>
+            </div>
+            <div class="error-container">
+            </div>
         </div>
-        <button type="reset" form="leaveForm" id="leave-submit-alert-reset-btn" onclick="onLeaveFormReset()">Reset</button>
-    </div>
+        <div class="form-row-container">
+            <div class="form-label-container">
+                <label class="form-label" for="from">Start Date:</label>
+            </div>
+            <div class="form-input-container">
+                <input type="date" class="form-input" id="from" name="from">
+            </div>
+            <div class="error-container">
+            </div>
+        </div>
+        <div class="form-row-container">
+            <div class="form-label-container">
+                <label class="form-label" for="to">End Date:</label>
+            </div>
+            <div class="form-input-container">
+                <input type="date" class="form-input" id="to" name="to">
+            </div>
+            <div class="error-container">
+                {{ .LeaveFormDto.DateErr }}
+            </div>
+        </div>
+        <div class="form-row-container">
+            <div class="form-label-container">
+                <label class="form-label" for="Note">Note:</label>
+            </div>
+            <div class="form-textarea-container">
+                <textarea type="text" class="form-input" id="note" name="note"></textarea>
+            </div>
+            <div class="error-container">
+            </div>
+        </div>
+        <div class="success-msg-container">
+                {{ .LeaveFormDto.SuccessMsg }}
+            </div>
+        <div class="form-btn-container">
+            <button type="reset" id="leave-form-cancel-btn" class="gpg-close-btn" form="leave-form" onclick="onLeaveFormReset()">Cancel</button>
+            <button type="submit" id="leave-form-submit-btn" class="gpg-submit-btn" form="leave-form">SUBMIT</button>
+        </div>
+    </form>
 </div>
 {{ end }}

@@ -283,17 +283,6 @@ ul {
     justify-content: center;
 }
 
-.form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    max-width: 300px;
-    font-size: small;
-}
-
-
 form {
     display: flex;
     flex-direction: column;
@@ -403,6 +392,16 @@ form input {
     align-items: center;
     margin: 0;
     cursor: pointer;
+}
+
+.login-form-container {
+    width: 95%;
+    height: 100%;
+    max-width: 300px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .loginFormInput {
@@ -523,6 +522,86 @@ form input {
     justify-content: center;
     align-items: center;
     font-size: smaller;
+}
+
+
+.form-container {
+    width: 100%;
+    height: 95%;
+    display: flex;
+    max-width: 800px;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.form-header {
+    width: 100%;
+    height: 40px;
+    border-bottom: var(--timesheet-border) solid 1px;
+    font-size: large;
+}
+
+.form-content-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    margin: 0;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-grow: 1;
+}
+
+.form-row-container{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-textarea-container {
+    width: 100%;
+    height: 60px;
+}
+
+.form-label-container {
+    width: 100%;
+    height: 20px;
+}
+
+.form-input-container {
+    width: 100%;
+    height: 25px;
+}
+
+.form-label {
+    width: 100%;
+    height: 100%;
+}
+
+.form-input {
+    width: 100%;
+    border-radius: 0;
+    border: solid 1px var(--timesheet-border);
+    font-size: small;
+    margin: 0;
+    padding: 5px;
+    box-sizing: border-box;
+    color: var(--main-color);
+}
+
+.form-btn-container {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 15px;
 }
 
 /***** timesheets *****/
@@ -1140,70 +1219,15 @@ input::-webkit-inner-spin-button {
     border-bottom: solid var(--gpg-green) 1px;
     background-color: white;
     overflow-y: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .leaveContent {
-    margin: 0 3% 0 3%;
-    height: 84%;
-
-}
-
-.leaveRequestHeading {
-    font-size: large;
-    width: 100%;
-    border-bottom: var(--form-input-border-color) solid 1px;
-}
-
-#leaveForm {
-    width: 100%;
-    row-gap: 2em;
-}
-
-#leaveDateContainer {
+    width: 95%;
+    height: 95%;
     display: flex;
-    column-gap: 2%;
-}
-
-#leaveFormButtons {
-    display: flex;
-    margin-bottom: 1em;
-}
-
-.inputDiv {
-    display: flex;
-    flex-direction: column;
-    row-gap: 0.5em;
-    color: black;
-    margin: 0;
-    padding: 0;
-}
-
-.formInput {
-    border: var(--form-input-border-color) solid 1px;
-    border-radius: 0%;
-    font-size: 1em;
-    color: var(--main-color);
-    padding: 5px;
-    margin: 0;
-    width: 99%;
-    height: 30px;
-}
-
-.formInput select {
-    width: 100%;
-}
-
-#leaveNameFormInput:focus {
-    border: var(--form-input-border-color) solid 1px;
-    outline: none;
-}
-
-.dateInput {
-    border: var(--form-input-border-color) solid 1px;
-    border-radius: 0%;
-    font-size: 1em;
-    color: var(--main-color);
-    padding: 0.5em;
 }
 
 #note {
@@ -1215,20 +1239,6 @@ input::-webkit-inner-spin-button {
     justify-content: flex-end;
     column-gap: 1em;
     align-items: flex-end;
-}
-
-#leaveFormCancelBtn {
-    background-color: white;
-    border: solid 1px var(--gpg-green);
-    color: var(--gpg-green);
-    height: 1.5em;
-}
-
-#leaveFormSubmitBtn {
-    background-color: var(--gpg-green);
-    border: none;
-    color: white;
-    height: 2em;
 }
 
 #leave-submit-alert-container {
@@ -1263,6 +1273,15 @@ input::-webkit-inner-spin-button {
 }
 
 #employee-leave-history-container {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#leave-history-container {
     width: 100%;
     height: 100%;
     overflow-y: auto;
@@ -1456,7 +1475,7 @@ input::-webkit-inner-spin-button {
     display: flex;
     align-items: center;
     padding-left: 5px;
-    max-width: 600px;
+    max-width: 800px;
 }
 
 .admin-job-row-text {
@@ -1696,7 +1715,7 @@ input::-webkit-inner-spin-button {
     display: flex;
     align-items: center;
     padding-left: 5px;
-    max-width: 600px;
+    max-width: 800px;
 }
 
 .admin-employee-row-text {
@@ -2045,7 +2064,7 @@ input::-webkit-inner-spin-button {
 .admin-leave-request-row {
     height: 2.3em;
     width: 99.5%;
-    max-width: 600px;
+    max-width: 800px;
     border: solid 1px var(--timesheet-border);
     background-color: var(--light-background-color);
     display: flex;

@@ -15,25 +15,25 @@ function onLeaveSelectorClick() {
             switch (this.textContent.trim()) {
                 case "REQUEST":
                     leaveContentElement = document.querySelector("#leaveRequestContent")
-                    leaveContentElement.style.display = "block"
+                    leaveContentElement.style.display = "flex"
                     break
                 case "HISTORY":
                     leaveContentElement = document.querySelector("#leaveHistoryContent")
-                    leaveContentElement.style.display = "block"
+                    leaveContentElement.style.display = "flex"
                     break
             }
         })
     })
 }
 
-document.getElementById("leaveForm").addEventListener("htmx:afterSwap", function(event) {
+document.getElementById("leave-form").addEventListener("htmx:afterSwap", function(event) {
     console.log("after swap")
     onLeaveFormSubmit()
 })
 
 function onLeaveFormSubmit() {
-    const submitBtn = document.getElementById("leaveFormSubmitBtn")
-    const cancelBtn = document.getElementById("leaveFormCancelBtn")
+    const submitBtn = document.getElementById("leave-form-submit-btn")
+    const cancelBtn = document.getElementById("leave-form-cancel-btn")
     const error = document.querySelector(".error")
     let isFormValid = true
     
@@ -55,8 +55,8 @@ function onLeaveFormSubmit() {
 }
 
 function onLeaveFormReset() {
-    const submitBtn = document.getElementById("leaveFormSubmitBtn")
-    const cancelBtn = document.getElementById("leaveFormCancelBtn")
+    const submitBtn = document.getElementById("leave-form-submit-btn")
+    const cancelBtn = document.getElementById("leave-form-cancel-btn")
     const errors = document.querySelector(".error")
 
     const leaveSubmitAlert = document.getElementById("leave-submit-alert-container").style.display = "none"

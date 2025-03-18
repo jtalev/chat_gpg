@@ -141,3 +141,51 @@ func AdminUpdateLeaveRequest(idStr, isApprovedStr string, db *sql.DB) (domain.Le
 
 	return outLr, nil
 }
+
+type LeaveFormDto struct {
+	RequestId  string
+	EmployeeId string
+	FirstName  string
+	LastName   string
+	Type       string
+	From       string
+	To         string
+	Note       string
+	IsPending  string
+	IsApproved string
+	DateErr    string
+	SuccessMsg string
+}
+
+func mapLeaveDtoToLeaveRequest(leaveFormDto LeaveFormDto) domain.LeaveRequest {
+	leaveRequest := domain.LeaveRequest{
+		EmployeeId: leaveFormDto.EmployeeId,
+		Type:       leaveFormDto.Type,
+		From:       leaveFormDto.From,
+		To:         leaveFormDto.To,
+		Note:       leaveFormDto.Note,
+	}
+
+	return leaveRequest
+}
+
+func PostLeaveRequest(leaveFormDto LeaveFormDto, db *sql.DB) (LeaveFormDto, error) {
+	leaveRequest := mapLeaveDtoToLeaveRequest(leaveFormDto)
+
+	errors, err := leaveRequest.Validate()
+	if err != nil {
+		return leaveFormDto, err
+	}
+
+	if !errors.IsSuccessful {
+		leaveFormDto.DateErr = errors.DateErr
+		return leaveFormDto, nil
+	} else {
+		leaveRequest, err = infrastructure.PostLeaveRequest(leaveRequest, db)
+		if err != nil {
+			return leaveFormDto, err
+		}
+		leaveFormDto.SuccessMsg = "Leave request posted successfully."
+		return leaveFormDto, nil
+	}
+}

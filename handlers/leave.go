@@ -101,10 +101,17 @@ func (h *Handler) RenderLeaveFormTab() http.Handler {
 				return
 			}
 
-			type Data struct {
-				Employee domain.Employee
+			leaveFormDto := application.LeaveFormDto{
+				EmployeeId: employee.EmployeeId,
+				FirstName:  employee.FirstName,
+				LastName:   employee.LastName,
+				DateErr:    "",
 			}
-			outData := Data{Employee: employee}
+
+			type Data struct {
+				LeaveFormDto application.LeaveFormDto
+			}
+			outData := Data{LeaveFormDto: leaveFormDto}
 
 			err = tmpl.ExecuteTemplate(w, "leaveForm", outData)
 			if err != nil {
@@ -224,18 +231,17 @@ func validateLeaveRequest(lr domain.LeaveRequest) ([]domain.ValidationResult, er
 func (h *Handler) PostLeaveRequest() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			log.Println("posting leave request")
-			err := r.ParseForm()
-			if err != nil {
-				h.Logger.Errorf("Error parsing form: %v", err)
-				http.Error(w, "Bad request", http.StatusBadRequest)
-				return
-			}
-
 			employeeId, ok := r.Context().Value("employee_id").(string)
 			if !ok {
 				h.Logger.Error("Error getting employee_id from context")
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			err := r.ParseForm()
+			if err != nil {
+				h.Logger.Errorf("Error parsing form: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
 			leaveType := r.FormValue("type")
@@ -243,7 +249,7 @@ func (h *Handler) PostLeaveRequest() http.Handler {
 			to := r.FormValue("to")
 			note := r.FormValue("note")
 
-			leaveRequest := domain.LeaveRequest{
+			leaveDto := application.LeaveFormDto{
 				EmployeeId: employeeId,
 				Type:       leaveType,
 				From:       from,
@@ -251,25 +257,24 @@ func (h *Handler) PostLeaveRequest() http.Handler {
 				Note:       note,
 			}
 
-			result, err := validateLeaveRequest(leaveRequest)
+			leaveDto, err = application.PostLeaveRequest(leaveDto, h.DB)
 			if err != nil {
-				h.Logger.Errorf("Error validating leave request: %v", err)
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
-				return
-			}
-			if len(result) > 0 {
-				fmt.Fprint(w, result[0].Msg)
-				return
-			}
-
-			_, err = infrastructure.PostLeaveRequest(leaveRequest, h.DB)
-			if err != nil {
-				h.Logger.Errorf("Error posting leave request: %v", err)
+				log.Printf("Error posting leave request: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
 
-			fmt.Fprint(w, "")
+			type Data struct {
+				LeaveFormDto application.LeaveFormDto
+			}
+			outData := Data{LeaveFormDto: leaveDto}
+
+			err = executePartialTemplate(leaveFormPath, "leaveForm", outData, w)
+			if err != nil {
+				log.Println("Error executing template:", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
 		},
 	)
 }

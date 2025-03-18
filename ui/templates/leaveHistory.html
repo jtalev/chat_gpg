@@ -1,39 +1,40 @@
 {{ define "leaveHistory" }}
-<p class="leaveRequestHeading">Leave history</p>
-<div id="employee-leave-history-container">
-    <div class="employee-leave-container">
-        <div class="employee-leave-container-header" id="pending">
-            <span class="header-arrow" id="pending-arrow"><img src="../static/img/nav-down-arrow.svg"></span>
-            Pending
+<div id="leave-history-container">
+    <div id="employee-leave-history-container">
+        <div class="employee-leave-container">
+            <div class="employee-leave-container-header" id="pending">
+                <span class="header-arrow" id="pending-arrow"><img src="../static/img/nav-down-arrow.svg"></span>
+                Pending
+            </div>
+            <div class="employee-leave-list-container" id="leave-pending-requests">
+                {{ range .Pending }}
+                    {{ template "employeeLeaveRequest" . }}
+                {{ end }}
+            </div>
         </div>
-        <div class="employee-leave-list-container" id="leave-pending-requests">
-            {{ range .Pending }}
-                {{ template "employeeLeaveRequest" . }}
-            {{ end }}
+        <div class="employee-leave-container">
+            <div class="employee-leave-container-header" id="approved">
+                <span class="header-arrow" id="approved-arrow"><img src="../static/img/nav-down-arrow.svg"></span>
+                Approved
+            </div>
+            <div class="employee-leave-list-container" id="leave-approved-requests">
+                {{ range .Approved }}
+                    {{ template "employeeLeaveRequest" . }}
+                {{ end }}
+            </div>
+        </div>
+        <div class="employee-leave-container">
+            <div class="employee-leave-container-header" id="denied">
+                <span class="header-arrow" id="denied-arrow"><img src="../static/img/nav-down-arrow.svg"></span>
+                Denied
+            </div>
+            <div class="employee-leave-list-container" id="leave-denied-requests">
+                {{ range .Denied }}
+                    {{ template "employeeLeaveRequest" . }}
+                {{ end }}
+            </div>
         </div>
     </div>
-    <div class="employee-leave-container">
-        <div class="employee-leave-container-header" id="approved">
-            <span class="header-arrow" id="approved-arrow"><img src="../static/img/nav-down-arrow.svg"></span>
-            Approved
-        </div>
-        <div class="employee-leave-list-container" id="leave-approved-requests">
-            {{ range .Approved }}
-                {{ template "employeeLeaveRequest" . }}
-            {{ end }}
-        </div>
-    </div>
-    <div class="employee-leave-container">
-        <div class="employee-leave-container-header" id="denied">
-            <span class="header-arrow" id="denied-arrow"><img src="../static/img/nav-down-arrow.svg"></span>
-            Denied
-        </div>
-        <div class="employee-leave-list-container" id="leave-denied-requests">
-            {{ range .Denied }}
-                {{ template "employeeLeaveRequest" . }}
-            {{ end }}
-        </div>
-    </div>
-</div>	
+</div>
 <div id="employee-leave-modal-container"></div>
 {{ end }}
