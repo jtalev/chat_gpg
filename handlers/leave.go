@@ -228,6 +228,8 @@ func validateLeaveRequest(lr domain.LeaveRequest) ([]domain.ValidationResult, er
 	return results, nil
 }
 
+var postLeaveKeys = []string{"type", "from", "to", "note"}
+
 func (h *Handler) PostLeaveRequest() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -238,23 +240,19 @@ func (h *Handler) PostLeaveRequest() http.Handler {
 				return
 			}
 
-			err := r.ParseForm()
+			reqVals, err := parseRequestValues(postLeaveKeys, r)
 			if err != nil {
-				h.Logger.Errorf("Error parsing form: %v", err)
+				log.Printf("Error parsing request values: %v", err)
 				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
-			leaveType := r.FormValue("type")
-			from := r.FormValue("from")
-			to := r.FormValue("to")
-			note := r.FormValue("note")
 
 			leaveDto := application.LeaveFormDto{
 				EmployeeId: employeeId,
-				Type:       leaveType,
-				From:       from,
-				To:         to,
-				Note:       note,
+				Type:       reqVals[0],
+				From:       reqVals[1],
+				To:         reqVals[2],
+				Note:       reqVals[3],
 			}
 
 			leaveDto, err = application.PostLeaveRequest(leaveDto, h.DB)
@@ -264,12 +262,7 @@ func (h *Handler) PostLeaveRequest() http.Handler {
 				return
 			}
 
-			type Data struct {
-				LeaveFormDto application.LeaveFormDto
-			}
-			outData := Data{LeaveFormDto: leaveDto}
-
-			err = executePartialTemplate(leaveFormPath, "leaveForm", outData, w)
+			err = executePartialTemplate(leaveFormPath, "leaveForm", leaveDto, w)
 			if err != nil {
 				log.Println("Error executing template:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)

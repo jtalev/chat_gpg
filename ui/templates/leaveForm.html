@@ -21,7 +21,7 @@
                 name="name" 
                 readonly
                 style="background-color: var(--main-background-color)" 
-                value="{{ .LeaveFormDto.FirstName }} {{ .LeaveFormDto.LastName }}">
+                value="{{ .FirstName }} {{ .LastName }}">
             </div>
             <div class="error-container">
             </div>
@@ -60,7 +60,7 @@
                 <input type="date" class="form-input" id="to" name="to">
             </div>
             <div class="error-container">
-                {{ .LeaveFormDto.DateErr }}
+                {{ .DateErr }}
             </div>
         </div>
         <div class="form-row-container">
@@ -74,7 +74,7 @@
             </div>
         </div>
         <div class="success-msg-container">
-                {{ .LeaveFormDto.SuccessMsg }}
+                {{ .SuccessMsg }}
             </div>
         <div class="form-btn-container">
             <button type="reset" id="leave-form-cancel-btn" class="gpg-close-btn" form="leave-form" onclick="onLeaveFormReset()">Cancel</button>

@@ -2,10 +2,13 @@ package domain
 
 import (
 	"database/sql"
+	"errors"
 	"log"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/badoux/checkmail"
 	"github.com/nyaruka/phonenumbers"
@@ -191,6 +194,71 @@ type LeaveRequest struct {
 	Note       string `json:"note"`
 	IsPending  bool   `json:"is_pending"`
 	IsApproved bool   `json:"is_approved"`
+}
+
+type LeaveErrors struct {
+	DateErr      string
+	IsSuccessful bool
+}
+
+func (l *LeaveRequest) Validate() LeaveErrors {
+	errors := LeaveErrors{
+		IsSuccessful: true,
+	}
+	errors = l.validateDate(errors)
+	return errors
+}
+
+func stringToDate(date string) (time.Time, error) {
+	date = strings.TrimSpace(date)
+	dateArr := strings.Split(date, "-")
+	dateArrInt := make([]int, 3)
+
+	for i := range dateArr {
+		int, err := strconv.Atoi(dateArr[i])
+		if err != nil {
+			return time.Time{}, errors.New("Date value cannot be converted to integer")
+		}
+		dateArrInt[i] = int
+	}
+	month := time.Month(dateArrInt[1])
+	if month < time.January || month > time.December {
+		return time.Time{}, errors.New("Invalid month value")
+	}
+
+	dateObject := time.Date(dateArrInt[0], month, dateArrInt[2], 0, 0, 0, 0, time.Local)
+
+	return dateObject, nil
+}
+
+func (l *LeaveRequest) validateDate(errors LeaveErrors) LeaveErrors {
+	from, err := stringToDate(l.From)
+	if err != nil {
+		errors.DateErr = "*invalid start date format"
+		errors.IsSuccessful = false
+		return errors
+	}
+
+	to, err := stringToDate(l.To)
+	if err != nil {
+		errors.DateErr = "*invalid end date format"
+		errors.IsSuccessful = false
+		return errors
+	}
+
+	if from.Before(time.Now().AddDate(0, 0, -1)) {
+		errors.DateErr = "*start date cannot be a past date"
+		errors.IsSuccessful = false
+		return errors
+	}
+
+	if !from.Before(to) {
+		errors.DateErr = "*start date must be before end date"
+		errors.IsSuccessful = false
+		return errors
+	}
+
+	return errors
 }
 
 type Job struct {

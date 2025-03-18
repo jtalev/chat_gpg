@@ -170,18 +170,21 @@ func mapLeaveDtoToLeaveRequest(leaveFormDto LeaveFormDto) domain.LeaveRequest {
 }
 
 func PostLeaveRequest(leaveFormDto LeaveFormDto, db *sql.DB) (LeaveFormDto, error) {
-	leaveRequest := mapLeaveDtoToLeaveRequest(leaveFormDto)
-
-	errors, err := leaveRequest.Validate()
+	employee, err := infrastructure.GetEmployeeByEmployeeId(leaveFormDto.EmployeeId, db)
 	if err != nil {
 		return leaveFormDto, err
 	}
+	leaveFormDto.FirstName = employee.FirstName
+	leaveFormDto.LastName = employee.LastName
+	leaveRequest := mapLeaveDtoToLeaveRequest(leaveFormDto)
+
+	errors := leaveRequest.Validate()
 
 	if !errors.IsSuccessful {
 		leaveFormDto.DateErr = errors.DateErr
 		return leaveFormDto, nil
 	} else {
-		leaveRequest, err = infrastructure.PostLeaveRequest(leaveRequest, db)
+		_, err := infrastructure.PostLeaveRequest(leaveRequest, db)
 		if err != nil {
 			return leaveFormDto, err
 		}
