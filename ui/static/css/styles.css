@@ -1331,6 +1331,15 @@ input::-webkit-inner-spin-button {
     border-radius: 0;
  }
 
+ .employee-leave-request-info {
+    display: flex;
+    flex-grow: 1;
+}
+
+.leave-delete-container {
+
+}
+
 /** ----- admin ----- **/
 @media screen and (max-width: 1030px) {
 
@@ -1496,8 +1505,17 @@ input::-webkit-inner-spin-button {
     background-color: transparent;
     cursor: pointer;
 }
-.admin-job-delete-btn img {
-    width: 80%;
+
+@media screen and (max-width: 376px) {
+    .admin-job-delete-btn img {
+        width: 90%;
+    }
+}
+
+@media screen and (min-width: 377px) {
+    .admin-job-delete-btn img {
+        width: 80%;
+    }
 }
 
 #add-job-modal-container {
@@ -1733,6 +1751,7 @@ input::-webkit-inner-spin-button {
     border: none;
     background-color: transparent;
     cursor: pointer;
+    padding: none;
 }
 
 .admin-employee-delete-btn img {
@@ -2097,18 +2116,26 @@ input::-webkit-inner-spin-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-left: auto;
     margin-right: 10px;
     padding: 0;
 }
 
-#admin-lr-approved-icon {
+.admin-lr-pending-icon {
     width: 20px;
 }
 
-#admin-lr-denied-icon {
-    width: 23px;
+.admin-lr-approved-icon {
+    width: 17px;
+}
+
+.admin-lr-denied-icon {
+    width: 20px;
     opacity: 60%;
+}
+
+.admin-lr-info {
+    display: flex;
+    flex-grow: 1;
 }
 
 #admin-leave-modal-container {
@@ -2125,44 +2152,42 @@ input::-webkit-inner-spin-button {
 }
 
 #admin-leave-modal-content {
-    width: 90%;
+    width: 95%;
     height: 90%;
     border: solid 1px var(--gpg-green);
     background-color: white;
-    max-width: 700px;
+    max-width: 500px;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     padding-top: 2em;
-    gap: 1em;
+    gap: 15px;
 }
 
 .admin-lr-modal-icon {
-    width: 50px;
+    width: 30px;
     padding: 0;
     margin: 0;
 }
 
 #admin-lr-modal-form {
-    width: 90%;
-    height: 60%;
+    width: 95%;
+    max-width: 450px;
     display: flex;
     justify-content: center;
     align-items: flex-start;
-    max-width: 550px;
-    max-height: 750px;
 }
 
-@media screen and (max-width: 365px) {
+@media screen and (max-width: 376px) {
     #admin-lr-modal-label-container {
         height: 100%;
-        width: 35%;
+        width: 30%;
         padding-right: 5px;
         display: flex;
         flex-direction: column;
         gap: 15px;
-        font-size: smaller;
+        font-size: small;
     }
 
     #admin-lr-modal-value-container {
@@ -2171,43 +2196,52 @@ input::-webkit-inner-spin-button {
         display: flex;
         flex-direction: column;
         gap: 15px;
-        font-size: smaller;
+        font-size: small;
     }
 }
 
-#admin-lr-modal-label-container {
-    height: 100%;
-    width: 35%;
-    padding-right: 5px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
+@media screen and (min-width: 377px) {
+    #admin-lr-modal-label-container {
+        height: 100%;
+        width: 25%;
+        padding-right: 5px;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        font-size: small;
+    }
 
-#admin-lr-modal-value-container {
-    height: 100%;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    #admin-lr-modal-value-container {
+        height: 100%;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        font-size: small;
+    }
+
 }
 
 .admin-lr-modal-row {
     padding: 0;
     margin: 0;
     width: 100%;
-    height: 10%;
+    height: 30px;
     display: flex;
     align-items: flex-end;
 }
 
 .admin-lr-modal-label {
-    justify-content: flex-end;
+    justify-content: flex-start;
+    align-items: center;
 }
 
 .admin-lr-modal-value {
-    justify-content: center;
-    border-bottom: var(--gpg-green) solid 1px;
+    justify-content: flex-start;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 5px;
+    border: var(--timesheet-border) solid 1px;
 }
 
 #admin-lr-modal-btn-container {
@@ -2230,8 +2264,8 @@ input::-webkit-inner-spin-button {
 .admin-lr-modal-approvedeny-btn {
     background-color: transparent;
     width: 50%;
-    height: 3em;
-    font-size: 16px;
+    height: 30px;
+    font-size: small;
     border: none;
 }
 

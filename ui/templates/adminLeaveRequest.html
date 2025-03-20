@@ -9,15 +9,17 @@ hx-vals='{
 	"id":"{{ .RequestId }}"
 }'
 onclick="onLeaveRequestClick()">
-	<p class="admin-lr-row-name">{{ .FirstName }} {{ .LastName }} | </p>
-	<p class="admin-lr-row-dates">{{ .From }} - {{ .To }} | </p>
-	<p class="admin-lr-row-dates">{{ .Type }}</p>
+	<div class="admin-lr-info">
+		<p class="admin-lr-row-name">{{ .FirstName }} {{ .LastName }} | </p>
+		<p class="admin-lr-row-dates">{{ .From }} - {{ .To }} | </p>
+		<p class="admin-lr-row-dates">{{ .Type }}</p>
+	</div>
 	{{ if and .IsPending (not .IsApproved) }}
-	<div class="admin-lr-icon"><img src="../static/img/pending.svg"></div>
+	<div class="admin-lr-icon"><img class="admin-lr-pending-icon" src="../static/img/pending.svg"></div>
 	{{ else if and (not .IsPending) .IsApproved }}
-	<div class="admin-lr-icon"><img id="admin-lr-approved-icon" src="../static/img/approved.svg"></div>
+	<div class="admin-lr-icon"><img class="admin-lr-approved-icon" src="../static/img/approved.svg"></div>
 	{{ else if and (not .IsPending) (not .IsApproved) }}
-	<div class="admin-lr-icon"><img id="admin-lr-denied-icon" src="../static/img/denied.svg"></div>
+	<div class="admin-lr-icon"><img class="admin-lr-denied-icon" src="../static/img/denied.svg"></div>
 	{{ end }}
 </div>
 {{ end }}

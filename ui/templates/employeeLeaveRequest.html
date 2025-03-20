@@ -1,23 +1,52 @@
 {{ define "employeeLeaveRequest" }}
 <div 
-class="admin-leave-request-row"
-hx-get="/leave/leave-request-modal"
-hx-trigger="click"
-hx-target="#employee-leave-modal-container"
-hx-swap="innerHTML"
-hx-vals='{
-	"id":"{{ .RequestId }}"
-}'
-onclick="onLeaveRequestClick()">
-	<p class="admin-lr-row-name">{{ .FirstName }} {{ .LastName }} | </p>
-	<p class="admin-lr-row-dates">{{ .From }} - {{ .To }} | </p>
-	<p class="admin-lr-row-dates">{{ .Type }}</p>
+class="admin-leave-request-row">
+	<div
+	class="employee-leave-request-info"
+	hx-get="/leave/leave-request-modal"
+	hx-trigger="click"
+	hx-target="#employee-leave-modal-container"
+	hx-swap="innerHTML"
+	hx-vals='{
+		"id":"{{ .RequestId }}"
+	}'
+	onclick="onLeaveRequestClick()">
+		<p class="admin-lr-row-name">{{ .FirstName }} {{ .LastName }} | </p>
+		<p class="admin-lr-row-dates">{{ .From }} - {{ .To }} | </p>
+		<p class="admin-lr-row-dates">{{ .Type }}</p>
+	</div>
 	{{ if and .IsPending (not .IsApproved) }}
-	<div class="admin-lr-icon"><img src="../static/img/pending.svg"></div>
+	<div class="leave-delete-container">
+		<button
+		class="admin-employee-delete-btn"
+		hx-delete="/leave/delete"
+		hx-trigger="click"
+		hx-target="closest .admin-leave-request-row"
+		hx-swap="delete"
+		hx-vals='{
+			"id": {{ .RequestId }}
+		}'>
+			<img src="../static/img/delete.svg" />
+		</button>
+	</div>
+	<div class="admin-lr-icon"><img class="admin-lr-pending-icon" src="../static/img/pending.svg"></div>
 	{{ else if and (not .IsPending) .IsApproved }}
-	<div class="admin-lr-icon"><img id="admin-lr-approved-icon" src="../static/img/approved.svg"></div>
+	<div class="admin-lr-icon"><img class="admin-lr-approved-icon" src="../static/img/approved.svg"></div>
 	{{ else if and (not .IsPending) (not .IsApproved) }}
-	<div class="admin-lr-icon"><img id="admin-lr-denied-icon" src="../static/img/denied.svg"></div>
+	<div class="leave-delete-container">
+		<button
+		class="admin-employee-delete-btn"
+		hx-delete="/leave/delete"
+		hx-trigger="click"
+		hx-target="closest .admin-leave-request-row"
+		hx-swap="delete"
+		hx-vals='{
+			"id": {{ .RequestId }}
+		}'>
+			<img src="../static/img/delete.svg" />
+		</button>
+	</div>
+	<div class="admin-lr-icon"><img class="admin-lr-denied-icon" src="../static/img/denied.svg"></div>
 	{{ end }}
 </div>
 {{ end }}
