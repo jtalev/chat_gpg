@@ -1,15 +1,17 @@
 {{ define "reportEmployeeLeaveRequest" }}
 <div class="report-leave-request-row" onclick="onLeaveRequestClick(event)">
   <div class="report-leave-request-row-unclicked">
-    <p class="admin-lr-row-name">{{ .FirstName }} {{ .LastName }} | </p>
-    <p class="admin-lr-row-dates">{{ .From }} - {{ .To }} | </p>
-    <p class="admin-lr-row-dates">{{ .Type }}</p>
+    <div class="employee-leave-request-info">
+      <p class="admin-lr-row-name">{{ .FirstName }} {{ .LastName }} | </p>
+      <p class="admin-lr-row-dates">{{ .From }} - {{ .To }} | </p>
+      <p class="admin-lr-row-dates">{{ .Type }}</p>
+    </div>
     {{ if and .IsPending (not .IsApproved) }}
-    <div class="admin-lr-icon"><img src="../static/img/pending.svg"></div>
+    <div class="admin-lr-icon"><img class="admin-lr-pending-icon" src="../static/img/pending.svg"></div>
     {{ else if and (not .IsPending) .IsApproved }}
-    <div class="admin-lr-icon"><img id="admin-lr-approved-icon" src="../static/img/approved.svg"></div>
+    <div class="admin-lr-icon"><img class="admin-lr-approved-icon" src="../static/img/approved.svg"></div>
     {{ else if and (not .IsPending) (not .IsApproved) }}
-    <div class="admin-lr-icon"><img id="admin-lr-denied-icon" src="../static/img/denied.svg"></div>
+    <div class="admin-lr-icon"><img class="admin-lr-denied-icon" src="../static/img/denied.svg"></div>
     {{ end }}
   </div>
   <div class="report-leave-request-row-expanded">
@@ -53,7 +55,7 @@
         {{ .Note }}
       </div>
     </div>
-  	<div class="admin-lr-icon"><img id="admin-lr-approved-icon" src="../static/img/approved.svg"></div>
+  	<div class="admin-lr-icon"><img class="admin-lr-approved-icon" src="../static/img/approved.svg"></div>
   </div>
 </div>
 {{ end }}

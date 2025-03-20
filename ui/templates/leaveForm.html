@@ -47,7 +47,7 @@
                 <label class="form-label" for="from">Start Date:</label>
             </div>
             <div class="form-input-container">
-                <input type="date" class="form-input" id="from" name="from">
+                <input type="date" class="form-input" id="from" name="from" value="{{ .From }}">
             </div>
             <div class="error-container">
             </div>
@@ -57,7 +57,7 @@
                 <label class="form-label" for="to">End Date:</label>
             </div>
             <div class="form-input-container">
-                <input type="date" class="form-input" id="to" name="to">
+                <input type="date" class="form-input" id="to" name="to" value="{{ .To }}">
             </div>
             <div class="error-container">
                 {{ .DateErr }}
@@ -68,14 +68,14 @@
                 <label class="form-label" for="Note">Note:</label>
             </div>
             <div class="form-textarea-container">
-                <textarea type="text" class="form-input" id="note" name="note"></textarea>
+                <textarea type="text" class="form-input" id="note" name="note">{{ .Note }}</textarea>
             </div>
             <div class="error-container">
             </div>
         </div>
         <div class="success-msg-container">
-                {{ .SuccessMsg }}
-            </div>
+                <p>{{ .SuccessMsg }}</p>
+        </div>
         <div class="form-btn-container">
             <button type="reset" id="leave-form-cancel-btn" class="gpg-close-btn" form="leave-form" onclick="onLeaveFormReset()">Cancel</button>
             <button type="submit" id="leave-form-submit-btn" class="gpg-submit-btn" form="leave-form">SUBMIT</button>
