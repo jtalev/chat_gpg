@@ -169,6 +169,21 @@ func mapLeaveDtoToLeaveRequest(leaveFormDto LeaveFormDto) domain.LeaveRequest {
 	return leaveRequest
 }
 
+func getPendingApprovedLeave(employeeId string, db *sql.DB) ([]domain.LeaveRequest, error) {
+	outRequests := []domain.LeaveRequest{}
+	pastRequests, err := infrastructure.GetLeaveRequestsByEmployee(employeeId, db)
+	if err != nil {
+		return nil, err
+	}
+	for _, lr := range pastRequests {
+		if lr.IsPending == false && lr.IsApproved == false {
+			continue
+		}
+		outRequests = append(outRequests, lr)
+	}
+	return outRequests, nil
+}
+
 func PostLeaveRequest(leaveFormDto LeaveFormDto, db *sql.DB) (LeaveFormDto, error) {
 	employee, err := infrastructure.GetEmployeeByEmployeeId(leaveFormDto.EmployeeId, db)
 	if err != nil {
@@ -177,8 +192,12 @@ func PostLeaveRequest(leaveFormDto LeaveFormDto, db *sql.DB) (LeaveFormDto, erro
 	leaveFormDto.FirstName = employee.FirstName
 	leaveFormDto.LastName = employee.LastName
 	leaveRequest := mapLeaveDtoToLeaveRequest(leaveFormDto)
+	pastRequests, err := getPendingApprovedLeave(leaveFormDto.EmployeeId, db)
+	if err != nil {
+		return leaveFormDto, err
+	}
 
-	errors := leaveRequest.Validate()
+	errors := leaveRequest.Validate(pastRequests)
 
 	if !errors.IsSuccessful {
 		leaveFormDto.DateErr = errors.DateErr

@@ -108,12 +108,7 @@ func (h *Handler) RenderLeaveFormTab() http.Handler {
 				DateErr:    "",
 			}
 
-			type Data struct {
-				LeaveFormDto application.LeaveFormDto
-			}
-			outData := Data{LeaveFormDto: leaveFormDto}
-
-			err = tmpl.ExecuteTemplate(w, "leaveForm", outData)
+			err = tmpl.ExecuteTemplate(w, "leaveForm", leaveFormDto)
 			if err != nil {
 				log.Println("Error executing template:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)

@@ -3,7 +3,6 @@ package domain
 import (
 	"database/sql"
 	"errors"
-	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -201,11 +200,11 @@ type LeaveErrors struct {
 	IsSuccessful bool
 }
 
-func (l *LeaveRequest) Validate() LeaveErrors {
+func (l *LeaveRequest) Validate(pastRequests []LeaveRequest) LeaveErrors {
 	errors := LeaveErrors{
 		IsSuccessful: true,
 	}
-	errors = l.validateDate(errors)
+	errors = l.validateDate(errors, pastRequests)
 	return errors
 }
 
@@ -231,7 +230,7 @@ func stringToDate(date string) (time.Time, error) {
 	return dateObject, nil
 }
 
-func (l *LeaveRequest) validateDate(errors LeaveErrors) LeaveErrors {
+func (l *LeaveRequest) validateDate(errors LeaveErrors, pastRequests []LeaveRequest) LeaveErrors {
 	from, err := stringToDate(l.From)
 	if err != nil {
 		errors.DateErr = "*invalid start date format"
@@ -252,10 +251,40 @@ func (l *LeaveRequest) validateDate(errors LeaveErrors) LeaveErrors {
 		return errors
 	}
 
-	if !from.Before(to) {
-		errors.DateErr = "*start date must be before end date"
+	if to.Before(from) {
+		errors.DateErr = "*end date cannot be before start date"
 		errors.IsSuccessful = false
 		return errors
+	}
+
+	for _, pastLr := range pastRequests {
+		pastFrom, err := stringToDate(pastLr.From)
+		if err != nil {
+			errors.DateErr = "*internal server error"
+			errors.IsSuccessful = false
+			return errors
+		}
+		pastTo, err := stringToDate(pastLr.To)
+		if err != nil {
+			errors.DateErr = "*internal server error"
+			errors.IsSuccessful = false
+			return errors
+		}
+		if pastFrom.Before(from) && pastTo.After(to) {
+			errors.DateErr = "*dates overlap with previously submitted request"
+			errors.IsSuccessful = false
+			return errors
+		}
+		if pastFrom.After(from.AddDate(0, 0, -1)) && pastFrom.Before(to.AddDate(0, 0, 1)) {
+			errors.DateErr = "*dates overlap with previously submitted request"
+			errors.IsSuccessful = false
+			return errors
+		}
+		if pastTo.After(from.AddDate(0, 0, -1)) && pastTo.Before(to.AddDate(0, 0, 1)) {
+			errors.DateErr = "*dates overlap with previously submitted request"
+			errors.IsSuccessful = false
+			return errors
+		}
 	}
 
 	return errors
@@ -405,8 +434,6 @@ func InitDb(rootPath string, sugar *zap.SugaredLogger) *sql.DB {
 	} else if env == "production" {
 		dbPath = filepath.Join(rootPath, "infrastructure", "db", prodFile)
 	}
-
-	log.Println(dbPath)
 
 	if dbPath == "" {
 		sugar.Error("Error obtaining db path")
