@@ -17,9 +17,9 @@ function timeInputFilter() {
     })
 }
 
-document.addEventListener("htmx:afterSwap", calculateRowTotals)
 document.addEventListener("DOMContentLoaded", calculateRowTotals)
 function calculateRowTotals() {
+    console.log("hello")
     const table = document.getElementById("timesheetTable")
     const rows = table.rows
 
@@ -52,13 +52,19 @@ function calculateRowTotals() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", updateRowTotals)
-document.addEventListener("keyup", updateRowTotals)
-function updateRowTotals() {
-    document.querySelectorAll(".timeInput").forEach(cell => {
-        cell.removeEventListener("keyup", calculateRowTotals)
-        cell.addEventListener("keyup", calculateRowTotals)
-    })
+document.addEventListener("DOMContentLoaded", setupEventListeners);
+document.addEventListener("htmx:afterSwap", setupEventListeners);
+
+function setupEventListeners() {
+    // Delegate keyup event to the table instead of each .timeInput
+    document.getElementById("timesheetTable").addEventListener("keyup", function (event) {
+        if (event.target.classList.contains("timeInput")) {
+            calculateRowTotals();
+        }
+    });
+
+    // Run row total calculation once when HTMX swaps content
+    calculateRowTotals();
 }
 
 document.addEventListener("DOMContentLoaded", onAddRowClick)

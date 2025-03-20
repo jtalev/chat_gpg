@@ -40,15 +40,11 @@ function onLeaveFormSubmit() {
     if (error.textContent != "") {
         isFormValid = false
     }
-
-    console.log(error.textContent)
-    console.log(isFormValid)
     
     if (!isFormValid) {
         return
     }
 
-    const leaveSubmitAlert = document.getElementById("leave-submit-alert-container").style.display = "flex"
     cancelBtn.style.display = "none"
     submitBtn.textContent = "SUBMITTED"
     submitBtn.disabled = true   

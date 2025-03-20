@@ -1242,35 +1242,8 @@ input::-webkit-inner-spin-button {
     align-items: flex-end;
 }
 
-#leave-submit-alert-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 30%;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    margin-top: 5px;
-}
-
-#leave-submit-alert {
-    width: 80%;
-    height: 100%;
-    border: var(--gpg-green) solid 1px;
-    max-width: 500px;
-    background-color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 15px;
-}
-
-#leave-submit-alert-text {
-    color: var(--gpg-green);
-    width: 60%;
-    text-align: center;
+#leave-form-success-msg {
+    font-size: small;
 }
 
 #employee-leave-history-container {
@@ -2512,6 +2485,7 @@ input::-webkit-inner-spin-button {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-right: 10px;
 }
 
 @media screen and (max-width: 550px) {

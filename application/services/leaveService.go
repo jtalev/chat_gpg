@@ -207,7 +207,7 @@ func PostLeaveRequest(leaveFormDto LeaveFormDto, db *sql.DB) (LeaveFormDto, erro
 		if err != nil {
 			return leaveFormDto, err
 		}
-		leaveFormDto.SuccessMsg = "Leave request posted successfully."
+		leaveFormDto.SuccessMsg = "Leave request submitted successfully."
 		return leaveFormDto, nil
 	}
 }
