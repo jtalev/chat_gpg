@@ -1106,19 +1106,6 @@ input::-webkit-inner-spin-button {
     white-space: nowrap;
 }
 
-.saveAllBtn {
-    border-radius: 0;
-    border: var(--gpg-green) solid 1px;
-    background-color: var(--gpg-green);
-    color: white;
-    width: 6em;
-    height: 2.5em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-}
-
 @media screen and (max-width: 1400px) {
     .deleteRowContainer {
         width: 100px;
@@ -1148,6 +1135,19 @@ input::-webkit-inner-spin-button {
 
 .deleteRowBtnImg {
     width: 1.5em;
+}
+
+.timesheet-table-day-total-container {
+    font-size: small;
+    color: var(--main-color);
+    border-bottom: none;
+}
+
+.timesheet-table-day-total-container {
+    font-size: small;
+    color: var(--main-color);
+    border-bottom: none;
+    border-right: var(--main-background-color) solid 1px;
 }
 
 /***** leave *****/

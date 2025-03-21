@@ -5,7 +5,7 @@
     <form 
     id="jobSelectForm"
     hx-post="/timesheet-week/init-timesheet-week"
-    hx-target="#timesheetTable" 
+    hx-target="#timesheet-table-job-rows" 
     hx-swap="beforeend"
     hx-vals='{
     	"week_start_date": "{{ .WeekStartDate }}"

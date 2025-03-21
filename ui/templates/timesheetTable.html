@@ -5,8 +5,47 @@
             <thead id="timesheetTableHead">
                 {{ template "timesheetHead" .Data.Dates }}
             </thead>
-            <tbody>
+            <tbody id="timesheet-table-job-rows">
                 {{ template "existingTimesheetRow" .Data }}
+            </tbody>
+            <tbody id="timesheet-table-day-total-row">
+                <td 
+                class="timesheet-table-day-total-container stickyCell" 
+                style="
+                    background-color: var(--main-background-color);
+                    border-right: var(--timesheet-border) solid 1px;">
+                    <p>Total</p>
+                </td>
+                <td class="timesheet-table-day-total-container">
+                    <p class="day-total">0:0</p>
+                </td>
+                <td class="timesheet-table-day-total-container">
+                    <p class="day-total">0:0</p>
+                </td>
+                <td class="timesheet-table-day-total-container">
+                    <p class="day-total">0:0</p>
+                </td>
+                <td class="timesheet-table-day-total-container">
+                    <p class="day-total">0:0</p>
+                </td>
+                <td class="timesheet-table-day-total-container">
+                    <p class="day-total">0:0</p>
+                </td>
+                <td class="timesheet-table-day-total-container">
+                    <p class="day-total">0:0</p>
+                </td>
+                <td class="timesheet-table-day-total-container">
+                    <p class="day-total">0:0</p>
+                </td>
+                <td
+                class="timesheet-table-day-total-container darkGreenBackground">
+                    <p id="timesheet-table-total">0:0</p>
+                </td>
+                <td 
+                class="timesheet-table-day-total-container" 
+                style="
+                background-color: var(--main-background-color)">
+                </td>
             </tbody>
         </table>
     </div>

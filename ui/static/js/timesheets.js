@@ -17,10 +17,9 @@ function timeInputFilter() {
     })
 }
 
-document.addEventListener("DOMContentLoaded", calculateRowTotals)
 function calculateRowTotals() {
-    console.log("hello")
     const table = document.getElementById("timesheetTable")
+    if (!table) return
     const rows = table.rows
 
     for (let i = 1; i < rows.length; i++) {
@@ -28,44 +27,98 @@ function calculateRowTotals() {
         let hours = 0
         let mins = 0
 
-        for (let j = 0; j < cells.length; j++) {
-            const cellValue = cells[j].value
-            const containsColon = cellValue.includes(":")
-            if (containsColon) {
-                const cellValueSplit = cellValue.split(":")
-                const addHrs = cellValueSplit[0]
-                const addMins = cellValueSplit[1]
-                hours += Number(addHrs)
-                mins += Number(addMins)
+        cells.forEach(cell => {
+            const cellValue = cell.value
+            if (cellValue.includes(":")) {
+                const [addHrs, addMins] = cellValue.split(":").map(Number)
+                hours += addHrs
+                mins += addMins
             } else {
                 hours += Number(cellValue)
             }
-        }
+        });
 
-        // convert mins to hours and minutes and add to totals
-        const extraHours = Math.floor(mins / 60)
-        hours += extraHours
+        hours += Math.floor(mins / 60)
         mins = mins % 60
 
         const total = rows[i].querySelector(".total")
-        total.innerHTML = hours + ":" + mins
+        if (total) {
+            total.innerHTML = `${hours}:${mins}`
+        }
     }
 }
 
-document.addEventListener("DOMContentLoaded", setupEventListeners);
-document.addEventListener("htmx:afterSwap", setupEventListeners);
+function calculateDayTotals() {
+    const table = document.getElementById("timesheetTable")
+    if (!table) return
 
-function setupEventListeners() {
-    // Delegate keyup event to the table instead of each .timeInput
-    document.getElementById("timesheetTable").addEventListener("keyup", function (event) {
-        if (event.target.classList.contains("timeInput")) {
-            calculateRowTotals();
+    const rows = table.rows
+    const numRows = rows.length
+    const dayTotalRow = rows[numRows - 1].querySelectorAll(".day-total")
+    console.log(numRows)
+    if (numRows <= 2) {
+        console.log("condition met")
+        dayTotalRow.forEach(cell => {
+            cell.innerHTML = "0:0"
+        })
+        return
+    }
+
+    const numCols = rows[1].querySelectorAll(".timeInput").length
+
+    for (let colIdx = 0; colIdx < numCols; colIdx++) {
+        let totalHours = 0
+        let totalMinutes = 0
+
+        // Loop through each row (excluding header & total row)
+        for (let rowIdx = 1; rowIdx < numRows - 1; rowIdx++) {
+            const cell = rows[rowIdx].querySelectorAll(".timeInput")[colIdx]
+            if (cell) {
+                let cellValue = cell.value.trim()
+                if (cellValue === "") {
+                    cellValue = "0:00"  // Treat empty cells as 0 hours, 0 minutes
+                }
+
+                if (cellValue.includes(":")) {
+                    const [hrs, mins] = cellValue.split(":").map(Number)
+                    totalHours += isNaN(hrs) ? 0 : hrs
+                    totalMinutes += isNaN(mins) ? 0 : mins
+                } else {
+                    totalHours += isNaN(Number(cellValue)) ? 0 : Number(cellValue)
+                }
+            }
         }
-    });
 
-    // Run row total calculation once when HTMX swaps content
-    calculateRowTotals();
+        totalHours += Math.floor(totalMinutes / 60)
+        totalMinutes = totalMinutes % 60
+
+        if (dayTotalRow[colIdx]) {
+            dayTotalRow[colIdx].innerHTML = `<p>${totalHours}:${totalMinutes.toString().padStart(2, "0")}</p>`
+        }
+    }
 }
+
+
+function updateRowTotals() {
+    document.querySelectorAll(".timeInput").forEach(cell => {
+        cell.removeEventListener("keyup", calculateRowTotals)
+        cell.addEventListener("keyup", calculateRowTotals)
+        cell.removeEventListener("keyup", calculateDayTotals)
+        cell.addEventListener("keyup", calculateDayTotals)
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    updateRowTotals()
+    calculateRowTotals()
+    calculateDayTotals()
+});
+
+document.body.addEventListener("htmx:afterSwap", function() {
+    updateRowTotals()
+    calculateRowTotals()
+    calculateDayTotals()
+});
 
 document.addEventListener("DOMContentLoaded", onAddRowClick)
 document.addEventListener("htmx:afterSwap", onAddRowClick)
