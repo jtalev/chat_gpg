@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"text/template"
@@ -227,7 +228,7 @@ func (h *Handler) DeleteTimesheetWeek() http.Handler {
 
 			log.Println(timesheetWeek)
 
-			w.WriteHeader(http.StatusOK)
+			fmt.Fprint(w, "<div></div>")
 		},
 	)
 }

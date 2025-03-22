@@ -35,7 +35,8 @@
 		        hx-target="#projectRow-{{ .TimesheetWeekId }}"
 		        hx-vals='{
 		        	"timesheet_week_id": "{{.TimesheetWeekId}}"
-		        }'  
+		        }'
+		        hx-swap="outerHTML"
 		        class="deleteRowBtn">
 		        	<img src="../static/img/delete.svg" class="deleteRowBtnImg">
 		        </button>

@@ -49,34 +49,34 @@ function calculateRowTotals() {
 }
 
 function calculateDayTotals() {
+    const tableBody = document.getElementById("timesheet-table-job-rows")
     const table = document.getElementById("timesheetTable")
-    if (!table) return
+    if (!table || !tableBody) return
 
-    const rows = table.rows
+    const rows = tableBody.querySelectorAll("tr")
     const numRows = rows.length
-    const dayTotalRow = rows[numRows - 1].querySelectorAll(".day-total")
-    console.log(numRows)
-    if (numRows <= 2) {
-        console.log("condition met")
+    const dayTotalRow = document.querySelectorAll(".day-total")
+
+    if (numRows === 0) {
+        console.log("No data rows, resetting totals")
         dayTotalRow.forEach(cell => {
             cell.innerHTML = "0:0"
         })
         return
     }
 
-    const numCols = rows[1].querySelectorAll(".timeInput").length
+    const numCols = table.querySelectorAll(".timeInput").length / numRows
 
     for (let colIdx = 0; colIdx < numCols; colIdx++) {
         let totalHours = 0
         let totalMinutes = 0
 
-        // Loop through each row (excluding header & total row)
-        for (let rowIdx = 1; rowIdx < numRows - 1; rowIdx++) {
-            const cell = rows[rowIdx].querySelectorAll(".timeInput")[colIdx]
+        rows.forEach(row => {
+            const cell = row.querySelectorAll(".timeInput")[colIdx]
             if (cell) {
                 let cellValue = cell.value.trim()
                 if (cellValue === "") {
-                    cellValue = "0:00"  // Treat empty cells as 0 hours, 0 minutes
+                    cellValue = "0:0"
                 }
 
                 if (cellValue.includes(":")) {
@@ -87,17 +87,64 @@ function calculateDayTotals() {
                     totalHours += isNaN(Number(cellValue)) ? 0 : Number(cellValue)
                 }
             }
-        }
+        })
 
         totalHours += Math.floor(totalMinutes / 60)
         totalMinutes = totalMinutes % 60
 
         if (dayTotalRow[colIdx]) {
-            dayTotalRow[colIdx].innerHTML = `<p>${totalHours}:${totalMinutes.toString().padStart(2, "0")}</p>`
+            dayTotalRow[colIdx].innerHTML = `<p>${totalHours}:${totalMinutes.toString().padStart(1, "0")}</p>`
         }
     }
 }
 
+function calculateWeekTotal() {
+    const dayTotalCells = document.querySelectorAll(".day-total")
+    const rowTotalCells = document.querySelectorAll(".total")
+    const tableTotalCell = document.getElementById("timesheet-table-total")
+
+    let rowHrs = 0
+    let rowMins = 0
+    let dayHrs = 0
+    let dayMins = 0
+
+    if (rowTotalCells) {
+        rowTotalCells.forEach(cell => {
+            cellValue = cell.textContent.trim()
+            if (cellValue.includes(":")) {
+                const [hrs, mins] = cellValue.split(":").map(Number)
+                rowHrs += isNaN(hrs) ? 0 : hrs
+                rowMins += isNaN(mins) ? 0 : mins
+            } else {
+                rowHrs += isNaN(cellValue) ? 0 : Number(cellValue)
+            }
+        })
+    }
+
+    rowHrs += Math.floor(rowMins / 60)
+    rowMins = rowMins % 60
+
+    dayTotalCells.forEach(cell => {
+        console.log(cell.textContent)
+        cellValue = cell.textContent.trim()
+        if (cellValue.includes(":")) {
+            const [hrs, mins] = cellValue.split(":").map(Number)
+            dayHrs += isNaN(hrs) ? 0 : hrs
+            dayMins += isNaN(mins) ? 0 : mins
+        } else {
+            dayHrs += isNaN(cellValue) ? 0 : Number(cellValue)
+        }  
+    })
+
+    dayHrs += Math.floor(dayMins / 60)
+    dayMins = dayMins % 60
+
+    if (rowTotalCells && dayHrs === rowHrs && dayMins === rowMins) {
+        tableTotalCell.innerHTML = `${rowHrs}:${rowMins}`
+    } else {
+        tableTotalCell.innerHTML = `${dayHrs}:${dayMins}`
+    }
+}
 
 function updateRowTotals() {
     document.querySelectorAll(".timeInput").forEach(cell => {
@@ -105,6 +152,8 @@ function updateRowTotals() {
         cell.addEventListener("keyup", calculateRowTotals)
         cell.removeEventListener("keyup", calculateDayTotals)
         cell.addEventListener("keyup", calculateDayTotals)
+        cell.removeEventListener("keyup", calculateWeekTotal)
+        cell.addEventListener("keyup", calculateWeekTotal)
     });
 }
 
@@ -112,12 +161,14 @@ document.addEventListener("DOMContentLoaded", () => {
     updateRowTotals()
     calculateRowTotals()
     calculateDayTotals()
+    calculateWeekTotal()
 });
 
 document.body.addEventListener("htmx:afterSwap", function() {
     updateRowTotals()
     calculateRowTotals()
     calculateDayTotals()
+    calculateWeekTotal()
 });
 
 document.addEventListener("DOMContentLoaded", onAddRowClick)
