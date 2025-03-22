@@ -3,6 +3,7 @@ package domain
 import (
 	"database/sql"
 	"errors"
+	"log"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -428,6 +429,7 @@ func InitDb(rootPath string, sugar *zap.SugaredLogger) *sql.DB {
 	devFile := "dev.db"
 	prodFile := "prod.db"
 	env := os.Getenv("ENV")
+	log.Println(env)
 	var dbPath string
 	if env == "development" {
 		dbPath = filepath.Join(rootPath, "infrastructure", "db", devFile)

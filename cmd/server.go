@@ -30,7 +30,7 @@ func newCookieStore() *sessions.CookieStore {
 	env := os.Getenv("ENV")
 	if env == "production" {
 		store.Options = &sessions.Options{
-			Secure:   true,
+			Secure:   false,
 			HttpOnly: true,
 			SameSite: http.SameSiteLaxMode,
 		}

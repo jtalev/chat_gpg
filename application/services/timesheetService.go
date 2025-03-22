@@ -445,7 +445,7 @@ func GetAvailableJobs(employeeId, weekStartDate string, db *sql.DB) ([]domain.Jo
 				isAvailable = false
 			}
 		}
-		if isAvailable {
+		if isAvailable && !jobs[i].IsComplete {
 			outJobs = append(outJobs, jobs[i])
 		}
 		isAvailable = true

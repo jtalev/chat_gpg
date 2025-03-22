@@ -2,3 +2,4 @@
 gpg-dev-keypair.pem
 deploy
 deploy.sh
+infrastructure/db

@@ -44,6 +44,7 @@ type EmployeeTimesheetReportData struct {
 	DayTotals             []string
 	WeekTotal             string
 	LeaveHoursPayable     string
+	TotalHoursPayable     string
 	RelevantLeaveRequests []domain.LeaveRequest
 }
 
@@ -247,6 +248,12 @@ func GetEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (EmployeeT
 	outData.LeaveHoursPayable = leaveHrsPayable
 	outData.RelevantLeaveRequests = relevantLeaveRequests
 
+	totalHoursPayable, err := calcTotalHrsPayable(outData.WeekTotal, outData.LeaveHoursPayable)
+	if err != nil {
+		return outData, err
+	}
+	outData.TotalHoursPayable = totalHoursPayable
+
 	return outData, nil
 }
 
@@ -313,6 +320,12 @@ func GetPrevEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (Emplo
 	outData.LeaveHoursPayable = leaveHrsPayable
 	outData.RelevantLeaveRequests = relevantLeaveRequests
 
+	totalHoursPayable, err := calcTotalHrsPayable(outData.WeekTotal, outData.LeaveHoursPayable)
+	if err != nil {
+		return outData, err
+	}
+	outData.TotalHoursPayable = totalHoursPayable
+
 	return outData, nil
 }
 
@@ -378,6 +391,12 @@ func GetNextEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (Emplo
 	outData.WeekTotal = weekTotal
 	outData.LeaveHoursPayable = leaveHrsPayable
 	outData.RelevantLeaveRequests = relevantLeaveRequests
+
+	totalHoursPayable, err := calcTotalHrsPayable(outData.WeekTotal, outData.LeaveHoursPayable)
+	if err != nil {
+		return outData, err
+	}
+	outData.TotalHoursPayable = totalHoursPayable
 
 	return outData, nil
 }
@@ -471,4 +490,32 @@ func ProcessLeavePayable(weekStartDate, employeeId string, db *sql.DB) (string, 
 	}
 
 	return leavePayableStr, nil
+}
+
+func calcTotalHrsPayable(weekTotal, leaveHoursPayable string) (string, error) {
+	week := strings.Split(weekTotal, ":")
+
+	weekInt := make([]int, 2)
+	hrs, mins := 0, 0
+
+	for i := range week {
+		val, err := strconv.Atoi(week[i])
+		if err != nil {
+			return "", err
+		}
+		weekInt[i] = val
+	}
+
+	leaveHrs, err := strconv.Atoi(leaveHoursPayable)
+	if err != nil {
+		return "", nil
+	}
+
+	hrs = weekInt[0] + leaveHrs
+	mins = weekInt[1]
+
+	hrs += mins / 60
+	mins = mins % 60
+
+	return fmt.Sprintf("%v:%v", hrs, mins), nil
 }
