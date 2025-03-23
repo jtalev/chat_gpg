@@ -2,6 +2,7 @@ package application
 
 import (
 	"database/sql"
+	"log"
 	"strconv"
 
 	"github.com/jtalev/chat_gpg/domain/models"
@@ -61,13 +62,17 @@ func jobDtoToJob(jobDto JobDto) (domain.Job, error) {
 		IsComplete: isComplete,
 	}
 
-	number, err := strconv.Atoi(jobDto.Number)
-	if err != nil {
+	if jobDto.Number == "" {
+		job.Number = 0
+	} else {
+		number, err := strconv.Atoi(jobDto.Number)
+		if err != nil {
+			job.Number = number
+			jobDto.NumberErr = "Numbers only"
+			return job, nil
+		}
 		job.Number = number
-		jobDto.NumberErr = "Numbers only"
-		return job, nil
 	}
-	job.Number = number
 
 	return job, nil
 }
@@ -83,22 +88,55 @@ func mapErrorsToJobDto(errors domain.JobErrors, jobDto JobDto) JobDto {
 	return jobDto
 }
 
+func fillJobProperties(job domain.Job) domain.Job {
+	if job.Address == "" {
+		job.Address = "n/a"
+	}
+	if job.Suburb == "" {
+		job.Suburb = "n/a"
+	}
+	if job.PostCode == "" {
+		job.PostCode = "n/a"
+	}
+	if job.City == "" {
+		job.City = "n/a"
+	}
+	return job
+}
+
+func fillJobDtoProperties(jobDto JobDto) JobDto {
+	if jobDto.Number == "" {
+		jobDto.Number = "0"
+	}
+	if jobDto.Address == "" {
+		jobDto.Address = "n/a"
+	}
+	if jobDto.Suburb == "" {
+		jobDto.Suburb = "n/a"
+	}
+	if jobDto.PostCode == "" {
+		jobDto.PostCode = "n/a"
+	}
+	if jobDto.City == "" {
+		jobDto.City = "n/a"
+	}
+	return jobDto
+}
+
 func PostJob(jobDto JobDto, db *sql.DB) (JobDto, error) {
 	job, err := jobDtoToJob(jobDto)
 	if err != nil {
 		return JobDto{}, err
 	}
 
-	_, err = strconv.Atoi(jobDto.Number)
-	if err != nil {
-		jobDto.NumberErr = "Numbers only"
-	}
-
 	errors := job.Validate()
 	if errors.IsSuccessful == false {
 		jobDto = mapErrorsToJobDto(errors, jobDto)
+		jobDto = fillJobDtoProperties(jobDto)
+		log.Println(jobDto)
 		return jobDto, nil
 	} else {
+		job = fillJobProperties(job)
 		job, err = infrastructure.PostJob(job, db)
 		if err != nil {
 			return JobDto{}, err
@@ -114,16 +152,13 @@ func PutJob(jobDto JobDto, db *sql.DB) (JobDto, error) {
 		return JobDto{}, err
 	}
 
-	_, err = strconv.Atoi(jobDto.Number)
-	if err != nil {
-		jobDto.NumberErr = "Numbers only"
-	}
-
 	errors := job.Validate()
 	if errors.IsSuccessful == false {
 		jobDto = mapErrorsToJobDto(errors, jobDto)
+		jobDto = fillJobDtoProperties(jobDto)
 		return jobDto, nil
 	} else {
+		job = fillJobProperties(job)
 		job, err = infrastructure.PutJob(job.ID, job, db)
 		jobDto.SuccessMsg = "Job successfully updated."
 		return jobDto, nil

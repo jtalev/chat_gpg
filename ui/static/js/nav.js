@@ -40,7 +40,7 @@ function onNavLinkClick() {
                 element.style.borderLeft = "var(--gpg-green) solid 3px"
                 element.style.backgroundColor = "#00969C50"
             } else {
-                element.style.borderLeft = "var(--gpg-grey) solid 3px"
+                element.style.borderLeft = "var(--timesheet-border) solid 3px"
             }
         })
     }

@@ -15,7 +15,12 @@
 		"id": {{ .ID }}
 	}'
 	onclick="onPutJobClick()">
-		{{ .Name }} | {{ .Number }} {{ .Address }}, {{ .Suburb }}, {{ .PostCode }}
+		{{ .Name }} {{ if or (ne .Number 0) (ne .Address "n/a") (ne .Suburb "n/a") (ne .PostCode "n/a") }}
+		| {{ end }}
+		{{ if ne .Number 0 }} {{ .Number }} {{ end }}
+		{{ if ne .Address "n/a" }} {{ .Address }}, {{ end }}
+		{{ if ne .Suburb "n/a" }} {{ .Suburb }}, {{ end }}
+		{{ if ne .PostCode "n/a" }} {{ .PostCode }} {{ end }}
 	</p>
 	<button
 	class="admin-job-delete-btn"
@@ -47,7 +52,12 @@
 		"id": {{ .ID }}
 	}'
 	onclick="onPutJobClick()">
-		{{ .Name }} | {{ .Number }} {{ .Address }}, {{ .Suburb }}, {{ .PostCode }}
+		{{ .Name }} {{ if or (ne .Number 0) (ne .Address "n/a") (ne .Suburb "n/a") (ne .PostCode "n/a") }}
+		| {{ end }}
+		{{ if ne .Number 0 }} {{ .Number }} {{ end }}
+		{{ if ne .Address "n/a" }} {{ .Address }}, {{ end }}
+		{{ if ne .Suburb "n/a" }} {{ .Suburb }}, {{ end }}
+		{{ if ne .PostCode "n/a" }} {{ .PostCode }} {{ end }}
 	</p>
 	<button
 	class="admin-job-delete-btn"

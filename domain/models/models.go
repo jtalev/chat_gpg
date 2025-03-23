@@ -319,10 +319,7 @@ func (j *Job) Validate() JobErrors {
 	errors.IsSuccessful = true
 	errors = j.validateName(errors)
 	errors = j.validateNumber(errors)
-	errors = j.validateAddress(errors)
-	errors = j.validateSuburb(errors)
 	errors = j.validatePostCode(errors)
-	errors = j.validateCity(errors)
 	return errors
 }
 
@@ -336,6 +333,9 @@ func (j *Job) validateName(errors JobErrors) JobErrors {
 }
 
 func (j *Job) validateNumber(errors JobErrors) JobErrors {
+	if j.Number == 0 {
+		return errors
+	}
 	if strconv.Itoa(j.Number) == "0" {
 		errors.IsSuccessful = false
 		errors.NumberErr = "*required"
@@ -368,9 +368,10 @@ func (j *Job) validateSuburb(errors JobErrors) JobErrors {
 }
 
 func (j *Job) validatePostCode(errors JobErrors) JobErrors {
-	if len(j.PostCode) <= 0 {
-		errors.IsSuccessful = false
-		errors.PostCodeErr = "*required"
+	if len(j.PostCode) == 0 {
+		return errors
+	}
+	if j.PostCode == "n/a" {
 		return errors
 	}
 	_, err := strconv.Atoi(j.PostCode)

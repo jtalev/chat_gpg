@@ -300,7 +300,13 @@ func mapTimesheetsToTimesheetWeek(inTimesheetWeeks []domain.TimesheetWeek, db *s
 		if err != nil {
 			return nil, err
 		}
-		jobName := fmt.Sprintf("%s, %v %s, %s", job.Name, job.Number, job.Address, job.Suburb)
+		jobName := fmt.Sprintf("%s", job.Name)
+		if job.Number != 0 && job.Address != "n/a" {
+			jobName = fmt.Sprintf("%s, %v %s", jobName, job.Number, job.Address)
+		}
+		if job.PostCode != "n/a" {
+			jobName = fmt.Sprintf("%s, %s", jobName, job.PostCode)
+		}
 		outData[i].JobName = jobName
 
 		wed, err := GetTimesheetById(strconv.Itoa(inTimesheetWeeks[i].WedTimesheetId), db)

@@ -18,7 +18,14 @@
 			    	id="{{ .ID }}" 
 			    	name="job_id" 
 			    	value="{{ .ID }}">
-			    	<label for="{{ .Name }}">{{ .Name }}, {{ .Number }} {{ .Address }}, {{ .Suburb }}</label>
+			    	<label for="{{ .Name }}">
+			    		{{ .Name }} {{ if or (ne .Number 0) (ne .Address "n/a") (ne .Suburb "n/a") (ne .PostCode "n/a") }}
+						| {{ end }}
+						{{ if ne .Number 0 }} {{ .Number }} {{ end }}
+						{{ if ne .Address "n/a" }} {{ .Address }}, {{ end }}
+						{{ if ne .Suburb "n/a" }} {{ .Suburb }}, {{ end }}
+						{{ if ne .PostCode "n/a" }} {{ .PostCode }} {{ end }}
+			    	</label>
 			    </div>
 		    {{ end }}
 		</div>
