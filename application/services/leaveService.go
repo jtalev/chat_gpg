@@ -143,18 +143,27 @@ func AdminUpdateLeaveRequest(idStr, isApprovedStr string, db *sql.DB) (domain.Le
 }
 
 type LeaveFormDto struct {
-	RequestId  string
+	RequestId      string
+	EmployeeId     string
+	FirstName      string
+	LastName       string
+	Type           string
+	From           string
+	To             string
+	Note           string
+	HoursPerDay    string
+	IsMultiDay     string
+	IsPending      string
+	IsApproved     string
+	DateErr        string
+	HoursPerDayErr string
+	SuccessMsg     string
+}
+
+// "EmployeeId-Id" = name of certificate file stored in s3
+type LeaveDrCertificate struct {
+	Id         string
 	EmployeeId string
-	FirstName  string
-	LastName   string
-	Type       string
-	From       string
-	To         string
-	Note       string
-	IsPending  string
-	IsApproved string
-	DateErr    string
-	SuccessMsg string
 }
 
 func mapLeaveDtoToLeaveRequest(leaveFormDto LeaveFormDto) domain.LeaveRequest {
@@ -164,6 +173,21 @@ func mapLeaveDtoToLeaveRequest(leaveFormDto LeaveFormDto) domain.LeaveRequest {
 		From:       leaveFormDto.From,
 		To:         leaveFormDto.To,
 		Note:       leaveFormDto.Note,
+	}
+
+	if leaveFormDto.From != leaveFormDto.To && leaveFormDto.Type != "unpaid" {
+		leaveRequest.IsMultiDay = true
+		leaveRequest.HoursPerDay = 8
+	} else if leaveFormDto.From == leaveFormDto.To && leaveFormDto.Type != "unpaid" {
+		leaveRequest.IsMultiDay = false
+		hoursPerDay, _ := strconv.Atoi(leaveFormDto.HoursPerDay)
+		leaveRequest.HoursPerDay = hoursPerDay
+	} else if leaveFormDto.From == leaveFormDto.To && leaveFormDto.Type == "unpaid" {
+		leaveRequest.IsMultiDay = false
+		leaveRequest.HoursPerDay = 0
+	} else if leaveFormDto.From != leaveFormDto.To && leaveFormDto.Type == "unpaid" {
+		leaveRequest.IsMultiDay = false
+		leaveRequest.HoursPerDay = 0
 	}
 
 	return leaveRequest
@@ -201,6 +225,7 @@ func PostLeaveRequest(leaveFormDto LeaveFormDto, db *sql.DB) (LeaveFormDto, erro
 
 	if !errors.IsSuccessful {
 		leaveFormDto.DateErr = errors.DateErr
+		leaveFormDto.HoursPerDayErr = errors.HoursPerDayErr
 		return leaveFormDto, nil
 	} else {
 		_, err := infrastructure.PostLeaveRequest(leaveRequest, db)

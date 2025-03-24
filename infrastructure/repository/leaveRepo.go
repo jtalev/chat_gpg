@@ -10,7 +10,7 @@ import (
 func GetLeaveRequests(db *sql.DB) ([]domain.LeaveRequest, error) {
 	q := `
 	select lr.request_id, lr.employee_id, e.first_name, e.last_name, lr.leave_type, lr.from_date,
-	lr.to_date, lr.note, lr.is_approved, lr.is_pending 
+	lr.to_date, lr.note, lr.hours_per_day, lr.is_multi_day, lr.is_approved, lr.is_pending 
 	from leave_request lr 
 	join employee e on lr.employee_id = e.employee_id
 	order by e.employee_id asc;
@@ -33,6 +33,8 @@ func GetLeaveRequests(db *sql.DB) ([]domain.LeaveRequest, error) {
 			&leaveRequest.From,
 			&leaveRequest.To,
 			&leaveRequest.Note,
+			&leaveRequest.HoursPerDay,
+			&leaveRequest.IsMultiDay,
 			&leaveRequest.IsApproved,
 			&leaveRequest.IsPending,
 		); err != nil {
@@ -46,7 +48,7 @@ func GetLeaveRequests(db *sql.DB) ([]domain.LeaveRequest, error) {
 func GetLeaveRequestById(requestId int, db *sql.DB) (domain.LeaveRequest, error) {
 	q := `
 	select lr.request_id, lr.employee_id, e.first_name, e.last_name, lr.leave_type, lr.from_date,
-	lr.to_date, lr.note, lr.is_approved, lr.is_pending 
+	lr.to_date, lr.note, lr.hours_per_day, lr.is_multi_day, lr.is_approved, lr.is_pending 
 	from leave_request lr 
 	join employee e on lr.employee_id = e.employee_id
 	where lr.request_id = ?;
@@ -68,6 +70,8 @@ func GetLeaveRequestById(requestId int, db *sql.DB) (domain.LeaveRequest, error)
 			&data.From,
 			&data.To,
 			&data.Note,
+			&data.HoursPerDay,
+			&data.IsMultiDay,
 			&data.IsApproved,
 			&data.IsPending,
 		); err != nil {
@@ -83,7 +87,7 @@ func GetLeaveRequestById(requestId int, db *sql.DB) (domain.LeaveRequest, error)
 func GetLeaveRequestsByEmployee(employeeId string, db *sql.DB) ([]domain.LeaveRequest, error) {
 	q := `
 	select lr.request_id, lr.employee_id, e.first_name, e.last_name, lr.leave_type, lr.from_date,
-	lr.to_date, lr.note, lr.is_approved, lr.is_pending 
+	lr.to_date, lr.note, lr.hours_per_day, lr.is_multi_day, lr.is_approved, lr.is_pending 
 	from leave_request lr 
 	join employee e on lr.employee_id = e.employee_id
 	where lr.employee_id = ?;
@@ -106,6 +110,8 @@ func GetLeaveRequestsByEmployee(employeeId string, db *sql.DB) ([]domain.LeaveRe
 			&leaveRequest.From,
 			&leaveRequest.To,
 			&leaveRequest.Note,
+			&leaveRequest.HoursPerDay,
+			&leaveRequest.IsMultiDay,
 			&leaveRequest.IsApproved,
 			&leaveRequest.IsPending,
 		); err != nil {
@@ -119,27 +125,38 @@ func GetLeaveRequestsByEmployee(employeeId string, db *sql.DB) ([]domain.LeaveRe
 
 func PostLeaveRequest(leaveRequest domain.LeaveRequest, db *sql.DB) (domain.LeaveRequest, error) {
 	q := `
-	INSERT INTO leave_request (employee_id, leave_type, from_date, to_date, note)
-	VALUES ($1, $2, $3, $4, $5);
+	INSERT INTO leave_request (employee_id, leave_type, from_date, to_date, note, hours_per_day, is_multi_day)
+	VALUES ($1, $2, $3, $4, $5, $6, $7);
 	`
-	_, err := db.Exec(q, leaveRequest.EmployeeId, leaveRequest.Type, leaveRequest.From, leaveRequest.To, leaveRequest.Note)
+	_, err := db.Exec(
+		q,
+		leaveRequest.EmployeeId,
+		leaveRequest.Type,
+		leaveRequest.From,
+		leaveRequest.To,
+		leaveRequest.Note,
+		leaveRequest.HoursPerDay,
+		leaveRequest.IsMultiDay)
 	if err != nil {
 		return domain.LeaveRequest{}, err
 	}
 	return domain.LeaveRequest{
-		EmployeeId: leaveRequest.EmployeeId,
-		Type:       leaveRequest.Type,
-		From:       leaveRequest.From,
-		To:         leaveRequest.To,
-		Note:       leaveRequest.Note,
+		EmployeeId:  leaveRequest.EmployeeId,
+		Type:        leaveRequest.Type,
+		From:        leaveRequest.From,
+		To:          leaveRequest.To,
+		Note:        leaveRequest.Note,
+		HoursPerDay: leaveRequest.HoursPerDay,
+		IsMultiDay:  leaveRequest.IsMultiDay,
 	}, nil
 }
 
 func PutLeaveRequest(leaveRequest domain.LeaveRequest, db *sql.DB) (domain.LeaveRequest, error) {
 	q := `
 	update leave_request
-	set leave_type = $1, from_date = $2, to_date = $3, note = $4, is_approved = $5, is_pending = $6
-	where request_id = $7;
+	set leave_type = $1, from_date = $2, to_date = $3, note = $4, is_approved = $5, is_pending = $6,
+	hours_per_day = $7, is_multi_day = $8
+	where request_id = $9;
 	`
 
 	_, err := db.Exec(
@@ -150,6 +167,8 @@ func PutLeaveRequest(leaveRequest domain.LeaveRequest, db *sql.DB) (domain.Leave
 		leaveRequest.Note,
 		leaveRequest.IsApproved,
 		leaveRequest.IsPending,
+		leaveRequest.HoursPerDay,
+		leaveRequest.IsMultiDay,
 		leaveRequest.RequestId,
 	)
 	if err != nil {

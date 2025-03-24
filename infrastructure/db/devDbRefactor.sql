@@ -34,8 +34,10 @@ CREATE TABLE IF NOT EXISTS leave_request (
     from_date TEXT NOT NULL,
     to_date TEXT NOT NULL,
     note TEXT,
-    is_pending INTEGER DEFAULT 1,
-    is_approved INTEGER DEFAULT 0,
+    hours_per_day INTEGER NOT NULL DEFAULT 8,
+    is_multi_day INTEGER,
+    is_pending INTEGER NOT NULL DEFAULT 1,
+    is_approved INTEGER NOT NULL DEFAULT 0,
     FOREIGN KEY (employee_id) REFERENCES employee(employee_id) ON DELETE CASCADE
 );
 
@@ -94,36 +96,11 @@ INSERT INTO employee_auth (employee_id, username, password_hash)
 VALUES ('5972277', 'ddoss', '$2y$14$aiyzqIjN/Dyyuie6.mccdu8OC3GYB7XEPCdSU/P.UTlrRwR9ktIjq');
 
 /** ---- leave_request inserts ---- **/
-INSERT INTO leave_request (employee_id, leave_type, from_date, to_date, note)
-VALUES ('5972276', 'annual', '2024-12-18', '2024-12-20', 'gone fishin');
-INSERT INTO leave_request (employee_id, leave_type, from_date, to_date, note, is_pending, is_approved)
-VALUES ('5972276', 'sick', '2024-12-18', '2024-12-20', 'gone fishin', 0, 0);
-INSERT INTO leave_request (employee_id, leave_type, from_date, to_date, note, is_pending, is_approved)
-VALUES ('5972276', 'annual', '2024-12-18', '2024-12-20', 'gone fishin', 0, 1);
+INSERT INTO leave_request (employee_id, leave_type, from_date, to_date, note, hours_per_day, is_multi_day, is_pending, is_approved)
+VALUES ('5972276', 'sick', '2024-12-20', '2024-12-20', 'gone fishin', 4, 0, 1, 0);
+INSERT INTO leave_request (employee_id, leave_type, from_date, to_date, note, is_multi_day, is_pending, is_approved)
+VALUES ('5972276', 'annual', '2024-12-18', '2024-12-20', 'gone fishin', 1, 0, 1);
 
 /** ---- job inserts ---- **/
 INSERT INTO job (name, number, address, suburb, post_code, city)
 VALUES ('Natts House', 1, 'Trewheela Ave', 'Manifold Heights', '3218', 'Geelong');
-INSERT INTO job (name, number, address, suburb, post_code, city)
-VALUES ('Matts House', 1, 'Trewheela Ave', 'Manifold Heights', '3218', 'Geelong');
-
-/** ---- timesheet_week inserts ---- **/
-INSERT INTO timesheet_week 
-(employee_id, job_id, wed_timesheet_id, thu_timesheet_id, fri_timesheet_id, sat_timesheet_id, sun_timesheet_id, mon_timesheet_id, tue_timesheet_id, week_start_date)
-VALUES ('5972276', 2, 1, 2, 3, 4, 5, 6, 7, '2025-1-1');
-
-/** ---- timesheet inserts ---- **/
-INSERT INTO timesheet (timesheet_week_id, timesheet_date, day, hours, minutes)
-VALUES (1, '2025-01-01', 'wed', 4, 30);
-INSERT INTO timesheet (timesheet_week_id, timesheet_date, day, hours, minutes)
-VALUES (1, '2025-01-02', 'thu', 5, 30);
-INSERT INTO timesheet (timesheet_week_id, timesheet_date, day, hours, minutes)
-VALUES (1, '2025-01-03', 'fri', 1, 30);
-INSERT INTO timesheet (timesheet_week_id, timesheet_date, day, hours, minutes)
-VALUES (1, '2025-01-04', 'sat', 0, 0);
-INSERT INTO timesheet (timesheet_week_id, timesheet_date, day, hours, minutes)
-VALUES (1, '2025-01-05', 'sun', 0, 0);
-INSERT INTO timesheet (timesheet_week_id, timesheet_date, day, hours, minutes)
-VALUES (1, '2025-01-06', 'mon', 8, 30);
-INSERT INTO timesheet (timesheet_week_id, timesheet_date, day, hours, minutes)
-VALUES (1, '2025-01-07', 'tue', 8, 0);

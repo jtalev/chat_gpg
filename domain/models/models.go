@@ -184,21 +184,24 @@ func (e *EmployeeAuth) validatePassword(errors EmployeeAuthErrors) EmployeeAuthE
 }
 
 type LeaveRequest struct {
-	RequestId  int    `json:"request_id"`
-	EmployeeId string `json:"employee_id"`
-	FirstName  string `json:"first_name"`
-	LastName   string `json:"last_name"`
-	Type       string `json:"leave_type"`
-	From       string `json:"from_date"`
-	To         string `json:"to_date"`
-	Note       string `json:"note"`
-	IsPending  bool   `json:"is_pending"`
-	IsApproved bool   `json:"is_approved"`
+	RequestId   int    `json:"request_id"`
+	EmployeeId  string `json:"employee_id"`
+	FirstName   string `json:"first_name"`
+	LastName    string `json:"last_name"`
+	Type        string `json:"leave_type"`
+	From        string `json:"from_date"`
+	To          string `json:"to_date"`
+	Note        string `json:"note"`
+	HoursPerDay int    `json:"hours_per_day"`
+	IsMultiDay  bool   `json:"is_multi_day"`
+	IsPending   bool   `json:"is_pending"`
+	IsApproved  bool   `json:"is_approved"`
 }
 
 type LeaveErrors struct {
-	DateErr      string
-	IsSuccessful bool
+	DateErr        string
+	HoursPerDayErr string
+	IsSuccessful   bool
 }
 
 func (l *LeaveRequest) Validate(pastRequests []LeaveRequest) LeaveErrors {
@@ -206,6 +209,7 @@ func (l *LeaveRequest) Validate(pastRequests []LeaveRequest) LeaveErrors {
 		IsSuccessful: true,
 	}
 	errors = l.validateDate(errors, pastRequests)
+	errors = l.validateHoursPerDay(errors)
 	return errors
 }
 
@@ -288,6 +292,15 @@ func (l *LeaveRequest) validateDate(errors LeaveErrors, pastRequests []LeaveRequ
 		}
 	}
 
+	return errors
+}
+
+func (l *LeaveRequest) validateHoursPerDay(errors LeaveErrors) LeaveErrors {
+	if l.Type != "unpaid" && l.HoursPerDay == 0 {
+		errors.HoursPerDayErr = "*change leave type to unpaid or add hours"
+		errors.IsSuccessful = false
+		return errors
+	}
 	return errors
 }
 

@@ -134,3 +134,21 @@ function onLeaveRequestClick() {
 function onModalClose() {
     document.querySelector("#employee-leave-modal-container").style.display = "none"
 }
+
+document.getElementById("from").addEventListener("change", toggleHrsPerDayContainer)
+document.getElementById("to").addEventListener("change", toggleHrsPerDayContainer)
+document.getElementById("type").addEventListener("change", toggleHrsPerDayContainer)
+function toggleHrsPerDayContainer() {
+    const type = document.getElementById("type").value
+    const startDate = document.getElementById("from").value
+    const endDate = document.getElementById("to").value
+    const hrsPerDayContainer = document.getElementById("hours-per-day-container")
+
+    if (type === "unpaid") {
+        hrsPerDayContainer.style.display = "none"
+    } else if (startDate === endDate) {
+        hrsPerDayContainer.style.display = "flex"
+    } else {
+        hrsPerDayContainer.style.display = "none"
+    }
+}

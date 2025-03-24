@@ -223,7 +223,7 @@ func validateLeaveRequest(lr domain.LeaveRequest) ([]domain.ValidationResult, er
 	return results, nil
 }
 
-var postLeaveKeys = []string{"type", "from", "to", "note"}
+var postLeaveKeys = []string{"type", "from", "to", "note", "hours_per_day"}
 
 func (h *Handler) PostLeaveRequest() http.Handler {
 	return http.HandlerFunc(
@@ -243,11 +243,12 @@ func (h *Handler) PostLeaveRequest() http.Handler {
 			}
 
 			leaveDto := application.LeaveFormDto{
-				EmployeeId: employeeId,
-				Type:       reqVals[0],
-				From:       reqVals[1],
-				To:         reqVals[2],
-				Note:       reqVals[3],
+				EmployeeId:  employeeId,
+				Type:        reqVals[0],
+				From:        reqVals[1],
+				To:          reqVals[2],
+				Note:        reqVals[3],
+				HoursPerDay: reqVals[4],
 			}
 
 			leaveDto, err = application.PostLeaveRequest(leaveDto, h.DB)

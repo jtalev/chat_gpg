@@ -464,7 +464,7 @@ func CalcLeavePayable(filteredLeaveRequests []domain.LeaveRequest, weekStartDate
 				continue
 			}
 			if lrStart.After(startDate.AddDate(0, 0, -1)) && lrStart.Before(endDate) {
-				hrs += 8
+				hrs += lr.HoursPerDay
 			}
 			lrStart = lrStart.AddDate(0, 0, 1)
 		}

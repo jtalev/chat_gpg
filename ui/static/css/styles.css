@@ -1244,6 +1244,11 @@ input::-webkit-inner-spin-button {
     align-items: flex-end;
 }
 
+#hours-per-day {
+    width: 50px;
+    text-align: center;
+}
+
 #leave-form-success-msg {
     font-size: small;
 }
@@ -2472,7 +2477,7 @@ input::-webkit-inner-spin-button {
 
 @media screen and (min-width: 551px) {
     .report-leave-expanded-label-container {
-        width: 15%;
+        width: 20%;
         gap: 5px;
         display: flex;
         flex-direction: column;
