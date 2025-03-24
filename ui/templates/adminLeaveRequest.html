@@ -1,18 +1,31 @@
 {{ define "adminLeaveRequest" }}
-<div 
-class="admin-leave-request-row"
-hx-get="/admin/leave-request-modal"
-hx-trigger="click"
-hx-target="#admin-leave-modal-container"
-hx-swap="innerHTML"
-hx-vals='{
-	"id":"{{ .RequestId }}"
-}'
-onclick="onLeaveRequestClick()">
-	<div class="admin-lr-info">
+<div class="admin-leave-request-row">
+	<div 
+	class="admin-lr-info"
+	hx-get="/admin/leave-request-modal"
+	hx-trigger="click"
+	hx-target="#admin-leave-modal-container"
+	hx-swap="innerHTML"
+	hx-vals='{
+		"id":"{{ .RequestId }}"
+	}'
+	onclick="onLeaveRequestClick()">
 		<p class="admin-lr-row-name">{{ .FirstName }} {{ .LastName }} | </p>
 		<p class="admin-lr-row-dates">{{ .From }} - {{ .To }} | </p>
 		<p class="admin-lr-row-dates">{{ .Type }}</p>
+	</div>
+	<div class="leave-delete-container">
+		<button
+		class="admin-employee-delete-btn"
+		hx-delete="/leave/delete"
+		hx-trigger="click"
+		hx-target="closest .admin-leave-request-row"
+		hx-swap="delete"
+		hx-vals='{
+			"id": {{ .RequestId }}
+		}'>
+			<img src="../static/img/delete.svg" />
+		</button>
 	</div>
 	{{ if and .IsPending (not .IsApproved) }}
 	<div class="admin-lr-icon"><img class="admin-lr-pending-icon" src="../static/img/pending.svg"></div>
