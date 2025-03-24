@@ -135,9 +135,13 @@ function onModalClose() {
     document.querySelector("#employee-leave-modal-container").style.display = "none"
 }
 
-document.getElementById("from").addEventListener("change", toggleHrsPerDayContainer)
-document.getElementById("to").addEventListener("change", toggleHrsPerDayContainer)
-document.getElementById("type").addEventListener("change", toggleHrsPerDayContainer)
+document.addEventListener("htmx:afterSwap", setupLeaveFormListeners)
+document.addEventListener("DOMContentLoaded", setupLeaveFormListeners)
+function setupLeaveFormListeners() {
+    document.getElementById("from").addEventListener("change", toggleHrsPerDayContainer)
+    document.getElementById("to").addEventListener("change", toggleHrsPerDayContainer)
+    document.getElementById("type").addEventListener("change", toggleHrsPerDayContainer)
+}
 function toggleHrsPerDayContainer() {
     const type = document.getElementById("type").value
     const startDate = document.getElementById("from").value
