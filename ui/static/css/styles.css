@@ -958,8 +958,6 @@ input[type="radio"]:checked {
         width: 130px;
         margin: 0;
         padding: 0;
-        padding-left: 10px;
-        padding-right: 10px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -969,11 +967,9 @@ input[type="radio"]:checked {
 @media screen and (min-width: 401px) {
     .stickyCellContent {
         height: 100%;
-        width: 190px;
+        width: 150px;
         margin: 0;
         padding: 0;
-        padding-left: 15px;
-        padding-right: 15px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -986,8 +982,6 @@ input[type="radio"]:checked {
         width: 260px;
         margin: 0;
         padding: 0;
-        padding-left: 10px;
-        padding-right: 10px;
         display: flex;
         justify-content: center;
         align-items: center;
