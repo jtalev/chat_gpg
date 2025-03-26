@@ -12,7 +12,17 @@
 			class="modal-form" 
 			id="put-employee-form">
 				<input type="hidden" name="id" value="{{ .ID }}">
-			    <input type="hidden" name="employee_id" value="{{ .EmployeeId }}">
+			    <div class="modal-form-row">
+				<div class="modal-form-label-container">
+						<label class="modal-form-label" for="employee_id">Employee ID:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="employee_id" id="employee-id" value="{{ .EmployeeId }}">
+					</div>
+					<div class="error-container">
+						{{ .EmployeeIdErr }}
+					</div>
+				</div>
 				<div class="modal-form-row">
 					<div class="modal-form-label-container">
 						<label class="modal-form-label" for="first_name">First Name:</label>
@@ -77,6 +87,22 @@
 					</div>
 					<div class="error-container">
 						{{ .PhoneNumberErr }}
+					</div>
+				</div>
+				<div class="modal-form-row">
+				<div class="modal-form-label-container">
+						<label class="modal-form-label" for="is_admin">Is Admin?</label>
+					</div>
+					<div id="put-job-is-complete-input-row">
+						<div class="put-job-is-complete-input-container">
+							<input class="put-job-is-complete-input" type="radio" id="true" name="is_admin" value="true" {{ if eq (printf "%v" .IsAdmin) "true" }} checked {{ end }}>true</input>
+						</div>
+						<div class="put-job-is-complete-input-container">
+							<input class="put-job-is-complete-input" type="radio" id="false" name="is_admin" value="false" {{ if eq (printf "%v" .IsAdmin) "false" }} checked {{ else if ne (printf "%v" .IsAdmin) "true" }} checked {{ end }}>false</input>
+						</div>
+					</div>
+					<div class="error-container">
+						{{ .IsAdminErr }}
 					</div>
 				</div>
 				<div class="success-msg-container">

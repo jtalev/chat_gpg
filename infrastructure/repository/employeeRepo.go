@@ -131,11 +131,11 @@ func PostEmployee(employee domain.Employee, db *sql.DB) (domain.Employee, error)
 func PutEmployee(employee domain.Employee, db *sql.DB) (domain.Employee, error) {
 	q := `
 	update employee
-	set employee_id = $1, first_name = $2, last_name = $3, email = $4, phone_number = $5, updated_at = CURRENT_TIMESTAMP
-	where id = $6
+	set employee_id = $1, first_name = $2, last_name = $3, email = $4, phone_number = $5, is_admin = $6, updated_at = CURRENT_TIMESTAMP
+	where id = $7
 	`
 
-	_, err := db.Exec(q, employee.EmployeeId, employee.FirstName, employee.LastName, employee.Email, employee.PhoneNumber, employee.ID)
+	_, err := db.Exec(q, employee.EmployeeId, employee.FirstName, employee.LastName, employee.Email, employee.PhoneNumber, employee.IsAdmin, employee.ID)
 	if err != nil {
 		return domain.Employee{}, err
 	}

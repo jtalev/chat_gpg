@@ -82,11 +82,6 @@ func (e *Employee) validateEmployeeId(errors EmployeeErrors) EmployeeErrors {
 		errors.IsSuccessful = false
 		return errors
 	}
-	if len(e.EmployeeId) != 7 {
-		errors.EmployeeIdErr = "*must be 7 characters long"
-		errors.IsSuccessful = false
-		return errors
-	}
 	return errors
 }
 

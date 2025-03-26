@@ -114,13 +114,18 @@ func employeeDtoToEmployee(employeeDto EmployeeDto) (domain.Employee, error) {
 	return employee, nil
 }
 
-func employeeDtoToEmployeeAuth(employeeDto EmployeeDto) domain.EmployeeAuth {
+func employeeDtoToEmployeeAuth(employeeDto EmployeeDto) (domain.EmployeeAuth, error) {
+	id, err := strconv.Atoi(employeeDto.ID)
+	if err != nil {
+		return domain.EmployeeAuth{}, err
+	}
 	employeeAuth := domain.EmployeeAuth{
+		AuthId:       id,
 		EmployeeId:   employeeDto.EmployeeId,
 		Username:     employeeDto.Username,
 		PasswordHash: employeeDto.Password,
 	}
-	return employeeAuth
+	return employeeAuth, nil
 }
 
 func mapErrorsToEmployeeDto(empErrors domain.EmployeeErrors, empAuthErrors domain.EmployeeAuthErrors, employeeDto EmployeeDto) EmployeeDto {
@@ -141,7 +146,10 @@ func PostEmployee(employeeDto EmployeeDto, db *sql.DB) (EmployeeDto, error) {
 		return EmployeeDto{}, err
 	}
 
-	employeeAuth := employeeDtoToEmployeeAuth(employeeDto)
+	employeeAuth, err := employeeDtoToEmployeeAuth(employeeDto)
+	if err != nil {
+		return employeeDto, err
+	}
 
 	empErrors := employee.Validate()
 	empAuthErrors := employeeAuth.Validate()
@@ -167,7 +175,11 @@ func PostEmployee(employeeDto EmployeeDto, db *sql.DB) (EmployeeDto, error) {
 func PutEmployee(employeeDto EmployeeDto, db *sql.DB) (EmployeeDto, error) {
 	isSamePassword := false
 	if employeeDto.Password == "" {
-		employeeAuth, err := infrastructure.GetEmployeeAuthByEmployeeId(employeeDto.EmployeeId, db)
+		authId, err := strconv.Atoi(employeeDto.ID)
+		if err != nil {
+			return employeeDto, err
+		}
+		employeeAuth, err := infrastructure.GetEmployeeAuthById(authId, db)
 		if err != nil {
 			return employeeDto, err
 		}
@@ -180,8 +192,10 @@ func PutEmployee(employeeDto EmployeeDto, db *sql.DB) (EmployeeDto, error) {
 		return EmployeeDto{}, err
 	}
 
-	employeeAuth := employeeDtoToEmployeeAuth(employeeDto)
-
+	employeeAuth, err := employeeDtoToEmployeeAuth(employeeDto)
+	if err != nil {
+		return employeeDto, err
+	}
 	empErrors := employee.Validate()
 	empAuthErrors := employeeAuth.Validate()
 	if empErrors.IsSuccessful == false || empAuthErrors.IsSuccessful == false {

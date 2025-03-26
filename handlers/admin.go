@@ -340,6 +340,11 @@ func (h *Handler) PutEmployeeModal() http.Handler {
 				return
 			}
 
+			isAdmin := "false"
+			if employee.IsAdmin == true {
+				isAdmin = "true"
+			}
+
 			employeeDto := application.EmployeeDto{
 				ID:          vals[0],
 				EmployeeId:  vals[1],
@@ -348,6 +353,7 @@ func (h *Handler) PutEmployeeModal() http.Handler {
 				Username:    employeeAuth.Username,
 				Email:       employee.Email,
 				PhoneNumber: employee.PhoneNumber,
+				IsAdmin:     isAdmin,
 			}
 
 			err = executePartialTemplate(adminPutEmployeeModalPath, "adminPutEmployeeModal", employeeDto, w)

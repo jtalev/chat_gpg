@@ -87,7 +87,7 @@ func (h *Handler) PostEmployee() http.Handler {
 	)
 }
 
-var putEmployeeFormKeys = []string{"id", "employee_id", "first_name", "last_name", "username", "password", "email", "phone"}
+var putEmployeeFormKeys = []string{"id", "employee_id", "first_name", "last_name", "username", "password", "email", "phone", "is_admin"}
 
 func (h *Handler) PutEmployee() http.Handler {
 	return http.HandlerFunc(
@@ -108,6 +108,7 @@ func (h *Handler) PutEmployee() http.Handler {
 			employeeDto.Password = requestVals[5]
 			employeeDto.Email = requestVals[6]
 			employeeDto.PhoneNumber = requestVals[7]
+			employeeDto.IsAdmin = requestVals[8]
 
 			employee, err := application.PutEmployee(employeeDto, h.DB)
 			if err != nil {
