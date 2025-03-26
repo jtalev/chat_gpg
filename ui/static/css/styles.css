@@ -939,13 +939,13 @@ input[type="radio"]:checked {
     position: sticky;
     left: 0;
     background-color: #f9f9f9;
+    z-index: 1;
     border: none;
     padding: 0;
     margin: 0;
     border-bottom: var(--timesheet-border) solid 1px;
     border-right: var(--timesheet-border) solid 1px;
     border-collapse: collapse;
-    overflow-y: auto;
 }
 
 .stickyCellContent > p {
@@ -958,9 +958,12 @@ input[type="radio"]:checked {
         width: 130px;
         margin: 0;
         padding: 0;
+        padding-left: 10px;
+        padding-right: 10px;
         display: flex;
         justify-content: center;
         align-items: center;
+        overflow-y: auto;
     }
 }
 @media screen and (min-width: 401px) {
@@ -969,9 +972,12 @@ input[type="radio"]:checked {
         width: 190px;
         margin: 0;
         padding: 0;
+        padding-left: 15px;
+        padding-right: 15px;
         display: flex;
         justify-content: center;
         align-items: center;
+        overflow-y: auto;
     }
 }
 @media screen and (min-width: 861px) {
@@ -980,9 +986,12 @@ input[type="radio"]:checked {
         width: 260px;
         margin: 0;
         padding: 0;
+        padding-left: 10px;
+        padding-right: 10px;
         display: flex;
         justify-content: center;
         align-items: center;
+        overflow-y: auto;
     }
 }
 
@@ -1048,16 +1057,9 @@ input::-webkit-inner-spin-button {
 .projects {
     margin: 0;
     padding: 0;
-    height: 50%;
-    width: 90%;
-    overflow: auto;
+    width: auto;
     white-space: nowrap;
-    display: flex;
-    align-items: center;
-}
-
-.projects > select {
-    cursor: pointer;
+    display: inline-block;
 }
 
 #timesheetBtnContainer {
