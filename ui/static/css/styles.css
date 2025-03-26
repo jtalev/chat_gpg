@@ -939,15 +939,13 @@ input[type="radio"]:checked {
     position: sticky;
     left: 0;
     background-color: #f9f9f9;
-    z-index: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
     border: none;
     padding: 0;
     margin: 0;
     border-bottom: var(--timesheet-border) solid 1px;
     border-right: var(--timesheet-border) solid 1px;
     border-collapse: collapse;
+    overflow-y: auto;
 }
 
 .stickyCellContent > p {
@@ -1050,11 +1048,12 @@ input::-webkit-inner-spin-button {
 .projects {
     margin: 0;
     padding: 0;
-    width: 80%;
-    overflow: hidden;
+    height: 50%;
+    width: 90%;
+    overflow: auto;
     white-space: nowrap;
-    text-overflow: ellipsis;
-    display: inline-block;
+    display: flex;
+    align-items: center;
 }
 
 .projects > select {
