@@ -53,6 +53,7 @@ const (
 	adminLeaveRequestPath          = "../ui/templates/adminLeaveRequest.html"
 	adminLeaveRequestModalPath     = "../ui/templates/adminLeaveModal.html"
 	accountPath                    = "../ui/views/account.html"
+	safetyPath                     = "../ui/views/safety.html"
 )
 
 func renderTemplate(
@@ -101,6 +102,7 @@ func renderTemplate(
 		adminEmployeeTabPath,
 		adminEmployeeListPath,
 		accountPath,
+		safetyPath,
 	)
 
 	if err != nil {
@@ -214,6 +216,16 @@ func (h *Handler) ServeDashboardView() http.Handler {
 			component := "dashboard"
 			title := "Dashboard - GPG"
 			renderTemplate(w, r, component, title, data)
+		},
+	)
+}
+
+func (h *Handler) ServeSafetyView() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			component := "safety"
+			title := "Safety - GPG"
+			renderTemplate(w, r, component, title, nil)
 		},
 	)
 }

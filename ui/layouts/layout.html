@@ -29,6 +29,8 @@
                 {{ template "admin" . }}
             {{ else if eq .Component "account" }}
                 {{ template "account" . }}
+            {{ else if eq .Component "safety" }}
+                {{ template "safety" . }}
             {{ else }}
                 <p>could not find template</p>
             {{ end }}
