@@ -54,6 +54,7 @@ const (
 	adminLeaveRequestModalPath     = "../ui/templates/adminLeaveModal.html"
 	accountPath                    = "../ui/views/account.html"
 	safetyPath                     = "../ui/views/safety.html"
+	incidentReportFormPath         = "../ui/templates/incidentReportForm.html"
 )
 
 func renderTemplate(
@@ -103,6 +104,7 @@ func renderTemplate(
 		adminEmployeeListPath,
 		accountPath,
 		safetyPath,
+		incidentReportFormPath,
 	)
 
 	if err != nil {
@@ -223,9 +225,27 @@ func (h *Handler) ServeDashboardView() http.Handler {
 func (h *Handler) ServeSafetyView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			employeeId, err := getEmployeeId(w, r)
+			if err != nil {
+				log.Printf("error getting employee id: %v", err)
+				http.Error(w, "Unauthorized", http.StatusUnauthorized)
+				return
+			}
+			employee, err := infrastructure.GetEmployeeByEmployeeId(employeeId, h.DB)
+			if err != nil {
+				log.Printf("error getting employee: %v", err)
+				http.Error(w, "Not found", http.StatusNotFound)
+				return
+			}
+
+			data := application.IncidentReportValues{
+				ReporterId: employeeId,
+				Reporter:   fmt.Sprintf("%s %s", employee.FirstName, employee.LastName),
+			}
+
 			component := "safety"
 			title := "Safety - GPG"
-			renderTemplate(w, r, component, title, nil)
+			renderTemplate(w, r, component, title, data)
 		},
 	)
 }

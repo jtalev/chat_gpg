@@ -1,0 +1,414 @@
+{{ define "incidentReportForm" }}
+<div class="form-container">
+	<div class="form-header">
+		<p>Incident Report Form</p>
+	</div>
+	<form
+	class="form"
+	id="incident-report-form">
+		<input type="hidden" name="reporter_id" value="{{ .ReporterId }}">
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="full_name">Full Name:</label>
+			</div>
+			<div class="form-input-container">
+				<input 
+				class="form-input" 
+				type="text" 
+				name="full_name">
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="home_address">Home Address:</label>
+			</div>
+			<div class="form-input-container">
+				<input 
+				class="form-input" 
+				type="text" 
+				name="home_address">
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="contact_number">Contact Number:</label>
+			</div>
+			<div class="form-input-container">
+				<input 
+				class="form-input" 
+				type="text" 
+				name="contact_number">
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="incident_date">Incident Date:</label>
+			</div>
+			<div class="form-input-container">
+				<input 
+				class="form-input" 
+				type="date" 
+				name="incident_date">
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="incident_time">Incident Time:</label>
+			</div>
+			<div class="form-input-container">
+				<input 
+				class="form-input" 
+				type="text" 
+				name="incident_time">
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="police_notified">Police Notified:</label>
+			</div>
+			<div class="form-input-container-radio">
+				<div class="form-input-radio-option">
+					<input 
+					class="form-input-radio" 
+					type="radio" 
+					name="police_notified"
+					value="yes">Yes</input>
+				</div>
+				<div class="form-input-radio-option"> 
+					<input 
+					class="form-input-radio" 
+					type="radio" 
+					name="police_notified"
+					value="no">No</input>
+				</div>
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="incident_location">Incident Location:</label>
+			</div>
+			<div class="form-input-container">
+				<input 
+				class="form-input" 
+				type="text" 
+				name="incident_location">
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="incident_description">Incident Description:</label>
+			</div>
+			<div class="form-input-container">
+				<input 
+				class="form-input" 
+				type="text" 
+				name="incident_description">
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="was_witnessed">Were there witnesses to the incident:</label>
+			</div>
+			<div class="form-input-container-radio">
+				<div class="form-input-radio-option">
+					<input 
+					class="form-input-radio" 
+					type="radio" 
+					name="was_witnessed"
+					value="yes">Yes</input>
+				</div>
+				<div class="form-input-radio-option"> 
+					<input 
+					class="form-input-radio" 
+					type="radio" 
+					name="was_witnessed"
+					value="no">No</input>
+				</div>
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="was_injured">Was the individual injured:</label>
+			</div>
+			<div class="form-input-container-radio">
+				<div class="form-input-radio-option">
+					<input 
+					class="form-input-radio" 
+					type="radio" 
+					name="was_injured"
+					value="yes">Yes</input>
+				</div>
+				<div class="form-input-radio-option"> 
+					<input 
+					class="form-input-radio" 
+					type="radio" 
+					name="was_injured"
+					value="no">No</input>
+				</div>
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="further_details">Further Details:</label>
+			</div>
+			<div class="form-input-container">
+				<input 
+				class="form-input" 
+				type="text" 
+				name="further_details">
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="was_treated">Was the individual treated:</label>
+			</div>
+			<div class="form-input-container-radio">
+				<div class="form-input-radio-option">
+					<input 
+					class="form-input-radio" 
+					type="radio" 
+					name="was_treated"
+					value="yes">Yes</input>
+				</div>
+				<div class="form-input-radio-option"> 
+					<input 
+					class="form-input-radio" 
+					type="radio" 
+					name="was_treated"
+					value="no">No</input>
+				</div>
+				<div class="form-input-radio-option"> 
+					<input 
+					class="form-input-radio" 
+					type="radio" 
+					name="was_treated"
+					value="refused treatment">Refused Treatment</input>
+				</div>
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="treatment_location">Treatment Location:</label>
+			</div>
+			<div class="form-input-container-radio">
+				<div class="form-input-radio-option">
+					<input 
+					class="form-input-radio" 
+					type="radio" 
+					name="treatment_location"
+					value="onsite">On Site</input>
+				</div>
+				<div class="form-input-radio-option"> 
+					<input 
+					class="form-input-radio" 
+					type="radio" 
+					name="treatment_location"
+					value="emergency room">Emergency Room</input>
+				</div>
+				<div class="form-input-radio-option"> 
+					<input 
+					class="form-input-radio" 
+					type="radio" 
+					name="treatment_location"
+					value="other">Other</input>
+				</div>
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label">Action(s) Taken:</label>
+			</div>
+			<div id="inc-actions-input-container">
+				<div class="inc-actions-input-row">
+					<div class="inc-actions-date-column">
+						Date
+					</div>
+					<div class="inc-actions-action-column">
+						Action
+					</div>
+					<div class="inc-actions-name-column">
+						Name
+					</div>
+				</div>
+				<div class="inc-actions-input-row">
+					<div class="inc-actions-date-column">
+						<input 
+						class="form-input" 
+						type="date" 
+						name="inc_info_date_1">
+					</div>
+					<div class="inc-actions-action-column">
+						<input 
+						class="form-input" 
+						type="text" 
+						name="inc_info_action_1">
+					</div>
+					<div class="inc-actions-name-column">
+						<input 
+						class="form-input" 
+						type="text" 
+						name="inc_info_name_1">
+					</div>
+				</div>
+				<div class="inc-actions-input-row">
+					<div class="inc-actions-date-column">
+						<input 
+						class="form-input" 
+						type="date" 
+						name="inc_info_date_2">
+					</div>
+					<div class="inc-actions-action-column">
+						<input 
+						class="form-input" 
+						type="text" 
+						name="inc_info_action_2">
+					</div>
+					<div class="inc-actions-name-column">
+						<input 
+						class="form-input" 
+						type="text" 
+						name="inc_info_name_2">
+					</div>
+				</div>
+				<div class="inc-actions-input-row">
+					<div class="inc-actions-date-column">
+						<input 
+						class="form-input" 
+						type="date" 
+						name="inc_info_date_3">
+					</div>
+					<div class="inc-actions-action-column">
+						<input 
+						class="form-input" 
+						type="text" 
+						name="inc_info_action_3">
+					</div>
+					<div class="inc-actions-name-column">
+						<input 
+						class="form-input" 
+						type="text" 
+						name="inc_info_name_3">
+					</div>
+				</div>
+				<div class="inc-actions-input-row">
+					<div class="inc-actions-date-column">
+						<input 
+						class="form-input" 
+						type="date" 
+						name="inc_info_date_4">
+					</div>
+					<div class="inc-actions-action-column">
+						<input 
+						class="form-input" 
+						type="text" 
+						name="inc_info_action_4">
+					</div>
+					<div class="inc-actions-name-column">
+						<input 
+						class="form-input" 
+						type="text" 
+						name="inc_info_name_4">
+					</div>
+				</div>
+				<div class="inc-actions-input-row">
+					<div class="inc-actions-date-column">
+						<input 
+						class="form-input" 
+						type="date" 
+						name="inc_info_date_5">
+					</div>
+					<div class="inc-actions-action-column">
+						<input 
+						class="form-input" 
+						type="text" 
+						name="inc_info_action_5">
+					</div>
+					<div class="inc-actions-name-column">
+						<input 
+						class="form-input" 
+						type="text" 
+						name="inc_info_name_5">
+					</div>
+				</div>
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="reporter">Name of individual submitting report:</label>
+			</div>
+			<div class="form-input-container">
+				<input 
+				class="form-input" 
+				type="text" 
+				name="reporter"
+				readonly
+				value="{{ .Reporter }}"
+				style="background: var(--main-background-color);">
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="signature">Signature:</label>
+			</div>
+			<div class="form-input-container">
+				<input 
+				class="form-input" 
+				type="text" 
+				name="signature">
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="report_date">Date:</label>
+			</div>
+			<div class="form-input-container">
+				<input 
+				class="form-input" 
+				type="date" 
+				name="report_date">
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="success-msg-container">
+                <p>{{ .SuccessMsg }}</p>
+        </div>
+        <div class="form-btn-container" style="margin-bottom: 50px;">
+            <button type="reset" id="incident-report-form-cancel-btn" class="gpg-close-btn" form="incident-report-form">Cancel</button>
+            <button type="submit" id="incident-report-form-submit-btn" class="gpg-submit-btn" form="incident-report-form">SUBMIT</button>
+        </div>
+	</form>
+</div>
+{{ end }}

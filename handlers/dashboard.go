@@ -15,6 +15,7 @@ func getDashboardData(w http.ResponseWriter, r *http.Request) (InitialDashboardD
 	if isAdmin {
 		pages = append(pages, "REPORTS", "ADMIN")
 	}
+	pages = append(pages, "SAFETY")
 	data := InitialDashboardData{
 		Pages: pages,
 	}

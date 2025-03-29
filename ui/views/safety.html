@@ -1,3 +1,23 @@
 {{ define "safety" }}
-safety
+<div class="view-container">
+	<div class="view-header-container">
+		<h2 class="view-header">Safety</h2>
+	</div>
+	<div class="view-content-selector-container">
+		<div 
+		class="view-content-selector"
+		id="incident-report-content-selector" 
+		style="background-color: white;">
+			INCIDENT REPORT
+		</div>
+		<div class="borderBottom"></div>
+	</div>
+	<div class="view-content-container">
+		<div 
+			class="view-content"
+			id="safety-view-content">
+			{{ template "incidentReportForm" .Data }}
+		</div>
+	</div>
+</div>
 {{ end }}

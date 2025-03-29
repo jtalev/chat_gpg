@@ -11,6 +11,9 @@
 	{{ else if eq . "ADMIN" }}
 	<div class="dashboard-tile-container">
 		<a class="dashboard-tile-content" href="/admin">
+	{{ else if eq . "SAFETY" }}
+	<div class="dashboard-tile-container">
+		<a class="dashboard-tile-content" href="/safety">
 	{{ end }}	
 			<div id="dashboard-tile-icon-container">
 				{{ if eq . "TIMESHEETS" }}
@@ -20,6 +23,8 @@
 				{{ else if eq . "REPORTS" }}
 				<img src="../static/img/reports-icon.svg">
 				{{ else if eq . "ADMIN" }}
+				<img src="../static/img/admin-icon.svg">
+				{{ else if eq . "SAFETY" }}
 				<img src="../static/img/admin-icon.svg">
 				{{ end }}
 			</div>

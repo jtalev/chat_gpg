@@ -410,6 +410,99 @@ form input {
     border: var(--form-input-border-color) solid 1px;
 }
 
+@media screen and (max-width: 1030px) {
+
+    .view-container {
+        width: 95%;
+        height: 95%;
+        margin-top: auto;
+        margin-bottom: 1em;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+@media screen and (min-width: 1031px) {    
+    .view-container {
+        height: 95%;
+        width: 95%;
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.view-header-container {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    margin: 0 0 0.4em 0;
+}
+
+.view-header {
+    font-weight: lighter;
+    margin: 0 0 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.view-content-selector-container {
+    display: flex;
+    height: 30px;
+}
+
+.view-content-selector {
+    width: 130px;
+    font-size: small;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: var(--gpg-green) solid 1px;
+    cursor: pointer;
+    border-radius: 0;
+}
+
+.view-content-container {
+    width: 100%;
+    height: 90%;
+    border-left: solid var(--gpg-green) 1px;
+    border-right: solid var(--gpg-green) 1px;
+    border-bottom: solid var(--gpg-green) 1px;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.view-content {
+    width: 95%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-y: auto;
+}
+
+.form-input-container-radio {
+    width: 100%;
+    height: 25px;
+    background: white;
+    display: flex;
+    gap: 15px;
+}
+
+.form-input-radio-option {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.form-input-radio {
+    width: 20px;
+}
+
 .modal-container {
     width: 90%;
     height: 90%;
@@ -2629,4 +2722,44 @@ input::-webkit-inner-spin-button {
     border: solid 1px var(--gpg-green);
     background: transparent;
     color: var(--gpg-green);
+}
+
+/* ----- safety ----- */
+#incident-report-content-selector {
+    border-bottom: none;
+}
+
+#inc-actions-input-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.inc-actions-input-row {
+    height: 25px;
+    width: 100%;
+    display: flex;
+    gap: 5px;
+}
+
+.inc-actions-date-column {
+    width: 15%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.inc-actions-action-column {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.inc-actions-name-column {
+    height: 100%;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
 }
