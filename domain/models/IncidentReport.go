@@ -34,6 +34,8 @@ type IncidentReport struct {
 	Reporter            string `json:"reporter"`
 	Signature           string `json:"signature"`
 	ReportDate          string `json:"report_date"`
+	CreatedAt           string `json:"created_at"`
+	ModifiedAt          string `json:"modified_at"`
 }
 
 type IncidentReportErrors struct {
@@ -48,6 +50,7 @@ type IncidentReportErrors struct {
 	IncidentLocationErr    string
 	IncidentDescriptionErr string
 	WasWitnessedErr        string
+	WasInjuredErr          string
 	WasTreatedErr          string
 	TreatmentLocationErr   string
 	ReporterErr            string
@@ -71,6 +74,7 @@ func (i *IncidentReport) Validate() IncidentReportErrors {
 	errors = i.validateIncidentLocation(errors)
 	errors = i.validateIncidentDescription(errors)
 	errors = i.validateWasWitnessed(errors)
+	errors = i.validateWasInjured(errors)
 	errors = i.validateWasTreated(errors)
 	errors = i.validateTreatmentLocation(errors)
 	errors = i.validateReporter(errors)
@@ -167,6 +171,14 @@ func (i *IncidentReport) validateWasWitnessed(errors IncidentReportErrors) Incid
 	if i.WasWitnessed == "" {
 		errors.IsSuccessful = false
 		errors.WasWitnessedErr = "*required"
+		return errors
+	}
+	return errors
+}
+func (i *IncidentReport) validateWasInjured(errors IncidentReportErrors) IncidentReportErrors {
+	if i.WasInjured == "" {
+		errors.IsSuccessful = false
+		errors.WasInjuredErr = "*required"
 		return errors
 	}
 	return errors

@@ -52,9 +52,12 @@ const (
 	adminLeaveTabPath              = "../ui/templates/adminLeaveTab.html"
 	adminLeaveRequestPath          = "../ui/templates/adminLeaveRequest.html"
 	adminLeaveRequestModalPath     = "../ui/templates/adminLeaveModal.html"
+	adminSafetyTabPath             = "../ui/templates/adminSafetyTab.html"
+	adminIncidentReportListPath    = "../ui/templates/adminIncidentReportList.html"
 	accountPath                    = "../ui/views/account.html"
 	safetyPath                     = "../ui/views/safety.html"
 	incidentReportFormPath         = "../ui/templates/incidentReportForm.html"
+	iframePdfPath                  = "../ui/templates/iframePdf.html"
 )
 
 func renderTemplate(

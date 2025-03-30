@@ -5,7 +5,12 @@
 	</div>
 	<form
 	class="form"
-	id="incident-report-form">
+	id="incident-report-form"
+	hx-post="/safety/generate-incident-report"
+	hx-target="#safety-view-content"
+	hx-swap="innerHTML"
+	hx-ext="json-enc">
+		<input type="hidden" name="uuid" value="{{ .UUID }}">
 		<input type="hidden" name="reporter_id" value="{{ .ReporterId }}">
 		<div class="form-row-container">
 			<div class="form-label-container">
@@ -15,9 +20,11 @@
 				<input 
 				class="form-input" 
 				type="text" 
-				name="full_name">
+				name="full_name"
+				value="{{ .FullName }}">
 			</div>
 			<div class="error-container">
+				{{ .FullNameErr }}
             </div>
 		</div>
 		<div class="form-row-container">
@@ -28,9 +35,11 @@
 				<input 
 				class="form-input" 
 				type="text" 
-				name="home_address">
+				name="home_address"
+				value="{{ .HomeAddress }}">
 			</div>
 			<div class="error-container">
+				{{ .HomeAddressErr }}
             </div>
 		</div>
 		<div class="form-row-container">
@@ -41,9 +50,11 @@
 				<input 
 				class="form-input" 
 				type="text" 
-				name="contact_number">
+				name="contact_number"
+				value="{{ .ContactNumber }}">
 			</div>
 			<div class="error-container">
+				{{ .ContactNumberErr }}
             </div>
 		</div>
 		<div class="form-row-container">
@@ -54,9 +65,11 @@
 				<input 
 				class="form-input" 
 				type="date" 
-				name="incident_date">
+				name="incident_date"
+				value="{{ .IncidentDate }}">
 			</div>
 			<div class="error-container">
+				{{ .IncidentDateErr }}
             </div>
 		</div>
 		<div class="form-row-container">
@@ -67,9 +80,11 @@
 				<input 
 				class="form-input" 
 				type="text" 
-				name="incident_time">
+				name="incident_time"
+				value="{{ .IncidentTime }}">
 			</div>
 			<div class="error-container">
+				{{ .IncidentTimeErr }}
             </div>
 		</div>
 		<div class="form-row-container">
@@ -82,17 +97,20 @@
 					class="form-input-radio" 
 					type="radio" 
 					name="police_notified"
-					value="yes">Yes</input>
+					value="yes"
+					{{ if eq .PoliceNotified "yes" }} checked {{ end }}>Yes</input>
 				</div>
 				<div class="form-input-radio-option"> 
 					<input 
 					class="form-input-radio" 
 					type="radio" 
 					name="police_notified"
-					value="no">No</input>
+					value="no"
+					{{ if eq .PoliceNotified "no" }} checked {{ end }}>No</input>
 				</div>
 			</div>
 			<div class="error-container">
+				{{ .PoliceNotifiedErr }}
             </div>
 		</div>
 		<div class="form-row-container">
@@ -103,9 +121,11 @@
 				<input 
 				class="form-input" 
 				type="text" 
-				name="incident_location">
+				name="incident_location"
+				value="{{ .IncidentLocation }}">
 			</div>
 			<div class="error-container">
+				{{ .IncidentLocationErr }}
             </div>
 		</div>
 		<div class="form-row-container">
@@ -116,9 +136,11 @@
 				<input 
 				class="form-input" 
 				type="text" 
-				name="incident_description">
+				name="incident_description"
+				value="{{ .IncidentDescription }}">
 			</div>
 			<div class="error-container">
+				{{ .IncidentDescriptionErr }}
             </div>
 		</div>
 		<div class="form-row-container">
@@ -131,17 +153,20 @@
 					class="form-input-radio" 
 					type="radio" 
 					name="was_witnessed"
-					value="yes">Yes</input>
+					value="yes"
+					{{ if eq .WasWitnessed "yes" }} checked {{ end }}>Yes</input>
 				</div>
 				<div class="form-input-radio-option"> 
 					<input 
 					class="form-input-radio" 
 					type="radio" 
 					name="was_witnessed"
-					value="no">No</input>
+					value="no"
+					{{ if eq .WasWitnessed "no" }} checked {{ end }}>No</input>
 				</div>
 			</div>
 			<div class="error-container">
+				{{ .WasWitnessedErr }}
             </div>
 		</div>
 		<div class="form-row-container">
@@ -154,17 +179,20 @@
 					class="form-input-radio" 
 					type="radio" 
 					name="was_injured"
-					value="yes">Yes</input>
+					value="yes"
+					{{ if eq .WasInjured "yes" }} checked {{ end }}>Yes</input>
 				</div>
 				<div class="form-input-radio-option"> 
 					<input 
 					class="form-input-radio" 
 					type="radio" 
 					name="was_injured"
-					value="no">No</input>
+					value="no"
+					{{ if eq .WasInjured "no" }} checked {{ end }}>No</input>
 				</div>
 			</div>
 			<div class="error-container">
+				{{ .WasInjuredErr }}
             </div>
 		</div>
 		<div class="form-row-container">
@@ -175,7 +203,8 @@
 				<input 
 				class="form-input" 
 				type="text" 
-				name="further_details">
+				name="further_details"
+				value="{{ .FurtherDetails }}">
 			</div>
 			<div class="error-container">
             </div>
@@ -190,24 +219,28 @@
 					class="form-input-radio" 
 					type="radio" 
 					name="was_treated"
-					value="yes">Yes</input>
+					value="yes"
+					{{ if eq .WasTreated "yes" }} checked {{ end }}>Yes</input>
 				</div>
 				<div class="form-input-radio-option"> 
 					<input 
 					class="form-input-radio" 
 					type="radio" 
 					name="was_treated"
-					value="no">No</input>
+					value="no"
+					{{ if eq .WasTreated "no" }} checked {{ end }}>No</input>
 				</div>
 				<div class="form-input-radio-option"> 
 					<input 
 					class="form-input-radio" 
 					type="radio" 
 					name="was_treated"
-					value="refused treatment">Refused Treatment</input>
+					value="refused treatment"
+					{{ if eq .WasTreated "refused treatment" }} checked {{ end }}>Refused Treatment</input>
 				</div>
 			</div>
 			<div class="error-container">
+				{{ .WasTreatedErr }}
             </div>
 		</div>
 		<div class="form-row-container">
@@ -220,24 +253,28 @@
 					class="form-input-radio" 
 					type="radio" 
 					name="treatment_location"
-					value="onsite">On Site</input>
+					value="onsite"
+					{{ if eq .TreatmentLocation "onsite" }} checked {{ end }}>On Site</input>
 				</div>
 				<div class="form-input-radio-option"> 
 					<input 
 					class="form-input-radio" 
 					type="radio" 
 					name="treatment_location"
-					value="emergency room">Emergency Room</input>
+					value="emergency room"
+					{{ if eq .TreatmentLocation "emergency room" }} checked {{ end }}>Emergency Room</input>
 				</div>
 				<div class="form-input-radio-option"> 
 					<input 
 					class="form-input-radio" 
 					type="radio" 
 					name="treatment_location"
-					value="other">Other</input>
+					value="other"
+					{{ if eq .TreatmentLocation "other" }} checked {{ end }}>Other</input>
 				</div>
 			</div>
 			<div class="error-container">
+				{{ .TreatmentLocationErr }}
             </div>
 		</div>
 		<div class="form-row-container">
@@ -261,19 +298,22 @@
 						<input 
 						class="form-input" 
 						type="date" 
-						name="inc_info_date_1">
+						name="inc_info_date_1"
+						value="{{ .IncInfoDate1 }}">
 					</div>
 					<div class="inc-actions-action-column">
 						<input 
 						class="form-input" 
 						type="text" 
-						name="inc_info_action_1">
+						name="inc_info_action_1"
+						value="{{ .IncInfoAction1 }}">
 					</div>
 					<div class="inc-actions-name-column">
 						<input 
 						class="form-input" 
 						type="text" 
-						name="inc_info_name_1">
+						name="inc_info_name_1"
+						value="{{ .IncInfoName1 }}">
 					</div>
 				</div>
 				<div class="inc-actions-input-row">
@@ -281,19 +321,22 @@
 						<input 
 						class="form-input" 
 						type="date" 
-						name="inc_info_date_2">
+						name="inc_info_date_2"
+						value="{{ .IncInfoDate2 }}">
 					</div>
 					<div class="inc-actions-action-column">
 						<input 
 						class="form-input" 
 						type="text" 
-						name="inc_info_action_2">
+						name="inc_info_action_2"
+						value="{{ .IncInfoAction2 }}">
 					</div>
 					<div class="inc-actions-name-column">
 						<input 
 						class="form-input" 
 						type="text" 
-						name="inc_info_name_2">
+						name="inc_info_name_2"
+						value="{{ .IncInfoName2 }}">
 					</div>
 				</div>
 				<div class="inc-actions-input-row">
@@ -301,19 +344,22 @@
 						<input 
 						class="form-input" 
 						type="date" 
-						name="inc_info_date_3">
+						name="inc_info_date_3"
+						value="{{ .IncInfoDate3 }}">
 					</div>
 					<div class="inc-actions-action-column">
 						<input 
 						class="form-input" 
 						type="text" 
-						name="inc_info_action_3">
+						name="inc_info_action_3"
+						value="{{ .IncInfoAction3 }}">
 					</div>
 					<div class="inc-actions-name-column">
 						<input 
 						class="form-input" 
 						type="text" 
-						name="inc_info_name_3">
+						name="inc_info_name_3"
+						value="{{ .IncInfoName3 }}">
 					</div>
 				</div>
 				<div class="inc-actions-input-row">
@@ -321,19 +367,22 @@
 						<input 
 						class="form-input" 
 						type="date" 
-						name="inc_info_date_4">
+						name="inc_info_date_4"
+						value="{{ .IncInfoDate4 }}">
 					</div>
 					<div class="inc-actions-action-column">
 						<input 
 						class="form-input" 
 						type="text" 
-						name="inc_info_action_4">
+						name="inc_info_action_4"
+						value="{{ .IncInfoAction4 }}">
 					</div>
 					<div class="inc-actions-name-column">
 						<input 
 						class="form-input" 
 						type="text" 
-						name="inc_info_name_4">
+						name="inc_info_name_4"
+						value="{{ .IncInfoName4 }}">
 					</div>
 				</div>
 				<div class="inc-actions-input-row">
@@ -341,19 +390,22 @@
 						<input 
 						class="form-input" 
 						type="date" 
-						name="inc_info_date_5">
+						name="inc_info_date_5"
+						value="{{ .IncInfoDate5 }}">
 					</div>
 					<div class="inc-actions-action-column">
 						<input 
 						class="form-input" 
 						type="text" 
-						name="inc_info_action_5">
+						name="inc_info_action_5"
+						value="{{ .IncInfoAction5 }}">
 					</div>
 					<div class="inc-actions-name-column">
 						<input 
 						class="form-input" 
 						type="text" 
-						name="inc_info_name_5">
+						name="inc_info_name_5"
+						value="{{ .IncInfoName5 }}">
 					</div>
 				</div>
 			</div>
@@ -384,9 +436,11 @@
 				<input 
 				class="form-input" 
 				type="text" 
-				name="signature">
+				name="signature"
+				value="{{ .Signature }}">
 			</div>
 			<div class="error-container">
+				{{ .SignatureErr }}
             </div>
 		</div>
 		<div class="form-row-container">
@@ -397,9 +451,11 @@
 				<input 
 				class="form-input" 
 				type="date" 
-				name="report_date">
+				name="report_date"
+				value="{{ .ReportDate }}">
 			</div>
 			<div class="error-container">
+            	{{ .ReportDateErr }}
             </div>
 		</div>
 		<div class="success-msg-container">

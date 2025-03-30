@@ -1,0 +1,40 @@
+{{ define "adminIncidentReportList" }}
+	<div class="list-container">
+		<div>
+			<p class="list-header">Incident Reports</p>
+		</div>
+		{{ range . }}
+		<div class="incident-report-list-item">
+			<div class="incident-report-list-item-info">
+				<span style="font-weight: 600;">Incident Report - {{ .FullName }}</span>
+				<span style="color: var(--timesheet-border);">Incident Date: {{ .IncidentDate }}</span>
+				<span style="color: var(--timesheet-border)">{{ .CreatedAt }} . {{ .Reporter }}</span>
+			</div>
+			<div class="incident-report-list-item-btn-container">
+				<div
+				class="incident-report-list-item-btn"
+				onclick="togglePdfViewer()"
+				hx-get="/safety/get-incident-report"
+				hx-target="#admin-safety-pdf-viewer"
+				hx-swap="innerHTML"
+				hx-vals='{
+					"uuid": "{{ .UUID }}"
+				}'>
+					<img src="../static/img/view.svg">
+				</div>
+				<div 
+				class="incident-report-list-item-btn"
+				hx-delete="/safety/delete-incident-report"
+				hx-target="closest .incident-report-list-item"
+				hx-swap="delete"
+				hx-on::after-request="clearPdfViewer()"
+				hx-vals='{
+					"uuid": "{{ .UUID }}"
+				}'>
+					<img src="../static/img/delete_grey.svg">
+				</div>
+			</div>
+		</div>	
+		{{ end }}
+	</div>
+{{ end }}

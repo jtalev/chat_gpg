@@ -453,8 +453,8 @@ form input {
 }
 
 .view-content-selector {
-    width: 130px;
-    font-size: small;
+    width: 100px;
+    font-size: x-small;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -497,6 +497,7 @@ form input {
     justify-content: center;
     align-items: center;
     gap: 5px;
+    font-size: small;
 }
 
 .form-input-radio {
@@ -676,6 +677,7 @@ form input {
 .form-label {
     width: 100%;
     height: 100%;
+    font-size: small;
 }
 
 .form-input {
@@ -1249,7 +1251,7 @@ input::-webkit-inner-spin-button {
 
 #leaveContentSelectorContainer {
     display: flex;
-    height: 2.5em;
+    height: 30px;
 }
 
 .borderBottom {
@@ -1259,8 +1261,8 @@ input::-webkit-inner-spin-button {
 }
 
 .leaveContentSelector {
-    width: 6em;
-    font-size: small;
+    width: 80px;
+    font-size: x-small;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1433,8 +1435,8 @@ input::-webkit-inner-spin-button {
 }
 
 .adminContentSelector {
-    width: 7em;
-    font-size: small;
+    width: 80px;
+    font-size: x-small;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -1453,6 +1455,10 @@ input::-webkit-inner-spin-button {
 }
 
 #leaveSelector {
+    border-left: none;
+}
+
+#safetySelector {
     border-left: none;
 }
 
@@ -1514,7 +1520,6 @@ input::-webkit-inner-spin-button {
     gap: 5px;
     padding-left: 1em;
     padding-right: 1em;
-    max-height: 500px;
 }
 
 .admin-job-list-headers {
@@ -2648,7 +2653,7 @@ input::-webkit-inner-spin-button {
     
     .dashboard-tile-container {
         width: 45%;
-        height: 250px;
+        height: 170px;
         border: var(--gpg-green) solid 1px;
         background-color: var(--main-background-color);
     }
@@ -2734,6 +2739,7 @@ input::-webkit-inner-spin-button {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    font-size: small;
 }
 
 .inc-actions-input-row {
@@ -2762,4 +2768,191 @@ input::-webkit-inner-spin-button {
     flex-grow: 1;
     display: flex;
     align-items: center;
+}
+
+#admin-safety-tab-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#admin-safety-tab-content {
+    width: 95%;
+    height: 97%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+#admin-safety-tab-content-toggle-container {
+    height: 40px;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+}
+
+#admin-safety-content-toggle {
+    width: 200px;
+    height: 30px;
+    border: solid 1px var(--gpg-green);
+    background-color: var(--light-background-color);
+    font-size: x-small;
+    display: flex;
+}
+
+#incident-report-toggle {
+    width: 50%;
+    height: 100%;
+    border-right: 1px solid var(--gpg-green);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: var(--gpg-green-background);
+    color: white;
+    cursor: pointer;
+}
+
+#swm-toggle {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#admin-safety-content-container {
+    width: 100%;
+    height: 90%;
+    display: flex;
+    font-size: small;
+}
+
+@media screen and (max-width: 1029px) {
+    #admin-safety-content {
+        width: 100%;
+        height: 100%;
+        border: solid 1px var(--gpg-green);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #admin-safety-pdf-viewer {
+        width: 100%;
+        height: 100%;
+        border: solid 1px var(--gpg-green);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+@media screen and (min-width: 1030px) {
+    #admin-safety-content {
+        width: 30%;
+        border: solid 1px var(--gpg-green);
+        margin-right: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #admin-safety-pdf-viewer {
+        border: solid 1px var(--gpg-green);
+        width: 70%;  
+        display: flex; 
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.list-container {
+    width: 95%;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.list-header {
+    border-bottom: var(--timesheet-border) solid 1px;
+    padding: 0;
+    margin: 0;
+    margin-bottom: 3px;
+    margin-top: 3px;
+    height: 25px;
+    display: flex;
+    align-items: flex-end;
+}
+
+.incident-report-list-item {
+    border-bottom: var(--main-background-color) solid 1px;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.incident-report-list-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.incident-report-list-item-btn-container {
+    width: 100%;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.incident-report-list-item-btn {
+    width: 25px;
+    height: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    border: solid 1px var(--gpg-light-green-background);
+    background-color: var(--main-background-color);
+    cursor: pointer;
+}
+
+.incident-report-list-item-btn img {
+    width: 90%;
+    height: 90%;
+}
+
+.admin-safety-pdf {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+#close-pdf-viewer-btn-container {
+    margin-left: auto;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+}
+
+#close-pdf-btn {
+    height: 30px;
+    width: 80px;
+    border: var(--gpg-green) solid 1px;
+    background-color: var(--gpg-green-background);
+    color: white;
+    display: none;
+    font-size: x-small;
+    cursor: pointer;
 }

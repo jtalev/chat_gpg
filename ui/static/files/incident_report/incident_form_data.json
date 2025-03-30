@@ -18,7 +18,7 @@
 					"name": "inc_info_date_1",
 					"value": "{{ .IncInfoDate1 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -28,7 +28,7 @@
 					"name": "inc_info_name_3",
 					"value": "{{ .IncInfoName3 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -38,7 +38,7 @@
 					"name": "incident_date",
 					"value": "{{ .IncidentDate }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -48,7 +48,7 @@
 					"name": "inc_info_date_2",
 					"value": "{{ .IncInfoDate2 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -58,7 +58,7 @@
 					"name": "inc_info_action_2",
 					"value": "{{ .IncInfoAction2 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -68,7 +68,7 @@
 					"name": "inc_info_action_3",
 					"value": "{{ .IncInfoAction3 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -78,7 +78,7 @@
 					"name": "inc_info_name_5",
 					"value": "{{ .IncInfoName5 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -88,7 +88,7 @@
 					"name": "further_details",
 					"value": "{{ .FurtherDetails }}",
 					"multiline": true,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -98,7 +98,7 @@
 					"name": "report_date",
 					"value": "{{ .ReportDate }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -108,7 +108,7 @@
 					"name": "full_name",
 					"value": "{{ .FullName }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -118,7 +118,7 @@
 					"name": "inc_info_date_4",
 					"value": "{{ .IncInfoDate4 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -128,7 +128,7 @@
 					"name": "inc_info_date_5",
 					"value": "{{ .IncInfoDate5 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -138,7 +138,7 @@
 					"name": "signature",
 					"value": "{{ .Signature }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -148,7 +148,7 @@
 					"name": "home_address",
 					"value": "{{ .HomeAddress }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -158,7 +158,7 @@
 					"name": "incident_location",
 					"value": "{{ .IncidentLocation }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -168,7 +168,7 @@
 					"name": "inc_info_action_1",
 					"value": "{{ .IncInfoAction1 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -178,7 +178,7 @@
 					"name": "inc_info_date_3",
 					"value": "{{ .IncInfoDate3 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -188,7 +188,7 @@
 					"name": "inc_info_name_2",
 					"value": "{{ .IncInfoName2 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -198,7 +198,7 @@
 					"name": "incident_time",
 					"value": "{{ .IncidentTime }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -208,7 +208,7 @@
 					"name": "inc_info_name_1",
 					"value": "{{ .IncInfoName1 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -218,7 +218,7 @@
 					"name": "reporter",
 					"value": "{{ .Reporter }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -228,7 +228,7 @@
 					"name": "inc_info_name_4",
 					"value": "{{ .IncInfoName4 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -238,7 +238,7 @@
 					"name": "inc_info_action_4",
 					"value": "{{ .IncInfoAction4 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -248,7 +248,7 @@
 					"name": "contact_number",
 					"value": "{{ .ContactNumber }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -258,7 +258,7 @@
 					"name": "incident_description",
 					"value": "{{ .IncidentDescription }}",
 					"multiline": true,
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -268,7 +268,7 @@
 					"name": "inc_info_action_5",
 					"value": "{{ .IncInfoAction5 }}",
 					"multiline": false,
-					"locked": false
+					"locked": true
 				}
 			],
 			"radiobuttongroup": [
@@ -283,7 +283,7 @@
 						"no"
 					],
 					"value": "{{ .WasInjured }}",
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -297,7 +297,7 @@
 						"refused"
 					],
 					"value": "{{ .WasTreated }}",
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -310,7 +310,7 @@
 						"no"
 					],
 					"value": "{{ .PoliceNotified }}",
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -323,7 +323,7 @@
 						"no"
 					],
 					"value": "{{ .WasWitnessed }}",
-					"locked": false
+					"locked": true
 				},
 				{
 					"pages": [
@@ -337,7 +337,7 @@
 						"other"
 					],
 					"value": "{{ .TreatmentLocation }}",
-					"locked": false
+					"locked": true
 				}
 			]
 		}

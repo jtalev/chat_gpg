@@ -31,6 +31,10 @@ function onLeaveSelectorClick() {
                     leaveContentElement = document.querySelector("#adminEmployeesContent")
                     leaveContentElement.style.display = "block"
                     break
+                case "SAFETY":
+                    leaveContentElement = document.querySelector("#adminSafetyContent")
+                    leaveContentElement.style.display = "block"
+                    break
             }
         })
     })
@@ -136,4 +140,29 @@ function onPutJobClick() {
 
 function onPutJobModalClose() {
     document.querySelector("#put-job-modal-container").style.display = "none"
+}
+
+function onSafetyContentToggle(event) {
+    // Get toggle elements
+    const incidentToggle = document.getElementById("incident-report-toggle");
+    const swmToggle = document.getElementById("swm-toggle");
+
+    // Reset both toggles to default
+    incidentToggle.style.backgroundColor = "var(--gpg-green-background)";
+    incidentToggle.style.color = "white";
+    swmToggle.style.backgroundColor = "var(--main-background-color)";
+    swmToggle.style.color = "black";
+
+    // Highlight the clicked toggle
+    if (event.target.id === "incident-report-toggle") {
+        incidentToggle.style.backgroundColor = "var(--gpg-green-background)";
+        incidentToggle.style.color = "white";
+        swmToggle.style.backgroundColor = "var(--main-background-color)";
+        swmToggle.style.color = "black";
+    } else if (event.target.id === "swm-toggle") {
+        swmToggle.style.backgroundColor = "var(--gpg-green-background)";
+        swmToggle.style.color = "white";
+        incidentToggle.style.backgroundColor = "var(--main-background-color)";
+        incidentToggle.style.color = "black";
+    }
 }

@@ -27,6 +27,16 @@
         hx-swap="innerHTML">
             LEAVE
         </div>
+        <div 
+        class="adminContentSelector" 
+        id="safetySelector" 
+        style="background-color: var(--main-background-color);"
+        hx-get="/admin/render-safety-tab"
+        hx-target="#adminSafetyContent"
+        hx-trigger="click"
+        hx-swap="innerHTML">
+            SAFETY
+        </div>
         <div class="borderBottom">
 
         </div>
@@ -41,7 +51,11 @@
         <div class="adminContent" id="adminLeaveContent" style="display: none;">
             leave
         </div>
+        <div class="adminContent" id="adminSafetyContent" style="display: none;">
+            safety
+        </div>
     </div>
 </div>
 <script src="../static/js/admin.js"></script>
+<script src="../static/js/safety.js"></script>
 {{ end }}

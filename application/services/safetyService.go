@@ -46,13 +46,14 @@ type IncidentReportValues struct {
 	FullNameErr            string
 	HomeAddressErr         string
 	ContactNumberErr       string
-	DateErr                string
+	IncidentDateErr        string
+	IncidentTimeErr        string
 	PoliceNotifiedErr      string
 	IncidentLocationErr    string
 	IncidentDescriptionErr string
 	WasWitnessedErr        string
-	VictimInjuredErr       string
-	TreatmentProvidedErr   string
+	WasInjuredErr          string
+	WasTreatedErr          string
 	TreatmentLocationErr   string
 	ReporterErr            string
 	SignatureErr           string
@@ -123,21 +124,39 @@ func postIncidentReport(incidentReport domain.IncidentReport, db *sql.DB) (sql.R
 	return infrastructure.PostIncidentReport(incidentReport, db)
 }
 
-func GenerateIncidentReportPdf(incidentReportValues IncidentReportValues, db *sql.DB) error {
+func mapErrorsToIncidentReportValues(incidentReportValues IncidentReportValues, errors domain.IncidentReportErrors) IncidentReportValues {
+	incidentReportValues.FullNameErr = errors.FullNameErr
+	incidentReportValues.HomeAddressErr = errors.HomeAddressErr
+	incidentReportValues.ContactNumberErr = errors.ContactNumberErr
+	incidentReportValues.IncidentDateErr = errors.IncidentDateErr
+	incidentReportValues.IncidentTimeErr = errors.IncidentTimeErr
+	incidentReportValues.PoliceNotifiedErr = errors.PoliceNotifiedErr
+	incidentReportValues.IncidentLocationErr = errors.IncidentLocationErr
+	incidentReportValues.IncidentDescriptionErr = errors.IncidentDescriptionErr
+	incidentReportValues.WasWitnessedErr = errors.WasWitnessedErr
+	incidentReportValues.WasInjuredErr = errors.WasInjuredErr
+	incidentReportValues.WasTreatedErr = errors.WasTreatedErr
+	incidentReportValues.TreatmentLocationErr = errors.TreatmentLocationErr
+	incidentReportValues.ReporterErr = errors.ReporterErr
+	incidentReportValues.SignatureErr = errors.SignatureErr
+	incidentReportValues.ReportDateErr = errors.ReportDateErr
+	return incidentReportValues
+}
+
+func GenerateIncidentReportPdf(incidentReportValues IncidentReportValues, db *sql.DB) (IncidentReportValues, error) {
 	uuid := uuid.New().String()
 
 	incidentReport := mapIncidentReportValuesToIncidentReport(incidentReportValues)
 	incidentReport.UUID = uuid
 	errors := incidentReport.Validate()
 	if errors.IsSuccessful == false {
-		log.Printf("error validating incident report")
-		return nil
+		incidentReportValues = mapErrorsToIncidentReportValues(incidentReportValues, errors)
+		return incidentReportValues, nil
 	}
-
 	result, err := postIncidentReport(incidentReport, db)
 	if err != nil {
 		log.Printf("error posting incident report: %v", result)
-		return err
+		return incidentReportValues, err
 	}
 
 	p := mapToPdf(
@@ -153,7 +172,27 @@ func GenerateIncidentReportPdf(incidentReportValues IncidentReportValues, db *sq
 	err = p.GeneratePdf()
 	if err != nil {
 		log.Printf("Error generating incident report pdf: %v", err)
-		return err
+		return incidentReportValues, err
 	}
+	incidentReportValues.SuccessMsg = "Incident report submitted successfully."
+	return incidentReportValues, nil
+}
+
+func GetIncidentReportUrl(uuid string, db *sql.DB) (string, error) {
+	p := Pdf{
+		UUID:         uuid,
+		S3FileName:   uuid + "_" + outIncidentReportPdfName + ".pdf",
+		S3StorageDir: incidentReportS3StorageDir,
+	}
+
+	url, err := p.GetPresignedURL(100)
+	if err != nil {
+		return "", err
+	}
+
+	return url, nil
+}
+
+func DeleteIncidentReport(uuid string, db *sql.DB) error {
 	return nil
 }

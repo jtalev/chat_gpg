@@ -365,3 +365,31 @@ func (h *Handler) PutEmployeeModal() http.Handler {
 		},
 	)
 }
+
+func (h *Handler) RenderSafetyTab() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			incidentReports, err := infrastructure.GetIncidentReports(h.DB)
+			if err != nil {
+				log.Printf("Error getting incident reports: %v", err)
+				http.Error(w, "internal server error", http.StatusInternalServerError)
+			}
+
+			tmpl, err := template.ParseFiles(
+				adminSafetyTabPath,
+				adminIncidentReportListPath,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			err = tmpl.ExecuteTemplate(w, "adminSafetyTab", incidentReports)
+			if err != nil {
+				log.Printf("Error executing template: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}

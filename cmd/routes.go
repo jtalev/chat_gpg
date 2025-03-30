@@ -78,7 +78,10 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/admin/leave-finalise", a.AuthorizeAdmin(h.LeaveRequestFinalise()))
 	mux.Handle("/admin/add-employee-modal", a.AuthorizeAdmin(h.AddEmployeeModal()))
 	mux.Handle("/admin/employee-put-modal", a.AuthorizeAdmin(h.PutEmployeeModal()))
+	mux.Handle("/admin/render-safety-tab", a.AuthorizeAdmin(h.RenderSafetyTab()))
 
 	// safety routes
 	mux.Handle("/safety/generate-incident-report", h.GenerateIncidentReport())
+	mux.Handle("/safety/get-incident-report", h.GetIncidentReport())
+	mux.Handle("/safety/delete-incident-report", h.DeleteIncidentReport())
 }

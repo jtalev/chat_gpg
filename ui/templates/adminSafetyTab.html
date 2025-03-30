@@ -1,0 +1,26 @@
+{{ define "adminSafetyTab" }}
+<div id="admin-safety-tab-container">
+	<div id="admin-safety-tab-content">
+		<div id="admin-safety-tab-content-toggle-container">
+			<div id="admin-safety-content-toggle">
+				<div 
+				id="incident-report-toggle" onclick="onSafetyContentToggle(event)">INCIDENT REPORT</div>
+				<div 
+				id="swm-toggle"
+				onclick="onSafetyContentToggle(event)">SWMs</div>
+			</div>
+			<div id="close-pdf-viewer-btn-container">
+				<button id="close-pdf-btn" onclick="togglePdfViewer()">CLOSE PDF</button>
+			</div>
+		</div>
+		<div id="admin-safety-content-container">
+			<div id="admin-safety-content">
+				{{ template "adminIncidentReportList" . }}
+			</div>
+			<div id="admin-safety-pdf-viewer">
+				View PDF here.	
+			</div>
+		</div>
+	</div>
+</div>
+{{ end }}
