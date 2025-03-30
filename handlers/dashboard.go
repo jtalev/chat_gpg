@@ -7,7 +7,7 @@ type InitialDashboardData struct {
 }
 
 func getDashboardData(w http.ResponseWriter, r *http.Request) (InitialDashboardData, error) {
-	pages := []string{"TIMESHEETS", "LEAVE"}
+	pages := []string{"TIMESHEETS", "LEAVE", "SAFETY"}
 	isAdmin, err := getIsAdmin(w, r)
 	if err != nil {
 		return InitialDashboardData{}, err
@@ -15,7 +15,6 @@ func getDashboardData(w http.ResponseWriter, r *http.Request) (InitialDashboardD
 	if isAdmin {
 		pages = append(pages, "REPORTS", "ADMIN")
 	}
-	pages = append(pages, "SAFETY")
 	data := InitialDashboardData{
 		Pages: pages,
 	}
