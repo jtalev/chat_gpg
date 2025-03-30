@@ -1516,6 +1516,7 @@ input::-webkit-inner-spin-button {
 #admin-job-list {
     overflow-y: auto;
     display: flex;
+    height: 85%;
     flex-direction: column;
     gap: 5px;
     padding-left: 1em;
@@ -2645,14 +2646,14 @@ input::-webkit-inner-spin-button {
         width: 95%;
         height: 40%;
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: flex-start;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 3px;
     }
     
     .dashboard-tile-container {
-        width: 45%;
+        width: 48.6%;
         height: 170px;
         border: var(--gpg-green) solid 1px;
         background-color: var(--main-background-color);

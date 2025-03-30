@@ -194,5 +194,23 @@ func GetIncidentReportUrl(uuid string, db *sql.DB) (string, error) {
 }
 
 func DeleteIncidentReport(uuid string, db *sql.DB) error {
+	err := infrastructure.DeleteIncidentReport(uuid, db)
+	if err != nil {
+		log.Printf("error deleting incident report from db: %v", err)
+		return err
+	}
+
+	p := Pdf{
+		UUID:         uuid,
+		S3FileName:   uuid + "_" + outIncidentReportPdfName + ".pdf",
+		S3StorageDir: incidentReportS3StorageDir,
+	}
+
+	err = p.Delete()
+	if err != nil {
+		log.Printf("error deleting incident report pdf from s3 bucket: %v", err)
+		return err
+	}
+
 	return nil
 }

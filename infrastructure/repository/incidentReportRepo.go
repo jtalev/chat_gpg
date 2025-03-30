@@ -116,3 +116,16 @@ func PostIncidentReport(incidentReport domain.IncidentReport, db *sql.DB) (sql.R
 	}
 	return result, nil
 }
+
+func DeleteIncidentReport(uuid string, db *sql.DB) error {
+	q := `
+	delete from incident_report where uuid = ?;
+	`
+
+	_, err := db.Exec(q, uuid)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
