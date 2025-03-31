@@ -165,6 +165,7 @@ func PostEmployee(employeeDto EmployeeDto, db *sql.DB) (EmployeeDto, error) {
 		if err != nil {
 			return EmployeeDto{}, err
 		}
+		employeeAuth.AuthId = employee.ID
 		employeeAuth, err = infrastructure.PostEmployeeAuth(employeeAuth, db)
 		employeeDto.SuccessMsg = "Employee submitted successfully."
 		employeeDto.IsSuccess = true

@@ -78,11 +78,11 @@ func GetEmployeeAuthById(id int, db *sql.DB) (domain.EmployeeAuth, error) {
 
 func PostEmployeeAuth(employeeAuth domain.EmployeeAuth, db *sql.DB) (domain.EmployeeAuth, error) {
 	q := `
-	INSERT INTO employee_auth (employee_id, username, password_hash)
-	VALUES ($1, $2, $3);
+	INSERT INTO employee_auth (auth_id, employee_id, username, password_hash)
+	VALUES ($1, $2, $3, $4);
 	`
 
-	_, err := db.Exec(q, employeeAuth.EmployeeId, employeeAuth.Username, employeeAuth.PasswordHash)
+	_, err := db.Exec(q, employeeAuth.AuthId, employeeAuth.EmployeeId, employeeAuth.Username, employeeAuth.PasswordHash)
 	if err != nil {
 		return domain.EmployeeAuth{}, err
 	}
