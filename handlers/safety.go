@@ -84,3 +84,55 @@ func (h *Handler) DeleteIncidentReport() http.Handler {
 		},
 	)
 }
+
+func (h *Handler) PutIncidentReportHtml() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			vals, err := parseRequestValues([]string{"uuid"}, r)
+			if err != nil {
+				log.Printf("error parsing request values: %v", err)
+				http.Error(w, "Bad request", http.StatusBadRequest)
+				return
+			}
+			incidentReportVals, err := application.GetIncidentReport(vals[0], h.DB)
+			if err != nil {
+				log.Printf("error getting incident report from db: %v", err)
+				http.Error(w, "internal server error", http.StatusInternalServerError)
+				return
+			}
+			err = executePartialTemplate(putIncidentReportFormPath, "putIncidentReportForm", incidentReportVals, w)
+			if err != nil {
+				log.Printf("error executing html template: %v", err)
+				http.Error(w, "internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) PutIncidentReport() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			var incidentReportValues application.IncidentReportValues
+
+			if err := json.NewDecoder(r.Body).Decode(&incidentReportValues); err != nil {
+				http.Error(w, "Invalid JSON", http.StatusBadRequest)
+				return
+			}
+
+			incidentReportValues, err := application.PutIncidentReport(incidentReportValues, h.DB)
+			if err != nil {
+				log.Printf("error updating incident report: %v", err)
+				http.Error(w, "error updating incident report", http.StatusInternalServerError)
+				return
+			}
+
+			err = executePartialTemplate(putIncidentReportFormPath, "putIncidentReportForm", incidentReportValues, w)
+			if err != nil {
+				log.Printf("error executing html template: %v", err)
+				http.Error(w, "internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}

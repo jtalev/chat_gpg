@@ -2853,6 +2853,7 @@ input::-webkit-inner-spin-button {
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        overflow-y: auto;
     }
 }
 
@@ -2874,6 +2875,7 @@ input::-webkit-inner-spin-button {
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        overflow-y: auto;
     }
 }
 
@@ -2956,4 +2958,8 @@ input::-webkit-inner-spin-button {
     display: none;
     font-size: x-small;
     cursor: pointer;
+}
+
+#put-incident-form-container {
+    width: 95%;
 }

@@ -58,6 +58,7 @@ const (
 	safetyPath                     = "../ui/views/safety.html"
 	incidentReportFormPath         = "../ui/templates/incidentReportForm.html"
 	iframePdfPath                  = "../ui/templates/iframePdf.html"
+	putIncidentReportFormPath      = "../ui/templates/putIncidentReportForm.html"
 )
 
 func renderTemplate(

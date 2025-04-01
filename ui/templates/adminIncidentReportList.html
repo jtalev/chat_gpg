@@ -22,8 +22,20 @@
 				}'>
 					<img src="../static/img/view.svg">
 				</div>
+				<div
+				class="incident-report-list-item-btn"
+				onclick="togglePdfViewer()"
+				hx-get="/safety/put-incident-report-html"
+				hx-target="#admin-safety-pdf-viewer"
+				hx-swap="innerHTML"
+				hx-vals='{
+					"uuid": "{{ .UUID }}"
+				}'>
+					<img style="width: 70%;" src="../static/img/update.svg">
+				</div>
 				<div 
 				class="incident-report-list-item-btn"
+				style="margin-left: auto;" 
 				hx-delete="/safety/delete-incident-report"
 				hx-target="closest .incident-report-list-item"
 				hx-swap="delete"

@@ -2,6 +2,7 @@ package application
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	"github.com/google/uuid"
@@ -107,8 +108,45 @@ func mapIncidentReportValuesToIncidentReport(incidentReportValues IncidentReport
 	}
 }
 
+func mapIncidentReportToIncidentReportValues(incidentReport domain.IncidentReport) IncidentReportValues {
+	return IncidentReportValues{
+		UUID:                incidentReport.UUID,
+		ReporterId:          incidentReport.ReporterId,
+		FullName:            incidentReport.FullName,
+		HomeAddress:         incidentReport.HomeAddress,
+		ContactNumber:       incidentReport.ContactNumber,
+		IncidentDate:        incidentReport.IncidentDate,
+		IncidentTime:        incidentReport.IncidentTime,
+		PoliceNotified:      incidentReport.PoliceNotified,
+		IncidentLocation:    incidentReport.IncidentLocation,
+		IncidentDescription: incidentReport.IncidentDescription,
+		WasWitnessed:        incidentReport.WasWitnessed,
+		WasInjured:          incidentReport.WasInjured,
+		FurtherDetails:      incidentReport.FurtherDetails,
+		WasTreated:          incidentReport.WasTreated,
+		TreatmentLocation:   incidentReport.TreatmentLocation,
+		IncInfoDate1:        incidentReport.IncInfoDate1,
+		IncInfoDate2:        incidentReport.IncInfoDate2,
+		IncInfoDate3:        incidentReport.IncInfoDate3,
+		IncInfoDate4:        incidentReport.IncInfoDate4,
+		IncInfoDate5:        incidentReport.IncInfoDate5,
+		IncInfoAction1:      incidentReport.IncInfoAction1,
+		IncInfoAction2:      incidentReport.IncInfoAction2,
+		IncInfoAction3:      incidentReport.IncInfoAction3,
+		IncInfoAction4:      incidentReport.IncInfoAction4,
+		IncInfoAction5:      incidentReport.IncInfoAction5,
+		IncInfoName1:        incidentReport.IncInfoName1,
+		IncInfoName2:        incidentReport.IncInfoName2,
+		IncInfoName3:        incidentReport.IncInfoName3,
+		IncInfoName4:        incidentReport.IncInfoName4,
+		IncInfoName5:        incidentReport.IncInfoName5,
+		Reporter:            incidentReport.Reporter,
+		Signature:           incidentReport.Signature,
+		ReportDate:          incidentReport.ReportDate,
+	}
+}
+
 func mapToPdf(inPdfPath, inJsonPath, outPdfPath, outPdfName, s3StorageDir, uuid string, data any) Pdf {
-	log.Println(data)
 	return Pdf{
 		InPdfPath:    inPdfPath,
 		InJsonPath:   inJsonPath,
@@ -213,4 +251,55 @@ func DeleteIncidentReport(uuid string, db *sql.DB) error {
 	}
 
 	return nil
+}
+
+func GetIncidentReport(uuid string, db *sql.DB) (IncidentReportValues, error) {
+	incidentReport, err := infrastructure.GetIncidentReport(uuid, db)
+	if err != nil {
+		return IncidentReportValues{}, err
+	}
+
+	incidentReportValues := mapIncidentReportToIncidentReportValues(incidentReport)
+
+	return incidentReportValues, nil
+}
+
+func PutIncidentReport(incidentReportValues IncidentReportValues, db *sql.DB) (IncidentReportValues, error) {
+	incidentReport := mapIncidentReportValuesToIncidentReport(incidentReportValues)
+	errors := incidentReport.Validate()
+	if errors.IsSuccessful == false {
+		incidentReportValues = mapErrorsToIncidentReportValues(incidentReportValues, errors)
+		return incidentReportValues, nil
+	}
+
+	_, err := infrastructure.PutIncidentReport(incidentReport, db)
+	if err != nil {
+		log.Printf("error updating incident report at db: %v", err)
+		return incidentReportValues, err
+	}
+
+	p := mapToPdf(
+		inIncidentReportPath,
+		inIncidentReportJsonPath,
+		outIncidentReportPath,
+		outIncidentReportPdfName,
+		incidentReportS3StorageDir,
+		incidentReport.UUID,
+		incidentReport,
+	)
+	p.S3FileName = fmt.Sprintf("%s_%s.pdf", incidentReport.UUID, p.OutPdfName)
+
+	err = p.Delete()
+	if err != nil {
+		log.Printf("error deleting incident report from s3 bucket: %v", err)
+		return incidentReportValues, err
+	}
+	err = p.GeneratePdf()
+	if err != nil {
+		log.Printf("error generating pdf from updated incident report: %v", err)
+		return incidentReportValues, err
+	}
+
+	incidentReportValues.SuccessMsg = "Successfully updated incident report."
+	return incidentReportValues, nil
 }
