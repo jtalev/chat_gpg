@@ -1,4 +1,4 @@
-package application
+package report
 
 import (
 	"database/sql"
@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	application "github.com/jtalev/chat_gpg/application/services"
 	domain "github.com/jtalev/chat_gpg/domain/models"
 	repo "github.com/jtalev/chat_gpg/infrastructure/repository"
 )
@@ -20,11 +21,11 @@ type TimesheetReportData struct {
 
 func InitialTimesheetReportData(db *sql.DB) (TimesheetReportData, error) {
 	outData := TimesheetReportData{}
-	employees, err := GetEmployees(db)
+	employees, err := application.GetEmployees(db)
 	if err != nil {
 		return TimesheetReportData{}, err
 	}
-	weekStartDate := weekStartDate()
+	weekStartDate := application.WeekStartDate()
 	weekStartDateStr := fmt.Sprintf("%v-%v-%v", weekStartDate.Year(), int(weekStartDate.Month()), weekStartDate.Day())
 
 	sort.Slice(employees, func(i, j int) bool {
@@ -40,7 +41,7 @@ type EmployeeTimesheetReportData struct {
 	EmployeeId            string
 	WeekStartDate         string
 	WeekDates             []int
-	TimesheetRows         []TimesheetRow
+	TimesheetRows         []application.TimesheetRow
 	DayTotals             []string
 	WeekTotal             string
 	LeaveHoursPayable     string
@@ -48,7 +49,7 @@ type EmployeeTimesheetReportData struct {
 	RelevantLeaveRequests []domain.LeaveRequest
 }
 
-func calcTimesheetRowTotal(inTimesheetRows []TimesheetRow) []string {
+func calcTimesheetRowTotal(inTimesheetRows []application.TimesheetRow) []string {
 	outTotals := make([]string, len(inTimesheetRows))
 
 	for i := range inTimesheetRows {
@@ -67,7 +68,7 @@ func calcTimesheetRowTotal(inTimesheetRows []TimesheetRow) []string {
 	return outTotals
 }
 
-func formatTimesheetMatrices(inTimesheetRows []TimesheetRow) (outHoursMatrix, outMinutesMatrix [][]int) {
+func formatTimesheetMatrices(inTimesheetRows []application.TimesheetRow) (outHoursMatrix, outMinutesMatrix [][]int) {
 	row, col := len(inTimesheetRows), 7
 
 	outHoursMatrix, outMinutesMatrix = make([][]int, row), make([][]int, row)
@@ -113,7 +114,7 @@ func calcDayTotals(inHoursMatrix, inMinutesMatrix [][]int) (dayTotals []string) 
 	return dayTotals
 }
 
-func formatDayTotals(inTimesheetRows []TimesheetRow) []string {
+func formatDayTotals(inTimesheetRows []application.TimesheetRow) []string {
 	hoursMatrix, minutesMatrix := formatTimesheetMatrices(inTimesheetRows)
 	return calcDayTotals(hoursMatrix, minutesMatrix)
 }
@@ -197,7 +198,7 @@ func GetEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (EmployeeT
 		return outData, err
 	}
 
-	employee, err := GetEmployeeById(idStr, db)
+	employee, err := application.GetEmployeeById(idStr, db)
 	if err != nil {
 		return outData, err
 	}
@@ -207,11 +208,11 @@ func GetEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (EmployeeT
 		return outData, err
 	}
 
-	timesheetWeeks, err := GetTimesheetWeekByEmployeeWeekStart(employee.EmployeeId, weekStartDate, db)
+	timesheetWeeks, err := application.GetTimesheetWeekByEmployeeWeekStart(employee.EmployeeId, weekStartDate, db)
 	if err != nil {
 		return outData, err
 	}
-	timesheetRows, err := mapTimesheetsToTimesheetWeek(timesheetWeeks, db)
+	timesheetRows, err := application.MapTimesheetsToTimesheetWeek(timesheetWeeks, db)
 	if err != nil {
 		return outData, err
 	}
@@ -279,11 +280,11 @@ func GetPrevEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (Emplo
 		return outData, err
 	}
 
-	timesheetWeeks, err := GetTimesheetWeekByEmployeeWeekStart(id, outData.WeekStartDate, db)
+	timesheetWeeks, err := application.GetTimesheetWeekByEmployeeWeekStart(id, outData.WeekStartDate, db)
 	if err != nil {
 		return outData, err
 	}
-	timesheetRows, err := mapTimesheetsToTimesheetWeek(timesheetWeeks, db)
+	timesheetRows, err := application.MapTimesheetsToTimesheetWeek(timesheetWeeks, db)
 	if err != nil {
 		return outData, err
 	}
@@ -351,11 +352,11 @@ func GetNextEmployeeTimesheetReport(id, weekStartDate string, db *sql.DB) (Emplo
 		return outData, err
 	}
 
-	timesheetWeeks, err := GetTimesheetWeekByEmployeeWeekStart(id, outData.WeekStartDate, db)
+	timesheetWeeks, err := application.GetTimesheetWeekByEmployeeWeekStart(id, outData.WeekStartDate, db)
 	if err != nil {
 		return outData, err
 	}
-	timesheetRows, err := mapTimesheetsToTimesheetWeek(timesheetWeeks, db)
+	timesheetRows, err := application.MapTimesheetsToTimesheetWeek(timesheetWeeks, db)
 	if err != nil {
 		return outData, err
 	}
@@ -412,7 +413,7 @@ func GetLeaveByEmployeeId(employeeId string, db *sql.DB) ([]domain.LeaveRequest,
 
 func FilterEmployeeLeaveByWeek(leaveRequests []domain.LeaveRequest, weekStartDate string) ([]domain.LeaveRequest, error) {
 	outLeaveRequests := []domain.LeaveRequest{}
-	startDate, err := dateStrToDate(weekStartDate)
+	startDate, err := application.DateStrToDate(weekStartDate)
 	if err != nil {
 		return nil, err
 	}
@@ -423,8 +424,8 @@ func FilterEmployeeLeaveByWeek(leaveRequests []domain.LeaveRequest, weekStartDat
 			continue
 		}
 
-		lrStart, err := dateStrToDate(lr.From)
-		lrEnd, err := dateStrToDate(lr.To)
+		lrStart, err := application.DateStrToDate(lr.From)
+		lrEnd, err := application.DateStrToDate(lr.To)
 		if err != nil {
 			return nil, err
 		}
@@ -445,15 +446,15 @@ func FilterEmployeeLeaveByWeek(leaveRequests []domain.LeaveRequest, weekStartDat
 func CalcLeavePayable(filteredLeaveRequests []domain.LeaveRequest, weekStartDate string) (string, error) {
 	hrs := 0
 
-	startDate, err := dateStrToDate(weekStartDate)
+	startDate, err := application.DateStrToDate(weekStartDate)
 	if err != nil {
 		return "", nil
 	}
 	endDate := startDate.AddDate(0, 0, 7)
 
 	for _, lr := range filteredLeaveRequests {
-		lrStart, err := dateStrToDate(lr.From)
-		lrEnd, err := dateStrToDate(lr.To)
+		lrStart, err := application.DateStrToDate(lr.From)
+		lrEnd, err := application.DateStrToDate(lr.To)
 		if err != nil {
 			return "", err
 		}

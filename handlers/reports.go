@@ -5,17 +5,17 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/jtalev/chat_gpg/application/services"
+	report "github.com/jtalev/chat_gpg/application/services/report"
 )
 
 type ReportsViewData struct {
-	TimesheetReportData application.TimesheetReportData
+	TimesheetReportData report.TimesheetReportData
 }
 
 func (h *Handler) ServeReportsView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			initialTimesheetReportData, err := application.InitialTimesheetReportData(h.DB)
+			initialTimesheetReportData, err := report.InitialTimesheetReportData(h.DB)
 			if err != nil {
 				log.Println("Error getting initial timesheet report data:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -50,7 +50,7 @@ func (h *Handler) GetEmployeeTimesheetReport() http.Handler {
 			}
 			employeeId, weekStartDate := requestVals[0], requestVals[1]
 
-			outData, err := application.GetEmployeeTimesheetReport(employeeId, weekStartDate, h.DB)
+			outData, err := report.GetEmployeeTimesheetReport(employeeId, weekStartDate, h.DB)
 			if err != nil {
 				log.Println("Error getting employee timesheet report:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -93,7 +93,7 @@ func (h *Handler) PrevEmployeeTimesheetReport() http.Handler {
 			}
 			employeeId, weekStartDate := requestVals[0], requestVals[1]
 
-			outData, err := application.GetPrevEmployeeTimesheetReport(employeeId, weekStartDate, h.DB)
+			outData, err := report.GetPrevEmployeeTimesheetReport(employeeId, weekStartDate, h.DB)
 			if err != nil {
 				log.Println("Error getting employee timesheet report:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -136,7 +136,7 @@ func (h *Handler) NextEmployeeTimesheetReport() http.Handler {
 			}
 			employeeId, weekStartDate := requestVals[0], requestVals[1]
 
-			outData, err := application.GetNextEmployeeTimesheetReport(employeeId, weekStartDate, h.DB)
+			outData, err := report.GetNextEmployeeTimesheetReport(employeeId, weekStartDate, h.DB)
 			if err != nil {
 				log.Println("Error getting employee timesheet report:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -154,6 +154,39 @@ func (h *Handler) NextEmployeeTimesheetReport() http.Handler {
 			if err != nil {
 				log.Println("Error executing template:", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) InitJobReportData() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			_, err := report.InitJobReportData(h.DB)
+			if err != nil {
+				log.Printf("error getting initial job report data: %v", err)
+				http.Error(w, "internal server error: error getting initial job report data", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) GetJobReport() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			out, err := report.GetJobReportData(1, "2025-4-2", "right", h.DB)
+			if err != nil {
+				log.Printf("error getting job report data: %v", err)
+				http.Error(w, "internal server error: error getting job report data from server", http.StatusInternalServerError)
+				return
+			}
+
+			err = executePartialTemplate(jobReportPath, "jobReport", out, w)
+			if err != nil {
+				log.Printf("error executing job report templates: %v", err)
+				http.Error(w, "internal server error", http.StatusInternalServerError)
 				return
 			}
 		},

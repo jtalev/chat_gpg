@@ -78,8 +78,8 @@ type AdminLeaveModalData struct {
 
 func calcLeaveDaysFromRequest(lr domain.LeaveRequest) (int, error) {
 	dayCounter := 1 // add one for the date the leave request starts on
-	startDate, err := dateStrToDate(lr.From)
-	endDate, err := dateStrToDate(lr.To)
+	startDate, err := DateStrToDate(lr.From)
+	endDate, err := DateStrToDate(lr.To)
 	if err != nil {
 		return -1, err
 	}

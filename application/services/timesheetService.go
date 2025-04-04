@@ -58,7 +58,7 @@ func strToInt(inArr []string) ([]int, error) {
 }
 
 // incoming dates are in format yyyy-mm-dd
-func dateStrToDate(inDate string) (time.Time, error) {
+func DateStrToDate(inDate string) (time.Time, error) {
 	containsHyphen := strings.Contains(inDate, "-")
 	if !containsHyphen {
 		return time.Time{}, errors.New("Date string must be in format: yyyy-mm-dd")
@@ -151,7 +151,7 @@ func PutTimesheet(id, time string, db *sql.DB) (domain.Timesheet, error) {
 func postNilTimesheets(inTimesheetWeek *domain.TimesheetWeek, weekStartDate string, db *sql.DB) ([]domain.Timesheet, error) {
 	var outTimesheets = make([]domain.Timesheet, 7)
 	timesheetDate := weekStartDate
-	date, err := dateStrToDate(weekStartDate)
+	date, err := DateStrToDate(weekStartDate)
 	if err != nil {
 		return nil, err
 	}
@@ -211,7 +211,7 @@ func InitTimesheetWeek(employeeId string, jobIdStr string, weekStartDate string,
 		return nil, err
 	}
 
-	outTimesheetRows, err := mapTimesheetsToTimesheetWeek([]domain.TimesheetWeek{outTimesheetWeek}, db)
+	outTimesheetRows, err := MapTimesheetsToTimesheetWeek([]domain.TimesheetWeek{outTimesheetWeek}, db)
 	if err != nil {
 		return nil, err
 	}
@@ -275,13 +275,13 @@ func InitialTimesheetViewData(employeeId string, db *sql.DB) (TimesheetViewData,
 		return outData, err
 	}
 
-	year, month, day := weekStartDate().Date()
+	year, month, day := WeekStartDate().Date()
 	weekStart := fmt.Sprintf("%v-%v-%v", year, int(month), day)
 	initialTimesheetWeeks, err := GetTimesheetWeekByEmployeeWeekStart(employeeId, weekStart, db)
 	if err != nil {
 		return outData, err
 	}
-	timesheetRows, err := mapTimesheetsToTimesheetWeek(initialTimesheetWeeks, db)
+	timesheetRows, err := MapTimesheetsToTimesheetWeek(initialTimesheetWeeks, db)
 
 	outData.MonthStr = month.String()
 	outData.Year = year
@@ -292,7 +292,7 @@ func InitialTimesheetViewData(employeeId string, db *sql.DB) (TimesheetViewData,
 	return outData, nil
 }
 
-func mapTimesheetsToTimesheetWeek(inTimesheetWeeks []domain.TimesheetWeek, db *sql.DB) ([]TimesheetRow, error) {
+func MapTimesheetsToTimesheetWeek(inTimesheetWeeks []domain.TimesheetWeek, db *sql.DB) ([]TimesheetRow, error) {
 	outData := make([]TimesheetRow, len(inTimesheetWeeks))
 	for i := range inTimesheetWeeks {
 		job, err := GetJobById(inTimesheetWeeks[i].JobId, db)
@@ -342,7 +342,7 @@ func mapTimesheetsToTimesheetWeek(inTimesheetWeeks []domain.TimesheetWeek, db *s
 	return outData, nil
 }
 
-func weekStartDate() time.Time {
+func WeekStartDate() time.Time {
 	date := time.Now()
 	switch date.Weekday().String() {
 	case "Wednesday":
@@ -364,7 +364,7 @@ func weekStartDate() time.Time {
 }
 
 func currentWeekDates() ([]int, error) {
-	date := weekStartDate()
+	date := WeekStartDate()
 	outDates := make([]int, 7)
 
 	for i := range outDates {
@@ -390,7 +390,7 @@ func TimesheetTableData(employeeId string, hxVals []string, db *sql.DB) (Timeshe
 	outData := TimesheetData{}
 
 	arrow, weekStartDate := hxVals[0], hxVals[1]
-	date, err := dateStrToDate(weekStartDate)
+	date, err := DateStrToDate(weekStartDate)
 	if err != nil {
 		log.Println(err)
 		return TimesheetData{}, err
@@ -414,7 +414,7 @@ func TimesheetTableData(employeeId string, hxVals []string, db *sql.DB) (Timeshe
 	if err != nil {
 		return outData, err
 	}
-	timesheetRows, err := mapTimesheetsToTimesheetWeek(timesheetWeeks, db)
+	timesheetRows, err := MapTimesheetsToTimesheetWeek(timesheetWeeks, db)
 	if err != nil {
 		return outData, err
 	}

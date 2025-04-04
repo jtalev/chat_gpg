@@ -1,0 +1,18 @@
+{{ define "jobReport" }}
+<p>job</p>
+ID: {{ .Job.ID }}</br>
+Name: {{ .Job.Name }}</br>
+<p>hrs</p>
+Hours: {{ .Hrs }}
+<p>employee reports</p>
+{{ range .EmployeeReports }}
+Name: {{ .Name }}</br>
+EmployeeId: {{ .EmployeeId }}</br>
+Timesheets</br>
+{{ range .EmployeeTimesheetWeek.Timesheets }}
+	Hours: {{ .Hours }} Minutes: {{ .Minutes }}</br>
+{{ end }}
+Hrs: {{ .EmployeeTimesheetWeek.Hrs }}</br>
+</br>
+{{ end }}
+{{ end }}
