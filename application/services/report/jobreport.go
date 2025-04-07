@@ -20,8 +20,7 @@ type Job struct {
 }
 
 type InitDataJobReport struct {
-	Jobs          []Job
-	WeekStartDate string
+	Jobs []Job
 }
 
 func getJobs(db *sql.DB) ([]domain.Job, error) {
@@ -52,7 +51,6 @@ func InitJobReportData(db *sql.DB) (InitDataJobReport, error) {
 	}
 
 	outData.Jobs = append(outData.Jobs, convertToJobSelect(jobs)...)
-	outData.WeekStartDate = startDate(time.Now())
 
 	return outData, nil
 }
@@ -87,7 +85,34 @@ func jobSelectMap(id int, db *sql.DB) (*Job, error) {
 	return &jobSelect, nil
 }
 
-func startDate(date time.Time) string {
+func startDate(date time.Time) time.Time {
+	now := time.Now()
+	switch now.Weekday() {
+	case time.Wednesday:
+		return now
+	case time.Thursday:
+		now = now.AddDate(0, 0, -1)
+		return now
+	case time.Friday:
+		now = now.AddDate(0, 0, -2)
+		return now
+	case time.Saturday:
+		now = now.AddDate(0, 0, -3)
+		return now
+	case time.Sunday:
+		now = now.AddDate(0, 0, -4)
+		return now
+	case time.Monday:
+		now = now.AddDate(0, 0, -5)
+		return now
+	case time.Tuesday:
+		now = now.AddDate(0, 0, -6)
+		return now
+	}
+	return now
+}
+
+func startDateStr(date time.Time) string {
 	now := time.Now()
 	switch now.Weekday() {
 	case time.Wednesday:
@@ -114,12 +139,8 @@ func startDate(date time.Time) string {
 	return ""
 }
 
-func getTimesheetWeeks(weekStartDate string, db *sql.DB) ([]domain.TimesheetWeek, error) {
-	if weekStartDate == "" {
-		weekStartDate = startDate(time.Now())
-	}
-
-	timesheetWeeks, err := repo.GetTimesheetWeekByWeekStart(weekStartDate, db)
+func getTimesheetWeeks(db *sql.DB) ([]domain.TimesheetWeek, error) {
+	timesheetWeeks, err := repo.GetTimesheetWeeks(db)
 	if err != nil {
 		log.Print("error getting timesheet week at GetTimesheetWeekByWeekStart: %v", err)
 		return nil, err
@@ -128,7 +149,46 @@ func getTimesheetWeeks(weekStartDate string, db *sql.DB) ([]domain.TimesheetWeek
 	return timesheetWeeks, nil
 }
 
-func filterTimesheetWeeks(jobId int, timesheetWeeks []domain.TimesheetWeek) []domain.TimesheetWeek {
+func dateStrToDate(date string) time.Time {
+	slc := strings.Split(date, "-")
+	year, month, day := slc[0], slc[1], slc[2]
+	yearInt, err := strconv.Atoi(year)
+	if err != nil {
+		panic("year is not a number")
+	}
+	monthInt, err := strconv.Atoi(month)
+	if err != nil {
+		panic("month is not a number")
+	}
+	dayInt, err := strconv.Atoi(day)
+	if err != nil {
+		panic("day is not a number")
+	}
+	return time.Date(yearInt, time.Month(monthInt), dayInt, 0, 0, 0, 0, time.Local)
+}
+
+func filterTimesheetWeeksByDate(weeks int, timesheetWeeks []domain.TimesheetWeek) []domain.TimesheetWeek {
+	out := []domain.TimesheetWeek{}
+
+	if weeks == 0 {
+		log.Println("no duration for timesheet weeks submitted")
+		return nil
+	}
+
+	date := startDate(time.Now())
+	date = date.AddDate(0, 0, -7*(weeks-1))
+
+	for _, timesheetWeek := range timesheetWeeks {
+		weekStartDate := dateStrToDate(timesheetWeek.WeekStartDate)
+		if weekStartDate.After(date.AddDate(0, 0, -1)) {
+			out = append(out, timesheetWeek)
+		}
+	}
+
+	return out
+}
+
+func filterTimesheetWeeksByJob(jobId int, timesheetWeeks []domain.TimesheetWeek) []domain.TimesheetWeek {
 	var filtered = make([]domain.TimesheetWeek, 0, len(timesheetWeeks))
 
 	for _, week := range timesheetWeeks {
@@ -221,37 +281,37 @@ func generateEmployeeReports(timesheetWeeks []domain.TimesheetWeek, db *sql.DB) 
 	return &employeeJobReports, nil
 }
 
-func determineWeekStart(weekStartStr, arrow string) string {
-	if weekStartStr == "" {
-		return startDate(time.Now())
-	}
+// func determineWeekStart(weekStartStr, arrow string) string {
+// 	if weekStartStr == "" {
+// 		return startDate(time.Now())
+// 	}
 
-	slc := strings.Split(weekStartStr, "-")
-	if len(slc) != 3 {
-		panic(`date string arr should always be len = 3 when split at "-"`)
-	}
-	yearstr, monthstr, daystr := slc[0], slc[1], slc[2]
-	year, err := strconv.Atoi(yearstr)
-	month, err := strconv.Atoi(monthstr)
-	day, err := strconv.Atoi(daystr)
-	if err != nil {
-		panic("bad request, cannot convert date str to int")
-	}
+// 	slc := strings.Split(weekStartStr, "-")
+// 	if len(slc) != 3 {
+// 		panic(`date string arr should always be len = 3 when split at "-"`)
+// 	}
+// 	yearstr, monthstr, daystr := slc[0], slc[1], slc[2]
+// 	year, err := strconv.Atoi(yearstr)
+// 	month, err := strconv.Atoi(monthstr)
+// 	day, err := strconv.Atoi(daystr)
+// 	if err != nil {
+// 		panic("bad request, cannot convert date str to int")
+// 	}
 
-	weekStartDate := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.Local)
-	if arrow == "left" {
-		weekStartDate = weekStartDate.AddDate(0, 0, -7)
-	} else if arrow == "right" {
-		weekStartDate = weekStartDate.AddDate(0, 0, 7)
-	} else {
-		panic(`bad request, arrow should be "left" or "right"`)
-	}
-	weekStartStr = fmt.Sprintf("%v-%v-%v", weekStartDate.Year(), int(weekStartDate.Month()), weekStartDate.Day())
-	log.Println(weekStartStr)
-	return weekStartStr
-}
+// 	weekStartDate := time.Date(year, time.Month(month), day, 0, 0, 0, 0, time.Local)
+// 	if arrow == "left" {
+// 		weekStartDate = weekStartDate.AddDate(0, 0, -7)
+// 	} else if arrow == "right" {
+// 		weekStartDate = weekStartDate.AddDate(0, 0, 7)
+// 	} else {
+// 		panic(`bad request, arrow should be "left" or "right"`)
+// 	}
+// 	weekStartStr = fmt.Sprintf("%v-%v-%v", weekStartDate.Year(), int(weekStartDate.Month()), weekStartDate.Day())
+// 	log.Println(weekStartStr)
+// 	return weekStartStr
+// }
 
-func GetJobReportData(jobId int, weekStartStr, arrow string, db *sql.DB) (JobReport, error) {
+func GetJobReportData(jobId int, weeks int, db *sql.DB) (JobReport, error) {
 	var jobReport JobReport
 
 	jobSelect, err := jobSelectMap(jobId, db)
@@ -259,15 +319,14 @@ func GetJobReportData(jobId int, weekStartStr, arrow string, db *sql.DB) (JobRep
 		return jobReport, err
 	}
 
-	weekStartStr = determineWeekStart(weekStartStr, arrow)
-	log.Println(weekStartStr)
-	timesheetWeeks, err := getTimesheetWeeks(weekStartStr, db)
+	timesheetWeeks, err := getTimesheetWeeks(db)
 	if err != nil {
 		log.Printf("error getting timesheet week: %v", err)
 		return jobReport, err
 	}
 
-	filtered := filterTimesheetWeeks(jobId, timesheetWeeks)
+	filtered := filterTimesheetWeeksByJob(jobId, timesheetWeeks)
+	filtered = filterTimesheetWeeksByDate(weeks, filtered)
 
 	employeeJobReports, err := generateEmployeeReports(filtered, db)
 

@@ -13,3 +13,15 @@ function onLeaveRequestClick(event) {
     expandedRow.style.display = "none";
   }
 }
+
+function toggleContentSelector(event) {
+  const contentSelectors = document.querySelectorAll(".view-content-selector")
+  contentSelectors.forEach(selector => {
+    selector.style.backgroundColor = "var(--main-background-color"
+    selector.style.borderBottom = "solid 1px var(--gpg-green)"
+  })
+
+  const clickedSelector = event.currentTarget
+  clickedSelector.style.backgroundColor = "white"
+  clickedSelector.style.borderBottom = "none"
+}

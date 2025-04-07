@@ -1,8 +1,35 @@
 {{ define "reports" }}
-<div class="reportsContainer">
-	<h2 id="reportsHeader">Reports</h2>
-	<div id="reportsContentContainer">
-	    <div class="reportsContent" id="reportsContent">
+<div class="view-container">
+	<div class="view-header-container">
+		<h2 class="view-header">Reports</h2>
+	</div>
+	<div class="view-content-selector-container">
+		<div 
+		class="view-content-selector"
+		id="timesheet-report-content-selector"
+		hx-get="/reports/init-timesheet-report" 
+		hx-swap="innerHTML"
+		hx-target="#report-content"
+		hx-trigger="click"
+		style="background-color: white;"
+		onclick="toggleContentSelector(event)">
+			TIMESHEET
+		</div>
+		<div 
+		class="view-content-selector"
+		id="job-report-content-selector" 
+		hx-get="/reports/init-job-report"
+		hx-swap="innerHTML"
+		hx-target="#report-content"
+		hx-trigger="click"
+		style="background-color: var(--main-background-color);"
+		onclick="toggleContentSelector(event)">
+			JOB
+		</div>
+		<div class="borderBottom"></div>
+	</div>
+	<div class="view-content-container">
+	    <div class="view-content" id="report-content">
 	    {{ template "timesheetReport" .TimesheetReportData }}
 	    </div>
 	</div>

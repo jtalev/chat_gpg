@@ -1,20 +1,22 @@
 {{ define "timesheetReport" }}
-<div id="timesheetReportNavContainer">
-	<select 
-	hx-get="/reports/timesheet-report"
-	hx-target="#timesheetReport"
-	hx-swap="innerHTML"
-	name="id" 
-	id="employeeSelector"
-	hx-vals='{
-		"week_start_date": "{{ .WeekStartDate }}"
-	}'>
-		<option>Select employee</option>
-		{{ range .Employees }}
-			<option value="{{ .ID }}">{{ .FirstName }} {{ .LastName }}</option>
-		{{ end }}
-	</select>
-</div>
-<div id="timesheetReport">
+<div class="timesheet-report-container">
+	<div id="timesheetReportNavContainer">
+		<select 
+		hx-get="/reports/timesheet-report"
+		hx-target="#timesheetReport"
+		hx-swap="innerHTML"
+		name="id" 
+		id="employeeSelector"
+		hx-vals='{
+			"week_start_date": "{{ .WeekStartDate }}"
+		}'>
+			<option>Select employee</option>
+			{{ range .Employees }}
+				<option value="{{ .ID }}">{{ .FirstName }} {{ .LastName }}</option>
+			{{ end }}
+		</select>
+	</div>
+	<div id="timesheetReport">
+	</div>
 </div>
 {{ end }}

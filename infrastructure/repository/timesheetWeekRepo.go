@@ -8,6 +8,41 @@ import (
 	"github.com/jtalev/chat_gpg/domain/models"
 )
 
+func GetTimesheetWeeks(db *sql.DB) ([]domain.TimesheetWeek, error) {
+	q := `
+	SELECT * FROM timesheet_week;
+	`
+	rows, err := db.Query(q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	outTimesheetWeeks := []domain.TimesheetWeek{}
+	for rows.Next() {
+		var timesheetWeek domain.TimesheetWeek
+		if err := rows.Scan(
+			&timesheetWeek.TimesheetWeekId,
+			&timesheetWeek.EmployeeId,
+			&timesheetWeek.JobId,
+			&timesheetWeek.WedTimesheetId,
+			&timesheetWeek.ThuTimesheetId,
+			&timesheetWeek.FriTimesheetId,
+			&timesheetWeek.SatTimesheetId,
+			&timesheetWeek.SunTimesheetId,
+			&timesheetWeek.MonTimesheetId,
+			&timesheetWeek.TueTimesheetId,
+			&timesheetWeek.WeekStartDate,
+			&timesheetWeek.CreatedAt,
+			&timesheetWeek.ModifiedAt,
+		); err != nil {
+			return nil, err
+		}
+		outTimesheetWeeks = append(outTimesheetWeeks, timesheetWeek)
+	}
+	return outTimesheetWeeks, nil
+}
+
 func GetTimesheetWeekById(id int, db *sql.DB) (domain.TimesheetWeek, error) {
 	q := `
 	SELECT * FROM timesheet_week WHERE timesheet_week_id = ?;

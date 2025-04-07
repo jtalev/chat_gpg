@@ -1,0 +1,23 @@
+{{ define "initJobReport" }}
+<div id="job-report-container">
+	<form 
+	id="job-report-job-selector"
+	hx-post="/reports/get-job-report"
+	hx-target="#job-report"
+	hx-swap="innerHTML"
+	hx-ext="json-enc"
+	hx-trigger="change"
+	>
+		<select
+		name="id">
+			<option value="">Select job</option>
+			{{ range .Jobs }}
+			<option value="{{ .ID }}">{{ .Name }}</option>
+			{{ end }}
+		</select>
+	</form>
+	<div id="job-report">
+
+	</div>
+</div>
+{{ end }}
