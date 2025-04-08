@@ -2624,6 +2624,135 @@ input::-webkit-inner-spin-button {
     width: 100%;
     flex-grow: 1;
     overflow-y: auto;
+    box-sizing: border-box;
+    padding: 10px 0 0 0;
+}
+
+#job-report-content {
+    width: 99%;
+    height: 99%;
+    border: solid 1px var(--gpg-green);
+    background-color: var(--main-background-color);
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 10px;
+    gap: 10px;
+}
+
+#job-report-duration-container {
+    width: 99%;
+    height: 20px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+#job-report-duration-selector {
+    border: solid 1px var(--gpg-green);
+    background-color: white;
+    width: 150px;
+    height: 100%;
+    display: flex;
+    font-size: smaller;
+}
+
+#job-report-duration-1w {
+    background-color: var(--gpg-light-green-background);
+}
+
+.job-report-duration {
+    width: 20%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#job-report-graphics-container {
+    width: 99%;
+    border: solid 1px var(--gpg-green);
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#job-report-graph {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+}
+
+@media screen and (max-width: 1030px) {
+    #job-report-overview-container {
+        width: 99%;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+}
+
+@media screen and (min-width: 1031px) {
+    #job-report-overview-container {
+        width: 99%;
+        display: flex;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        gap: 10px;
+    }  
+}
+
+.job-report-overview-metric-container {
+    height: 140px;
+    width: 140px;
+    border: solid 1px var(--gpg-green);
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.job-report-metric-header {
+    width: 100%;
+    height: 10px;
+    white-space: normal;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.job-report-metric-value {
+    width: 100%;
+    height: 10px;
+    white-space: normal;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: large;
+}
+
+#job-report-employee-breakdown-container {
+    width: 99%;
+    border: solid 1px var(--gpg-green);
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#job-report-employee-breakdown {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
 }
 
 /* ----- dashboard ----- */

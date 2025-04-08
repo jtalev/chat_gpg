@@ -1,18 +1,57 @@
 {{ define "jobReport" }}
-<p>job</p>
-ID: {{ .Job.ID }}</br>
-Name: {{ .Job.Name }}</br>
-<p>hrs</p>
-Hours: {{ .Hrs }}
-<p>employee reports</p>
-{{ range .EmployeeReports }}
-Name: {{ .Name }}</br>
-EmployeeId: {{ .EmployeeId }}</br>
-Timesheets</br>
-{{ range .EmployeeTimesheetWeek.Timesheets }}
-	Hours: {{ .Hours }} Minutes: {{ .Minutes }}</br>
-{{ end }}
-Hrs: {{ .EmployeeTimesheetWeek.Hrs }}</br>
-</br>
-{{ end }}
+<div id="job-report-content">
+	<div id="job-report-duration-container">
+		<div id="job-report-duration-selector">
+			<div
+			class="job-report-duration"
+			id="job-report-duration-1w">
+				1w
+			</div>
+			<div class="job-report-duration">
+				1m
+			</div>
+			<div class="job-report-duration">
+				3m
+			</div>
+			<div class="job-report-duration">
+				6m
+			</div>
+			<div class="job-report-duration">
+				all
+			</div>
+		</div>
+	</div>
+	<div id="job-report-graphics-container">
+		<div id="job-report-graph">
+			graph coming soon...
+		</div>
+	</div>
+	<div id="job-report-overview-container">
+		<div class="job-report-overview-metric-container">
+			<p class="job-report-metric-header">total hours on site</p>
+			<p class="job-report-metric-value">{{ .TotalHrs }}</p>
+		</div>
+		<div class="job-report-overview-metric-container">
+			<p class="job-report-metric-header">total days on site</p>
+			<p class="job-report-metric-value">{{ .TotalDays }}</p>
+		</div>
+		<div class="job-report-overview-metric-container">
+			<p class="job-report-metric-header">average hrs/day</p>
+			<p class="job-report-metric-value">{{ .AvHrsPerDay }}</p>
+		</div>
+		<div class="job-report-overview-metric-container">
+			<p class="job-report-metric-header">average hrs/employee</p>
+			<p class="job-report-metric-value">{{ .AvHrsPerEmployee }}</p>
+		</div>
+		<div class="job-report-overview-metric-container">
+			<p class="job-report-metric-header">total employees involved</p>
+			<p class="job-report-metric-value">{{ .TotalEmployees }}</p>
+		</div>
+	</div>
+	<div id="job-report-employee-breakdown-container">
+		<div id="job-report-employee-breakdown">
+			employee breakdowns coming soon...
+		</div>
+	</div>
+</div>
 {{ end }}

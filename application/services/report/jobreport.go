@@ -68,8 +68,12 @@ type EmployeeJobReport struct {
 
 type JobReport struct {
 	*Job
-	Hrs             string
-	EmployeeReports []EmployeeJobReport
+	TotalHrs         string
+	TotalDays        int
+	AvHrsPerDay      string
+	AvHrsPerEmployee string
+	TotalEmployees   int
+	EmployeeReports  []EmployeeJobReport
 }
 
 func jobSelectMap(id int, db *sql.DB) (*Job, error) {
@@ -180,7 +184,7 @@ func filterTimesheetWeeksByDate(weeks int, timesheetWeeks []domain.TimesheetWeek
 
 	for _, timesheetWeek := range timesheetWeeks {
 		weekStartDate := dateStrToDate(timesheetWeek.WeekStartDate)
-		if weekStartDate.After(date.AddDate(0, 0, -1)) {
+		if weekStartDate.After(date.AddDate(0, 0, -1)) && weekStartDate.Before(time.Now()) {
 			out = append(out, timesheetWeek)
 		}
 	}
@@ -246,11 +250,11 @@ func generateEmployeeReports(timesheetWeeks []domain.TimesheetWeek, db *sql.DB) 
 
 			for i, id := range timesheetIds {
 				employee, err := repo.GetEmployeeByEmployeeId(week.EmployeeId, db)
-				name = fmt.Sprintf("%s %s", employee.FirstName, employee.LastName)
 				if err != nil {
 					log.Printf("error getting employee: %v", err)
 					return
 				}
+				name = fmt.Sprintf("%s %s", employee.FirstName, employee.LastName)
 				timesheet, err := repo.GetTimesheetById(id, db)
 				if err != nil {
 					log.Printf("error getting timesheet: %v", err)
@@ -311,6 +315,84 @@ func generateEmployeeReports(timesheetWeeks []domain.TimesheetWeek, db *sql.DB) 
 // 	return weekStartStr
 // }
 
+func timeStrToInt(time string) (int, int) {
+	slc := strings.Split(time, ":")
+	hrs, err := strconv.Atoi(slc[0])
+	if err != nil {
+		panic(fmt.Sprintf("error converting time string to int values hr: %v", err))
+	}
+	mins, err := strconv.Atoi(slc[1])
+	if err != nil {
+		panic(fmt.Sprintf("error converting time string to int value mins: %v", err))
+	}
+	return hrs, mins
+}
+
+func calcTotalHrs(employeeJobReports *[]EmployeeJobReport) string {
+	hrs, mins := 0, 0
+	for _, report := range *employeeJobReports {
+		h, m := timeStrToInt(report.EmployeeTimesheetWeek.Hrs)
+		hrs += h
+		mins += m
+	}
+	hrs += mins / 60
+	mins = mins % 60
+	return fmt.Sprintf("%v:%v", hrs, mins)
+}
+
+func calcTotalDays(employeeJobReports *[]EmployeeJobReport) int {
+	count := 0
+	dateSeen := make(map[string]bool)
+
+	for _, report := range *employeeJobReports {
+		for _, timesheet := range *report.EmployeeTimesheetWeek.Timesheets {
+			if (timesheet.Hours != 0 || timesheet.Minutes != 0) && !dateSeen[timesheet.TimesheetDate] {
+				dateSeen[timesheet.TimesheetDate] = true
+				count++
+			}
+		}
+	}
+	return count
+}
+
+func calcTotalEmployees(employeeJobReports *[]EmployeeJobReport) int {
+	seen := make(map[string]bool)
+
+	for _, report := range *employeeJobReports {
+		seen[report.EmployeeId] = true
+	}
+
+	return len(seen)
+}
+
+func calcAvHrsPerDay(employeeJobReports *[]EmployeeJobReport) string {
+	totalDays := calcTotalDays(employeeJobReports)
+	if totalDays == 0 {
+		return fmt.Sprintf("%v:%v", 0, 0)
+	}
+	totalHrsStr := calcTotalHrs(employeeJobReports)
+	hrs, mins := timeStrToInt(totalHrsStr)
+	mins += hrs * 60
+	mins = mins / totalDays
+	hrs = mins / 60
+	mins = mins % 60
+	return fmt.Sprintf("%v:%v", hrs, mins)
+}
+
+func calcAvHrsPerEmployee(employeeJobReports *[]EmployeeJobReport) string {
+	totalEmployees := calcTotalEmployees(employeeJobReports)
+	if totalEmployees == 0 {
+		return fmt.Sprintf("%v:%v", 0, 0)
+	}
+	totalHrsStr := calcTotalHrs(employeeJobReports)
+	hrs, mins := timeStrToInt(totalHrsStr)
+	mins += hrs * 60
+	mins = mins / totalEmployees
+	hrs = mins / 60
+	mins = mins % 60
+	return fmt.Sprintf("%v:%v", hrs, mins)
+}
+
 func GetJobReportData(jobId int, weeks int, db *sql.DB) (JobReport, error) {
 	var jobReport JobReport
 
@@ -329,8 +411,17 @@ func GetJobReportData(jobId int, weeks int, db *sql.DB) (JobReport, error) {
 	filtered = filterTimesheetWeeksByDate(weeks, filtered)
 
 	employeeJobReports, err := generateEmployeeReports(filtered, db)
+	if err != nil {
+		log.Printf("error generating employee job reports: %v", err)
+		return jobReport, err
+	}
 
 	jobReport.Job = jobSelect
 	jobReport.EmployeeReports = *employeeJobReports
+	jobReport.TotalHrs = calcTotalHrs(employeeJobReports)
+	jobReport.TotalDays = calcTotalDays(employeeJobReports)
+	jobReport.TotalEmployees = calcTotalEmployees(employeeJobReports)
+	jobReport.AvHrsPerDay = calcAvHrsPerDay(employeeJobReports)
+	jobReport.AvHrsPerEmployee = calcAvHrsPerEmployee(employeeJobReports)
 	return jobReport, nil
 }
