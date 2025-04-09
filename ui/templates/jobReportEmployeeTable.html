@@ -1,0 +1,44 @@
+{{ define "jobReportEmployeeTable" }}
+<div id="job-report-employee-table-container">
+	<table id="job-report-employee-table">
+		<thead>
+			<tr>
+				<th>
+					
+				</th>
+				<th>
+					Employee
+				</th>
+				<th>
+					ID
+				</th>
+				<th>
+					Hours
+				</th>
+				<th>
+					Days
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			{{ range . }}
+			<tr>
+				<td></td>
+				<td>
+					{{ .Name }}
+				</td>
+				<td>
+					{{ .EmployeeId }}
+				</td>
+				<td>
+					{{ .TotalHrs }}
+				</td>
+				<td>
+					{{ .TotalDays }}
+				</td>
+			</tr>
+			{{ end }}
+		</tbody>
+	</table>
+</div>
+{{ end }}

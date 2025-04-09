@@ -2,9 +2,11 @@ package report
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"reflect"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -66,14 +68,23 @@ type EmployeeJobReport struct {
 	*EmployeeTimesheetWeek
 }
 
+type EmployeeReport struct {
+	Name           string
+	EmployeeId     string
+	TotalHrs       string
+	TotalDays      int
+	TimesheetWeeks []EmployeeTimesheetWeek
+}
+
 type JobReport struct {
 	*Job
-	TotalHrs         string
-	TotalDays        int
-	AvHrsPerDay      string
-	AvHrsPerEmployee string
-	TotalEmployees   int
-	EmployeeReports  []EmployeeJobReport
+	TotalHrs             string
+	TotalDays            int
+	AvHrsPerDay          string
+	AvHrsPerEmployee     string
+	TotalEmployees       int
+	EmployeeReports      []EmployeeReport
+	ActiveDurationSelect int
 }
 
 func jobSelectMap(id int, db *sql.DB) (*Job, error) {
@@ -171,7 +182,7 @@ func dateStrToDate(date string) time.Time {
 	return time.Date(yearInt, time.Month(monthInt), dayInt, 0, 0, 0, 0, time.Local)
 }
 
-func filterTimesheetWeeksByDate(weeks int, timesheetWeeks []domain.TimesheetWeek) []domain.TimesheetWeek {
+func filterTimesheetWeeksByWeeks(weeks int, timesheetWeeks []domain.TimesheetWeek) []domain.TimesheetWeek {
 	out := []domain.TimesheetWeek{}
 
 	if weeks == 0 {
@@ -232,7 +243,7 @@ func calcEmployeeWeekHrs(timesheets []domain.Timesheet) string {
 	return fmt.Sprintf("%v:%v", hrs, mins)
 }
 
-func generateEmployeeReports(timesheetWeeks []domain.TimesheetWeek, db *sql.DB) (*[]EmployeeJobReport, error) {
+func generateEmployeeJobReports(timesheetWeeks []domain.TimesheetWeek, db *sql.DB) (*[]EmployeeJobReport, error) {
 	var employeeJobReports []EmployeeJobReport
 	var wg sync.WaitGroup
 	var mu sync.Mutex
@@ -393,9 +404,62 @@ func calcAvHrsPerEmployee(employeeJobReports *[]EmployeeJobReport) string {
 	return fmt.Sprintf("%v:%v", hrs, mins)
 }
 
-func GetJobReportData(jobId int, weeks int, db *sql.DB) (JobReport, error) {
-	var jobReport JobReport
+func generateEmployeeReports(employeeJobReports *[]EmployeeJobReport) []EmployeeReport {
+	out := []EmployeeReport{}
+	employeeReports := make(map[string]EmployeeReport)
+	seen := make(map[string]bool)
 
+	for _, report := range *employeeJobReports {
+		if !seen[report.EmployeeId] {
+			seen[report.EmployeeId] = true
+			employeeReports[report.EmployeeId] = EmployeeReport{
+				Name:           report.Name,
+				EmployeeId:     report.EmployeeId,
+				TotalHrs:       "0:0",
+				TotalDays:      0,
+				TimesheetWeeks: []EmployeeTimesheetWeek{},
+			}
+		}
+
+		employeeReport := employeeReports[report.EmployeeId]
+		totalDays, hrs, mins := 0, 0, 0
+
+		for _, timesheet := range *report.EmployeeTimesheetWeek.Timesheets {
+			if timesheet.Hours == 0 && timesheet.Minutes == 0 {
+				continue
+			}
+			hrs += timesheet.Hours
+			mins += timesheet.Minutes
+			totalDays++
+		}
+
+		reportHrs, reportMins := timeStrToInt(employeeReport.TotalHrs)
+		hrs += reportHrs
+		mins += reportMins
+		hrs += mins / 60
+		mins = mins / 60
+		employeeReport.TotalHrs = fmt.Sprintf("%v:%v", hrs, mins)
+		employeeReport.TotalDays += totalDays
+		employeeReport.TimesheetWeeks = append(employeeReport.TimesheetWeeks, *report.EmployeeTimesheetWeek)
+		employeeReports[report.EmployeeId] = employeeReport
+	}
+
+	for _, employeeReport := range employeeReports {
+		out = append(out, employeeReport)
+	}
+
+	return out
+}
+
+func sortEmployeeReports(employeeReports []EmployeeReport) []EmployeeReport {
+	sort.Slice(employeeReports, func(i, j int) bool {
+		return employeeReports[i].Name < employeeReports[j].Name
+	})
+	return employeeReports
+}
+
+func getJobReportByWeeks(jobId, weeks int, db *sql.DB) (JobReport, error) {
+	var jobReport JobReport
 	jobSelect, err := jobSelectMap(jobId, db)
 	if err != nil {
 		return jobReport, err
@@ -408,20 +472,56 @@ func GetJobReportData(jobId int, weeks int, db *sql.DB) (JobReport, error) {
 	}
 
 	filtered := filterTimesheetWeeksByJob(jobId, timesheetWeeks)
-	filtered = filterTimesheetWeeksByDate(weeks, filtered)
+	filtered = filterTimesheetWeeksByWeeks(weeks, filtered)
 
-	employeeJobReports, err := generateEmployeeReports(filtered, db)
+	employeeJobReports, err := generateEmployeeJobReports(filtered, db)
 	if err != nil {
 		log.Printf("error generating employee job reports: %v", err)
 		return jobReport, err
 	}
 
 	jobReport.Job = jobSelect
-	jobReport.EmployeeReports = *employeeJobReports
 	jobReport.TotalHrs = calcTotalHrs(employeeJobReports)
 	jobReport.TotalDays = calcTotalDays(employeeJobReports)
 	jobReport.TotalEmployees = calcTotalEmployees(employeeJobReports)
 	jobReport.AvHrsPerDay = calcAvHrsPerDay(employeeJobReports)
 	jobReport.AvHrsPerEmployee = calcAvHrsPerEmployee(employeeJobReports)
+	jobReport.EmployeeReports = generateEmployeeReports(employeeJobReports)
+	jobReport.EmployeeReports = sortEmployeeReports(jobReport.EmployeeReports)
+	jobReport.ActiveDurationSelect = weeks
+	return jobReport, nil
+}
+
+func getJobReportByDates(jobId int, startDate, endDate string, db *sql.DB) (JobReport, error) {
+	var jobReport JobReport
+	return jobReport, nil
+}
+
+func GetJobReportData(jobId, weeks int, startDate, endDate string, db *sql.DB) (JobReport, error) {
+	var jobReport JobReport
+	var err error
+
+	if (startDate != "" && endDate == "") || (startDate == "" && endDate != "") {
+		log.Printf("invalid state, startDate and endDate must both be nil or both contain a value")
+		return jobReport, errors.New("startDate and endDate must both be nil, or both must contain a value")
+	}
+	if startDate == "" && endDate == "" {
+		if weeks == 0 {
+			weeks = 1
+		}
+		jobReport, err = getJobReportByWeeks(jobId, weeks, db)
+		if err != nil {
+			log.Printf("error generating job report by weeks: %v", err)
+			return jobReport, err
+		}
+	}
+	if startDate != "" && endDate != "" {
+		jobReport, err = getJobReportByDates(jobId, startDate, endDate, db)
+		if err != nil {
+			log.Printf("error generating job report by dates: %v", err)
+			return jobReport, err
+		}
+	}
+
 	return jobReport, nil
 }

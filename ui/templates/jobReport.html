@@ -4,19 +4,83 @@
 		<div id="job-report-duration-selector">
 			<div
 			class="job-report-duration"
-			id="job-report-duration-1w">
+			id="job-report-duration-1w"
+			hx-post="/reports/get-job-report"
+			hx-target="#job-report"
+			hx-swap="innerHTML"
+			hx-ext="json-enc"
+			hx-trigger="click"
+			hx-vals='{
+				"id": "{{ .Job.ID }}",
+				"weeks": "1"
+			}'
+			{{ if eq .ActiveDurationSelect 1 }}
+				style="background-color: var(--gpg-light-green-background);"
+			{{ end }}>
 				1w
 			</div>
-			<div class="job-report-duration">
+			<div 
+			class="job-report-duration"
+			hx-post="/reports/get-job-report"
+			hx-target="#job-report"
+			hx-swap="innerHTML"
+			hx-ext="json-enc"
+			hx-trigger="click"
+			hx-vals='{
+				"id": "{{ .Job.ID }}",
+				"weeks": "4"
+			}'
+			{{ if eq .ActiveDurationSelect 4 }}
+				style="background-color: var(--gpg-light-green-background);"
+			{{ end }}>
 				1m
 			</div>
-			<div class="job-report-duration">
+			<div 
+			class="job-report-duration"
+			hx-post="/reports/get-job-report"
+			hx-target="#job-report"
+			hx-swap="innerHTML"
+			hx-ext="json-enc"
+			hx-trigger="click"
+			hx-vals='{
+				"id": "{{ .Job.ID }}",
+				"weeks": "12"
+			}'
+			{{ if eq .ActiveDurationSelect 12 }}
+				style="background-color: var(--gpg-light-green-background);"
+			{{ end }}>
 				3m
 			</div>
-			<div class="job-report-duration">
+			<div 
+			class="job-report-duration"
+			hx-post="/reports/get-job-report"
+			hx-target="#job-report"
+			hx-swap="innerHTML"
+			hx-ext="json-enc"
+			hx-trigger="click"
+			hx-vals='{
+				"id": "{{ .Job.ID }}",
+				"weeks": "24"
+			}'
+			{{ if eq .ActiveDurationSelect 24 }}
+				style="background-color: var(--gpg-light-green-background);"
+			{{ end }}>
 				6m
 			</div>
-			<div class="job-report-duration">
+			<div
+			class="job-report-duration"
+			hx-post="/reports/get-job-report"
+			hx-target="#job-report"
+			hx-swap="innerHTML"
+			hx-ext="json-enc"
+			hx-trigger="click"
+			hx-vals='{
+				"id": "{{ .Job.ID }}",
+				"weeks": "9999"
+			}'
+			{{ if eq .ActiveDurationSelect 9999 }}
+				style="background-color: var(--gpg-light-green-background);"
+			{{ end }}>
 				all
 			</div>
 		</div>
@@ -49,8 +113,14 @@
 		</div>
 	</div>
 	<div id="job-report-employee-breakdown-container">
+		<div id="job-report-employee-breakdown-header-container">
+			<div id="job-report-employee-header-img-container">
+				<img src="../static/img/employees.svg" id="job-report-employee-header-img">
+			</div>
+			<p id="job-report-employee-header">Employee Breakdown</p>
+		</div>
 		<div id="job-report-employee-breakdown">
-			employee breakdowns coming soon...
+			{{ template "jobReportEmployeeTable" .EmployeeReports }}
 		</div>
 	</div>
 </div>

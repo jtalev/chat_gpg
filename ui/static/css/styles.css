@@ -178,7 +178,7 @@ input {
         justify-content: flex-start;
         align-items: center;
         height: 2em;
-        font-size: 1.2em;
+        font-size: small;
     }
 
     .nav-link-text {
@@ -2658,16 +2658,13 @@ input::-webkit-inner-spin-button {
     font-size: smaller;
 }
 
-#job-report-duration-1w {
-    background-color: var(--gpg-light-green-background);
-}
-
 .job-report-duration {
     width: 20%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 #job-report-graphics-container {
@@ -2744,15 +2741,55 @@ input::-webkit-inner-spin-button {
     border: solid 1px var(--gpg-green);
     background-color: white;
     display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    padding: 10px;
+    gap: 10px;
+}
+
+#job-report-employee-breakdown-header-container {
+    display: flex;
+    align-items: flex-end;
+    height: 30px;
+    width: 100%;
+}
+
+#job-report-employee-header-img-container {
+    height: 60%;
+    width: 30px;
+    transform: translateY(-3px);
+}
+
+#job-report-employee-header-img {
+    height: 100%;
+    width: 100%;
+    display: flex;
     justify-content: center;
     align-items: center;
 }
 
+#job-report-employee-header {
+    display: flex;
+    align-items: flex-end;
+    font-size: large;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    flex-grow: 1;
+}
+
 #job-report-employee-breakdown {
     display: flex;
-    justify-content: center;
-    align-items: center;
     height: 300px;
+    overflow-y: auto;
+}
+
+#job-report-employee-table-container {
+    width: 100%;
+}
+
+#job-report-employee-table {
+    width: 100%;
 }
 
 /* ----- dashboard ----- */

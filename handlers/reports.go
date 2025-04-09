@@ -201,7 +201,10 @@ func (h *Handler) InitJobReportData() http.Handler {
 }
 
 type JobSelect struct {
-	ID string `json:"id"`
+	ID        string `json:"id"`
+	Weeks     string `json:"weeks"`
+	StartDate string `json:"start_date"`
+	EndDate   string `json:"end_date"`
 }
 
 func (h *Handler) GetJobReport() http.Handler {
@@ -213,6 +216,7 @@ func (h *Handler) GetJobReport() http.Handler {
 				http.Error(w, "Invalid JSON", http.StatusBadRequest)
 				return
 			}
+
 			id, err := strconv.Atoi(jobSelect.ID)
 			if err != nil {
 				log.Printf("error converting id to int, bad request: %v", err)
@@ -220,17 +224,34 @@ func (h *Handler) GetJobReport() http.Handler {
 				return
 			}
 
-			out, err := report.GetJobReportData(id, 1, h.DB)
+			if jobSelect.Weeks == "" {
+				jobSelect.Weeks = "0"
+			}
+			weeks, err := strconv.Atoi(jobSelect.Weeks)
+			if err != nil {
+				log.Printf("error converting weeks to int, bad request: %v", err)
+				http.Error(w, "error converting weeks to int: bad request", http.StatusBadRequest)
+				return
+			}
+
+			out, err := report.GetJobReportData(id, weeks, jobSelect.StartDate, jobSelect.EndDate, h.DB)
 			if err != nil {
 				log.Printf("error getting job report data: %v", err)
 				http.Error(w, "internal server error: error getting job report data from server", http.StatusInternalServerError)
 				return
 			}
 
-			err = executePartialTemplate(jobReportPath, "jobReport", out, w)
+			tmpl, err := template.ParseFiles(jobReportPath, jobReportEmployeeTable)
 			if err != nil {
-				log.Printf("error executing job report templates: %v", err)
-				http.Error(w, "internal server error", http.StatusInternalServerError)
+				log.Println("Error parsing file:", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			err = tmpl.ExecuteTemplate(w, "jobReport", out)
+			if err != nil {
+				log.Println("Error executing template:", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
 		},

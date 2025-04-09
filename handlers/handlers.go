@@ -41,6 +41,7 @@ const (
 	employeeTimesheetReportPath    = "../ui/templates/employeeTimesheetReport.html"
 	initJobReportPath              = "../ui/templates/initJobReport.html"
 	jobReportPath                  = "../ui/templates/jobReport.html"
+	jobReportEmployeeTable         = "../ui/templates/jobReportEmployeeTable.html"
 	adminPath                      = "../ui/views/admin.html"
 	adminEmployeeTabPath           = "../ui/templates/adminEmployeeTab.html"
 	adminEmployeeListPath          = "../ui/templates/adminEmployeeList.html"
