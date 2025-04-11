@@ -1,44 +1,95 @@
 {{ define "jobReportEmployeeTable" }}
 <div id="job-report-employee-table-container">
-	<table id="job-report-employee-table">
-		<thead>
-			<tr>
-				<th>
-					
-				</th>
-				<th>
-					Employee
-				</th>
-				<th>
-					ID
-				</th>
-				<th>
-					Hours
-				</th>
-				<th>
-					Days
-				</th>
-			</tr>
-		</thead>
-		<tbody>
-			{{ range . }}
-			<tr>
-				<td></td>
-				<td>
-					{{ .Name }}
-				</td>
-				<td>
-					{{ .EmployeeId }}
-				</td>
-				<td>
-					{{ .TotalHrs }}
-				</td>
-				<td>
-					{{ .TotalDays }}
-				</td>
-			</tr>
+	<div id="job-report-employee-table">
+		<div class="job-report-employee-table-row">
+			<div class="arrow-cell">
+				
+			</div>
+			<div class="employee-cell">
+				Employee
+			</div>
+			<div class="id-cell">
+				ID
+			</div>
+			<div class="hours-cell">
+				Hours
+			</div>
+			<div class="days-cell">
+				Days
+			</div>
+		</div>
+		{{ range . }}
+		<div class="job-report-employee-table-row">
+			<div 
+			class="arrow-cell" 
+			id="{{ .EmployeeId }}"
+			onclick="toggleEmployeeBreakdown(event)">
+					<img class="job-report-arrow-img" src="../static/img/job-report-down-arrow.svg">
+			</div>
+			<div class="employee-cell">
+				<img class="job-report-employee-img" src="../static/img/employee.svg">
+				<span style="color: var(--gpg-grey);"><b>{{ .Name }}</b></span>
+			</div>
+			<div class="id-cell">
+				<span style="color: var(--gpg-grey)"><b>{{ .EmployeeId }}</b></span>
+			</div>
+			<div class="hours-cell">
+				<span style="color: var(--gpg-grey);"><b>{{ .TotalHrs }}</b></span>
+			</div>
+			<div class="days-cell">
+				<span style="color: var(--gpg-grey);"><b>{{ .TotalDays }}</b></span>
+			</div>
+		</div>
+		<div 
+		class="job-report-employee-breakdown" 
+		id="{{ .EmployeeId }}">
+		<div class="job-report-employee-breakdown-header-container">
+			<img id="job-report-employee-breakdown-timesheet-icon" src="../static/img/timesheet-icon.svg">
+			Timesheet Breakdown
+		</div>
+			{{ range .TimesheetWeeks }}
+				<div class="job-report-employee-breakdown-container">
+					<div class="job-report-vacant-col"></div>
+					<div class="job-report-week-start-col">
+						<div class="job-report-val" style="color: var(--main-color);">
+							Week Start
+						</div>
+						<div class="job-report-val">
+							{{ .WeekStartDate }}
+						</div>
+					</div>
+					<div class="job-report-week-hrs-col">
+						<div class="job-report-val" style="color: var(--main-color);">
+							Hours
+						</div>
+						<div class="job-report-val">
+							{{ .Hrs }}
+						</div>
+					</div>
+					<div class="job-report-day-col">
+						<div class="job-report-val" style="color: var(--main-color);">
+							Day
+						</div>
+						{{ range .Timesheets}}
+						<div class="job-report-val">
+							{{ .Day }}
+						</div>
+						{{ end }}
+					</div>
+					<div class="job-report-hrs-col">
+						<div class="job-report-val" style="color: var(--main-color);">
+							Hours
+						</div>
+						{{ range .Timesheets }}
+						<div class="job-report-val">
+							{{ .Hours }}:{{ .Minutes }}
+						</div>
+						{{ end }}
+					</div>
+				</div>
 			{{ end }}
-		</tbody>
-	</table>
+		</div>
+		{{ end }}
+	</div>
 </div>
 {{ end }}

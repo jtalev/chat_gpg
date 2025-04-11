@@ -25,3 +25,20 @@ function toggleContentSelector(event) {
   clickedSelector.style.backgroundColor = "white"
   clickedSelector.style.borderBottom = "none"
 }
+
+function toggleEmployeeBreakdown(event) {
+  const clickedRow = event.currentTarget
+  const employeeId = clickedRow.id
+  let divToExpand
+
+  const expandables = document.querySelectorAll(".job-report-employee-breakdown")
+  expandables.forEach(div => {
+    if (div.id === employeeId) {
+      divToExpand = div
+    }
+  })
+
+  if (!divToExpand) return
+
+  divToExpand.style.display = divToExpand.style.display === "flex" ? "none" : "flex"
+}

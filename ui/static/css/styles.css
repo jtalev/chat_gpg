@@ -2792,6 +2792,108 @@ input::-webkit-inner-spin-button {
     width: 100%;
 }
 
+.job-report-employee-table-row {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    border-bottom: 1px solid var(--timesheet-border);
+}
+
+.job-report-employee-table-row > * {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.arrow-cell {
+    width: 8%;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.job-report-arrow-img {
+    width: 15px;
+    height: 15px;
+}
+
+.employee-cell {
+    width: 25%;
+    gap: 2px;
+}
+
+.job-report-employee-img {
+    width: 12px;
+    height: 12px;
+    transform: translateY(-2px);
+}
+
+.id-cell {
+    flex-grow: 1;
+}
+
+.hours-cell {
+    width: 20%;
+}
+
+.days-cell {
+    width: 20%;
+}
+
+.job-report-employee-breakdown {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background-color: var(--main-background-color);
+}
+
+.job-report-employee-breakdown-header-container {
+    width: 100%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding-left: 8%;
+    font-size: medium;
+}
+
+#job-report-employee-breakdown-timesheet-icon {
+    width: 12px;
+}
+
+.job-report-employee-breakdown-container {
+    width: 100%;
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.job-report-vacant-col {
+    width: 8%;
+}
+
+.job-report-week-start-col {
+    width: 25%;
+}
+
+.job-report-week-hrs-col {
+    flex-grow: 1;
+}
+
+.job-report-day-col {
+    width: 20%;
+}
+
+.job-report-hrs-col {
+    width: 20%;
+}
+
+.job-report-val {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    border-bottom: var(--timesheet-border) 1px solid;
+    color: var(--gpg-grey);
+}
+
 /* ----- dashboard ----- */
 @media screen and (max-width: 1030px) {
 

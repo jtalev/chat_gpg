@@ -58,13 +58,15 @@ func InitJobReportData(db *sql.DB) (InitDataJobReport, error) {
 }
 
 type EmployeeTimesheetWeek struct {
-	Timesheets *[]domain.Timesheet
-	Hrs        string
+	Timesheets    *[]domain.Timesheet
+	WeekStartDate string
+	Hrs           string
 }
 
 type EmployeeJobReport struct {
-	Name       string
-	EmployeeId string
+	Name          string
+	EmployeeId    string
+	WeekStartDate string
 	*EmployeeTimesheetWeek
 }
 
@@ -157,7 +159,7 @@ func startDateStr(date time.Time) string {
 func getTimesheetWeeks(db *sql.DB) ([]domain.TimesheetWeek, error) {
 	timesheetWeeks, err := repo.GetTimesheetWeeks(db)
 	if err != nil {
-		log.Print("error getting timesheet week at GetTimesheetWeekByWeekStart: %v", err)
+		log.Printf("error getting timesheet week at GetTimesheetWeekByWeekStart: %v", err)
 		return nil, err
 	}
 
@@ -276,12 +278,14 @@ func generateEmployeeJobReports(timesheetWeeks []domain.TimesheetWeek, db *sql.D
 			hrs = calcEmployeeWeekHrs(timesheets)
 
 			employeeTimesheetWeek := EmployeeTimesheetWeek{
-				Timesheets: &timesheets,
-				Hrs:        hrs,
+				Timesheets:    &timesheets,
+				WeekStartDate: week.WeekStartDate,
+				Hrs:           hrs,
 			}
 			employeeReport := EmployeeJobReport{
 				Name:                  name,
 				EmployeeId:            week.EmployeeId,
+				WeekStartDate:         week.WeekStartDate,
 				EmployeeTimesheetWeek: &employeeTimesheetWeek,
 			}
 
