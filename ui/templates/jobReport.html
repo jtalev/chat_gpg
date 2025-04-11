@@ -92,23 +92,28 @@
 	</div>
 	<div id="job-report-overview-container">
 		<div class="job-report-overview-metric-container">
-			<p class="job-report-metric-header">total hours on site</p>
+			<img class="job-report-metric-icon" src="../static/img/clock.svg">
+			<p class="job-report-metric-header">Total Hours</p>
 			<p class="job-report-metric-value">{{ .TotalHrs }}</p>
 		</div>
 		<div class="job-report-overview-metric-container">
-			<p class="job-report-metric-header">total days on site</p>
+			<img class="job-report-metric-icon" src="../static/img/leave-icon.svg">
+			<p class="job-report-metric-header">Total Days</p>
 			<p class="job-report-metric-value">{{ .TotalDays }}</p>
 		</div>
 		<div class="job-report-overview-metric-container">
-			<p class="job-report-metric-header">average hrs/day</p>
+			<img class="job-report-metric-icon" src="../static/img/calendar-clock.svg">
+			<p class="job-report-metric-header">Av. Hrs/Day</p>
 			<p class="job-report-metric-value">{{ .AvHrsPerDay }}</p>
 		</div>
 		<div class="job-report-overview-metric-container">
-			<p class="job-report-metric-header">average hrs/employee</p>
+			<img class="job-report-metric-icon" src="../static/img/employee-clock.svg">
+			<p class="job-report-metric-header">Av. Hrs/Employee</p>
 			<p class="job-report-metric-value">{{ .AvHrsPerEmployee }}</p>
 		</div>
 		<div class="job-report-overview-metric-container">
-			<p class="job-report-metric-header">total employees involved</p>
+			<img class="job-report-metric-icon" src="../static/img/employees.svg">
+			<p class="job-report-metric-header">Total Employees</p>
 			<p class="job-report-metric-value">{{ .TotalEmployees }}</p>
 		</div>
 	</div>

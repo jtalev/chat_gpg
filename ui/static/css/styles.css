@@ -2714,19 +2714,28 @@ input::-webkit-inner-spin-button {
     flex-direction: column;
 }
 
+.job-report-metric-icon {
+    width: 20px;
+    height: 30px;
+    margin: 0;
+    padding: 0;
+}
+
 .job-report-metric-header {
     width: 100%;
-    height: 10px;
+    height: 30px;
     white-space: normal;
     text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
+    margin: 0;
+    padding: 0;
 }
 
 .job-report-metric-value {
     width: 100%;
-    height: 10px;
+    height: 30px;
     white-space: normal;
     text-align: center;
     display: flex;
@@ -2734,6 +2743,8 @@ input::-webkit-inner-spin-button {
     align-items: center;
     font-weight: bold;
     font-size: large;
+    margin: 0;
+    padding: 0;
 }
 
 #job-report-employee-breakdown-container {
@@ -2780,7 +2791,7 @@ input::-webkit-inner-spin-button {
 
 #job-report-employee-breakdown {
     display: flex;
-    height: 300px;
+    height: 500px;
     overflow-y: auto;
 }
 

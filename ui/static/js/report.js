@@ -41,4 +41,10 @@ function toggleEmployeeBreakdown(event) {
   if (!divToExpand) return
 
   divToExpand.style.display = divToExpand.style.display === "flex" ? "none" : "flex"
+
+  rotateArror(clickedRow)
+}
+
+function rotateArror(clickedRow) {
+  clickedRow.style.rotate = clickedRow.style.rotate === "180deg" ? "0deg" : "180deg"
 }
