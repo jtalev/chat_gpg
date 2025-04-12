@@ -87,6 +87,8 @@ type JobReport struct {
 	TotalEmployees       int
 	EmployeeReports      []EmployeeReport
 	ActiveDurationSelect int
+	ChartLabels          []string
+	ChartData            []float32
 }
 
 func jobSelectMap(id int, db *sql.DB) (*Job, error) {
@@ -462,6 +464,35 @@ func sortEmployeeReports(employeeReports []EmployeeReport) []EmployeeReport {
 	return employeeReports
 }
 
+func timeStrToFloat(t string) float32 {
+	var hours, minutes int
+	fmt.Sscanf(t, "%d:%d", &hours, &minutes)
+	return float32(hours) + float32(minutes)/60
+}
+
+func aggregateChartData(employeeJobReports []EmployeeJobReport) ([]string, []float32) {
+	chartData := make(map[string]float32)
+	for _, report := range employeeJobReports {
+		totalHrs := timeStrToFloat(report.Hrs)
+		chartData[report.WeekStartDate] += totalHrs
+	}
+
+	var sortedWeeks []string
+	for week := range chartData {
+		sortedWeeks = append(sortedWeeks, week)
+	}
+	sort.Strings(sortedWeeks)
+
+	var labels []string
+	var values []float32
+	for _, week := range sortedWeeks {
+		labels = append(labels, week)
+		values = append(values, chartData[week])
+	}
+
+	return labels, values
+}
+
 func getJobReportByWeeks(jobId, weeks int, db *sql.DB) (JobReport, error) {
 	var jobReport JobReport
 	jobSelect, err := jobSelectMap(jobId, db)
@@ -493,6 +524,9 @@ func getJobReportByWeeks(jobId, weeks int, db *sql.DB) (JobReport, error) {
 	jobReport.EmployeeReports = generateEmployeeReports(employeeJobReports)
 	jobReport.EmployeeReports = sortEmployeeReports(jobReport.EmployeeReports)
 	jobReport.ActiveDurationSelect = weeks
+	labels, data := aggregateChartData(*employeeJobReports)
+	jobReport.ChartLabels = labels
+	jobReport.ChartData = data
 	return jobReport, nil
 }
 

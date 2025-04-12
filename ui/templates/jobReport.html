@@ -87,7 +87,61 @@
 	</div>
 	<div id="job-report-graphics-container">
 		<div id="job-report-graph">
-			graph coming soon...
+			<canvas id="job-report-chart" width="450" height="500"></canvas>
+			<script>
+				(function () {
+					const ctx = document.getElementById("job-report-chart");
+					if (!ctx) return;
+
+					if (Chart.getChart("job-report-chart")) {
+						Chart.getChart("job-report-chart").destroy();
+					}
+
+					const labels = {{ .ChartLabels }};
+					const data = {{ .ChartData }};
+
+					new Chart(ctx, {
+						type: 'bar',
+						data: {
+							labels: labels,
+							datasets: [{
+								label: 'Hours Worked',
+								data: data,
+								backgroundColor: 'rgba(75, 192, 192, 0.6)',
+								borderColor: 'rgba(75, 192, 192, 1)',
+								borderWidth: 1
+							}]
+						},
+						options: {
+							responsive: true,
+							scales: {
+								x: {
+									title: {
+										display: true,
+										text: "Week Start Date"
+									}
+								},
+								y: { 
+									beginAtZero: true,
+									title: {
+										display: true,
+										text: "Hours"
+									}
+								}
+							},
+							plugins: {
+								legend: {
+									position: "top"
+								},
+								title: {
+									display: true,
+									text: "Weekly Hours Breakdown"
+								}
+							}
+						}
+					});
+				})();
+			</script>
 		</div>
 	</div>
 	<div id="job-report-overview-container">
