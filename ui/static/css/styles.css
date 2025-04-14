@@ -3053,6 +3053,10 @@ input::-webkit-inner-spin-button {
     border-bottom: none;
 }
 
+#swm-content-selector {
+    border-left: none;
+}
+
 #inc-actions-input-container {
     width: 100%;
     display: flex;
@@ -3197,6 +3201,43 @@ input::-webkit-inner-spin-button {
     }
 }
 
+#admin-swm-content-container {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+}
+
+#admin-swm-header {
+    height: 20px;
+    font-size: small;
+    padding: none;
+    display: flex;
+    align-items: flex-end;
+}
+
+.admin-swm-list-row {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    border-bottom: var(--main-background-color) solid 1px;
+    font-size: small;
+    box-sizing: border-box;
+    padding: 5px 0 5px 0;
+    gap: 5px;
+}
+
+.admin-swm-list-row-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#admin-swm-delete-btn {
+    margin-left: auto;
+}
+
 .list-container {
     width: 95%;
     height: 100%;
@@ -3280,4 +3321,119 @@ input::-webkit-inner-spin-button {
 
 #put-incident-form-container {
     width: 95%;
+}
+
+#swm-user-content-container {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 15px 0 15px 0;
+}
+
+#swm-main-content-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    gap: 15px;
+}
+
+@media screen and (max-width: 1030px) {
+    #swm-list-container {
+        border: solid 1px var(--gpg-green);
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        padding: 10px;
+    }
+
+    #swm-viewer-container {
+        border: solid 1px var(--gpg-green);
+        flex-grow: 1;
+        height: 100%;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: small;
+        gap: 10px;
+    }
+}
+
+@media screen and (min-width: 1031px) {
+    #swm-list-container {
+        border: solid 1px var(--gpg-green);
+        width: 30%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        padding: 10px;
+    }
+
+    #swm-viewer-container {
+        border: solid 1px var(--gpg-green);
+        flex-grow: 1;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: small;
+        gap: 10px;
+    }
+}
+
+#swm-viewer-icon {
+    width: 30px;
+}
+
+#swm-header {
+    display: flex;
+    align-items: flex-end;
+    font-size: small;
+    height: 30px;
+    margin-bottom: 10px;
+}
+    
+.swm-list-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    height: 50px;
+    width: 100%;
+    border-bottom: var(--main-background-color) solid 1px;
+    font-size: small;
+}
+
+.swm-list-row:hover {
+    background-color: var(--light-background-color);
+}
+
+.swm-list-row-icon {
+    width: 20px;
+}
+
+.swm-list-row-info {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex-grow: 1;
+}
+
+.swm-list-row-name {
+    height: 40%;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    font-weight: bold;
+}
+
+.swm-list-row-file-name {
+    height: 40%;
+    width: 100%;
+    color: var(--timesheet-border);
+    display: flex;
+    align-items: flex-end;
 }

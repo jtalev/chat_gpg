@@ -62,6 +62,9 @@ const (
 	incidentReportFormPath         = "../ui/templates/incidentReportForm.html"
 	iframePdfPath                  = "../ui/templates/iframePdf.html"
 	putIncidentReportFormPath      = "../ui/templates/putIncidentReportForm.html"
+	swmUserContentPath             = "../ui/templates/swmUserContent.html"
+	swmListPath                    = "../ui/templates/swmList.html"
+	adminSwmListPath               = "../ui/templates/adminSwmList.html"
 )
 
 func renderTemplate(
@@ -218,7 +221,7 @@ func (h *Handler) ServeDashboardView() http.Handler {
 		func(w http.ResponseWriter, r *http.Request) {
 			data, err := getDashboardData(w, r)
 			if err != nil {
-				log.Println("Error getting dashboard data: %v", err)
+				log.Printf("Error getting dashboard data: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}

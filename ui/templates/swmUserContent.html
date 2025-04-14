@@ -1,0 +1,17 @@
+{{ define "swmUserContent" }}
+<div id="swm-user-content-container">
+	<div id="swm-main-content-container">
+		<div
+		id="swm-list-container"
+		hx-trigger="load"
+		hx-get="/safety/swms/get-list-html"
+		hx-target="#swm-list-container"
+		hx-swap="innerHTML">
+		</div>
+		<div id="swm-viewer-container">
+			<img id="swm-viewer-icon" src="../static/img/file-exclamation.svg">
+			select SWMS to view
+		</div>
+	</div>
+</div>
+{{ end }}

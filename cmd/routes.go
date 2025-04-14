@@ -83,10 +83,16 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/admin/employee-put-modal", a.AuthorizeAdmin(h.PutEmployeeModal()))
 	mux.Handle("/admin/render-safety-tab", a.AuthorizeAdmin(h.RenderSafetyTab()))
 
+	mux.Handle("/admin/safety/serve-swm-list-content", a.AuthorizeAdmin(h.AdminServeSwmListContent()))
+	mux.Handle("/admin/safety/serve-incident-report-content", a.AuthorizeAdmin(h.AdminServeIncidentReportContent()))
+
 	// safety routes
+	mux.Handle("/safety/serve-incident-report-form", a.AuthorizeAdmin(h.ServeIncidentReportForm()))
 	mux.Handle("/safety/generate-incident-report", a.AuthorizeUser(h.GenerateIncidentReport()))
 	mux.Handle("/safety/get-incident-report", a.AuthorizeAdmin(h.GetIncidentReport()))
 	mux.Handle("/safety/delete-incident-report", a.AuthorizeAdmin(h.DeleteIncidentReport()))
 	mux.Handle("/safety/put-incident-report-html", a.AuthorizeAdmin(h.PutIncidentReportHtml()))
 	mux.Handle("/safety/put-incident-report", a.AuthorizeAdmin(h.PutIncidentReport()))
+	mux.Handle("/safety/serve-swm-user-content", a.AuthorizeUser(h.ServeSwmUserContent()))
+	mux.Handle("/safety/swms/get-list-html", a.AuthorizeUser(h.GetSwmsListHtml()))
 }

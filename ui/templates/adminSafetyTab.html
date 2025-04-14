@@ -4,21 +4,38 @@
 		<div id="admin-safety-tab-content-toggle-container">
 			<div id="admin-safety-content-toggle">
 				<div 
-				id="incident-report-toggle" onclick="onSafetyContentToggle(event)">INCIDENT REPORT</div>
+				id="incident-report-toggle"
+				hx-get="/admin/safety/serve-incident-report-content"
+				hx-trigger="click"
+				hx-target="#admin-safety-content"
+				hx-swap="innerHTML"
+				onclick="onSafetyContentToggle(event)">
+					INCIDENT REPORT
+				</div>
 				<div 
 				id="swm-toggle"
-				onclick="onSafetyContentToggle(event)">SWMs</div>
+				hx-get="/admin/safety/serve-swm-list-content"
+				hx-trigger="click"
+				hx-target="#admin-safety-content"
+				hx-swap="innerHTML"
+				onclick="onSafetyContentToggle(event)">
+					SWMs
+				</div>
 			</div>
 			<div id="close-pdf-viewer-btn-container">
-				<button id="close-pdf-btn" onclick="togglePdfViewer()">CLOSE PDF</button>
+				<button id="close-pdf-btn" onclick="togglePdfViewer()">CLOSE</button>
 			</div>
 		</div>
 		<div id="admin-safety-content-container">
-			<div id="admin-safety-content">
-				{{ template "adminIncidentReportList" . }}
+			<div
+			id="admin-safety-content"
+			hx-trigger="load"
+			hx-target="#admin-safety-content"
+			hx-swap="innerHTML"
+			hx-get="/admin/safety/serve-incident-report-content">
 			</div>
 			<div id="admin-safety-pdf-viewer">
-				View PDF here.	
+				Select item to view.	
 			</div>
 		</div>
 	</div>

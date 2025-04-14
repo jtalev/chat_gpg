@@ -369,25 +369,42 @@ func (h *Handler) PutEmployeeModal() http.Handler {
 func (h *Handler) RenderSafetyTab() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			err := executePartialTemplate(adminSafetyTabPath, "adminSafetyTab", nil, w)
+			if err != nil {
+				log.Printf("Error executing template: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) AdminServeIncidentReportContent() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
 			incidentReports, err := infrastructure.GetIncidentReports(h.DB)
 			if err != nil {
 				log.Printf("Error getting incident reports: %v", err)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
 			}
 
-			tmpl, err := template.ParseFiles(
-				adminSafetyTabPath,
-				adminIncidentReportListPath,
-			)
+			err = executePartialTemplate(adminIncidentReportListPath, "adminIncidentReportList", incidentReports, w)
 			if err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
+				log.Printf("error executing adminIncidentReportList.html: %v", err)
+				http.Error(w, "error executing adminIncidentReportList.html, internal server error", http.StatusInternalServerError)
 				return
 			}
+		},
+	)
+}
 
-			err = tmpl.ExecuteTemplate(w, "adminSafetyTab", incidentReports)
+func (h *Handler) AdminServeSwmListContent() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			err := executePartialTemplate(adminSwmListPath, "adminSwmList", []int{1, 2, 3, 4, 5}, w)
 			if err != nil {
-				log.Printf("Error executing template: %v", err)
-				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				log.Printf("error executing adminSwmList.html: %v", err)
+				http.Error(w, "error executing adminSwmList.html, internal server error", http.StatusInternalServerError)
 				return
 			}
 		},

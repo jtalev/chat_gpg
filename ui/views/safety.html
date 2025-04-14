@@ -7,8 +7,23 @@
 		<div 
 		class="view-content-selector"
 		id="incident-report-content-selector" 
+		onclick="toggleContentSelector(event)"
+		hx-get="/safety/serve-incident-report-form"
+		hx-trigger="click"
+		hx-swap="innerHTML"
+		hx-target="#safety-view-content"
 		style="background-color: white;">
 			INCIDENT REPORT
+		</div>
+		<div 
+		class="view-content-selector"
+		id="swm-content-selector"
+		onclick="toggleContentSelector(event)"
+		hx-get="/safety/serve-swm-user-content"
+		hx-trigger="click"
+		hx-swap="innerHTML"
+		hx-target="#safety-view-content">
+			SWMS
 		</div>
 		<div class="borderBottom"></div>
 	</div>

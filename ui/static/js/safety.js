@@ -25,3 +25,36 @@ document.addEventListener("DOMContentLoaded", function() {
         button.addEventListener("click", togglePdfViewer);
     });
 });
+
+function toggleContentSelector(event) {
+    const clickedSelector = event.currentTarget
+    const selectors = document.querySelectorAll(".view-content-selector")
+
+    selectors.forEach(selector => {
+        selector.style.backgroundColor = "var(--main-background-color)"
+        selector.style.borderBottom = "solid 1px var(--gpg-green)"
+        if (selector === clickedSelector) {
+            selector.style.backgroundColor = "white"
+            selector.style.borderBottom = "none"
+        }
+    })
+}
+
+function toggleSwmViewer() {
+    if (window.innerWidth > 1030) {
+        return 
+    }
+
+    const swmList = document.querySelector("#swm-list-container")
+    const swmViewer = document.querySelector("#swm-viewer-container")
+
+    const isContentVisible = window.getComputedStyle(swmList).display !== "none";
+
+    if (isContentVisible) {
+        swmList.style.display = "none"
+        swmViewer.style.display = "flex"
+    } else {
+        swmList.style.display = "flex"
+        swmViewer.style.display = "none"
+    }
+}
