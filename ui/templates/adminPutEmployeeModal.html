@@ -90,7 +90,22 @@
 					</div>
 				</div>
 				<div class="modal-form-row">
-				<div class="modal-form-label-container">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="role">Role:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<select name="role" class="form-input" id="role">
+	                    <option value="employee" {{ if eq .Role "employee" }} selected {{ end }}>Employee</option>
+	                    <option value="foreman" {{ if eq .Role "foreman" }} selected {{ end }}>Foreman</option>
+	                    <option value="management" {{ if eq .Role "management" }} selected {{ end }}>Management</option>
+	                </select>
+					</div>
+					<div class="error-container">
+						{{ .RoleErr }}
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
 						<label class="modal-form-label" for="is_admin">Is Admin?</label>
 					</div>
 					<div id="put-job-is-complete-input-row">

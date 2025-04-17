@@ -3405,6 +3405,7 @@ input::-webkit-inner-spin-button {
     width: 100%;
     border-bottom: var(--main-background-color) solid 1px;
     font-size: small;
+    cursor: pointer;
 }
 
 .swm-list-row:hover {

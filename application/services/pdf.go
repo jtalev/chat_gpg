@@ -1,6 +1,7 @@
 package application
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"log"
@@ -24,10 +25,10 @@ const (
 type Pdf struct {
 	UUID string
 
-	InJsonPath  string
-	OutJsonName string
-	OutJsonPath string
-	OutJsonFile *os.File
+	JsonTemplatePath string
+	OutJsonName      string
+	OutJsonPath      string
+	OutJsonFile      *os.File
 
 	InPdfPath  string
 	OutPdfName string
@@ -41,22 +42,145 @@ type Pdf struct {
 	Data any
 }
 
+var alphabet = map[string]string{
+	"a": "A",
+	"b": "B",
+	"c": "C",
+	"d": "D",
+	"e": "E",
+	"f": "F",
+	"g": "G",
+	"h": "H",
+	"i": "I",
+	"j": "J",
+	"k": "K",
+	"l": "L",
+	"m": "M",
+	"n": "N",
+	"o": "O",
+	"p": "P",
+	"q": "Q",
+	"r": "R",
+	"s": "S",
+	"t": "T",
+	"u": "U",
+	"v": "V",
+	"w": "W",
+	"x": "X",
+	"y": "Y",
+	"z": "Z",
+}
+
+func (p *Pdf) FormatJsonTemplate() error {
+	inputFile, err := os.Open(p.JsonTemplatePath)
+	if err != nil {
+		return err
+	}
+	defer inputFile.Close()
+
+	templateVariable := "."
+	var outputLines []string
+
+	scanner := bufio.NewScanner(inputFile)
+	const maxCapacity = 1024 * 1024
+	buf := make([]byte, maxCapacity)
+	scanner.Buffer(buf, maxCapacity)
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		trimmed := strings.TrimSpace(line)
+
+		if strings.HasPrefix(trimmed, `"value"`) {
+			switch {
+			case strings.HasSuffix(line, "false,"):
+				line = strings.TrimSuffix(line, "false,")
+				line = fmt.Sprintf(`%s{{ %s }},`, line, templateVariable)
+			case strings.HasSuffix(line, "true,"):
+				line = strings.TrimSuffix(line, "true,")
+				line = fmt.Sprintf(`%s{{ %s }},`, line, templateVariable)
+			case strings.HasSuffix(line, `"",`):
+				line = strings.TrimSuffix(line, `"",`)
+				line = fmt.Sprintf(`%s"{{ %s }}",`, line, templateVariable)
+			default:
+				fmt.Println("nothing trimmed")
+				outputLines = append(outputLines, line)
+				continue
+			}
+
+			templateVariable = "."
+			outputLines = append(outputLines, line)
+
+		} else if strings.HasPrefix(trimmed, `"name"`) {
+			arr := strings.Split(trimmed, `"`)
+			if len(arr) < 4 {
+				outputLines = append(outputLines, line)
+				continue
+			}
+			temp := arr[3]
+			parts := strings.Split(temp, "_")
+			for i, word := range parts {
+				if len(word) == 0 {
+					continue
+				}
+				first := string(word[0])
+				upper, ok := alphabet[first]
+				if ok {
+					parts[i] = upper + word[1:]
+				}
+				templateVariable += parts[i]
+			}
+			outputLines = append(outputLines, line)
+
+		} else {
+			outputLines = append(outputLines, line)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return fmt.Errorf("scanner error at line %d: %w", len(outputLines), err)
+	}
+
+	outputFile, err := os.Create(p.JsonTemplatePath)
+	if err != nil {
+		return err
+	}
+	defer outputFile.Close()
+
+	writer := bufio.NewWriter(outputFile)
+	for _, line := range outputLines {
+		_, err = writer.WriteString(line + "\n")
+		if err != nil {
+			return err
+		}
+	}
+	return writer.Flush()
+}
+
+func (p *Pdf) GenerateJsonTemplate() error {
+	conf := api.LoadConfiguration()
+	err := api.ExportFormFile(p.InPdfPath, p.JsonTemplatePath, conf)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // returns path of processed json file
 // json used to fill pdf
 func (p *Pdf) ExecuteJsonTemplate() error {
-	if p.InJsonPath == "" {
+	if p.JsonTemplatePath == "" {
 		panic("type Pdf requires member InJsonPath to execute json templating")
 	}
 
-	inJsonFile, err := os.ReadFile(p.InJsonPath)
+	inJsonFile, err := os.ReadFile(p.JsonTemplatePath)
 	if err != nil {
 		return err
 	}
 
-	p.OutJsonName = strings.Split(strings.Split(p.InJsonPath, "/")[len(strings.Split(p.InJsonPath, "/"))-1], ".")[0]
+	p.OutJsonName = strings.Split(strings.Split(p.JsonTemplatePath, "/")[len(strings.Split(p.JsonTemplatePath, "/"))-1], ".")[0]
 
-	dotIdx := len(p.InJsonPath) - 5
-	p.OutJsonPath = p.InJsonPath[:dotIdx] + "_output" + p.InJsonPath[dotIdx:]
+	dotIdx := len(p.JsonTemplatePath) - 5
+	p.OutJsonPath = p.JsonTemplatePath[:dotIdx] + "_output" + p.JsonTemplatePath[dotIdx:]
 	p.OutJsonFile, err = os.Create(p.OutJsonPath)
 	if err != nil {
 		return err
@@ -124,21 +248,27 @@ func (p *Pdf) Store() error {
 }
 
 func (p *Pdf) GeneratePdf() error {
-	if p.InPdfPath == "" {
-		panic("type Pdf requires member InPdfPath to generate Pdf")
+	if p.InPdfPath == "" || p.OutPdfPath == "" || p.OutJsonPath == "" {
+		panic("type Pdf requires member InPdfPath, OutPdfPath & OutJsonPath to generate Pdf")
 	}
 
 	err := p.ExecuteJsonTemplate()
 	if err != nil {
+		log.Printf("failed to execute json template: %v", err)
 		return err
 	}
 
 	err = api.FillFormFile(p.InPdfPath, p.OutJsonPath, p.OutPdfPath, nil)
 	if err != nil {
+		log.Printf("failed to fill form file: %v", err)
 		return err
 	}
 
-	p.Store()
+	// err = p.Store()
+	// if err != nil {
+	// 	log.Printf("error storing pdf: %v", err)
+	// 	return err
+	// }
 	return nil
 }
 

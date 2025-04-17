@@ -12,6 +12,7 @@ import (
 
 	"github.com/gorilla/sessions"
 	application "github.com/jtalev/chat_gpg/application/services"
+	"github.com/jtalev/chat_gpg/application/services/safety"
 	domain "github.com/jtalev/chat_gpg/domain/models"
 	infrastructure "github.com/jtalev/chat_gpg/infrastructure/repository"
 
@@ -248,7 +249,7 @@ func (h *Handler) ServeSafetyView() http.Handler {
 				return
 			}
 
-			data := application.IncidentReportValues{
+			data := safety.IncidentReportValues{
 				ReporterId: employeeId,
 				Reporter:   fmt.Sprintf("%s %s", employee.FirstName, employee.LastName),
 			}

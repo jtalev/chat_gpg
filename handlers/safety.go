@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	application "github.com/jtalev/chat_gpg/application/services"
+	"github.com/jtalev/chat_gpg/application/services/safety"
 	repo "github.com/jtalev/chat_gpg/infrastructure/repository"
 )
 
@@ -27,7 +27,7 @@ func (h *Handler) ServeIncidentReportForm() http.Handler {
 				return
 			}
 
-			data := application.IncidentReportValues{
+			data := safety.IncidentReportValues{
 				ReporterId: employeeId,
 				Reporter:   fmt.Sprintf("%s %s", employee.FirstName, employee.LastName),
 			}
@@ -46,14 +46,14 @@ func (h *Handler) ServeIncidentReportForm() http.Handler {
 func (h *Handler) GenerateIncidentReport() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			var incidentReportValues application.IncidentReportValues
+			var incidentReportValues safety.IncidentReportValues
 
 			if err := json.NewDecoder(r.Body).Decode(&incidentReportValues); err != nil {
 				http.Error(w, "Invalid JSON", http.StatusBadRequest)
 				return
 			}
 
-			incidentReportValues, err := application.GenerateIncidentReportPdf(incidentReportValues, h.DB)
+			incidentReportValues, err := safety.GenerateIncidentReportPdf(incidentReportValues, h.DB)
 			if err != nil {
 				log.Printf("error generating incident report pdf: %v", err)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -80,7 +80,7 @@ func (h *Handler) GetIncidentReport() http.Handler {
 				return
 			}
 
-			pdfUrl, err := application.GetIncidentReportUrl(vals[0], h.DB)
+			pdfUrl, err := safety.GetIncidentReportUrl(vals[0], h.DB)
 			if err != nil {
 				log.Printf("error getting incident report url: %v", err)
 				http.Error(w, "error getting incident report url", http.StatusInternalServerError)
@@ -107,7 +107,7 @@ func (h *Handler) DeleteIncidentReport() http.Handler {
 				return
 			}
 
-			err = application.DeleteIncidentReport(vals[0], h.DB)
+			err = safety.DeleteIncidentReport(vals[0], h.DB)
 			if err != nil {
 				log.Printf("error deleting incident report url: %v", err)
 				http.Error(w, "error deleting incident report url", http.StatusInternalServerError)
@@ -128,7 +128,7 @@ func (h *Handler) PutIncidentReportHtml() http.Handler {
 				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
-			incidentReportVals, err := application.GetIncidentReport(vals[0], h.DB)
+			incidentReportVals, err := safety.GetIncidentReport(vals[0], h.DB)
 			if err != nil {
 				log.Printf("error getting incident report from db: %v", err)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -147,14 +147,14 @@ func (h *Handler) PutIncidentReportHtml() http.Handler {
 func (h *Handler) PutIncidentReport() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			var incidentReportValues application.IncidentReportValues
+			var incidentReportValues safety.IncidentReportValues
 
 			if err := json.NewDecoder(r.Body).Decode(&incidentReportValues); err != nil {
 				http.Error(w, "Invalid JSON", http.StatusBadRequest)
 				return
 			}
 
-			incidentReportValues, err := application.PutIncidentReport(incidentReportValues, h.DB)
+			incidentReportValues, err := safety.PutIncidentReport(incidentReportValues, h.DB)
 			if err != nil {
 				log.Printf("error updating incident report: %v", err)
 				http.Error(w, "error updating incident report", http.StatusInternalServerError)
@@ -193,6 +193,16 @@ func (h *Handler) GetSwmsListHtml() http.Handler {
 				http.Error(w, "error executing swmList template", http.StatusInternalServerError)
 				return
 			}
+		},
+	)
+}
+
+var s = safety.Swm{}
+
+func (h *Handler) GenerateSwmPdf() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			s.GenerateSwmPdf()
 		},
 	)
 }

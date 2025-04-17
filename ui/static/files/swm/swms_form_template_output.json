@@ -1,0 +1,1428 @@
+{
+	"header": {
+		"source": "safe_work_method_statement.pdf",
+		"version": "pdfcpu v0.9.1 dev",
+		"creation": "2025-04-17 19:36:58 AEST",
+		"author": "hayden glenny",
+		"creator": "Microsoft® Word for Microsoft 365",
+		"producer": "pdfcpu v0.9.1 dev"
+	},
+	"forms": [
+		{
+			"textfield": [
+				{
+					"pages": [
+						1
+					],
+					"id": "1106",
+					"name": "contact_number",
+					"value": "054216133",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1104",
+					"name": "site_address",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1107",
+					"name": "email_address",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1105",
+					"name": "contact_name",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1120",
+					"name": "other_2",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1119",
+					"name": "other_1",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1103",
+					"name": "project_number",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1108",
+					"name": "swms_date",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1102",
+					"name": "project_activity",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "110",
+					"name": "risks_1",
+					"value": "Muscle strain and sprains from incorrect lifting technique/ tripping hazard over site storage position",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "112",
+					"name": "step_2",
+					"value": "Working on Ladders",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "131",
+					"name": "residual_risk_3",
+					"value": "B1",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "121",
+					"name": "step_4",
+					"value": "General Preparation works",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "124",
+					"name": "hazards_4",
+					"value": "Flying debris from sanding/ respiratory damage from sanding of paint and plaster",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "106",
+					"name": "control_measures_1",
+					"value": "Warm Up stretches, correct lifting technique, 2 person lifts when required/ preplanning to find suitable storage area for equipment",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "108",
+					"name": "residual_risk_1",
+					"value": "A2",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "133",
+					"name": "initial_risk_5",
+					"value": "B4",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "104",
+					"name": "initial_risk_2",
+					"value": "D3",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "132",
+					"name": "hazards_3",
+					"value": "Public Safety",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "135",
+					"name": "risks_3",
+					"value": "Risk of injury or harm to the general public",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "122",
+					"name": "initial_risk_3",
+					"value": "C2",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "117",
+					"name": "control_measures_3",
+					"value": "Isolate working area with the use of bollards, hard barriers and signage",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "105",
+					"name": "control_measures_2",
+					"value": "Use of platform steps whenever possible, no overreaching of ladder, where possible utilise mobile equipment or plant",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "118",
+					"name": "control_responsibility_2",
+					"value": "Project Manager Foreman Painters",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "127",
+					"name": "step_3",
+					"value": "Working in Public Spaces",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "126",
+					"name": "initial_risk_4",
+					"value": "B4",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "120",
+					"name": "residual_risk_5",
+					"value": "B2",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "107",
+					"name": "step_1",
+					"value": "Site Set Up",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "130",
+					"name": "residual_risk_2",
+					"value": "B2",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "137",
+					"name": "risks_4",
+					"value": "Eye damage from flying debris while undertaking preparation works/ Respiratory damage from paint/plaster dust",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "115",
+					"name": "control_responsibility_4",
+					"value": "Project Manager Foreman Painters",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "128",
+					"name": "risks_5",
+					"value": "Muscle strains from overuse/ flying debris when working overhead/ fume inhalation",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "103",
+					"name": "hazards_2",
+					"value": "Fall Hazard",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "113",
+					"name": "risks_2",
+					"value": "Potential serious injury from falling from height of ladder",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "123",
+					"name": "step_5",
+					"value": "General Painting Works",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "136",
+					"name": "control_measures_5",
+					"value": "Take breaks when required and continue stretches throughout the day, use of safety glasses working overhead/ P2 mask when required",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "109",
+					"name": "hazards_1",
+					"value": "Muscle strains/ additional tripping hazards",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "114",
+					"name": "control_responsibility_1",
+					"value": "Project Manager Foreman Painters",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "119",
+					"name": "residual_risk_4",
+					"value": "B1",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "134",
+					"name": "hazards_5",
+					"value": "Muscle strains, eye damage, fume inhalation",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "111",
+					"name": "initial_risk_1",
+					"value": "B3",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "125",
+					"name": "control_responsibility_3",
+					"value": "Project Manager Foreman Painters",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "129",
+					"name": "control_measures_4",
+					"value": "Use of correct PPE while undertaking preparation works including safety glasses/ P2 rated mask if required",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						3
+					],
+					"id": "116",
+					"name": "control_responsibility_5",
+					"value": "Project Manager Foreman Painters",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "160",
+					"name": "hazards_9",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "161",
+					"name": "initial_risk_9",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "157",
+					"name": "step_12",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "171",
+					"name": "initial_risk_12",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "183",
+					"name": "control_responsibility_6",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "187",
+					"name": "hazards_6",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "178",
+					"name": "control_measures_7",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "146",
+					"name": "control_responsibility_7",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "138",
+					"name": "hazards_8",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "143",
+					"name": "control_measures_8",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "141",
+					"name": "control_responsibility_8",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "147",
+					"name": "risks_9",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "179",
+					"name": "step_6",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "172",
+					"name": "step_11",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "159",
+					"name": "control_responsibility_11",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "170",
+					"name": "risks_12",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "145",
+					"name": "step_9",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "182",
+					"name": "residual_risk_6",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "140",
+					"name": "step_8",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "144",
+					"name": "initial_risk_8",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "139",
+					"name": "residual_risk_8",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "166",
+					"name": "step_10",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "158",
+					"name": "hazards_10",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "167",
+					"name": "risks_10",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "181",
+					"name": "control_measures_6",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "148",
+					"name": "hazards_11",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "154",
+					"name": "residual_risk_10",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "142",
+					"name": "risks_8",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "162",
+					"name": "hazards_12",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "164",
+					"name": "residual_risk_12",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "177",
+					"name": "initial_risk_7",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "169",
+					"name": "control_responsibility_9",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "149",
+					"name": "control_responsibility_10",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "168",
+					"name": "control_measures_11",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "186",
+					"name": "residual_risk_7",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "176",
+					"name": "hazards_7",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "155",
+					"name": "control_measures_9",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "173",
+					"name": "residual_risk_9",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "163",
+					"name": "control_measures_12",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "184",
+					"name": "step_7",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "175",
+					"name": "initial_risk_6",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "185",
+					"name": "risks_7",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "153",
+					"name": "initial_risk_10",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "152",
+					"name": "control_measures_10",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "156",
+					"name": "risks_11",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "150",
+					"name": "initial_risk_11",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "151",
+					"name": "residual_risk_11",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "180",
+					"name": "risks_6",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						4
+					],
+					"id": "165",
+					"name": "control_responsibility_12",
+					"value": "",
+					"multiline": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "202",
+					"name": "sign_date_7",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "203",
+					"name": "sign_sig_7",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "205",
+					"name": "sign_name_9",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "191",
+					"name": "sign_sig_3",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "207",
+					"name": "sign_sig_5",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "196",
+					"name": "sign_date_6",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "195",
+					"name": "sign_name_6",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "201",
+					"name": "sign_sig_6",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "209",
+					"name": "sign_name_7",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "199",
+					"name": "sign_date_8",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "188",
+					"name": "sign_name_1",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "194",
+					"name": "sign_name_5",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "214",
+					"name": "sign_sig_8",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "212",
+					"name": "sign_sig_9",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "190",
+					"name": "sign_date_1",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "200",
+					"name": "sign_name_2",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "213",
+					"name": "sign_name_3",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "193",
+					"name": "sign_sig_4",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "198",
+					"name": "sign_date_5",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "204",
+					"name": "sign_date_2",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "210",
+					"name": "sign_date_3",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "189",
+					"name": "sign_sig_1",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "211",
+					"name": "sign_date_9",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "192",
+					"name": "sign_date_4",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "208",
+					"name": "sign_name_4",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "206",
+					"name": "sign_name_8",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						5
+					],
+					"id": "197",
+					"name": "sign_sig_2",
+					"value": "",
+					"multiline": false,
+					"locked": true
+				}
+			],
+			"checkbox": [
+				{
+					"pages": [
+						1
+					],
+					"id": "1112",
+					"name": "safety_boots",
+					"default": true,
+					"value": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1132",
+					"name": "angle_grinder",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1123",
+					"name": "scaffold",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1125",
+					"name": "roof_anchor_points",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1126",
+					"name": "extension_ladder",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1127",
+					"name": "electric_scissor_lift",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1113",
+					"name": "safety_glasses",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1118",
+					"name": "fall_arrest",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1122",
+					"name": "step_above_2m",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1115",
+					"name": "respiratory_protection",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1116",
+					"name": "hi_vis_clothing",
+					"default": true,
+					"value": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1111",
+					"name": "safety_gloves",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1124",
+					"name": "pressure_washer_diesel",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1129",
+					"name": "electric_knuckle_boom",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1117",
+					"name": "safety_helmet",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1121",
+					"name": "step_below_2m",
+					"default": true,
+					"value": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1128",
+					"name": "diesel_scissor_lift",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1130",
+					"name": "diesel_knuckle_boom",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1114",
+					"name": "protective_clothing",
+					"default": false,
+					"value": false,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1109",
+					"name": "high_risk_works",
+					"default": true,
+					"value": true,
+					"locked": true
+				},
+				{
+					"pages": [
+						1
+					],
+					"id": "1131",
+					"name": "airless_spray_gun",
+					"default": false,
+					"value": false,
+					"locked": true
+				}
+			]
+		}
+	]
+}

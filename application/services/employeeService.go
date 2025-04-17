@@ -5,7 +5,9 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/google/uuid"
 	"github.com/jtalev/chat_gpg/domain/models"
+	models "github.com/jtalev/chat_gpg/domain/models"
 	auth "github.com/jtalev/chat_gpg/infrastructure/auth"
 	"github.com/jtalev/chat_gpg/infrastructure/repository"
 )
@@ -76,6 +78,7 @@ type EmployeeDto struct {
 	Password            string
 	Email               string
 	PhoneNumber         string
+	Role                string
 	IsAdmin             string
 	EmployeeIdErr       string
 	FirstNameErr        string
@@ -84,6 +87,7 @@ type EmployeeDto struct {
 	PasswordErr         string
 	EmailErr            string
 	PhoneNumberErr      string
+	RoleErr             string
 	IsAdminErr          string
 	IsSuccess           bool
 	IsDifferentPassword bool
@@ -128,6 +132,18 @@ func employeeDtoToEmployeeAuth(employeeDto EmployeeDto) (domain.EmployeeAuth, er
 	return employeeAuth, nil
 }
 
+func employeeDtoToRole(employeeDto EmployeeDto, db *sql.DB) Role {
+	r := Role{}
+	role := models.Role{
+		UUID:       uuid.New().String(),
+		EmployeeId: employeeDto.EmployeeId,
+		Role:       employeeDto.Role,
+	}
+	r.Role = role
+	r.db = db
+	return r
+}
+
 func mapErrorsToEmployeeDto(empErrors domain.EmployeeErrors, empAuthErrors domain.EmployeeAuthErrors, employeeDto EmployeeDto) EmployeeDto {
 	employeeDto.EmployeeIdErr = empErrors.EmployeeIdErr
 	employeeDto.FirstNameErr = empErrors.FirstNameErr
@@ -167,6 +183,11 @@ func PostEmployee(employeeDto EmployeeDto, db *sql.DB) (EmployeeDto, error) {
 		}
 		employeeAuth.AuthId = employee.ID
 		employeeAuth, err = infrastructure.PostEmployeeAuth(employeeAuth, db)
+		r := employeeDtoToRole(employeeDto, db)
+		_, err = r.PostEmployeeRole()
+		if err != nil {
+			return employeeDto, err
+		}
 		employeeDto.SuccessMsg = "Employee submitted successfully."
 		employeeDto.IsSuccess = true
 		return employeeDto, nil
@@ -216,6 +237,11 @@ func PutEmployee(employeeDto EmployeeDto, db *sql.DB) (EmployeeDto, error) {
 			}
 		}
 		_, err = infrastructure.PutEmployeeAuth(employeeAuth, db)
+		r := employeeDtoToRole(employeeDto, db)
+		_, err = r.PutEmployeeRole()
+		if err != nil {
+			return employeeDto, err
+		}
 		employeeDto.SuccessMsg = "Employee submitted successfully."
 		employeeDto.IsSuccess = true
 		return employeeDto, nil

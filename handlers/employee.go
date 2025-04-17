@@ -46,7 +46,7 @@ func (h *Handler) DeleteEmployee() http.Handler {
 	)
 }
 
-var postEmployeeKeys = []string{"id", "employee_id", "first_name", "last_name", "email", "phone_number", "is_admin", "username", "password"}
+var postEmployeeKeys = []string{"id", "employee_id", "first_name", "last_name", "email", "phone_number", "is_admin", "username", "password", "role"}
 
 func (h *Handler) PostEmployee() http.Handler {
 	return http.HandlerFunc(
@@ -68,6 +68,7 @@ func (h *Handler) PostEmployee() http.Handler {
 				IsAdmin:     reqVals[6],
 				Username:    reqVals[7],
 				Password:    reqVals[8],
+				Role:        reqVals[9],
 			}
 
 			employeeDto, err = application.PostEmployee(employeeDto, h.DB)
@@ -87,14 +88,14 @@ func (h *Handler) PostEmployee() http.Handler {
 	)
 }
 
-var putEmployeeFormKeys = []string{"id", "employee_id", "first_name", "last_name", "username", "password", "email", "phone", "is_admin"}
+var putEmployeeFormKeys = []string{"id", "employee_id", "first_name", "last_name", "username", "password", "email", "phone", "is_admin", "role"}
 
 func (h *Handler) PutEmployee() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			requestVals, err := parseRequestValues(putEmployeeFormKeys, r)
 			if err != nil {
-				log.Println("Error parsing request values: %v", err)
+				log.Printf("Error parsing request values: %v", err)
 				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
@@ -109,17 +110,18 @@ func (h *Handler) PutEmployee() http.Handler {
 			employeeDto.Email = requestVals[6]
 			employeeDto.PhoneNumber = requestVals[7]
 			employeeDto.IsAdmin = requestVals[8]
+			employeeDto.Role = requestVals[9]
 
 			employee, err := application.PutEmployee(employeeDto, h.DB)
 			if err != nil {
-				log.Println("Error updating employee: %v", err)
+				log.Printf("Error updating employee: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
 
 			err = executePartialTemplate(adminPutEmployeeModalPath, "adminPutEmployeeModal", employee, w)
 			if err != nil {
-				log.Println("Error executing template: %v", err)
+				log.Printf("Error executing template: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}

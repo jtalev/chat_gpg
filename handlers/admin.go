@@ -315,27 +315,33 @@ func (h *Handler) PutEmployeeModal() http.Handler {
 			keys := []string{"id", "employee_id"}
 			vals, err := parseRequestValues(keys, r)
 			if err != nil {
-				log.Println("Error parsing request values: %v", err)
+				log.Printf("Error parsing request values: %v", err)
 				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
 
 			id, err := strconv.Atoi(vals[0])
 			if err != nil {
-				log.Println("Error converting request value to int: %v", err)
+				log.Printf("Error converting request value to int: %v", err)
 				http.Error(w, "Bad request", http.StatusBadRequest)
 				return
 			}
 
 			employee, err := application.GetEmployeeById(id, h.DB)
 			if err != nil {
-				log.Println("Error getting employee: %v", err)
+				log.Printf("Error getting employee: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
 			employeeAuth, err := infrastructure.GetEmployeeAuthByEmployeeId(vals[1], h.DB)
 			if err != nil {
-				log.Println("Error getting employee auth: %v", err)
+				log.Printf("Error getting employee auth: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+			role, err := infrastructure.GetEmployeeRole(employee.EmployeeId, h.DB)
+			if err != nil {
+				log.Printf("Error getting employee role: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
 				return
 			}
@@ -354,6 +360,7 @@ func (h *Handler) PutEmployeeModal() http.Handler {
 				Email:       employee.Email,
 				PhoneNumber: employee.PhoneNumber,
 				IsAdmin:     isAdmin,
+				Role:        role.Role,
 			}
 
 			err = executePartialTemplate(adminPutEmployeeModalPath, "adminPutEmployeeModal", employeeDto, w)
