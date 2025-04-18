@@ -184,10 +184,20 @@ func (h *Handler) ServeSwmUserContent() http.Handler {
 	)
 }
 
+var s = safety.Swms{}
+
 func (h *Handler) GetSwmsListHtml() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			err := executePartialTemplate(swmListPath, "swmList", []int{1, 2, 3, 4}, w)
+			s.Db = h.DB
+			err := s.GetSwms()
+			if err != nil {
+				log.Printf("error getting swms: %v", err)
+				http.Error(w, "error getting swms, internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			err = executePartialTemplate(swmListPath, "swmList", s.SwmsArr, w)
 			if err != nil {
 				log.Printf("error executing swmList.html: %v", err)
 				http.Error(w, "error executing swmList template", http.StatusInternalServerError)
@@ -197,12 +207,25 @@ func (h *Handler) GetSwmsListHtml() http.Handler {
 	)
 }
 
-var s = safety.Swm{}
-
-func (h *Handler) GenerateSwmPdf() http.Handler {
+func (h *Handler) GenerateSwmsPdf() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			s.GenerateSwmPdf()
+			err := json.NewDecoder(r.Body).Decode(&s.Swms)
+			if err != nil {
+				log.Printf("error decoding swms json data: %v", err)
+				http.Error(w, "error decoding swms json data, bad request", http.StatusBadRequest)
+				return
+			}
+
+			s.Db = h.DB
+			s.Errors, err = s.PostSwm(s.Swms)
+			if err != nil {
+				log.Printf("error posting swms: %v", err)
+				http.Error(w, "error posting swms, internal server error", http.StatusInternalServerError)
+				return
+			}
+			log.Println(s.Errors)
+			s.GenerateSwmsPdf(s.Swms)
 		},
 	)
 }

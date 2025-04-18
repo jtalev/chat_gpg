@@ -8,8 +8,8 @@
 	onclick="toggleSwmViewer()">
 		<img class="swm-list-row-icon" src="../static/img/file-exclamation.svg">
 		<div class="swm-list-row-info">
-			<div class="swm-list-row-name">name</div>
-			<div class="swm-list-row-file-name">file-name.pdf</div>
+			<div class="swm-list-row-name">{{ .ProjectActivity }}</div>
+			<div class="swm-list-row-file-name">{{ .ProjectNumber }} - {{ .SwmsDate }}</div>
 		</div>
 	</div>
 {{ end }}

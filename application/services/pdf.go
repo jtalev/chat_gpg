@@ -264,11 +264,11 @@ func (p *Pdf) GeneratePdf() error {
 		return err
 	}
 
-	// err = p.Store()
-	// if err != nil {
-	// 	log.Printf("error storing pdf: %v", err)
-	// 	return err
-	// }
+	err = p.Store()
+	if err != nil {
+		log.Printf("error storing pdf: %v", err)
+		return err
+	}
 	return nil
 }
 
