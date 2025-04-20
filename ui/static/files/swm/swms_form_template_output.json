@@ -16,7 +16,7 @@
 					],
 					"id": "1106",
 					"name": "contact_number",
-					"value": "0910920",
+					"value": "054216133",
 					"multiline": false,
 					"locked": true
 				},
@@ -26,7 +26,7 @@
 					],
 					"id": "1104",
 					"name": "site_address",
-					"value": "site address",
+					"value": "",
 					"multiline": false,
 					"locked": true
 				},
@@ -36,7 +36,7 @@
 					],
 					"id": "1107",
 					"name": "email_address",
-					"value": "email address",
+					"value": "",
 					"multiline": false,
 					"locked": true
 				},
@@ -46,7 +46,7 @@
 					],
 					"id": "1105",
 					"name": "contact_name",
-					"value": "contact name",
+					"value": "",
 					"multiline": false,
 					"locked": true
 				},
@@ -76,7 +76,7 @@
 					],
 					"id": "1103",
 					"name": "project_number",
-					"value": "project number",
+					"value": "",
 					"multiline": false,
 					"locked": true
 				},
@@ -86,7 +86,7 @@
 					],
 					"id": "1108",
 					"name": "swms_date",
-					"value": "swms date",
+					"value": "",
 					"multiline": false,
 					"locked": true
 				},
@@ -96,7 +96,7 @@
 					],
 					"id": "1102",
 					"name": "project_activity",
-					"value": "Geelong Library Floors & Handrails",
+					"value": "",
 					"multiline": false,
 					"locked": true
 				},
@@ -106,7 +106,7 @@
 					],
 					"id": "110",
 					"name": "risks_1",
-					"value": "",
+					"value": "Muscle strain and sprains from \nincorrect lifting technique/ \ntripping hazard over site \nstorage position",
 					"multiline": true,
 					"locked": true
 				},
@@ -116,7 +116,7 @@
 					],
 					"id": "112",
 					"name": "step_2",
-					"value": "",
+					"value": "Working on \nLadders",
 					"multiline": true,
 					"locked": true
 				},
@@ -126,7 +126,7 @@
 					],
 					"id": "131",
 					"name": "residual_risk_3",
-					"value": "",
+					"value": "B1",
 					"multiline": true,
 					"locked": true
 				},
@@ -136,7 +136,7 @@
 					],
 					"id": "121",
 					"name": "step_4",
-					"value": "",
+					"value": "General \nPreparation \nworks",
 					"multiline": true,
 					"locked": true
 				},
@@ -146,7 +146,7 @@
 					],
 					"id": "124",
 					"name": "hazards_4",
-					"value": "",
+					"value": "Flying debris from sanding/ \nrespiratory damage from sanding \nof paint and plaster",
 					"multiline": true,
 					"locked": true
 				},
@@ -156,7 +156,7 @@
 					],
 					"id": "106",
 					"name": "control_measures_1",
-					"value": "",
+					"value": "Warm Up stretches, correct \nlifting technique, 2 person \nlifts when required/ preplanning \nto find suitable storage area \nfor equipment",
 					"multiline": true,
 					"locked": true
 				},
@@ -166,7 +166,7 @@
 					],
 					"id": "108",
 					"name": "residual_risk_1",
-					"value": "",
+					"value": "A2",
 					"multiline": true,
 					"locked": true
 				},
@@ -176,7 +176,7 @@
 					],
 					"id": "133",
 					"name": "initial_risk_5",
-					"value": "",
+					"value": "B4",
 					"multiline": true,
 					"locked": true
 				},
@@ -186,7 +186,7 @@
 					],
 					"id": "104",
 					"name": "initial_risk_2",
-					"value": "",
+					"value": "D3",
 					"multiline": true,
 					"locked": true
 				},
@@ -196,7 +196,7 @@
 					],
 					"id": "132",
 					"name": "hazards_3",
-					"value": "",
+					"value": "Public Safety",
 					"multiline": true,
 					"locked": true
 				},
@@ -206,7 +206,7 @@
 					],
 					"id": "135",
 					"name": "risks_3",
-					"value": "",
+					"value": "Risk of injury or harm to the \ngeneral public",
 					"multiline": true,
 					"locked": true
 				},
@@ -216,7 +216,7 @@
 					],
 					"id": "122",
 					"name": "initial_risk_3",
-					"value": "",
+					"value": "C2",
 					"multiline": true,
 					"locked": true
 				},
@@ -226,7 +226,7 @@
 					],
 					"id": "117",
 					"name": "control_measures_3",
-					"value": "",
+					"value": "Isolate working area with the \nuse of bollards, hard barriers \nand signage",
 					"multiline": true,
 					"locked": true
 				},
@@ -236,7 +236,7 @@
 					],
 					"id": "105",
 					"name": "control_measures_2",
-					"value": "",
+					"value": "Use of platform steps whenever \npossible, no overreaching of \nladder, where possible utilise \nmobile equipment or plant",
 					"multiline": true,
 					"locked": true
 				},
@@ -246,7 +246,7 @@
 					],
 					"id": "118",
 					"name": "control_responsibility_2",
-					"value": "",
+					"value": "Project Manager \nForeman Painters",
 					"multiline": true,
 					"locked": true
 				},
@@ -256,7 +256,7 @@
 					],
 					"id": "127",
 					"name": "step_3",
-					"value": "",
+					"value": "Working in \nPublic Spaces",
 					"multiline": true,
 					"locked": true
 				},
@@ -266,7 +266,7 @@
 					],
 					"id": "126",
 					"name": "initial_risk_4",
-					"value": "",
+					"value": "B4",
 					"multiline": true,
 					"locked": true
 				},
@@ -276,7 +276,7 @@
 					],
 					"id": "120",
 					"name": "residual_risk_5",
-					"value": "",
+					"value": "B2",
 					"multiline": true,
 					"locked": true
 				},
@@ -286,7 +286,7 @@
 					],
 					"id": "107",
 					"name": "step_1",
-					"value": "",
+					"value": "Site Set Up",
 					"multiline": true,
 					"locked": true
 				},
@@ -296,7 +296,7 @@
 					],
 					"id": "130",
 					"name": "residual_risk_2",
-					"value": "",
+					"value": "B2",
 					"multiline": true,
 					"locked": true
 				},
@@ -306,7 +306,7 @@
 					],
 					"id": "137",
 					"name": "risks_4",
-					"value": "",
+					"value": "Eye damage from flying debris \nwhile undertaking preparation \nworks/ Respiratory damage from \npaint/plaster dust",
 					"multiline": true,
 					"locked": true
 				},
@@ -316,7 +316,7 @@
 					],
 					"id": "115",
 					"name": "control_responsibility_4",
-					"value": "",
+					"value": "Project Manager \nForeman Painters",
 					"multiline": true,
 					"locked": true
 				},
@@ -326,7 +326,7 @@
 					],
 					"id": "128",
 					"name": "risks_5",
-					"value": "",
+					"value": "Muscle strains from overuse/ \nflying debris when working \noverhead/ fume inhalation",
 					"multiline": true,
 					"locked": true
 				},
@@ -336,7 +336,7 @@
 					],
 					"id": "103",
 					"name": "hazards_2",
-					"value": "",
+					"value": "Fall Hazard",
 					"multiline": true,
 					"locked": true
 				},
@@ -346,7 +346,7 @@
 					],
 					"id": "113",
 					"name": "risks_2",
-					"value": "",
+					"value": "Potential serious injury from \nfalling from height of ladder",
 					"multiline": true,
 					"locked": true
 				},
@@ -356,7 +356,7 @@
 					],
 					"id": "123",
 					"name": "step_5",
-					"value": "",
+					"value": "General \nPainting Works",
 					"multiline": true,
 					"locked": true
 				},
@@ -366,7 +366,7 @@
 					],
 					"id": "136",
 					"name": "control_measures_5",
-					"value": "",
+					"value": "Take breaks when required and \ncontinue stretches throughout \nthe day, use of safety glasses \nworking overhead/ P2 mask when \nrequired",
 					"multiline": true,
 					"locked": true
 				},
@@ -376,7 +376,7 @@
 					],
 					"id": "109",
 					"name": "hazards_1",
-					"value": "",
+					"value": "Muscle strains/ additional \ntripping hazards",
 					"multiline": true,
 					"locked": true
 				},
@@ -386,7 +386,7 @@
 					],
 					"id": "114",
 					"name": "control_responsibility_1",
-					"value": "",
+					"value": "Project Manager \nForeman Painters",
 					"multiline": true,
 					"locked": true
 				},
@@ -396,7 +396,7 @@
 					],
 					"id": "119",
 					"name": "residual_risk_4",
-					"value": "",
+					"value": "B1",
 					"multiline": true,
 					"locked": true
 				},
@@ -406,7 +406,7 @@
 					],
 					"id": "134",
 					"name": "hazards_5",
-					"value": "",
+					"value": "Muscle strains, eye damage, fume \ninhalation",
 					"multiline": true,
 					"locked": true
 				},
@@ -416,7 +416,7 @@
 					],
 					"id": "111",
 					"name": "initial_risk_1",
-					"value": "",
+					"value": "B3",
 					"multiline": true,
 					"locked": true
 				},
@@ -426,7 +426,7 @@
 					],
 					"id": "125",
 					"name": "control_responsibility_3",
-					"value": "",
+					"value": "Project Manager \nForeman Painters",
 					"multiline": true,
 					"locked": true
 				},
@@ -436,7 +436,7 @@
 					],
 					"id": "129",
 					"name": "control_measures_4",
-					"value": "",
+					"value": "Use of correct PPE while \nundertaking preparation works \nincluding safety glasses/ P2 \nrated mask if required",
 					"multiline": true,
 					"locked": true
 				},
@@ -446,7 +446,7 @@
 					],
 					"id": "116",
 					"name": "control_responsibility_5",
-					"value": "",
+					"value": "Project Manager \nForeman Painters",
 					"multiline": true,
 					"locked": true
 				},
@@ -1319,7 +1319,7 @@
 					"id": "1116",
 					"name": "hi_vis_clothing",
 					"default": true,
-					"value": false,
+					"value": true,
 					"locked": true
 				},
 				{
@@ -1369,7 +1369,7 @@
 					"id": "1121",
 					"name": "step_below_2m",
 					"default": true,
-					"value": false,
+					"value": true,
 					"locked": true
 				},
 				{
@@ -1409,7 +1409,7 @@
 					"id": "1109",
 					"name": "high_risk_works",
 					"default": true,
-					"value": false,
+					"value": true,
 					"locked": true
 				},
 				{

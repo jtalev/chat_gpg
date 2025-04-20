@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/google/uuid"
 	services "github.com/jtalev/chat_gpg/application/services"
@@ -182,16 +183,34 @@ func mapErrorsToIncidentReportValues(incidentReportValues IncidentReportValues, 
 	return incidentReportValues
 }
 
+func wrapText(text string, limit int) string {
+	var result string
+	words := strings.Fields(text)
+	lineLen := 0
+
+	for _, word := range words {
+		if lineLen+len(word) > limit {
+			result += `\n`
+			lineLen = 0
+		}
+		result += word + " "
+		lineLen += len(word) + 1
+	}
+	return strings.TrimSpace(result)
+}
+
 func GenerateIncidentReportPdf(incidentReportValues IncidentReportValues, db *sql.DB) (IncidentReportValues, error) {
 	uuid := uuid.New().String()
 
 	incidentReport := mapIncidentReportValuesToIncidentReport(incidentReportValues)
 	incidentReport.UUID = uuid
 	errors := incidentReport.Validate()
-	if errors.IsSuccessful == false {
+	if !errors.IsSuccessful {
 		incidentReportValues = mapErrorsToIncidentReportValues(incidentReportValues, errors)
 		return incidentReportValues, nil
 	}
+	incidentReport.FurtherDetails = wrapText(incidentReport.FurtherDetails, 100)
+	incidentReport.IncidentDescription = wrapText(incidentReport.IncidentDescription, 100)
 	result, err := postIncidentReport(incidentReport, db)
 	if err != nil {
 		log.Printf("error posting incident report: %v", result)

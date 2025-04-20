@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"reflect"
 	"strings"
 	"text/template"
 	"time"
@@ -40,6 +41,72 @@ type Pdf struct {
 	S3Key        string
 
 	Data any
+}
+
+func (p *Pdf) WrapDataFieldText(data any, limit int) any {
+	val := reflect.ValueOf(data)
+	typ := reflect.TypeOf(data)
+	initialLimit := limit
+
+	if val.Kind() == reflect.Ptr {
+		val = val.Elem()
+		typ = typ.Elem()
+	}
+
+	if val.Kind() != reflect.Struct {
+		return data
+	}
+
+	out := reflect.New(typ).Elem()
+
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		fieldType := typ.Field(i)
+		fieldName := fieldType.Name
+		if fieldName == "ProjectActivity" {
+			out.Field(i).SetString(field.String())
+			continue
+		}
+		if strings.HasPrefix(fieldName, "Step") {
+			limit = 15
+		}
+		if strings.HasPrefix(fieldName, "ControlResponsibility") {
+			limit = 20
+		}
+
+		if !field.CanSet() && !field.CanInterface() {
+			continue
+		}
+
+		switch field.Kind() {
+		case reflect.String:
+			text := field.String()
+			if len(text) > limit {
+				text = wrapText(text, limit)
+			}
+			out.Field(i).SetString(text)
+		default:
+			out.Field(i).Set(field)
+		}
+		limit = initialLimit
+	}
+	return out.Interface()
+}
+
+func wrapText(text string, limit int) string {
+	var result string
+	words := strings.Fields(text)
+	lineLen := 0
+
+	for _, word := range words {
+		if lineLen+len(word) > limit {
+			result += `\n`
+			lineLen = 0
+		}
+		result += word + " "
+		lineLen += len(word) + 1
+	}
+	return strings.TrimSpace(result)
 }
 
 var alphabet = map[string]string{
@@ -248,8 +315,8 @@ func (p *Pdf) Store() error {
 }
 
 func (p *Pdf) GeneratePdf() error {
-	if p.InPdfPath == "" || p.OutPdfPath == "" || p.OutJsonPath == "" {
-		panic("type Pdf requires member InPdfPath, OutPdfPath & OutJsonPath to generate Pdf")
+	if p.InPdfPath == "" || p.OutPdfPath == "" {
+		panic("type Pdf requires member InPdfPath, OutPdfPath to generate Pdf")
 	}
 
 	err := p.ExecuteJsonTemplate()

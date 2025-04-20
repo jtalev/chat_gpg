@@ -96,7 +96,8 @@ func (s *Swms) PostSwm(swms models.Swms) (models.SwmsErrors, error) {
 
 // GenerateSwmsPdf must be executed after PostSwm, p.UUID set during PostSwms execution
 func (s *Swms) GenerateSwmsPdf(swms models.Swms) {
-	p.Data = swms
+	p.Data = defaultSwm.Swms
+	p.Data = p.WrapDataFieldText(p.Data, 32)
 	err := p.ExecuteJsonTemplate()
 	if err != nil {
 		log.Println(err)

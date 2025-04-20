@@ -224,7 +224,6 @@ func (h *Handler) GenerateSwmsPdf() http.Handler {
 				http.Error(w, "error posting swms, internal server error", http.StatusInternalServerError)
 				return
 			}
-			log.Println(s.Errors)
 			s.GenerateSwmsPdf(s.Swms)
 		},
 	)
