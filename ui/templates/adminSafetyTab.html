@@ -1,31 +1,6 @@
 {{ define "adminSafetyTab" }}
 <div id="admin-safety-tab-container">
 	<div id="admin-safety-tab-content">
-		<div id="admin-safety-tab-content-toggle-container">
-			<div id="admin-safety-content-toggle">
-				<div 
-				id="incident-report-toggle"
-				hx-get="/admin/safety/serve-incident-report-content"
-				hx-trigger="click"
-				hx-target="#admin-safety-content"
-				hx-swap="innerHTML"
-				onclick="onSafetyContentToggle(event)">
-					INCIDENT REPORT
-				</div>
-				<div 
-				id="swm-toggle"
-				hx-get="/admin/safety/serve-swm-list-content"
-				hx-trigger="click"
-				hx-target="#admin-safety-content"
-				hx-swap="innerHTML"
-				onclick="onSafetyContentToggle(event)">
-					SWMs
-				</div>
-			</div>
-			<div id="close-pdf-viewer-btn-container">
-				<button id="close-pdf-btn" onclick="togglePdfViewer()">CLOSE</button>
-			</div>
-		</div>
 		<div id="admin-safety-content-container">
 			<div
 			id="admin-safety-content"

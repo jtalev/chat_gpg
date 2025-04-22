@@ -2,6 +2,7 @@ package domain
 
 type Swms struct {
 	UUID                    string `json:"uuid"`
+	JobId                   string `json:"job_id"`
 	ProjectActivity         string `json:"project_activity"`
 	ProjectNumber           string `json:"project_number"`
 	SiteAddress             string `json:"site_address"`
@@ -148,6 +149,7 @@ type Swms struct {
 }
 
 type SwmsErrors struct {
+	JobIdErr           string
 	ProjectActivityErr string
 	ProjectNumberErr   string
 	SiteAddressErr     string
@@ -161,6 +163,7 @@ type SwmsErrors struct {
 
 func (s *Swms) Validate() SwmsErrors {
 	errors := SwmsErrors{IsSuccessful: true}
+	errors = s.ValidateJobId(errors)
 	errors = s.ValidateProjectActivity(errors)
 	errors = s.ValidateProjectNumber(errors)
 	errors = s.ValidateSiteAddress(errors)
@@ -168,6 +171,15 @@ func (s *Swms) Validate() SwmsErrors {
 	errors = s.ValidateContactNumber(errors)
 	errors = s.ValidateEmailAddress(errors)
 	errors = s.ValidateSwmsDate(errors)
+	return errors
+}
+
+func (s *Swms) ValidateJobId(errors SwmsErrors) SwmsErrors {
+	if s.JobId == "" {
+		errors.JobIdErr = "*required"
+		errors.IsSuccessful = false
+		return errors
+	}
 	return errors
 }
 

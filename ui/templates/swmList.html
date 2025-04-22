@@ -1,9 +1,29 @@
 {{ define "swmList" }}
 <div class="form-header" id="swm-header">
-	SWMS
+	<div id="swms-header-text">
+		SWMS
+	</div>
+	<div id="add-swms-btn-container">
+		<button
+		hx-get="/safety/swms/serve-swms-form"
+		hx-trigger="click"
+		hx-target="#swm-viewer-container"
+		hx-swap="innerHTML"
+		onclick="toggleSwmViewer()"
+		id="add-swms-btn">
+			+ add swms
+		</button>
+	</div>
 </div>
 {{ range . }}
 	<div
+	hx-get="/safety/swms/serve-swms-pdf"
+	hx-trigger="click"
+	hx-target="#swm-viewer-container"
+	hx-swap="innerHTML"
+	hx-vals='{
+		"uuid": "{{ .UUID }}"
+	}'
 	class="swm-list-row"
 	onclick="toggleSwmViewer()">
 		<img class="swm-list-row-icon" src="../static/img/file-exclamation.svg">

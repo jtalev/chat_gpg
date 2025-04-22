@@ -404,16 +404,3 @@ func (h *Handler) AdminServeIncidentReportContent() http.Handler {
 		},
 	)
 }
-
-func (h *Handler) AdminServeSwmListContent() http.Handler {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			err := executePartialTemplate(adminSwmListPath, "adminSwmList", []int{1, 2, 3, 4, 5}, w)
-			if err != nil {
-				log.Printf("error executing adminSwmList.html: %v", err)
-				http.Error(w, "error executing adminSwmList.html, internal server error", http.StatusInternalServerError)
-				return
-			}
-		},
-	)
-}

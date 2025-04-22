@@ -1,0 +1,1712 @@
+{{ define "swmsForm" }}
+	<div id="swms-form-content-container">
+	<div class="form-container" id="swms-form-container">
+		<div class="form-header" id="swms-form-header">
+			Safe Work Method Statement
+		</div>
+		<form
+		hx-post="safety/swms/post"
+		hx-swap="innerHtml"
+		hx-target="#swm-viewer-container"
+		class="form"
+		id="swms-form">
+			<div class="form-row-header-container">
+				General Information
+			</div>
+			<div class="form-row-container">
+	            <div class="form-label-container">
+	                <label class="form-label" for="project_activity">Project Activity:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                id="project-activity" 
+	                name="project_activity" 
+	                value="{{ .Swms.ProjectActivity }}">
+	            </div>
+	            <div class="error-container">
+	            	{{ .Errors.ProjectActivityErr }}
+	            </div>
+	        </div>
+	        <div class="form-row-container">
+	            <div class="form-label-container">
+	                <label class="form-label" for="project_number">Project Number:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                id="project-number" 
+	                name="project_number" 
+	                value="{{ .Swms.ProjectNumber }}">
+	            </div>
+	            <div class="error-container">
+	            	{{ .Errors.ProjectNumberErr }}
+	            </div>
+	        </div>
+	        <div class="form-row-container">
+	            <div class="form-label-container">
+	                <label class="form-label" for="site_address">Site Address:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                id="site-address" 
+	                name="site_address" 
+	                value="{{ .Swms.SiteAddress }}">
+	            </div>
+	            <div class="error-container">
+	            	{{ .Errors.SiteAddressErr }}
+	            </div>
+	        </div>
+	        <div class="form-row-container">
+	            <div class="form-label-container">
+	                <label class="form-label" for="contact_name">Contact Name:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                id="contact-name" 
+	                name="contact_name" 
+	                value="{{ .Swms.ContactName }}">
+	            </div>
+	            <div class="error-container">
+	            	{{ .Errors.ContactNameErr }}
+	            </div>
+	        </div>
+	        <div class="form-row-container">
+	            <div class="form-label-container">
+	                <label class="form-label" for="contact_number">Contact Number:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                id="contact-number" 
+	                name="contact_number" 
+	                value="{{ .Swms.ContactNumber }}">
+	            </div>
+	            <div class="error-container">
+	            	{{ .Errors.ContactNumberErr }}
+	            </div>
+	        </div>
+	        <div class="form-row-container">
+	            <div class="form-label-container">
+	                <label class="form-label" for="email_address">Email Address:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                id="email-address" 
+	                name="email_address" 
+	                value="{{ .Swms.EmailAddress }}">
+	            </div>
+	            <div class="error-container">
+	            	{{ .Errors.EmailAddressErr }}
+	            </div>
+	        </div>
+	        <div class="form-row-container">
+	            <div class="form-label-container">
+	                <label class="form-label" for="swms_date">Date:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="date" 
+	                class="form-input" 
+	                id="swms-date" 
+	                name="swms_date" 
+	                value="{{ .Swms.SwmsDate }}">
+	            </div>
+	            <div class="error-container">
+	            	{{ .Errors.SwmsDateErr }}
+	            </div>
+	        </div>
+	        <div class="form-row-container-checkbox">
+				<div class="form-label-container-checkbox">
+					<label class="form-label" for="high_risk_works">High Risk Works</label>
+				</div>
+				<div class="form-input-checkbox-option">
+					<input 
+					class="form-input-checkbox" 
+					type="checkbox" 
+					name="high_risk_works"
+					value="true"
+					{{ if eq .Swms.HighRiskWorks true }} checked {{ end }}/>
+				</div>
+			</div>
+
+			<div class="form-row-header-container">
+				Equipment Checklist
+			</div>
+			<div id="swms-equipment-checklist">
+				<div class="swms-equipment-checklist-container">
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="safety_gloves">Safety Gloves</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="safety_gloves"
+							value="true"
+							{{ if eq .Swms.SafetyGloves true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="safety_boots">Safety Boots</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="safety_boots"
+							value="true"
+							{{ if eq .Swms.SafetyBoots true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="safety_glasses">Safety Glasses</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="safety_glasses"
+							value="true"
+							{{ if eq .Swms.SafetyGlasses true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="protective_clothing">Protective Clothing</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="protective_clothing"
+							value="true"
+							{{ if eq .Swms.ProtectiveClothing true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="safety_gloves">Safety Gloves</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="safety_gloves"
+							value="true"
+							{{ if eq .Swms.SafetyGloves true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="respiratory_protection">Respiratory Protection</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="respiratory_protection"
+							value="true"
+							{{ if eq .Swms.RespiratoryProtection true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="hi_vis_clothing">Hi-Vis Clothing</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="hi_vis_clothing"
+							value="true"
+							{{ if eq .Swms.HiVisClothing true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="safety_helmet">Safety Helmet</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="safety_helmet"
+							value="true"
+							{{ if eq .Swms.SafetyHelmet true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="fall_arrest">Fall Arrest</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="fall_arrest"
+							value="true"
+							{{ if eq .Swms.FallArrest true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="step_below_2m">Platform Step (below 2m)</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="step_below_2m"
+							value="true"
+							{{ if eq .Swms.StepBelow2m true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="step_above_2m">Platform Step (above 2m)</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="step_above_2m"
+							value="true"
+							{{ if eq .Swms.StepAbove2m true }} checked {{ end }}/>
+						</div>
+					</div>
+				</div>
+				<div class="swms-equipment-checklist-container">
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="scaffold">Scaffold</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="scaffold"
+							value="true"
+							{{ if eq .Swms.Scaffold true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="pressure_washer_diesel">Pressure Washer (Diesel)</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="pressure_washer_diesel"
+							value="true"
+							{{ if eq .Swms.PressureWasherDiesel true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="roof_anchor_points">Roof Anchor Points</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="roof_anchor_points"
+							value="true"
+							{{ if eq .Swms.RoofAnchorPoints true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="extension_ladder">Extension Ladder</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="extension_ladder"
+							value="true"
+							{{ if eq .Swms.ExtensionLadder true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="electric_scissor_lift">Electric Scissor Lift</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="electric_scissor_lift"
+							value="true"
+							{{ if eq .Swms.ElectricScissorLift true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="diesel_scissor_lift">Diesel Scissor Lift</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="diesel_scissor_lift"
+							value="true"
+							{{ if eq .Swms.DieselScissorLift true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="electric_knuckle_boom">Electric Knuckle Boom</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="electric_knuckle_boom"
+							value="true"
+							{{ if eq .Swms.ElectricKnuckleBoom true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="diesel_knuckle_boom">Diesel Knuckle Boom</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="diesel_knuckle_boom"
+							value="true"
+							{{ if eq .Swms.DieselKnuckleBoom true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="airless_spray_gun">Airless Spray Gun</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="airless_spray_gun"
+							value="true"
+							{{ if eq .Swms.AirlessSprayGun true }} checked {{ end }}/>
+						</div>
+					</div>
+					<div class="form-row-container-checkbox">
+						<div class="form-label-container-checkbox">
+							<label class="form-label" for="angle_grinder">Angle Grinder</label>
+						</div>
+						<div class="form-input-checkbox-option">
+							<input 
+							class="form-input-checkbox" 
+							type="checkbox" 
+							name="angle_grinder"
+							value="true"
+							{{ if eq .Swms.AngleGrinder true }} checked {{ end }}/>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-row-container">
+	            <div class="form-label-container">
+	                <label class="form-label" for="other_1">Other (1):</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                id="other-1" 
+	                name="other_1" 
+	                value="{{ .Swms.Other1 }}">
+	            </div>
+	        </div>
+	        <div class="form-row-container">
+	            <div class="form-label-container">
+	                <label class="form-label" for="other_2">Other (2):</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                id="other-2" 
+	                name="other_2" 
+	                value="{{ .Swms.Other2 }}">
+	            </div>
+	        </div>
+
+	        <div class="form-row-header-container">
+	        	Hazards & Risk Assessment
+	        </div>
+	        <div class="swms-hazards-row-header">(1)</div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="step_1">Step:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="step_1" 
+	                value="{{ .Swms.Step1 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="hazards_1">Hazards:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="hazards_1" 
+	                value="{{ .Swms.Hazards1 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="risks_1">Risks:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="risks_1" 
+	                value="{{ .Swms.Risks1 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="initial_risk_1">Initital Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="initial_risk_1" 
+	                value="{{ .Swms.InitialRisk1 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_measures_1">Control Measures:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_measures_1" 
+	                value="{{ .Swms.ControlMeasures1 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="residual_risk_1">Residual Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="residual_risk_1" 
+	                value="{{ .Swms.ResidualRisk1 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_responsibility_1">Control Responsibility:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_responsibility_1" 
+	                value="{{ .Swms.ControlResponsibility1 }}">
+	            </div>
+	        </div>
+
+	        <div class="swms-hazards-row-header">(2)</div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="step_2">Step:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="step_2" 
+	                value="{{ .Swms.Step2 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="hazards_2">Hazards:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="hazards_2" 
+	                value="{{ .Swms.Hazards2 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="risks_2">Risks:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="risks_2" 
+	                value="{{ .Swms.Risks2 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="initial_risk_2">Initital Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="initial_risk_2" 
+	                value="{{ .Swms.InitialRisk2 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_measures_2">Control Measures:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_measures_2" 
+	                value="{{ .Swms.ControlMeasures2 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="residual_risk_2">Residual Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="residual_risk_2" 
+	                value="{{ .Swms.ResidualRisk2 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_responsibility_2">Control Responsibility:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_responsibility_2" 
+	                value="{{ .Swms.ControlResponsibility2 }}">
+	            </div>
+	        </div>
+
+	        <div class="swms-hazards-row-header">(3)</div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="step_3">Step:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="step_3" 
+	                value="{{ .Swms.Step3 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="hazards_3">Hazards:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="hazards_3" 
+	                value="{{ .Swms.Hazards3 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="risks_3">Risks:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="risks_3" 
+	                value="{{ .Swms.Risks3 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="initial_risk_3">Initital Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="initial_risk_3"
+	                value="{{ .Swms.InitialRisk3 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_measures_3">Control Measures:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_measures_3" 
+	                value="{{ .Swms.ControlMeasures3 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="residual_risk_3">Residual Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="residual_risk_3" 
+	                value="{{ .Swms.ResidualRisk3 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_responsibility_3">Control Responsibility:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_responsibility_3" 
+	                value="{{ .Swms.ControlResponsibility3 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-header">(4)</div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="step_4">Step:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="step_4" 
+	                value="{{ .Swms.Step4 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="hazards_4">Hazards:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="hazards_4" 
+	                value="{{ .Swms.Hazards4 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="risks_4">Risks:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="risks_4" 
+	                value="{{ .Swms.Risks4 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="initial_risk_4">Initital Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="initial_risk_4" 
+	                value="{{ .Swms.InitialRisk4 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_measures_4">Control Measures:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_measures_4" 
+	                value="{{ .Swms.ControlMeasures4 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="residual_risk_4">Residual Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="residual_risk_4" 
+	                value="{{ .Swms.ResidualRisk4 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_responsibility_4">Control Responsibility:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_responsibility_4" 
+	                value="{{ .Swms.ControlResponsibility4 }}">
+	            </div>
+	        </div>
+
+	        <div class="swms-hazards-row-header">(5)</div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="step_5">Step:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="step_5" 
+	                value="{{ .Swms.Step5 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="hazards_5">Hazards:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="hazards_5" 
+	                value="{{ .Swms.Hazards5 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="risks_5">Risks:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="risks_5" 
+	                value="{{ .Swms.Risks5 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="initial_risk_5">Initital Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="initial_risk_5" 
+	                value="{{ .Swms.InitialRisk5 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_measures_5">Control Measures:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_measures_5" 
+	                value="{{ .Swms.ControlMeasures5 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="residual_risk_5">Residual Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="residual_risk_5" 
+	                value="{{ .Swms.ResidualRisk5 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_responsibility_5">Control Responsibility:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_responsibility_5" 
+	                value="{{ .Swms.ControlResponsibility5 }}">
+	            </div>
+	        </div>
+
+	        <div class="swms-hazards-row-header">(6)</div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="step_6">Step:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="step_6" 
+	                value="{{ .Swms.Step6 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="hazards_6">Hazards:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="hazards_6" 
+	                value="{{ .Swms.Hazards6 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="risks_6">Risks:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="risks_6" 
+	                value="{{ .Swms.Risks6 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="initial_risk_6">Initital Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="initial_risk_6" 
+	                value="{{ .Swms.InitialRisk6 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_measures_6">Control Measures:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_measures_6" 
+	                value="{{ .Swms.ControlMeasures6 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="residual_risk_6">Residual Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="residual_risk_6" 
+	                value="{{ .Swms.ResidualRisk6 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_responsibility_6">Control Responsibility:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_responsibility_6" 
+	                value="{{ .Swms.ControlResponsibility6 }}">
+	            </div>
+	        </div>
+
+	        <div class="swms-hazards-row-header">(7)</div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="step_7">Step:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="step_7" 
+	                value="{{ .Swms.Step7 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="hazards_7">Hazards:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="hazards_7" 
+	                value="{{ .Swms.Hazards7 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="risks_7">Risks:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="risks_7" 
+	                value="{{ .Swms.Risks7 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="initial_risk_7">Initital Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="initial_risk_7" 
+	                value="{{ .Swms.InitialRisk7 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_measures_7">Control Measures:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_measures_7" 
+	                value="{{ .Swms.ControlMeasures7 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="residual_risk_7">Residual Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="residual_risk_7" 
+	                value="{{ .Swms.ResidualRisk7 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_responsibility_7">Control Responsibility:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_responsibility_7" 
+	                value="{{ .Swms.ControlResponsibility7 }}">
+	            </div>
+	        </div>
+
+	        <div class="swms-hazards-row-header">(8)</div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="step_8">Step:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="step_8" 
+	                value="{{ .Swms.Step8 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="hazards_8">Hazards:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="hazards_8" 
+	                value="{{ .Swms.Hazards8 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="risks_8">Risks:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="risks_8" 
+	                value="{{ .Swms.Risks8 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="initial_risk_8">Initital Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="initial_risk_8" 
+	                value="{{ .Swms.InitialRisk8 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_measures_8">Control Measures:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_measures_8" 
+	                value="{{ .Swms.ControlMeasures8 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="residual_risk_8">Residual Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="residual_risk_8" 
+	                value="{{ .Swms.ResidualRisk8 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_responsibility_8">Control Responsibility:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_responsibility_8" 
+	                value="{{ .Swms.ControlResponsibility8 }}">
+	            </div>
+	        </div>
+
+	        <div class="swms-hazards-row-header">(9)</div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="step_9">Step:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="step_9" 
+	                value="{{ .Swms.Step9 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="hazards_9">Hazards:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="hazards_9" 
+	                value="{{ .Swms.Hazards9 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="risks_9">Risks:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="risks_9" 
+	                value="{{ .Swms.Risks9 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="initial_risk_9">Initital Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="initial_risk_9" 
+	                value="{{ .Swms.InitialRisk9 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_measures_9">Control Measures:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_measures_9" 
+	                value="{{ .Swms.ControlMeasures9 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="residual_risk_9">Residual Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="residual_risk_9" 
+	                value="{{ .Swms.ResidualRisk9 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_responsibility_9">Control Responsibility:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_responsibility_9" 
+	                value="{{ .Swms.ControlResponsibility9 }}">
+	            </div>
+	        </div>
+
+	        <div class="swms-hazards-row-header">(10)</div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="step_10">Step:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="step_10" 
+	                value="{{ .Swms.Step10 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="hazards_10">Hazards:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="hazards_10" 
+	                value="{{ .Swms.Hazards10 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="risks_10">Risks:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="risks_10" 
+	                value="{{ .Swms.Risks10 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="initial_risk_10">Initital Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="initial_risk_10" 
+	                value="{{ .Swms.InitialRisk10 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_measures_10">Control Measures:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_measures_10" 
+	                value="{{ .Swms.ControlMeasures10 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="residual_risk_10">Residual Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="residual_risk_10" 
+	                value="{{ .Swms.ResidualRisk10 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_responsibility_10">Control Responsibility:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_responsibility_10" 
+	                value="{{ .Swms.ControlResponsibility10 }}">
+	            </div>
+	        </div>
+
+	        <div class="swms-hazards-row-header">(11)</div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="step_11">Step:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="step_11" 
+	                value="{{ .Swms.Step11 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="hazards_11">Hazards:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="hazards_11" 
+	                value="{{ .Swms.Hazards11 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="risks_11">Risks:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="risks_11" 
+	                value="{{ .Swms.Risks11 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="initial_risk_11">Initital Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="initial_risk_11" 
+	                value="{{ .Swms.InitialRisk11 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_measures_11">Control Measures:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_measures_11" 
+	                value="{{ .Swms.ControlMeasures11 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="residual_risk_11">Residual Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="residual_risk_11" 
+	                value="{{ .Swms.ResidualRisk11 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_responsibility_11">Control Responsibility:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_responsibility_11" 
+	                value="{{ .Swms.ControlResponsibility11 }}">
+	            </div>
+	        </div>
+
+	        <div class="swms-hazards-row-header">(12)</div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="step_12">Step:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="step_12" 
+	                value="{{ .Swms.Step12 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="hazards_12">Hazards:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="hazards_12" 
+	                value="{{ .Swms.Hazards12 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="risks_12">Risks:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="risks_12" 
+	                value="{{ .Swms.Risks12 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="initial_risk_12">Initital Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="initial_risk_12" 
+	                value="{{ .Swms.InitialRisk12 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_measures_12">Control Measures:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_measures_12" 
+	                value="{{ .Swms.ControlMeasures12 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="residual_risk_12">Residual Risk:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="residual_risk_12" 
+	                value="{{ .Swms.ResidualRisk12 }}">
+	            </div>
+	        </div>
+	        <div class="swms-hazards-row-container">
+	        	<div class="form-label-container">
+	                <label class="form-label" for="control_responsibility_12">Control Responsibility:</label>
+	            </div>
+	            <div class="form-input-container">
+	                <input 
+	                type="text" 
+	                class="form-input" 
+	                name="control_responsibility_12" 
+	                value="{{ .Swms.ControlResponsibility12 }}">
+	            </div>
+	        </div>
+
+	        <div class="form-row-header-container">
+	        	Sign
+	        </div>
+	        <div class="swms-sign-container">
+	        	<div class="swms-sign-row">
+	        		<div class="swms-sign-date-col">Date</div>
+	        		<div class="swms-sign-name-col">Name</div>
+	        		<div class="swms-sign-sig-col">Signature</div>
+	        	</div>
+	        	<div class="swms-sign-row">
+	        		<div class="swms-sign-date-col">
+	        			<input
+	        			type="date"
+	        			class="form-input"
+	        			name="sign_date_1"
+	        			value="{{ .Swms.SignDate1 }}">
+	        		</div>
+	        		<div class="swms-sign-name-col">
+						<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_name_1"
+	        			value="{{ .Swms.SignName1 }}">
+	        		</div>
+	        		<div class="swms-sign-sig-col">
+	        			<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_sig_1"
+	        			value="{{ .Swms.SignSig1 }}">
+	        		</div>
+	        	</div>
+	        	<div class="swms-sign-row">
+	        		<div class="swms-sign-date-col">
+	        			<input
+	        			type="date"
+	        			class="form-input"
+	        			name="sign_date_2"
+	        			value="{{ .Swms.SignDate2 }}">
+	        		</div>
+	        		<div class="swms-sign-name-col">
+						<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_name_2"
+	        			value="{{ .Swms.SignName2 }}">
+	        		</div>
+	        		<div class="swms-sign-sig-col">
+	        			<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_sig_2"
+	        			value="{{ .Swms.SignSig2 }}">
+	        		</div>
+	        	</div>
+	        	<div class="swms-sign-row">
+	        		<div class="swms-sign-date-col">
+	        			<input
+	        			type="date"
+	        			class="form-input"
+	        			name="sign_date_3"
+	        			value="{{ .Swms.SignDate3 }}">
+	        		</div>
+	        		<div class="swms-sign-name-col">
+						<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_name_3"
+	        			value="{{ .Swms.SignName3 }}">
+	        		</div>
+	        		<div class="swms-sign-sig-col">
+	        			<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_sig_3"
+	        			value="{{ .Swms.SignSig3 }}">
+	        		</div>
+	        	</div>
+	        	<div class="swms-sign-row">
+	        		<div class="swms-sign-date-col">
+	        			<input
+	        			type="date"
+	        			class="form-input"
+	        			name="sign_date_4"
+	        			value="{{ .Swms.SignDate4 }}">
+	        		</div>
+	        		<div class="swms-sign-name-col">
+						<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_name_4"
+	        			value="{{ .Swms.SignName4 }}">
+	        		</div>
+	        		<div class="swms-sign-sig-col">
+	        			<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_sig_4"
+	        			value="{{ .Swms.SignSig4 }}">
+	        		</div>
+	        	</div>
+	        	<div class="swms-sign-row">
+	        		<div class="swms-sign-date-col">
+	        			<input
+	        			type="date"
+	        			class="form-input"
+	        			name="sign_date_5"
+	        			value="{{ .Swms.SignDate5 }}">
+	        		</div>
+	        		<div class="swms-sign-name-col">
+						<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_name_5"
+	        			value="{{ .Swms.SignName5 }}">
+	        		</div>
+	        		<div class="swms-sign-sig-col">
+	        			<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_sig_5"
+	        			value="{{ .Swms.SignSig5 }}">
+	        		</div>
+	        	</div>
+	        	<div class="swms-sign-row">
+	        		<div class="swms-sign-date-col">
+	        			<input
+	        			type="date"
+	        			class="form-input"
+	        			name="sign_date_6"
+	        			value="{{ .Swms.SignDate6 }}">
+	        		</div>
+	        		<div class="swms-sign-name-col">
+						<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_name_6"
+	        			value="{{ .Swms.SignName6 }}">
+	        		</div>
+	        		<div class="swms-sign-sig-col">
+	        			<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_sig_6"
+	        			value="{{ .Swms.SignSig6 }}">
+	        		</div>
+	        	</div>
+	        	<div class="swms-sign-row">
+	        		<div class="swms-sign-date-col">
+	        			<input
+	        			type="date"
+	        			class="form-input"
+	        			name="sign_date_7"
+	        			value="{{ .Swms.SignDate7 }}">
+	        		</div>
+	        		<div class="swms-sign-name-col">
+						<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_name_7"
+	        			value="{{ .Swms.SignName7 }}">
+	        		</div>
+	        		<div class="swms-sign-sig-col">
+	        			<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_sig_7"
+	        			value="{{ .Swms.SignSig7 }}">
+	        		</div>
+	        	</div>
+	        	<div class="swms-sign-row">
+	        		<div class="swms-sign-date-col">
+	        			<input
+	        			type="date"
+	        			class="form-input"
+	        			name="sign_date_8"
+	        			value="{{ .Swms.SignDate8 }}">
+	        		</div>
+	        		<div class="swms-sign-name-col">
+						<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_name_8"
+	        			value="{{ .Swms.SignName8 }}">
+	        		</div>
+	        		<div class="swms-sign-sig-col">
+	        			<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_sig_8"
+	        			value="{{ .Swms.SignSig8 }}">
+	        		</div>
+	        	</div>
+	        	<div class="swms-sign-row">
+	        		<div class="swms-sign-date-col">
+	        			<input
+	        			type="date"
+	        			class="form-input"
+	        			name="sign_date_9"
+	        			value="{{ .Swms.SignDate9 }}">
+	        		</div>
+	        		<div class="swms-sign-name-col">
+						<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_name_9"
+	        			value="{{ .Swms.SignName9 }}">
+	        		</div>
+	        		<div class="swms-sign-sig-col">
+	        			<input
+	        			type="text"
+	        			class="form-input"
+	        			name="sign_sig_9"
+	        			value="{{ .Swms.SignSig9 }}">
+	        		</div>
+	        	</div>
+	        </div>
+
+	        <div class="success-msg-container">
+                <p>{{ .Errors.SuccessMsg }}</p>
+	        </div>
+	        <div class="form-btn-container" style="margin-bottom: 30px;">
+	            <button type="submit" id="swms-form-submit-btn" class="gpg-submit-btn" form="swms-form">SUBMIT</button>
+	        </div>
+		</form>
+	</div>
+</div>
+{{ end }}

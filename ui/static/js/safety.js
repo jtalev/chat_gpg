@@ -47,14 +47,17 @@ function toggleSwmViewer() {
 
     const swmList = document.querySelector("#swm-list-container")
     const swmViewer = document.querySelector("#swm-viewer-container")
+    const closePdfBtn = document.getElementById("swms-close-pdf-btn")
 
     const isContentVisible = window.getComputedStyle(swmList).display !== "none";
 
     if (isContentVisible) {
         swmList.style.display = "none"
         swmViewer.style.display = "flex"
+        closePdfBtn.style.display = "block"
     } else {
         swmList.style.display = "flex"
         swmViewer.style.display = "none"
+        closePdfBtn.style.display = "none"
     }
 }

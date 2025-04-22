@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS job;
 DROP TABLE IF EXISTS timesheet_week;
 DROP TABLE IF EXISTS timesheet;
 DROP TABLE IF EXISTS incident_report;
+DROP TABLE IF EXISTS swms;
 CREATE TABLE employee (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     employee_id TEXT NOT NULL UNIQUE,
@@ -215,6 +216,7 @@ INSERT INTO incident_report VALUES('199538a9-6fb1-4e22-80fa-978d3265cb63','59722
 
 CREATE TABLE swms (
     uuid TEXT PRIMARY KEY,
+    job_id TEXT NOT NULL,
     project_activity TEXT NOT NULL,
     project_number TEXT NOT NULL,
     site_address TEXT NOT NULL,

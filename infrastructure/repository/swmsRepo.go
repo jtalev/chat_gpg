@@ -22,7 +22,7 @@ func GetSwms(db *sql.DB) ([]models.Swms, error) {
 	for rows.Next() {
 		swms := models.Swms{}
 		if err := rows.Scan(
-			&swms.UUID, &swms.ProjectActivity, &swms.ProjectNumber, &swms.SiteAddress, &swms.ContactName, &swms.ContactNumber,
+			&swms.UUID, &swms.JobId, &swms.ProjectActivity, &swms.ProjectNumber, &swms.SiteAddress, &swms.ContactName, &swms.ContactNumber,
 			&swms.EmailAddress, &swms.SwmsDate, &swms.HighRiskWorks, &swms.SafetyGloves, &swms.SafetyBoots, &swms.SafetyGlasses,
 			&swms.ProtectiveClothing, &swms.RespiratoryProtection, &swms.HiVisClothing, &swms.SafetyHelmet, &swms.FallArrest,
 			&swms.Other1, &swms.Other2, &swms.StepBelow2m, &swms.StepAbove2m, &swms.Scaffold, &swms.PressureWasherDiesel,
@@ -61,7 +61,7 @@ func GetSwms(db *sql.DB) ([]models.Swms, error) {
 func PostSwms(swms models.Swms, db *sql.DB) (bool, error) {
 	q := `
 INSERT INTO swms (
-	uuid, project_activity, project_number, site_address, contact_name, contact_number,
+	uuid, job_id, project_activity, project_number, site_address, contact_name, contact_number,
 	email_address, swms_date, high_risk_works, safety_gloves, safety_boots, safety_glasses,
 	protective_clothing, respiratory_protection, hi_vis_clothing, safety_helmet, fall_arrest,
 	other_1, other_2, step_below_2m, step_above_2m, scaffold, pressure_washer_diesel,
@@ -97,11 +97,11 @@ INSERT INTO swms (
 	$89, $90, $91, $92, $93, $94, $95, $96, $97, $98, $99, $100, $101, $102, $103, $104,
 	$105, $106, $107, $108, $109, $110, $111, $112, $113, $114, $115, $116, $117, $118,
 	$119, $120, $121, $122, $123, $124, $125, $126, $127, $128, $129, $130, $131, $132,
-	$133, $134, $135, $136, $137, $138, $139, $140, $141, $142
+	$133, $134, $135, $136, $137, $138, $139, $140, $141, $142, $143
 );`
 
 	_, err := db.Exec(q,
-		swms.UUID, swms.ProjectActivity, swms.ProjectNumber, swms.SiteAddress, swms.ContactName, swms.ContactNumber,
+		swms.UUID, swms.JobId, swms.ProjectActivity, swms.ProjectNumber, swms.SiteAddress, swms.ContactName, swms.ContactNumber,
 		swms.EmailAddress, swms.SwmsDate, swms.HighRiskWorks, swms.SafetyGloves, swms.SafetyBoots, swms.SafetyGlasses,
 		swms.ProtectiveClothing, swms.RespiratoryProtection, swms.HiVisClothing, swms.SafetyHelmet, swms.FallArrest,
 		swms.Other1, swms.Other2, swms.StepBelow2m, swms.StepAbove2m, swms.Scaffold, swms.PressureWasherDiesel,
