@@ -238,14 +238,29 @@ func (h *Handler) GetSwmsListHtml() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			s.Db = h.DB
-			err := s.GetSwms()
+			employeeIdVal := r.Context().Value("employee_id")
+			employeeId, ok := employeeIdVal.(string)
+			if !ok {
+				log.Printf("error asserting employee_id from context: %v", employeeIdVal)
+				http.Error(w, "unauthorized or invalid employee id", http.StatusBadRequest)
+				return
+			}
+
+			err := s.GetUserRole(employeeId)
+			if err != nil {
+				log.Printf("error getting user role: %v", err)
+				http.Error(w, "error getting user role, unauthorized", http.StatusUnauthorized)
+				return
+			}
+
+			err = s.GetSwms()
 			if err != nil {
 				log.Printf("error getting swms: %v", err)
 				http.Error(w, "error getting swms, internal server error", http.StatusInternalServerError)
 				return
 			}
 
-			err = executePartialTemplate(swmListPath, "swmList", s.SwmsArr, w)
+			err = executePartialTemplate(swmListPath, "swmList", s, w)
 			if err != nil {
 				log.Printf("error executing swmList.html: %v", err)
 				http.Error(w, "error executing swmList template", http.StatusInternalServerError)

@@ -23,10 +23,6 @@ func VerifyHashedPassword(password, hash string) bool {
 	return err == nil
 }
 
-// func GenerateUUID() string {
-
-// }
-
 func AuthenticateUser(username, password string, db *sql.DB, sugar *zap.SugaredLogger) (domain.EmployeeAuth, error) {
 	employeeAuth, err := infrastructure.GetEmployeeAuthByUsername(username, db)
 	if err == sql.ErrNoRows {
@@ -51,6 +47,9 @@ type Auth struct {
 func (a *Auth) AuthorizeUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+			w.Header().Set("Pragma", "no-cache")
+			w.Header().Set("Expires", "0")
 			session, err := a.Store.Get(r, "auth_session")
 			if err != nil {
 				a.Logger.Errorf("Error getting auth_session: %v", err)

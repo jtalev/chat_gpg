@@ -4,6 +4,7 @@
 		SWMS
 	</div>
 	<div id="add-swms-btn-container">
+		{{ if or (eq .UserRole "management") (eq .UserRole "foreman") }}
 		<button
 		hx-get="/safety/swms/serve-swms-form"
 		hx-trigger="click"
@@ -13,24 +14,38 @@
 		id="add-swms-btn">
 			+ add swms
 		</button>
+		{{ end }}
 	</div>
 </div>
-{{ range . }}
-	<div
-	hx-get="/safety/swms/serve-swms-pdf"
-	hx-trigger="click"
-	hx-target="#swm-viewer-container"
-	hx-swap="innerHTML"
-	hx-vals='{
-		"uuid": "{{ .UUID }}"
-	}'
-	class="swm-list-row"
-	onclick="toggleSwmViewer()">
+{{ range .SwmsArr }}
+	<div class="swm-list-row">
 		<img class="swm-list-row-icon" src="../static/img/file-exclamation.svg">
 		<div class="swm-list-row-info">
 			<div class="swm-list-row-name">{{ .ProjectActivity }}</div>
 			<div class="swm-list-row-file-name">{{ .ProjectNumber }} - {{ .SwmsDate }}</div>
 		</div>
 	</div>
+	{{ if or (eq $.UserRole "management") (eq $.UserRole "foreman") }}
+		<div class="swms-list-btn-container">
+			<div
+			class="swms-list-view-btn"
+			hx-get="/safety/swms/serve-swms-pdf"
+			hx-trigger="click"
+			hx-target="#swm-viewer-container"
+			hx-swap="innerHTML"
+			hx-vals='{
+				"uuid": "{{ .UUID }}"
+			}'
+			onclick="toggleSwmViewer()">
+				<img src="../static/img/view.svg">
+			</div>
+			<div class="swms-list-update-btn">
+				<img src="../static/img/update.svg">
+			</div>
+			<div class="swms-list-delete-btn">
+				<img src="../static/img/delete_grey.svg">
+			</div>
+		</div>
+	{{ end }}
 {{ end }}
 {{ end }}

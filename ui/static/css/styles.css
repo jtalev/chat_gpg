@@ -3492,13 +3492,7 @@ input::-webkit-inner-spin-button {
     gap: 5px;
     height: 50px;
     width: 100%;
-    border-bottom: var(--main-background-color) solid 1px;
     font-size: small;
-    cursor: pointer;
-}
-
-.swm-list-row:hover {
-    background-color: var(--light-background-color);
 }
 
 .swm-list-row-icon {
@@ -3599,4 +3593,37 @@ input::-webkit-inner-spin-button {
     width: 45%;
     display: flex;
     align-items: center;
+}
+
+.swms-list-btn-container {
+    height: 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: var(--main-background-color) solid 1px;
+}
+
+.swms-list-btn-container div {
+    height: 100%;
+    width: 20px;
+    cursor: pointer;
+}
+
+.swms-list-view-btn img {
+    height: 100%;
+    transform: translateY(-3px);
+}
+
+.swms-list-update-btn img {
+    height: 75%;
+}
+
+.swms-list-delete-btn img {
+    height: 95%;
+    transform: translateY(-2px);
+}
+
+.swms-list-delete-btn {
+    margin-left: auto;
 }

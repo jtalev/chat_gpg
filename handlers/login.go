@@ -13,6 +13,10 @@ import (
 func (h *Handler) LoginHandler() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+
+			w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+			w.Header().Set("Pragma", "no-cache")
+			w.Header().Set("Expires", "0")
 			var username, password string
 			if r.Header.Get("Content-Type") == "application/json" {
 				var loginData struct {

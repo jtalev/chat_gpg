@@ -63,6 +63,17 @@ func (s *Swms) GenerateSwmsPdf(swms models.Swms) {
 	}
 }
 
+func (s *Swms) GetUserRole(employeeId string) error {
+	userRole, err := repo.GetEmployeeRole(employeeId, s.Db)
+	if err != nil {
+		log.Printf("error getting user role: %v", err)
+		return err
+	}
+	s.UserRole = userRole.Role
+	log.Println(s.UserRole)
+	return nil
+}
+
 func (s *Swms) GetSwms() error {
 	s.SwmsArr = []models.Swms{}
 	swmsArr, err := repo.GetSwms(s.Db)
