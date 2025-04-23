@@ -15,6 +15,7 @@ type Swms struct {
 	SwmsArr  []models.Swms
 	Errors   models.SwmsErrors
 	UserRole string
+	Jobs     []models.Job
 	Db       *sql.DB
 }
 
@@ -48,6 +49,28 @@ func (s *Swms) PostSwm(swms models.Swms) (models.SwmsErrors, error) {
 	}
 }
 
+func (s *Swms) PutSwms(swms models.Swms) (models.SwmsErrors, error) {
+	p.UUID = swms.UUID
+	errors := swms.Validate()
+	if !errors.IsSuccessful {
+		return errors, nil
+	} else {
+		log.Println("putting swms")
+		_, err := repo.PutSwms(swms, s.Db)
+		if err != nil {
+			log.Printf("error updating swms: %v", err)
+			return errors, err
+		}
+		err = p.Delete()
+		if err != nil {
+			log.Printf("error deleting swms pdf from s3: %v", err)
+			return errors, err
+		}
+		errors.SuccessMsg = "Swms updated successfully."
+		return errors, nil
+	}
+}
+
 // GenerateSwmsPdf must be executed after PostSwm, p.UUID set during PostSwms execution
 func (s *Swms) GenerateSwmsPdf(swms models.Swms) {
 	p.Data = swms
@@ -70,7 +93,6 @@ func (s *Swms) GetUserRole(employeeId string) error {
 		return err
 	}
 	s.UserRole = userRole.Role
-	log.Println(s.UserRole)
 	return nil
 }
 
@@ -104,4 +126,30 @@ func (s *Swms) GetSwmsPdfUrl(uuid string) (string, error) {
 	}
 
 	return url, nil
+}
+
+func (s *Swms) DeleteSwms() error {
+	err := repo.DeleteSwms(s.Swms.UUID, s.Db)
+	if err != nil {
+		log.Printf("error deleting swms: %v", err)
+		return err
+	}
+	p.S3FileName = p.UUID + "_" + p.OutPdfName + ".pdf"
+	p.UUID = s.Swms.UUID
+	err = p.Delete()
+	if err != nil {
+		log.Printf("error deleting swms pdf: %v", err)
+		return err
+	}
+	return nil
+}
+
+func (s *Swms) GetSwmsByUUID() error {
+	swms, err := repo.GetSwmsByUUID(s.Swms.UUID, s.Db)
+	if err != nil {
+		log.Printf("error fetching swms by UUID: %v", err)
+		return err
+	}
+	s.Swms = swms
+	return nil
 }

@@ -216,7 +216,7 @@ INSERT INTO incident_report VALUES('199538a9-6fb1-4e22-80fa-978d3265cb63','59722
 
 CREATE TABLE swms (
     uuid TEXT PRIMARY KEY,
-    job_id TEXT NOT NULL,
+    job_id INTEGER NOT NULL,
     project_activity TEXT NOT NULL,
     project_number TEXT NOT NULL,
     site_address TEXT NOT NULL,

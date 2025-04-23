@@ -61,3 +61,15 @@ function toggleSwmViewer() {
         closePdfBtn.style.display = "none"
     }
 }
+
+document.body.addEventListener("htmx:afterSwap", function(evt) {
+    const target = evt.detail.target;
+    console.log(target.id)
+    
+    if (target.id === "swm-viewer-container") {
+        htmx.ajax("GET", "/safety/swms/get-list-html", {
+            target: "#swm-list-container",
+            swap: "innerHTML"
+        });
+    }
+});

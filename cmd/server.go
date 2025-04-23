@@ -84,6 +84,7 @@ func run(
 		Logger: sugar,
 	}
 	a := infrastructure.Auth{
+		Db:     db,
 		Logger: sugar,
 		Store:  store,
 	}

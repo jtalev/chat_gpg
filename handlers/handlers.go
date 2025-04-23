@@ -66,6 +66,7 @@ const (
 	swmUserContentPath             = "../ui/templates/swmUserContent.html"
 	swmListPath                    = "../ui/templates/swmList.html"
 	swmsFormPath                   = "../ui/templates/swmsForm.html"
+	updateSwmsFormPath             = "../ui/templates/updateSwmsForm.html"
 )
 
 func renderTemplate(

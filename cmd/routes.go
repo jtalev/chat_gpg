@@ -86,7 +86,7 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/admin/safety/serve-incident-report-content", a.AuthorizeAdmin(h.AdminServeIncidentReportContent()))
 
 	// safety routes
-	mux.Handle("/safety/serve-incident-report-form", a.AuthorizeAdmin(h.ServeIncidentReportForm()))
+	mux.Handle("/safety/serve-incident-report-form", a.AuthorizeUser(h.ServeIncidentReportForm()))
 	mux.Handle("/safety/generate-incident-report", a.AuthorizeUser(h.GenerateIncidentReport()))
 	mux.Handle("/safety/get-incident-report", a.AuthorizeAdmin(h.GetIncidentReport()))
 	mux.Handle("/safety/delete-incident-report", a.AuthorizeAdmin(h.DeleteIncidentReport()))
@@ -95,8 +95,11 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 
 	mux.Handle("/safety/serve-swm-user-content", a.AuthorizeUser(h.ServeSwmUserContent()))
 	mux.Handle("/safety/swms/get-list-html", a.AuthorizeUser(h.GetSwmsListHtml()))
-	mux.Handle("/safety/swms/generate-swms-pdf", a.AuthorizeAdmin(h.GenerateSwmsPdf()))
+	mux.Handle("/safety/swms/generate-swms-pdf", a.AuthorizeForemanManagement(h.GenerateSwmsPdf()))
 	mux.Handle("/safety/swms/serve-swms-pdf", a.AuthorizeUser(h.ServeSwmsPdf()))
-	mux.Handle("/safety/swms/serve-swms-form", a.AuthorizeAdmin(h.ServeSwmsForm()))
-	mux.Handle("/safety/swms/post", a.AuthorizeAdmin(h.PostSwms()))
+	mux.Handle("/safety/swms/serve-swms-form", a.AuthorizeForemanManagement(h.ServeSwmsForm()))
+	mux.Handle("/safety/swms/post", a.AuthorizeForemanManagement(h.PostSwms()))
+	mux.Handle("/safety/swms/delete", a.AuthorizeForemanManagement(h.DeleteSwms()))
+	mux.Handle("/safety/swms/serve-swms-form-put", a.AuthorizeForemanManagement(h.ServeSwmsFormPut()))
+	mux.Handle("/safety/swms/put", a.AuthorizeForemanManagement(h.PutSwms()))
 }

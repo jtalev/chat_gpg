@@ -2,7 +2,7 @@
 	<div id="swms-form-content-container">
 	<div class="form-container" id="swms-form-container">
 		<div class="form-header" id="swms-form-header">
-			Safe Work Method Statement
+			New Safe Work Method Statement
 		</div>
 		<form
 		hx-post="safety/swms/post"
@@ -12,6 +12,21 @@
 		id="swms-form">
 			<div class="form-row-header-container">
 				General Information
+			</div>
+			<div class="form-row-container">
+				<div class="form-label-container">
+				    <label class="form-label" for="project_activity">Job:</label>
+				</div>
+				<div class="form-input-container">
+				    <select name="job_id" class="form-input" id="job-id">
+				    	{{ range .Jobs }}
+				        	<option value="{{ .ID }}" {{ if eq $.Swms.JobId .ID }} selected {{ end }}>{{ .Name }}</option>
+				        {{ end }}
+				    </select>
+				</div>
+				<div class="error-container">
+					{{ .Errors.JobIdErr }}
+				</div>
 			</div>
 			<div class="form-row-container">
 	            <div class="form-label-container">

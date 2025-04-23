@@ -6,8 +6,10 @@ import (
 	"log"
 	"net/http"
 	"reflect"
+	"strconv"
 	"strings"
 
+	application "github.com/jtalev/chat_gpg/application/services"
 	"github.com/jtalev/chat_gpg/application/services/safety"
 	models "github.com/jtalev/chat_gpg/domain/models"
 	repo "github.com/jtalev/chat_gpg/infrastructure/repository"
@@ -323,7 +325,16 @@ func (h *Handler) ServeSwmsPdf() http.Handler {
 func (h *Handler) ServeSwmsForm() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			err := executePartialTemplate(swmsFormPath, "swmsForm", defaultSwm, w)
+			s.Errors = models.SwmsErrors{}
+			s.Swms = defaultSwm.Swms
+			jobs, err := application.GetJobs(h.DB)
+			if err != nil {
+				log.Printf("error fetching jobs: %v", err)
+				http.Error(w, "error fetching jobs, internal server error", http.StatusInternalServerError)
+				return
+			}
+			s.Jobs = jobs
+			err = executePartialTemplate(swmsFormPath, "swmsForm", s, w)
 			if err != nil {
 				log.Printf("error executing swmsForm template: %v", err)
 				http.Error(w, "error executing swmsForm template, internal server error", http.StatusInternalServerError)
@@ -333,7 +344,44 @@ func (h *Handler) ServeSwmsForm() http.Handler {
 	)
 }
 
-var reqParams = []string{"job_id", "project_activity", "project_number", "site_address", "contact_name", "contact_number",
+func (h *Handler) ServeSwmsFormPut() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			log.Println("serve swms form put")
+			s.Errors = models.SwmsErrors{}
+			s.Db = h.DB
+			uuid, err := parseRequestValues([]string{"uuid"}, r)
+			if err != nil {
+				log.Printf("error parsing request values: %v", err)
+				http.Error(w, "error parsing request values, bad request", http.StatusBadRequest)
+				return
+			}
+			s.Swms.UUID = uuid[0]
+			err = s.GetSwmsByUUID()
+			if err != nil {
+				log.Printf("error fetching swms by UUID: %v", err)
+				http.Error(w, "error fetching swms by UUID, internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			jobs, err := application.GetJobs(h.DB)
+			if err != nil {
+				log.Printf("error fetching jobs: %v", err)
+				http.Error(w, "error fetching jobs, internal server error", http.StatusInternalServerError)
+				return
+			}
+			s.Jobs = jobs
+			err = executePartialTemplate(updateSwmsFormPath, "updateSwmsForm", s, w)
+			if err != nil {
+				log.Printf("error executing updateSwmsForm template: %v", err)
+				http.Error(w, "error executing updateSwmsForm template, internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
+var reqParams = []string{"uuid", "job_id", "project_activity", "project_number", "site_address", "contact_name", "contact_number",
 	"email_address", "swms_date", "high_risk_works", "safety_gloves", "safety_boots", "safety_glasses",
 	"protective_clothing", "respiratory_protection", "hi_vis_clothing", "safety_helmet", "fall_arrest",
 	"other_1", "other_2", "step_below_2m", "step_above_2m", "scaffold", "pressure_washer_diesel",
@@ -420,6 +468,15 @@ func (h *Handler) PostSwms() http.Handler {
 							switch fieldVal.Kind() {
 							case reflect.String:
 								fieldVal.SetString(val)
+							case reflect.Int:
+								log.Println(val)
+								valInt, err := strconv.Atoi(val)
+								if err != nil {
+									log.Printf("error converting string to int: %v", err)
+									http.Error(w, "error converting string to int", http.StatusConflict)
+									return
+								}
+								fieldVal.SetInt(int64(valInt))
 							default:
 								log.Printf("Unsupported field type: %s", fieldVal.Kind())
 							}
@@ -427,7 +484,13 @@ func (h *Handler) PostSwms() http.Handler {
 					}
 				}
 			}
-			s.Swms.JobId = "knlndds"
+			jobs, err := application.GetJobs(h.DB)
+			if err != nil {
+				log.Printf("error fetching jobs: %v", err)
+				http.Error(w, "error fetching jobs, internal server error", http.StatusInternalServerError)
+				return
+			}
+			s.Jobs = jobs
 
 			s.Errors, err = s.PostSwm(s.Swms)
 			if err != nil {
@@ -445,6 +508,103 @@ func (h *Handler) PostSwms() http.Handler {
 				http.Error(w, "error executing swmsForm, internal server error", http.StatusInternalServerError)
 				return
 			}
+		},
+	)
+}
+
+func (h *Handler) PutSwms() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			s.Db = h.DB
+			reqVals, err := parseRequestValues(reqParams, r)
+			if err != nil {
+				log.Printf("error parsing request values: %v", err)
+				http.Error(w, "error parsing request values, bad request", http.StatusBadRequest)
+				return
+			}
+
+			for i, param := range reqParams {
+				val := reqVals[i]
+				if val == "true" {
+					if swmsField, ok := swmsMap[param]; ok {
+						*swmsField = true
+						continue
+					}
+				}
+
+				swmsVal := reflect.ValueOf(&s.Swms).Elem()
+				swmsType := swmsVal.Type()
+
+				for j := 0; j < swmsType.NumField(); j++ {
+					field := swmsType.Field(j)
+					fieldName := field.Tag.Get("json")
+					if fieldName == "" {
+						fieldName = strings.ToLower(field.Name)
+					}
+
+					if fieldName == param {
+						fieldVal := swmsVal.FieldByName(field.Name)
+						if fieldVal.CanSet() {
+							switch fieldVal.Kind() {
+							case reflect.String:
+								fieldVal.SetString(val)
+							case reflect.Int:
+								log.Println(val)
+								valInt, err := strconv.Atoi(val)
+								if err != nil {
+									log.Printf("error converting string to int: %v", err)
+									http.Error(w, "error converting string to int", http.StatusConflict)
+									return
+								}
+								fieldVal.SetInt(int64(valInt))
+							default:
+								log.Printf("Unsupported field type: %s", fieldVal.Kind())
+							}
+						}
+					}
+				}
+			}
+			jobs, err := application.GetJobs(h.DB)
+			if err != nil {
+				log.Printf("error fetching jobs: %v", err)
+				http.Error(w, "error fetching jobs, internal server error", http.StatusInternalServerError)
+				return
+			}
+			s.Jobs = jobs
+
+			s.Errors, err = s.PutSwms(s.Swms)
+			if err != nil {
+				log.Printf("error posting swms: %v", err)
+				http.Error(w, "error posting swms, internal server error", http.StatusInternalServerError)
+				return
+			}
+			if s.Errors.IsSuccessful {
+				s.GenerateSwmsPdf(s.Swms)
+			}
+
+			err = executePartialTemplate(swmsFormPath, "swmsForm", s, w)
+			if err != nil {
+				log.Printf("error executing swmsForm: %v", err)
+				http.Error(w, "error executing swmsForm, internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) DeleteSwms() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			vals, err := parseRequestValues([]string{"uuid"}, r)
+			if err != nil {
+				log.Printf("error parsing request values: %v", err)
+				http.Error(w, "error parsing request values, bad request", http.StatusBadRequest)
+				return
+			}
+
+			s.Db = h.DB
+			s.Swms.UUID = vals[0]
+			s.DeleteSwms()
 		},
 	)
 }

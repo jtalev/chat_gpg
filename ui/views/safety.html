@@ -26,7 +26,15 @@
 			SWMS
 		</div>
 		<div class="borderBottom">
-			<button id="swms-close-pdf-btn" onclick="toggleSwmViewer()">CLOSE</button>
+			<button 
+			id="swms-close-pdf-btn" 
+			onclick="toggleSwmViewer()"
+			hx-get="/safety/serve-swm-user-content"
+			hx-trigger="click"
+			hx-swap="innerHTML"
+			hx-target="#safety-view-content">
+				CLOSE
+			</button>
 		</div>
 	</div>
 	<div class="view-content-container">

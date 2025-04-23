@@ -2,7 +2,7 @@ package domain
 
 type Swms struct {
 	UUID                    string `json:"uuid"`
-	JobId                   string `json:"job_id"`
+	JobId                   int    `json:"job_id"`
 	ProjectActivity         string `json:"project_activity"`
 	ProjectNumber           string `json:"project_number"`
 	SiteAddress             string `json:"site_address"`
@@ -175,7 +175,7 @@ func (s *Swms) Validate() SwmsErrors {
 }
 
 func (s *Swms) ValidateJobId(errors SwmsErrors) SwmsErrors {
-	if s.JobId == "" {
+	if s.JobId == 0 {
 		errors.JobIdErr = "*required"
 		errors.IsSuccessful = false
 		return errors
