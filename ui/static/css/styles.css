@@ -3596,32 +3596,36 @@ input::-webkit-inner-spin-button {
 }
 
 .swms-list-btn-container {
-    height: 20px;
+    height: 25px;
     width: 100%;
     display: flex;
     align-items: center;
     gap: 10px;
     border-bottom: var(--main-background-color) solid 1px;
+    padding-bottom: 5px;
 }
 
 .swms-list-btn-container div {
-    height: 100%;
-    width: 20px;
+    height: 28px;
+    width: 28px;
     cursor: pointer;
+    background-color: var(--main-background-color);
+    border: solid 1px var(--gpg-light-green-background);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .swms-list-view-btn img {
-    height: 100%;
-    transform: translateY(-3px);
+    height: 20px;
 }
 
 .swms-list-update-btn img {
-    height: 75%;
+    height: 15px;
 }
 
 .swms-list-delete-btn img {
-    height: 95%;
-    transform: translateY(-2px);
+    height: 20px;
 }
 
 .swms-list-delete-btn {
