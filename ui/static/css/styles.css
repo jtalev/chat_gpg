@@ -3214,7 +3214,7 @@ input::-webkit-inner-spin-button {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        overflow-y: auto;
+        overflow: auto;
     }
 }
 
@@ -3236,7 +3236,7 @@ input::-webkit-inner-spin-button {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        overflow-y: auto;
+        overflow: auto;
     }
 }
 
@@ -3338,6 +3338,8 @@ input::-webkit-inner-spin-button {
     width: 100%;
     height: 100%;
     border: none;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 #close-pdf-viewer-btn-container {
@@ -3602,7 +3604,7 @@ input::-webkit-inner-spin-button {
     align-items: center;
     gap: 10px;
     border-bottom: var(--main-background-color) solid 1px;
-    padding-bottom: 5px;
+    padding-bottom: 15px;
 }
 
 .swms-list-btn-container div {

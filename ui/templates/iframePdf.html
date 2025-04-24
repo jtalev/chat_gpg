@@ -1,6 +1,39 @@
 {{ define "iframePdf" }}
-<iframe
+<div
 class="admin-safety-pdf"
-src="{{ . }}"
-width="800" height="500"></iframe>
+id="pdf-viewer">
+	
+</div>
+<script>
+  const url = '{{ .URL }}';
+  const container = document.getElementById('pdf-viewer');
+
+  pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.7.107/pdf.worker.min.js';
+
+  pdfjsLib.getDocument(url).promise.then(pdf => {
+    for (let i = 1; i <= pdf.numPages; i++) {
+      pdf.getPage(i).then(page => {
+        const viewport = page.getViewport({ scale: 1 }); // initial scale to get original size
+        const desiredWidth = container.clientWidth;
+        const scale = desiredWidth / viewport.width;
+        const scaledViewport = page.getViewport({ scale });
+
+        const canvas = document.createElement('canvas');
+        container.appendChild(canvas);
+        const context = canvas.getContext('2d');
+
+        canvas.width = scaledViewport.width;
+        canvas.height = scaledViewport.height;
+        canvas.style.width = '100%';
+        canvas.style.display = 'block';
+        canvas.style.marginBottom = '1rem';
+
+        page.render({
+          canvasContext: context,
+          viewport: scaledViewport
+        });
+      });
+    }
+  });
+</script>
 {{ end }}

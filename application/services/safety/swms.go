@@ -134,8 +134,8 @@ func (s *Swms) DeleteSwms() error {
 		log.Printf("error deleting swms: %v", err)
 		return err
 	}
-	p.S3FileName = p.UUID + "_" + p.OutPdfName + ".pdf"
 	p.UUID = s.Swms.UUID
+	p.S3FileName = p.UUID + "_" + p.OutPdfName + ".pdf"
 	err = p.Delete()
 	if err != nil {
 		log.Printf("error deleting swms pdf: %v", err)
