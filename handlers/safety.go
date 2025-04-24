@@ -92,15 +92,7 @@ func (h *Handler) GetIncidentReport() http.Handler {
 				return
 			}
 
-			data := struct {
-				URL   string
-				Scale float32
-			}{
-				URL:   pdfUrl,
-				Scale: 1.3,
-			}
-
-			err = executePartialTemplate(iframePdfPath, "iframePdf", data, w)
+			err = executePartialTemplate(iframePdfPath, "iframePdf", pdfUrl, w)
 			if err != nil {
 				log.Printf("error executing incident report form template: %v", err)
 				http.Error(w, "internal server error", http.StatusInternalServerError)
@@ -320,15 +312,7 @@ func (h *Handler) ServeSwmsPdf() http.Handler {
 				return
 			}
 
-			data := struct {
-				URL   string
-				Scale float32
-			}{
-				URL:   pdfUrl,
-				Scale: 1,
-			}
-
-			err = executePartialTemplate(iframePdfPath, "iframePdf", data, w)
+			err = executePartialTemplate(iframePdfPath, "iframePdf", pdfUrl, w)
 			if err != nil {
 				log.Printf("error executing iframePdf template: %v", err)
 				http.Error(w, "error executing iframePdf template, internal server error", http.StatusInternalServerError)

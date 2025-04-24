@@ -5,7 +5,7 @@ id="pdf-viewer">
 	
 </div>
 <script>
-  const url = '{{ .URL }}';
+  const url = '{{ . }}';
   const container = document.getElementById('pdf-viewer');
 
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.7.107/pdf.worker.min.js';
