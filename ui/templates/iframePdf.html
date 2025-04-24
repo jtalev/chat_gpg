@@ -10,23 +10,30 @@ id="pdf-viewer">
 
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.7.107/pdf.worker.min.js';
 
+  const dpr = window.devicePixelRatio || 1;
+
   pdfjsLib.getDocument(url).promise.then(pdf => {
     for (let i = 1; i <= pdf.numPages; i++) {
       pdf.getPage(i).then(page => {
-        const viewport = page.getViewport({ scale: 1 }); // initial scale to get original size
-        const desiredWidth = container.clientWidth;
-        const scale = desiredWidth / viewport.width;
+        const viewport = page.getViewport({ scale: 1 });
+        const containerWidth = container.clientWidth;
+        const scale = (containerWidth / viewport.width) * dpr;
         const scaledViewport = page.getViewport({ scale });
 
         const canvas = document.createElement('canvas');
-        container.appendChild(canvas);
         const context = canvas.getContext('2d');
 
+        // Set actual pixel size
         canvas.width = scaledViewport.width;
         canvas.height = scaledViewport.height;
-        canvas.style.width = '100%';
+
+        // Set display size (CSS)
+        canvas.style.width = `${scaledViewport.width / dpr}px`;
+        canvas.style.height = `${scaledViewport.height / dpr}px`;
         canvas.style.display = 'block';
         canvas.style.marginBottom = '1rem';
+
+        container.appendChild(canvas);
 
         page.render({
           canvasContext: context,
