@@ -23,11 +23,9 @@ id="pdf-viewer">
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');
 
-        // Set actual pixel size
         canvas.width = scaledViewport.width;
         canvas.height = scaledViewport.height;
 
-        // Set display size (CSS)
         canvas.style.width = `${scaledViewport.width / dpr}px`;
         canvas.style.height = `${scaledViewport.height / dpr}px`;
         canvas.style.display = 'block';

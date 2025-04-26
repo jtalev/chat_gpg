@@ -32,6 +32,8 @@
                 {{ template "account" . }}
             {{ else if eq .Component "safety" }}
                 {{ template "safety" . }}
+            {{ else if eq .Component "purchaseOrder" }}
+                {{ template "purchaseOrder" . }}
             {{ else }}
                 <p>could not find template</p>
             {{ end }}

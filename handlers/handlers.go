@@ -67,6 +67,10 @@ const (
 	swmListPath                    = "../ui/templates/swmList.html"
 	swmsFormPath                   = "../ui/templates/swmsForm.html"
 	updateSwmsFormPath             = "../ui/templates/updateSwmsForm.html"
+
+	purchaseOrderPath        = "../ui/views/purchaseOrder.html"
+	purchaseOrderFormPath    = "../ui/templates/purchaseOrderForm.html"
+	purchaseOrderItemRowPath = "../ui/templates/purchaseOrderItemRow.html"
 )
 
 func renderTemplate(
@@ -117,6 +121,9 @@ func renderTemplate(
 		accountPath,
 		safetyPath,
 		incidentReportFormPath,
+		purchaseOrderPath,
+		purchaseOrderFormPath,
+		purchaseOrderItemRowPath,
 	)
 
 	if err != nil {

@@ -1,0 +1,41 @@
+{{ define "purchaseOrder" }}
+<div class="view-container">
+	<div class="view-header-container">
+		<h2 class="view-header">
+			Purchase Order
+		</h2>
+	</div>
+	<div class="view-content-selector-container">
+		<div
+		class="view-content-selector"
+		id="purchase-order-content-selector"
+		onclick="toggleContentSelector(event)"
+		hx-get="/purchase-order/serve-purchase-order-form"
+		hx-trigger="click"
+		hx-swap="innerHTML"
+		hx-target="#purchase-order-view-content">
+			ORDER
+		</div>
+		<div
+		class="view-content-selector"
+		id="purchase-order-history-content-selector"
+		onclick="toggleContentSelector(event)"
+		hx-get="/purchase-order/serve-purchase-order-employee-history"
+		hx-trigger="click"
+		hx-swap="innerHTML"
+		hx-target="#purchase-order-view-content">
+			HISTORY
+		</div>
+		<div class="borderBottom">
+		</div>
+	</div>
+	<div class="view-content-container">
+		<div
+		class="view-content"
+		id="purchase-order-view-content">
+			{{ template "purchaseOrderForm" .Data }}
+		</div>
+	</div>
+</div>
+<script src="../static/js/purchaseOrder.js"></script>
+{{ end }}

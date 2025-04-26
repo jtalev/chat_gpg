@@ -1,0 +1,92 @@
+{{ define "purchaseOrderForm" }}
+<div class="form-container" id="purchase-order-form-container">
+	<div class="form-header">
+		<p>Purchase Order</p>
+	</div>
+	<form 
+	hx-post="/purchase-order/post"
+	hx-target="#purchase-order-view-content"
+	hx-swap="innerHTML"
+	class="form-container"
+	id="purchase-order-form">
+		<div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="employee_id">Employee ID:</label>
+			</div>
+			<div class="form-input-container">
+				<input 
+				type="text" 
+				name="employee_id"
+				class="form-input"
+				id="employee_id"
+				readonly 
+				style="background-color: var(--main-background-color);"
+				value="{{ .EmployeeId }}">
+			</div>
+			<div class="error-container">
+			</div>
+		</div>
+		<div class="form-row-container">
+            <div class="form-label-container">
+                <label class="form-label" for="store">Store:</label>
+            </div>
+            <div class="form-input-container">
+                <select name="store" class="form-input" id="store">
+                    {{ range .Stores }}
+                    	<option value="{{ .StoreId }}" {{ if eq $.StoreId .StoreId }} selected {{ end }}>{{ .StoreName }}</option>
+                    {{ end }}
+                </select>
+            </div>
+            <div class="error-container">
+            </div>
+        </div>
+        <div class="form-row-container">
+            <div class="form-label-container">
+                <label class="form-label" for="job">Job:</label>
+            </div>
+            <div class="form-input-container">
+                <select name="job" class="form-input" id="job">
+                    {{ range .Jobs }}
+                    	<option value="{{ .ID }}" {{ if eq $.JobId .ID }} selected {{ end }}>{{ .Name }}</option>
+                    {{ end }}
+                </select>
+            </div>
+            <div class="error-container">
+            </div>
+        </div>
+        <div class="form-row-container">
+			<div class="form-label-container">
+				<label class="form-label" for="date">Date:</label>
+			</div>
+			<div class="form-input-container">
+				<input 
+				class="form-input" 
+				type="date" 
+				name="date"
+				value="{{ .Date }}">
+			</div>
+			<div class="error-container">
+            </div>
+		</div>
+		<div class="form-row-header-container">
+			Items
+		</div>
+		<div id="purchase-order-new-item-btn-container">
+			<button
+			id="purchase-order-new-item-btn">
+				+ ADD NEW ITEM
+			</button>
+		</div>
+		<div id="purchase-order-item-container">
+			<div class="purchase-order-item-row">
+				<div class="purchase-order-qty-col">Qty:</div>
+				<div class="purchase-order-type-col">Type:</div>
+				<div class="purchase-order-name-col">Name:</div>
+			</div>
+			{{ range .PurchaseOrderItems }}
+				{{ template "purchaseOrderItemRow" . }}
+			{{ end }}
+		</div>
+	</form>
+</div>
+{{ end }}
