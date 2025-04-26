@@ -1,7 +1,28 @@
 {{ define "purchaseOrderItemRow" }}
 <div class="purchase-order-item-row">
-	<div class="purchase-order-qty-col">{{ .Quantity }}</div>
-	<div class="purchase-order-type-col">{{ .ItemTypeId }}</div>
-	<div class="purchase-order-name-col">{{ .ItemName }}</div>
+	<div class="purchase-order-qty-col">
+		<input 
+		type="number" 
+		name="quantity"
+		class="form-input"
+		value="{{ .Quantity }}">
+	</div>
+	<div class="purchase-order-type-col">
+		<select 
+		name="item_type_name"
+		class="form-input">
+		<option value="">--Select an option--</option>
+		{{ range .ItemTypes }}
+			<option value="{{ .UUID }}" {{ if eq $.ItemTypeName .Type }} selected {{ end }}>{{ .Type }}</option>
+		{{ end }}
+		</select>
+	</div>
+	<div class="purchase-order-name-col">
+		<input 
+		type="text" 
+		name="item_name"
+		class="form-input"
+		value="{{ .ItemName }}">
+	</div>
 </div>
 {{ end }}

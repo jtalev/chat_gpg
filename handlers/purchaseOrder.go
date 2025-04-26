@@ -45,30 +45,42 @@ var itemTypeList = []itemType{
 }
 
 type purchaseOrderItem struct {
-	UUID       string `json:"uuid"`
-	ItemName   string `json:"item_name"`
-	ItemTypeId string `json:"item_type_id"`
-	Quantity   int    `json:"quantity"`
+	UUID         string `json:"uuid"`
+	ItemName     string `json:"item_name"`
+	ItemTypeId   string `json:"item_type_id"`
+	ItemTypeName string `json:"item_type_name"`
+	Quantity     int    `json:"quantity"`
+
+	ItemTypes []itemType
 }
 
 var purchaseOrderItemList = []purchaseOrderItem{
 	{
-		UUID:       "123",
-		ItemName:   "15L expressions low sheen monument",
-		ItemTypeId: "123",
-		Quantity:   2,
+		UUID:         "123",
+		ItemName:     "15L expressions low sheen monument",
+		ItemTypeId:   "123",
+		ItemTypeName: "Paint",
+		Quantity:     2,
+
+		ItemTypes: itemTypeList,
 	},
 	{
-		UUID:       "234",
-		ItemName:   "10L enamel antique white",
-		ItemTypeId: "123",
-		Quantity:   1,
+		UUID:         "234",
+		ItemName:     "10L enamel antique white",
+		ItemTypeId:   "123",
+		ItemTypeName: "Paint",
+		Quantity:     1,
+
+		ItemTypes: itemTypeList,
 	},
 	{
-		UUID:       "345",
-		ItemName:   "Haymes elite sash cutter",
-		ItemTypeId: "234",
-		Quantity:   6,
+		UUID:         "345",
+		ItemName:     "Haymes elite sash cutter",
+		ItemTypeId:   "234",
+		ItemTypeName: "Accessory",
+		Quantity:     6,
+
+		ItemTypes: itemTypeList,
 	},
 }
 
@@ -80,9 +92,8 @@ type purchaseOrder struct {
 	Date               string `json:"date"`
 	PurchaseOrderItems []purchaseOrderItem
 
-	Stores    []store
-	Jobs      []models.Job
-	ItemTypes []itemType
+	Stores []store
+	Jobs   []models.Job
 }
 
 func (h *Handler) ServePurchaseOrderView() http.Handler {
@@ -108,14 +119,29 @@ func (h *Handler) ServePurchaseOrderView() http.Handler {
 				JobId:              3,
 				PurchaseOrderItems: purchaseOrderItemList,
 
-				Stores:    storeList,
-				Jobs:      jobs,
-				ItemTypes: itemTypeList,
+				Stores: storeList,
+				Jobs:   jobs,
 			}
 
 			component := "purchaseOrder"
 			title := "Purchase Order - GPG"
 			renderTemplate(w, r, component, title, data)
+		},
+	)
+}
+
+func (h *Handler) ServeItemRow() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			item := purchaseOrderItem{
+				ItemTypes: itemTypeList,
+			}
+			err := executePartialTemplate(purchaseOrderItemRowPath, "purchaseOrderItemRow", item, w)
+			if err != nil {
+				log.Printf("error executing purchaseOrderItemRow.html: %v", err)
+				http.Error(w, "error executing purchaseOrderItemRow.html, internal server error", http.StatusInternalServerError)
+				return
+			}
 		},
 	)
 }

@@ -103,4 +103,7 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/safety/swms/delete", a.AuthorizeForemanManagement(h.DeleteSwms()))
 	mux.Handle("/safety/swms/serve-swms-form-put", a.AuthorizeForemanManagement(h.ServeSwmsFormPut()))
 	mux.Handle("/safety/swms/put", a.AuthorizeForemanManagement(h.PutSwms()))
+
+	// purchase order
+	mux.Handle("/purchase-order/serve-item-row", a.AuthorizeUser(h.ServeItemRow()))
 }

@@ -73,7 +73,11 @@
 		</div>
 		<div id="purchase-order-new-item-btn-container">
 			<button
-			id="purchase-order-new-item-btn">
+			id="purchase-order-new-item-btn"
+			hx-get="/purchase-order/serve-item-row"
+			hx-trigger="click"
+			hx-swap="beforeend"
+			hx-target="#purchase-order-item-container">
 				+ ADD NEW ITEM
 			</button>
 		</div>
