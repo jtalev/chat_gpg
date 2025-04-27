@@ -1,14 +1,12 @@
 {{ define "purchaseOrderForm" }}
-<div class="form-container" id="purchase-order-form-container">
+<div class="form-container">
 	<div class="form-header">
 		<p>Purchase Order</p>
 	</div>
 	<form 
-	hx-post="/purchase-order/post"
-	hx-target="#purchase-order-view-content"
-	hx-swap="innerHTML"
 	class="form-container"
-	id="purchase-order-form">
+	id="purchase-order-form"
+	onsubmit="sendPurchaseOrder(event)">
 		<div class="form-row-container">
 			<div class="form-label-container">
 				<label class="form-label" for="employee_id">Employee ID:</label>
@@ -31,7 +29,7 @@
                 <label class="form-label" for="store">Store:</label>
             </div>
             <div class="form-input-container">
-                <select name="store" class="form-input" id="store">
+                <select name="store_id" class="form-input" id="store_id">
                     {{ range .Stores }}
                     	<option value="{{ .StoreId }}" {{ if eq $.StoreId .StoreId }} selected {{ end }}>{{ .StoreName }}</option>
                     {{ end }}
@@ -45,9 +43,9 @@
                 <label class="form-label" for="job">Job:</label>
             </div>
             <div class="form-input-container">
-                <select name="job" class="form-input" id="job">
+                <select name="job_id" class="form-input" id="job_id">
                     {{ range .Jobs }}
-                    	<option value="{{ .ID }}" {{ if eq $.JobId .ID }} selected {{ end }}>{{ .Name }}</option>
+                    	<option type="number" value="{{ .ID }}" {{ if eq $.JobId .ID }} selected {{ end }}>{{ .Name }}</option>
                     {{ end }}
                 </select>
             </div>
@@ -63,6 +61,7 @@
 				class="form-input" 
 				type="date" 
 				name="date"
+				id="date" 
 				value="{{ .Date }}">
 			</div>
 			<div class="error-container">
@@ -86,11 +85,16 @@
 				<div class="purchase-order-qty-col">Qty:</div>
 				<div class="purchase-order-type-col">Type:</div>
 				<div class="purchase-order-name-col">Name:</div>
+				<div class="purchase-order-delete-col"></div>
 			</div>
 			{{ range .PurchaseOrderItems }}
 				{{ template "purchaseOrderItemRow" . }}
 			{{ end }}
 		</div>
+		<div class="form-btn-container">
+            <button type="reset" id="purchase-order-cancel-btn" class="gpg-close-btn" form="purchase-order-form">Cancel</button>
+            <button type="submit" id="purchase-order-submit-btn" class="gpg-submit-btn" form="purchase-order-form">SUBMIT</button>
+        </div>
 	</form>
 </div>
 {{ end }}

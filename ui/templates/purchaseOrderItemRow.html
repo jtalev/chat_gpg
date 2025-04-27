@@ -9,7 +9,7 @@
 	</div>
 	<div class="purchase-order-type-col">
 		<select 
-		name="item_type_name"
+		name="item_type_id"
 		class="form-input">
 		<option value="">--Select an option--</option>
 		{{ range .ItemTypes }}
@@ -23,6 +23,13 @@
 		name="item_name"
 		class="form-input"
 		value="{{ .ItemName }}">
+	</div>
+	<div class="purchase-order-delete-col">
+		<button
+		type="button"
+		class="purchase-order-delete-btn"
+		onclick="deleteItemRow(event)">
+		<img src="../static/img/delete.svg"></button>
 	</div>
 </div>
 {{ end }}

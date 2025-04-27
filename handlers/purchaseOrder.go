@@ -1,19 +1,15 @@
 package handlers
 
 import (
+	"encoding/json"
+	"io"
 	"log"
 	"net/http"
 
 	application "github.com/jtalev/chat_gpg/application/services"
-	models "github.com/jtalev/chat_gpg/domain/models"
 )
 
-type store struct {
-	StoreId   string
-	StoreName string
-}
-
-var storeList = []store{
+var storeList = []application.Store{
 	{
 		StoreId:   "123",
 		StoreName: "Haymes Geelong West",
@@ -28,12 +24,7 @@ var storeList = []store{
 	},
 }
 
-type itemType struct {
-	UUID string `json:"uuid"`
-	Type string `json:"type"`
-}
-
-var itemTypeList = []itemType{
+var itemTypeList = []application.ItemType{
 	{
 		UUID: "123",
 		Type: "Paint",
@@ -44,17 +35,7 @@ var itemTypeList = []itemType{
 	},
 }
 
-type purchaseOrderItem struct {
-	UUID         string `json:"uuid"`
-	ItemName     string `json:"item_name"`
-	ItemTypeId   string `json:"item_type_id"`
-	ItemTypeName string `json:"item_type_name"`
-	Quantity     int    `json:"quantity"`
-
-	ItemTypes []itemType
-}
-
-var purchaseOrderItemList = []purchaseOrderItem{
+var purchaseOrderItemList = []application.PurchaseOrderItem{
 	{
 		UUID:         "123",
 		ItemName:     "15L expressions low sheen monument",
@@ -84,18 +65,6 @@ var purchaseOrderItemList = []purchaseOrderItem{
 	},
 }
 
-type purchaseOrder struct {
-	UUID               string `json:"uuid"`
-	EmployeeId         string `json:"employee_id"`
-	StoreId            string `json:"store_id"`
-	JobId              int    `json:"job_id"`
-	Date               string `json:"date"`
-	PurchaseOrderItems []purchaseOrderItem
-
-	Stores []store
-	Jobs   []models.Job
-}
-
 func (h *Handler) ServePurchaseOrderView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -113,7 +82,7 @@ func (h *Handler) ServePurchaseOrderView() http.Handler {
 				return
 			}
 
-			data := purchaseOrder{
+			data := application.PurchaseOrder{
 				EmployeeId:         employeeId,
 				StoreId:            "345",
 				JobId:              3,
@@ -133,13 +102,41 @@ func (h *Handler) ServePurchaseOrderView() http.Handler {
 func (h *Handler) ServeItemRow() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			item := purchaseOrderItem{
+			item := application.PurchaseOrderItem{
 				ItemTypes: itemTypeList,
 			}
 			err := executePartialTemplate(purchaseOrderItemRowPath, "purchaseOrderItemRow", item, w)
 			if err != nil {
 				log.Printf("error executing purchaseOrderItemRow.html: %v", err)
 				http.Error(w, "error executing purchaseOrderItemRow.html, internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) PostPurchaseOrder() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			body, err := io.ReadAll(r.Body)
+			if err != nil {
+				log.Printf("error reading request body: %v", err)
+				http.Error(w, "error reading request body, bad request", http.StatusBadRequest)
+				return
+			}
+
+			order := application.PurchaseOrder{}
+			err = json.Unmarshal(body, &order)
+			if err != nil {
+				log.Printf("error unmarshalling json: %v", err)
+				http.Error(w, "error unmarshalling json, bad request", http.StatusBadRequest)
+				return
+			}
+
+			err = order.PostPurchaseOrder()
+			if err != nil {
+				log.Printf("error posting purchase order: %v", err)
+				http.Error(w, "error posting purchase order, internal server error", http.StatusInternalServerError)
 				return
 			}
 		},

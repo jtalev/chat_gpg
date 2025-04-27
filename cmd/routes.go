@@ -106,4 +106,5 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 
 	// purchase order
 	mux.Handle("/purchase-order/serve-item-row", a.AuthorizeUser(h.ServeItemRow()))
+	mux.Handle("/purchase-order/post", a.AuthorizeUser(h.PostPurchaseOrder()))
 }
