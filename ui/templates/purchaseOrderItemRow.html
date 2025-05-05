@@ -13,7 +13,7 @@
 		class="form-input">
 		<option value="">--Select an option--</option>
 		{{ range .ItemTypes }}
-			<option value="{{ .UUID }}" {{ if eq $.ItemTypeName .Type }} selected {{ end }}>{{ .Type }}</option>
+			<option value="{{ .UUID }}" {{ if eq $.ItemTypeId .UUID }} selected {{ end }}>{{ .Type }}</option>
 		{{ end }}
 		</select>
 	</div>

@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"html/template"
 	"io"
 	"log"
 	"net/http"
@@ -37,29 +38,26 @@ var itemTypeList = []application.ItemType{
 
 var purchaseOrderItemList = []application.PurchaseOrderItem{
 	{
-		UUID:         "123",
-		ItemName:     "15L expressions low sheen monument",
-		ItemTypeId:   "123",
-		ItemTypeName: "Paint",
-		Quantity:     2,
+		UUID:       "123",
+		ItemName:   "15L expressions low sheen monument",
+		ItemTypeId: "123",
+		Quantity:   2,
 
 		ItemTypes: itemTypeList,
 	},
 	{
-		UUID:         "234",
-		ItemName:     "10L enamel antique white",
-		ItemTypeId:   "123",
-		ItemTypeName: "Paint",
-		Quantity:     1,
+		UUID:       "234",
+		ItemName:   "10L enamel antique white",
+		ItemTypeId: "123",
+		Quantity:   1,
 
 		ItemTypes: itemTypeList,
 	},
 	{
-		UUID:         "345",
-		ItemName:     "Haymes elite sash cutter",
-		ItemTypeId:   "234",
-		ItemTypeName: "Accessory",
-		Quantity:     6,
+		UUID:       "345",
+		ItemName:   "Haymes elite sash cutter",
+		ItemTypeId: "234",
+		Quantity:   6,
 
 		ItemTypes: itemTypeList,
 	},
@@ -133,10 +131,28 @@ func (h *Handler) PostPurchaseOrder() http.Handler {
 				return
 			}
 
-			err = order.PostPurchaseOrder()
+			purchaseOrderErrors, err := order.PostPurchaseOrder(h.DB)
 			if err != nil {
 				log.Printf("error posting purchase order: %v", err)
 				http.Error(w, "error posting purchase order, internal server error", http.StatusInternalServerError)
+				return
+			}
+			order.Errors = purchaseOrderErrors
+
+			tmpl, err := template.ParseFiles(
+				purchaseOrderFormPath,
+				purchaseOrderItemRowPath,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				http.Error(w, "error parsing template files, internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			err = tmpl.ExecuteTemplate(w, "purchaseOrderForm", order)
+			if err != nil {
+				log.Printf("error executing purchaseOrderForm.html: %v", err)
+				http.Error(w, "error executing purchaseOrderForm.html, internal server error", http.StatusInternalServerError)
 				return
 			}
 		},

@@ -45,7 +45,9 @@ async function sendPurchaseOrder(event) {
       });
 
       const result = await response.text();
-      document.getElementById('purchase-order-view-content').innerHTML = result;
+      const container = document.getElementById('purchase-order-view-content')
+      container.innerHTML = result;
+      htmx.process(container)
     } catch (error) {
       console.error('Error submitting purchase order:', error);
     }

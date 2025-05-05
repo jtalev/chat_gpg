@@ -9,6 +9,10 @@ DROP TABLE IF EXISTS timesheet_week;
 DROP TABLE IF EXISTS timesheet;
 DROP TABLE IF EXISTS incident_report;
 DROP TABLE IF EXISTS swms;
+DROP TABLE IF EXISTS purchase_order;
+DROP TABLE IF EXISTS purchase_order_item;
+DROP TABLE IF EXISTS item_types;
+DROP TABLE IF EXISTS stores;
 CREATE TABLE employee (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     employee_id TEXT NOT NULL UNIQUE,
@@ -360,6 +364,51 @@ CREATE TABLE swms (
     sign_sig_9 TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     modified_at TEXT DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+DROP TABLE IF EXISTS purchase_order;
+CREATE TABLE purchase_order(
+    uuid TEXT PRIMARY KEY,
+    employee_id TEXT NOT NULL,
+    store_id TEXT NOT NULL,
+    job_id INTEGER NOT NULL,
+    order_date TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+DROP TABLE IF EXISTS purchase_order_item;
+CREATE TABLE purchase_order_item(
+    uuid TEXT PRIMARY KEY,
+    purchase_order_id TEXT NOT NULL,
+    item_name TEXT NOT NULL,
+    item_type_id TEXT NOT NULL,
+    quantity INTEGER NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (purchase_order_id) REFERENCES purchase_order(uuid) ON DELETE CASCADE,
+    FOREIGN KEY (item_type_id) REFERENCES item_types(uuid) ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS item_types;
+CREATE TABLE item_types(
+    uuid TEXT PRIMARY KEY,
+    type TEXT NOT NULL UNIQUE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+DROP TABLE IF EXISTS stores;
+CREATE TABLE stores(
+    uuid TEXT PRIMARY KEY,
+    business_name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    address TEXT NOT NULL,
+    suburb TEXT NOT NULL,
+    city TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 DELETE FROM sqlite_sequence;

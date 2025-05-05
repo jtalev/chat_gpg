@@ -22,6 +22,7 @@
 				value="{{ .EmployeeId }}">
 			</div>
 			<div class="error-container">
+				{{ .Errors.EmployeeIdErr }}
 			</div>
 		</div>
 		<div class="form-row-container">
@@ -36,6 +37,7 @@
                 </select>
             </div>
             <div class="error-container">
+            	{{ .Errors.StoreIdErr }}
             </div>
         </div>
         <div class="form-row-container">
@@ -50,6 +52,7 @@
                 </select>
             </div>
             <div class="error-container">
+            	{{ .Errors.JobIdErr }}
             </div>
         </div>
         <div class="form-row-container">
@@ -60,11 +63,12 @@
 				<input 
 				class="form-input" 
 				type="date" 
-				name="date"
+				name="order_date"
 				id="date" 
 				value="{{ .Date }}">
 			</div>
 			<div class="error-container">
+				{{ .Errors.DateErr }}
             </div>
 		</div>
 		<div class="form-row-header-container">
@@ -91,6 +95,12 @@
 				{{ template "purchaseOrderItemRow" . }}
 			{{ end }}
 		</div>
+		<div class="error-container">
+			{{ .Errors.PurchaseOrderItemsErr }}
+        </div>
+        <div class="success-msg-container">
+            <p id="leave-form-success-msg">{{ .Errors.SuccessMsg }}</p>
+        </div>
 		<div class="form-btn-container">
             <button type="reset" id="purchase-order-cancel-btn" class="gpg-close-btn" form="purchase-order-form">Cancel</button>
             <button type="submit" id="purchase-order-submit-btn" class="gpg-submit-btn" form="purchase-order-form">SUBMIT</button>
