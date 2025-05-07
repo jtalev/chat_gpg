@@ -209,6 +209,15 @@ type Handler struct {
 	Logger *zap.SugaredLogger
 }
 
+func (h *Handler) DecodeJson(out any, w http.ResponseWriter, r *http.Request) bool {
+	if err := json.NewDecoder(r.Body).Decode(out); err != nil {
+		log.Printf("error decoding json: %v", err)
+		http.Error(w, "Invalid JSON", http.StatusBadRequest)
+		return false
+	}
+	return true
+}
+
 func (h *Handler) ServeLoginView(w http.ResponseWriter, r *http.Request) {
 	login_path := filepath.Join("..", "ui", "views", "login.html")
 	tmpl := template.Must(template.ParseFiles(login_path))

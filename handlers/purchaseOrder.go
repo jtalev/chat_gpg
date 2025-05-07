@@ -158,3 +158,15 @@ func (h *Handler) PostPurchaseOrder() http.Handler {
 		},
 	)
 }
+
+func (h *Handler) PostItem() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			var itemType application.ItemType
+			if ok := h.DecodeJson(&itemType, w, r); !ok {
+				return
+			}
+			log.Println(itemType)
+		},
+	)
+}

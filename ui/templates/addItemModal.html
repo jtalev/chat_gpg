@@ -1,5 +1,5 @@
 {{ define "addItemModal" }}
-<div class="modal-container">
+<div class="modal-container item-modal">
 	<div class="modal-content-container">
 		<div class="modal-header-container">
 			<p>Add Item</p>
@@ -12,7 +12,11 @@
 		<div class="modal-form-container">
 			<form 
 			class="modal-form"
-			id="add-item-form">
+			id="add-item-form"
+			hx-post="/purchase-order/item/post"
+			hx-swap="innerHTML"
+			hx-target="#admin-purchase-order-content"
+			hx-ext="json-enc">
 				<div class="modal-form-row">
 					<div class="modal-form-label-container">
 						<label class="modal-form-label"
@@ -28,17 +32,16 @@
 					<div class="error-container">
 					</div>
 				</div>
-				<div class="modal-form-row">
-					<div class="modal-form-label-container">
+				<div class="modal-form-textarea-row">
+					<div class="modal-form-textarea-label-container">
 						<label class="modal-form-label"
 						for="description">Description:</label>
 					</div>
-					<div class="modal-form-input-container">
-						<input
-						class="modal-form-input" 
-						type="text" 
+					<div class="modal-form-textarea-container">
+						<textarea
+						class="modal-form-textarea" 
 						name="description"
-						value="{{ .Description }}">
+						>{{ .Description }}</textarea>
 					</div>
 					<div class="error-container">
 					</div>

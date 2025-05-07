@@ -17,8 +17,9 @@ type Store struct {
 }
 
 type ItemType struct {
-	UUID string `json:"uuid"`
-	Type string `json:"type"`
+	UUID        string `json:"uuid"`
+	Type        string `json:"type"`
+	Description string `json:"description"`
 }
 
 type PurchaseOrderItem struct {
