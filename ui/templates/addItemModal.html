@@ -1,0 +1,56 @@
+{{ define "addItemModal" }}
+<div class="modal-container">
+	<div class="modal-content-container">
+		<div class="modal-header-container">
+			<p>Add Item</p>
+			<button
+			class="close-modal-btn"
+			onclick="toggleAdminPurchaseOrderModal()">
+				x
+			</button>
+		</div>
+		<div class="modal-form-container">
+			<form 
+			class="modal-form"
+			id="add-item-form">
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label"
+						for="type">Type:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input
+						class="modal-form-input" 
+						type="text" 
+						name="type"
+						value="{{ .Type }}">
+					</div>
+					<div class="error-container">
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label"
+						for="description">Description:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input
+						class="modal-form-input" 
+						type="text" 
+						name="description"
+						value="{{ .Description }}">
+					</div>
+					<div class="error-container">
+					</div>
+				</div>
+				<div class="success-msg-container">
+					{{ .SuccessMsg }}
+				</div>
+				<div class="gpg-form-btn-container">
+					<button class="gpg-submit-btn" type="submit">SUBMIT</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{{ end }}

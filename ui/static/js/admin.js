@@ -35,6 +35,10 @@ function onLeaveSelectorClick() {
                     leaveContentElement = document.querySelector("#adminSafetyContent")
                     leaveContentElement.style.display = "block"
                     break
+                case "PURCHASE ORDER":
+                    leaveContentElement = document.querySelector("#adminPurchaseOrderContent")
+                    leaveContentElement.style.display = "block"
+                    break
             }
         })
     })
@@ -165,4 +169,21 @@ function onSafetyContentToggle(event) {
         incidentToggle.style.backgroundColor = "var(--main-background-color)";
         incidentToggle.style.color = "black";
     }
+}
+
+function togglePurchaseOrderContentSelector(event) {
+    const target = event.currentTarget
+    const selectors = document.querySelectorAll(".admin-purchase-order-content-selector")
+    selectors.forEach(selector => {
+        selector.style.backgroundColor = "var(--light-background-color)"
+        selector.style.color = "var(--timesheet-border)"
+    })
+
+    target.style.backgroundColor = "var(--gpg-light-green-background)"
+    target.style.color = "var(--main-color)"
+}
+
+function toggleAdminPurchaseOrderModal() {
+    const container = document.getElementById("admin-po-modal-container")
+    container.style.display = container.style.display === "flex" ? "none" : "flex"
 }

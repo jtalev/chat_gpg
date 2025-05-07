@@ -6,6 +6,36 @@ import (
 	models "github.com/jtalev/chat_gpg/domain/models"
 )
 
+func GetPurchaseOrders(db *sql.DB) ([]models.PurchaseOrder, error) {
+	q := `
+	select * from purchase_order;
+	`
+
+	rows, err := db.Query(q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	purchaseOrders := []models.PurchaseOrder{}
+	p := models.PurchaseOrder{}
+	for rows.Next() {
+		if err := rows.Scan(
+			&p.UUID,
+			&p.EmployeeId,
+			&p.StoreId,
+			&p.JobId,
+			&p.Date,
+			&p.CreatedAt,
+			&p.ModifiedAt,
+		); err != nil {
+			return nil, err
+		}
+		purchaseOrders = append(purchaseOrders, p)
+	}
+	return purchaseOrders, nil
+}
+
 func PostPurchaseOrder(purchaseOrder models.PurchaseOrder, db *sql.DB) error {
 	q := `
 	insert into purchase_order (uuid, employee_id, store_id,

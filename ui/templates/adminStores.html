@@ -1,0 +1,45 @@
+{{ define "adminStores" }}
+<div class="admin-po-tab-header-container">
+	<div class="admin-po-tab-header">Store Management</div>
+	<div class="admin-po-tab-add-btn-container">
+		<button 
+		class="admin-po-tab-add-btn"
+		hx-get="/admin/serve-add-store-modal"
+		hx-trigger="click"
+		hx-swap="innerHTML"
+		hx-target="#admin-po-modal-container"
+		onclick="toggleAdminPurchaseOrderModal()">
+			+ Add Store
+		</button>
+	</div>
+</div>
+<div class="admin-po-tab-list">
+	<div class="admin-po-list-row">
+		<div class="admin-po-store-name-col">
+			Name
+		</div>
+		<div class="admin-po-store-address-col">
+			Address
+		</div>
+		<div class="admin-po-actions-col">
+			Actions
+		</div>
+	</div>
+	{{ range . }}
+	<div class="admin-po-list-row admin-po-list-row-info">
+		<div class="admin-po-item-name-col">
+			{{ .BusinessName }}
+		</div>
+		<div class="admin-po-item-description-col">
+			{{ .Address }}
+		</div>
+		<div class="admin-po-actions-col">
+			<div class="admin-po-actions-container">
+				<button class="admin-po-actions-btn">U</button>
+				<button class="admin-po-actions-btn">D</button>
+			</div>
+		</div>
+	</div>
+	{{ end }}
+</div>
+{{ end }}

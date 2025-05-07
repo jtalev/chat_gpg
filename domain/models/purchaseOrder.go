@@ -120,10 +120,11 @@ func (p *PurchaseOrderItem) validateItemTypeId(errors PurchaseOrderItemErrors) P
 }
 
 type ItemType struct {
-	UUID       string `json:"uuid"`
-	Type       string `json:"type"`
-	CreatedAt  string `json:"created_at"`
-	ModifiedAt string `json:"modified_at"`
+	UUID        string `json:"uuid"`
+	Type        string `json:"type"`
+	Description string `json:"description"`
+	CreatedAt   string `json:"created_at"`
+	ModifiedAt  string `json:"modified_at"`
 }
 
 type Store struct {

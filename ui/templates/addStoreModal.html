@@ -1,0 +1,116 @@
+{{ define "addStoreModal" }}
+<div class="modal-container">
+	<div class="modal-content-container">
+		<div class="modal-header-container">
+			<p>Add Store</p>
+			<button
+			class="close-modal-btn"
+			onclick="toggleAdminPurchaseOrderModal()">
+				x
+			</button>
+		</div>
+		<div class="modal-form-container">
+			<form 
+			class="modal-form"
+			id="add-item-form">
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label"
+						for="business_name">Business Name:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input
+						class="modal-form-input" 
+						type="text" 
+						name="business_name"
+						value="{{ .BusinessName }}">
+					</div>
+					<div class="error-container">
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label"
+						for="email">Email:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input
+						class="modal-form-input" 
+						type="text" 
+						name="email"
+						value="{{ .Email }}">
+					</div>
+					<div class="error-container">
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label"
+						for="phone">Phone:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input
+						class="modal-form-input" 
+						type="text" 
+						name="phone"
+						value="{{ .Phone }}">
+					</div>
+					<div class="error-container">
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label"
+						for="address">Address:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input
+						class="modal-form-input" 
+						type="text" 
+						name="address"
+						value="{{ .Address }}">
+					</div>
+					<div class="error-container">
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label"
+						for="suburb">Suburb:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input
+						class="modal-form-input" 
+						type="text" 
+						name="suburb"
+						value="{{ .Suburb }}">
+					</div>
+					<div class="error-container">
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label"
+						for="city">City:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input
+						class="modal-form-input" 
+						type="text" 
+						name="city"
+						value="{{ .City }}">
+					</div>
+					<div class="error-container">
+					</div>
+				</div>
+				<div class="success-msg-container">
+					{{ .SuccessMsg }}
+				</div>
+				<div class="gpg-form-btn-container">
+					<button class="gpg-submit-btn" type="submit">SUBMIT</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{{ end }}

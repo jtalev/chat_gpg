@@ -214,3 +214,11 @@ func (o *PurchaseOrder) PostPurchaseOrder(db *sql.DB) (domain.PurchaseOrderError
 	purchaseOrderErrors.SuccessMsg = "Purchase order submitted successfully."
 	return purchaseOrderErrors, nil
 }
+
+func (o *PurchaseOrder) GetPurchaseOrders(db *sql.DB) ([]models.PurchaseOrder, error) {
+	purchaseOrders, err := repo.GetPurchaseOrders(db)
+	if err != nil {
+		return nil, err
+	}
+	return purchaseOrders, nil
+}

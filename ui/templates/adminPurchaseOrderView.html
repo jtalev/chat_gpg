@@ -1,0 +1,42 @@
+{{ define "adminPurchaseOrderView"}}
+<div id="admin-purchase-order-container">
+	<div id="admin-purchase-order-content-container">
+		<div id="admin-purchase-order-content-selector-container">
+			<div 
+			class="admin-purchase-order-content-selector"
+			style="background-color: var(--gpg-light-green-background); color: var(--main-color);" 
+			onclick="togglePurchaseOrderContentSelector(event)"
+			hx-get="/admin/serve-item-types-template"
+			hx-trigger="click"
+			hx-target="#admin-purchase-order-content"
+			hx-swap="innerHTML">
+				Item Types
+			</div>
+			<div
+			class="admin-purchase-order-content-selector"
+			style="border-left: none;"
+			onclick="togglePurchaseOrderContentSelector(event)"
+			hx-get="/admin/serve-stores-template"
+			hx-trigger="click"
+			hx-target="#admin-purchase-order-content"
+			hx-swap="innerHTML">
+				Stores
+			</div>
+			<div
+			class="admin-purchase-order-content-selector"
+			style="border-left: none;"
+			onclick="togglePurchaseOrderContentSelector(event)"
+			hx-get="/admin/serve-purchase-order-history"
+			hx-trigger="click"
+			hx-target="#admin-purchase-order-content"
+			hx-swap="innerHTML">
+				Purchase History
+			</div>
+		</div>
+		<div id="admin-purchase-order-content">
+			{{ template "adminItemTypes" . }}
+		</div>
+		<div id="admin-po-modal-container"></div>
+	</div>
+</div>
+{{ end }}

@@ -8,12 +8,12 @@ import (
 	"strconv"
 
 	application "github.com/jtalev/chat_gpg/application/services"
-	domain "github.com/jtalev/chat_gpg/domain/models"
+	models "github.com/jtalev/chat_gpg/domain/models"
 	infrastructure "github.com/jtalev/chat_gpg/infrastructure/repository"
 )
 
 type AdminData struct {
-	Employees []domain.Employee
+	Employees []models.Employee
 }
 
 func getInitialAdminData(db *sql.DB) (AdminData, error) {
@@ -54,7 +54,7 @@ func (h *Handler) RenderEmployeeTab() http.Handler {
 			}
 
 			data := struct {
-				Employees []domain.Employee
+				Employees []models.Employee
 			}{
 				Employees: employees,
 			}
@@ -399,6 +399,131 @@ func (h *Handler) AdminServeIncidentReportContent() http.Handler {
 			if err != nil {
 				log.Printf("error executing adminIncidentReportList.html: %v", err)
 				http.Error(w, "error executing adminIncidentReportList.html, internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
+var items = []models.ItemType{
+	{
+		Type:        "Enamel",
+		Description: "Oil based paint",
+	},
+	{
+		Type:        "Brushes",
+		Description: "Any type of paint brush",
+	},
+}
+
+var stores = []models.Store{
+	{
+		BusinessName: "Haymes Geelong West",
+		Address:      "Pakington Strees, Geelong West",
+	},
+	{
+		BusinessName: "Haymes Ocean Grove",
+		Address:      "Ocean Grove",
+	},
+}
+
+func (h *Handler) RenderPurchaseOrderTab() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			tmpl, err := template.ParseFiles(
+				adminPurchaseOrderViewPath,
+				adminItemTypesPath,
+			)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+
+			err = tmpl.ExecuteTemplate(w, "adminPurchaseOrderView", items)
+			if err != nil {
+				log.Printf("Error executing template: %v", err)
+				http.Error(w, "Internal server error", http.StatusInternalServerError)
+				return
+			}
+		},
+	)
+}
+
+type AdminHandler struct {
+}
+
+type HttpServer interface {
+	ServeSingleTemplate(templatePath, templateName string, data interface{}, w http.ResponseWriter) error
+}
+
+func (a *AdminHandler) ServeSingleTemplate(templatePath, templateName string, data interface{}, w http.ResponseWriter) error {
+	err := executePartialTemplate(templatePath, templateName, data, w)
+	if err != nil {
+		log.Printf("error executing %s: %v", templatePath, err)
+		http.Error(w, "error exectuting %s, internal server error", http.StatusInternalServerError)
+		return err
+	}
+	return nil
+}
+
+var a = AdminHandler{}
+var p = application.PurchaseOrder{}
+
+func (h *Handler) ServeItemTypes() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			err := a.ServeSingleTemplate(adminItemTypesPath, "adminItemTypes", items, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) ServeAddItemModal() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			err := a.ServeSingleTemplate(adminAddItemModalPath, "addItemModal", nil, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) ServeStores() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			err := a.ServeSingleTemplate(adminStoresPath, "adminStores", stores, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) ServeAddStoreModal() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			err := a.ServeSingleTemplate(adminAddStoreModalPath, "addStoreModal", nil, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) ServePurchaseOrderHistory() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			purchaseOrders, err := p.GetPurchaseOrders(h.DB)
+			if err != nil {
+				log.Printf("error getting purchase orders: %v", err)
+				http.Error(w, "error getting purchase orders, internal server error", http.StatusInternalServerError)
+				return
+			}
+			err = a.ServeSingleTemplate(adminPurchaseOrderHistoryPath, "adminPurchaseOrderHistory", purchaseOrders, w)
+			if err != nil {
 				return
 			}
 		},

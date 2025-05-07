@@ -68,9 +68,15 @@ const (
 	swmsFormPath                   = "../ui/templates/swmsForm.html"
 	updateSwmsFormPath             = "../ui/templates/updateSwmsForm.html"
 
-	purchaseOrderPath        = "../ui/views/purchaseOrder.html"
-	purchaseOrderFormPath    = "../ui/templates/purchaseOrderForm.html"
-	purchaseOrderItemRowPath = "../ui/templates/purchaseOrderItemRow.html"
+	purchaseOrderPath             = "../ui/views/purchaseOrder.html"
+	purchaseOrderFormPath         = "../ui/templates/purchaseOrderForm.html"
+	purchaseOrderItemRowPath      = "../ui/templates/purchaseOrderItemRow.html"
+	adminPurchaseOrderViewPath    = "../ui/templates/adminPurchaseOrderView.html"
+	adminPurchaseOrderHistoryPath = "../ui/templates/adminPurchaseOrderHistory.html"
+	adminItemTypesPath            = "../ui/templates/adminItemTypes.html"
+	adminStoresPath               = "../ui/templates/adminStores.html"
+	adminAddItemModalPath         = "../ui/templates/addItemModal.html"
+	adminAddStoreModalPath        = "../ui/templates/addStoreModal.html"
 )
 
 func renderTemplate(

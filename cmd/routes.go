@@ -84,6 +84,13 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/admin/employee-put-modal", a.AuthorizeAdmin(h.PutEmployeeModal()))
 	mux.Handle("/admin/render-safety-tab", a.AuthorizeAdmin(h.RenderSafetyTab()))
 
+	mux.Handle("/admin/render-purchase-order-tab", a.AuthorizeAdmin(h.RenderPurchaseOrderTab()))
+	mux.Handle("/admin/serve-item-types-template", a.AuthorizeAdmin(h.ServeItemTypes()))
+	mux.Handle("/admin/serve-stores-template", a.AuthorizeAdmin(h.ServeStores()))
+	mux.Handle("/admin/serve-purchase-order-history", a.AuthorizeAdmin(h.ServePurchaseOrderHistory()))
+	mux.Handle("/admin/serve-add-item-modal", a.AuthorizeAdmin(h.ServeAddItemModal()))
+	mux.Handle("/admin/serve-add-store-modal", a.AuthorizeAdmin(h.ServeAddStoreModal()))
+
 	mux.Handle("/admin/safety/serve-incident-report-content", a.AuthorizeAdmin(h.AdminServeIncidentReportContent()))
 
 	// safety routes

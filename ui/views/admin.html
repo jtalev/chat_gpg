@@ -37,6 +37,16 @@
         hx-swap="innerHTML">
             SAFETY
         </div>
+        <div 
+        class="adminContentSelector" 
+        id="purchaseOrderSelector" 
+        style="background-color: var(--main-background-color);"
+        hx-get="/admin/render-purchase-order-tab"
+        hx-target="#adminPurchaseOrderContent"
+        hx-trigger="click"
+        hx-swap="innerHTML">
+            PURCHASE ORDER
+        </div>
         <div class="borderBottom">
             <button id="close-pdf-btn" onclick="togglePdfViewer()">CLOSE</button>
         </div>
@@ -53,6 +63,9 @@
         </div>
         <div class="adminContent" id="adminSafetyContent" style="display: none;">
             safety
+        </div>
+        <div class="adminContent" id="adminPurchaseOrderContent" style="display: none;">
+            purchase order
         </div>
     </div>
 </div>
