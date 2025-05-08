@@ -10,21 +10,6 @@ import (
 	application "github.com/jtalev/chat_gpg/application/services"
 )
 
-var storeList = []application.Store{
-	{
-		StoreId:   "123",
-		StoreName: "Haymes Geelong West",
-	},
-	{
-		StoreId:   "234",
-		StoreName: "Dulux Geelong West",
-	},
-	{
-		StoreId:   "345",
-		StoreName: "Haymes Ocean Grove",
-	},
-}
-
 var itemTypeList = []application.ItemType{
 	{
 		UUID: "123",
@@ -62,10 +47,12 @@ var purchaseOrderItemList = []application.PurchaseOrderItem{
 		ItemTypes: itemTypeList,
 	},
 }
+var order = application.PurchaseOrder{}
 
 func (h *Handler) ServePurchaseOrderView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			order.Reset()
 			employeeId, err := getEmployeeId(w, r)
 			if err != nil {
 				log.Printf("error fetching employee id: %v", err)
@@ -80,13 +67,12 @@ func (h *Handler) ServePurchaseOrderView() http.Handler {
 				return
 			}
 
-			data := application.PurchaseOrder{
-				EmployeeId:         employeeId,
-				StoreId:            "345",
-				JobId:              3,
-				PurchaseOrderItems: purchaseOrderItemList,
+			order.PopulateStores(h.DB)
 
-				Stores: storeList,
+			data := application.PurchaseOrder{
+				EmployeeId: employeeId,
+
+				Stores: order.Stores,
 				Jobs:   jobs,
 			}
 
@@ -116,6 +102,7 @@ func (h *Handler) ServeItemRow() http.Handler {
 func (h *Handler) PostPurchaseOrder() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			order.Reset()
 			body, err := io.ReadAll(r.Body)
 			if err != nil {
 				log.Printf("error reading request body: %v", err)
@@ -123,7 +110,6 @@ func (h *Handler) PostPurchaseOrder() http.Handler {
 				return
 			}
 
-			order := application.PurchaseOrder{}
 			err = json.Unmarshal(body, &order)
 			if err != nil {
 				log.Printf("error unmarshalling json: %v", err)
@@ -167,6 +153,44 @@ func (h *Handler) PostItem() http.Handler {
 				return
 			}
 			log.Println(itemType)
+		},
+	)
+}
+
+func (h *Handler) PostStore() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			var store application.Store
+			if ok := h.DecodeJson(&store, w, r); !ok {
+				return
+			}
+			err := application.PostStore(store, h.DB)
+			if err != nil {
+				log.Printf("error posting store: %v", err)
+				http.Error(w, "error posting store, bad request", http.StatusBadRequest)
+				return
+			}
+			err = a.ServeSingleTemplate(adminAddStoreModalPath, "addStoreModal", nil, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) ServeEmployeePOHistory() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			order.Reset()
+			employeeId, err := getEmployeeId(w, r)
+			if err != nil {
+				log.Printf("error fetching employee ID: %v", err)
+				http.Error(w, "error fetching employee ID, unauthorized", http.StatusUnauthorized)
+				return
+			}
+			purchaseOrders, err := order.FetchEmployeeHistory(employeeId, h.DB)
+
+			log.Println(purchaseOrders)
 		},
 	)
 }

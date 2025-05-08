@@ -12,7 +12,11 @@
 		<div class="modal-form-container">
 			<form 
 			class="modal-form"
-			id="add-item-form">
+			id="add-item-form"
+			hx-post="/admin/store/post"
+			hx-swap="innerHTML"
+			hx-target="#admin-po-modal-container"
+			hx-ext="json-enc">
 				<div class="modal-form-row">
 					<div class="modal-form-label-container">
 						<label class="modal-form-label"

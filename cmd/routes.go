@@ -90,6 +90,7 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/admin/serve-purchase-order-history", a.AuthorizeAdmin(h.ServePurchaseOrderHistory()))
 	mux.Handle("/admin/serve-add-item-modal", a.AuthorizeAdmin(h.ServeAddItemModal()))
 	mux.Handle("/admin/serve-add-store-modal", a.AuthorizeAdmin(h.ServeAddStoreModal()))
+	mux.Handle("/admin/store/post", a.AuthorizeAdmin(h.PostStore()))
 
 	mux.Handle("/admin/safety/serve-incident-report-content", a.AuthorizeAdmin(h.AdminServeIncidentReportContent()))
 
@@ -115,4 +116,5 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/purchase-order/serve-item-row", a.AuthorizeUser(h.ServeItemRow()))
 	mux.Handle("/purchase-order/post", a.AuthorizeUser(h.PostPurchaseOrder()))
 	mux.Handle("/purchase-order/item/post", a.AuthorizeAdmin(h.PostItem()))
+	mux.Handle("/purchase-order/serve-purchase-order-employee-history", a.AuthorizeUser(h.ServeEmployeePOHistory()))
 }

@@ -416,17 +416,6 @@ var items = []models.ItemType{
 	},
 }
 
-var stores = []models.Store{
-	{
-		BusinessName: "Haymes Geelong West",
-		Address:      "Pakington Strees, Geelong West",
-	},
-	{
-		BusinessName: "Haymes Ocean Grove",
-		Address:      "Ocean Grove",
-	},
-}
-
 func (h *Handler) RenderPurchaseOrderTab() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -494,7 +483,13 @@ func (h *Handler) ServeAddItemModal() http.Handler {
 func (h *Handler) ServeStores() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			err := a.ServeSingleTemplate(adminStoresPath, "adminStores", stores, w)
+			stores, err := infrastructure.GetStores(h.DB)
+			if err != nil {
+				log.Printf("error getting stores: %v", err)
+				http.Error(w, "error getting stores, internal server error", http.StatusInternalServerError)
+				return
+			}
+			err = a.ServeSingleTemplate(adminStoresPath, "adminStores", stores, w)
 			if err != nil {
 				return
 			}

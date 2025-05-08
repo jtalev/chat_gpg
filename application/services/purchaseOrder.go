@@ -3,6 +3,7 @@ package application
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"sync"
 
 	"github.com/google/uuid"
@@ -12,8 +13,13 @@ import (
 )
 
 type Store struct {
-	StoreId   string
-	StoreName string
+	UUID         string `json:"uuid"`
+	BusinessName string `json:"business_name"`
+	Email        string `json:"email"`
+	Phone        string `json:"phone"`
+	Address      string `json:"address"`
+	Suburb       string `json:"suburb"`
+	City         string `json:"city"`
 }
 
 type ItemType struct {
@@ -38,6 +44,9 @@ type PurchaseOrder struct {
 	JobId              int                 `json:"job_id"`
 	Date               string              `json:"date"`
 	PurchaseOrderItems []PurchaseOrderItem `json:"purchase_order_items"`
+
+	Store string
+	Job   string
 
 	Stores []Store
 	Jobs   []models.Job
@@ -101,24 +110,29 @@ func (o *PurchaseOrder) populateItemTypes() {
 	}
 }
 
-var storeList = []Store{
-	{
-		StoreId:   "123",
-		StoreName: "Haymes Geelong West",
-	},
-	{
-		StoreId:   "234",
-		StoreName: "Dulux Geelong West",
-	},
-	{
-		StoreId:   "345",
-		StoreName: "Haymes Ocean Grove",
-	},
+func GetStores(db *sql.DB) ([]models.Store, error) {
+	storeList, err := repo.GetStores(db)
+	if err != nil {
+		log.Printf("error getting stores: %v", err)
+		return nil, err
+	}
+	return storeList, nil
 }
 
 // TODO: once stores repo is functional, get stores
-func (o *PurchaseOrder) populateStores() {
-	o.Stores = storeList
+func (o *PurchaseOrder) PopulateStores(db *sql.DB) error {
+	storeList, err := GetStores(db)
+	if err != nil {
+		return err
+	}
+	outStores := make([]Store, len(storeList))
+	for i, store := range storeList {
+		outStores[i].UUID = store.UUID
+		outStores[i].BusinessName = store.BusinessName
+		outStores[i].Address = store.Address
+	}
+	o.Stores = outStores
+	return nil
 }
 
 func (o *PurchaseOrder) initRequiredViewData(db *sql.DB) error {
@@ -128,7 +142,7 @@ func (o *PurchaseOrder) initRequiredViewData(db *sql.DB) error {
 	}
 	o.Jobs = jobs
 	o.populateItemTypes()
-	o.populateStores()
+	o.PopulateStores(db)
 	return nil
 }
 
@@ -216,10 +230,101 @@ func (o *PurchaseOrder) PostPurchaseOrder(db *sql.DB) (domain.PurchaseOrderError
 	return purchaseOrderErrors, nil
 }
 
-func (o *PurchaseOrder) GetPurchaseOrders(db *sql.DB) ([]models.PurchaseOrder, error) {
+func filterEmployeeOrders(orders []models.PurchaseOrder, employeeId string) []models.PurchaseOrder {
+	filteredOrders := []models.PurchaseOrder{}
+	for _, order := range orders {
+		if order.EmployeeId == employeeId {
+			filteredOrders = append(filteredOrders, order)
+		}
+	}
+	return filteredOrders
+}
+
+// func mapStoreNameToOrder(inOrders []models.PurchaseOrder, outOrders []PurchaseOrder, db *sql.DB) {
+// 	if len(inOrders) != len(outOrders) {
+// 		log.Println("inOrders and outOrders should be same length")
+// 	}
+// 	var store models.Store
+// 	var err error
+// 	for i, order := range inOrders {
+// 		store, err = repo.GetStoreById(order.JobId, db)
+// 		if err != nil {
+// 			log.Println("error getting job")
+// 			return
+// 		}
+// 		outOrders[i].Store = store.Name
+// 	}
+// }
+
+func mapJobNameToOrder(inOrders []models.PurchaseOrder, outOrders []PurchaseOrder, db *sql.DB) {
+	if len(inOrders) != len(outOrders) {
+		log.Println("inOrders and outOrders should be same length")
+	}
+	var job models.Job
+	var err error
+	for i, order := range inOrders {
+		job, err = repo.GetJobById(order.JobId, db)
+		if err != nil {
+			log.Println("error getting job")
+			return
+		}
+		outOrders[i].Job = job.Name
+	}
+}
+
+func mapUUIDToOrder(inOrders []models.PurchaseOrder, outOrders []PurchaseOrder, db *sql.DB) {
+	if len(inOrders) != len(outOrders) {
+		log.Println("inOrders and outOrders should be same length")
+	}
+	for i, order := range inOrders {
+		outOrders[i].UUID = order.UUID
+	}
+}
+
+func (o *PurchaseOrder) FetchEmployeeHistory(employeeId string, db *sql.DB) ([]PurchaseOrder, error) {
 	purchaseOrders, err := repo.GetPurchaseOrders(db)
 	if err != nil {
 		return nil, err
 	}
-	return purchaseOrders, nil
+	filteredOrders := filterEmployeeOrders(purchaseOrders, employeeId)
+	outOrders := make([]PurchaseOrder, len(filteredOrders))
+	// mapStoreNameToOrder(filteredOrders, outOrders, db)
+	mapJobNameToOrder(filteredOrders, outOrders, db)
+	mapUUIDToOrder(filteredOrders, outOrders, db)
+
+	return outOrders, nil
+}
+
+func (o *PurchaseOrder) GetPurchaseOrders(db *sql.DB) ([]PurchaseOrder, error) {
+	purchaseOrders, err := repo.GetPurchaseOrders(db)
+	if err != nil {
+		return nil, err
+	}
+	outOrders := make([]PurchaseOrder, len(purchaseOrders))
+	// mapStoreNameToOrder(purchaseOrders, outOrders)
+	mapJobNameToOrder(purchaseOrders, outOrders, db)
+	mapUUIDToOrder(purchaseOrders, outOrders, db)
+	return outOrders, nil
+}
+
+func mapStore(store Store, uuid string) models.Store {
+	return models.Store{
+		UUID:         uuid,
+		BusinessName: store.BusinessName,
+		Email:        store.Email,
+		Phone:        store.Phone,
+		Address:      store.Address,
+		Suburb:       store.Suburb,
+		City:         store.City,
+	}
+}
+
+func PostStore(store Store, db *sql.DB) error {
+	uuid := uuid.New().String()
+	modelStore := mapStore(store, uuid)
+	err := repo.PostStore(modelStore, db)
+	if err != nil {
+		return err
+	}
+	return nil
 }

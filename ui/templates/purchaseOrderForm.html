@@ -27,12 +27,13 @@
 		</div>
 		<div class="form-row-container">
             <div class="form-label-container">
-                <label class="form-label" for="store">Store:</label>
+                <label class="form-label" for="store_id">Store:</label>
             </div>
             <div class="form-input-container">
                 <select name="store_id" class="form-input" id="store_id">
+                	<option value="">-- select a store --</option>
                     {{ range .Stores }}
-                    	<option value="{{ .StoreId }}" {{ if eq $.StoreId .StoreId }} selected {{ end }}>{{ .StoreName }}</option>
+                    	<option value="{{ .UUID }}" {{ if eq $.StoreId .UUID }} selected {{ end }}>{{ .BusinessName }}</option>
                     {{ end }}
                 </select>
             </div>
@@ -46,6 +47,7 @@
             </div>
             <div class="form-input-container">
                 <select name="job_id" class="form-input" id="job_id">
+                	<option value="">-- select a job --</option>
                     {{ range .Jobs }}
                     	<option type="number" value="{{ .ID }}" {{ if eq $.JobId .ID }} selected {{ end }}>{{ .Name }}</option>
                     {{ end }}
