@@ -315,7 +315,7 @@ func (o *PurchaseOrder) GetPurchaseOrders(db *sql.DB) ([]PurchaseOrder, error) {
 		return nil, err
 	}
 	outOrders := make([]PurchaseOrder, len(purchaseOrders))
-	// mapStoreNameToOrder(purchaseOrders, outOrders)
+	mapStoreNameToOrder(purchaseOrders, outOrders, db)
 	mapJobNameToOrder(purchaseOrders, outOrders, db)
 	mapUUIDToOrder(purchaseOrders, outOrders, db)
 	return outOrders, nil

@@ -40,7 +40,33 @@ func GetStores(db *sql.DB) ([]models.Store, error) {
 
 // TODO: complete this function so that the store names can be properly set in purchase order history
 func GetStoreByUuid(uuid string, db *sql.DB) (models.Store, error) {
+	q := `
+	select * from stores where uuid = ?;
+	`
+	rows, err := db.Query(q, uuid)
+	if err != nil {
+		return models.Store{}, err
+	}
+	defer rows.Close()
 
+	s := models.Store{}
+	if rows.Next() {
+		err := rows.Scan(
+			&s.UUID,
+			&s.BusinessName,
+			&s.Email,
+			&s.Phone,
+			&s.Address,
+			&s.Suburb,
+			&s.City,
+			&s.CreatedAt,
+			&s.ModifiedAt,
+		)
+		if err != nil {
+			return models.Store{}, err
+		}
+	}
+	return s, nil
 }
 
 func PostStore(store models.Store, db *sql.DB) error {
