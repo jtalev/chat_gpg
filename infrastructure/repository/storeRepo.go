@@ -38,6 +38,11 @@ func GetStores(db *sql.DB) ([]models.Store, error) {
 	return stores, nil
 }
 
+// TODO: complete this function so that the store names can be properly set in purchase order history
+func GetStoreByUuid(uuid string, db *sql.DB) (models.Store, error) {
+
+}
+
 func PostStore(store models.Store, db *sql.DB) error {
 	q := `
 	insert into stores(uuid, business_name, email,

@@ -10,43 +10,6 @@ import (
 	application "github.com/jtalev/chat_gpg/application/services"
 )
 
-var itemTypeList = []application.ItemType{
-	{
-		UUID: "123",
-		Type: "Paint",
-	},
-	{
-		UUID: "234",
-		Type: "Accessory",
-	},
-}
-
-var purchaseOrderItemList = []application.PurchaseOrderItem{
-	{
-		UUID:       "123",
-		ItemName:   "15L expressions low sheen monument",
-		ItemTypeId: "123",
-		Quantity:   2,
-
-		ItemTypes: itemTypeList,
-	},
-	{
-		UUID:       "234",
-		ItemName:   "10L enamel antique white",
-		ItemTypeId: "123",
-		Quantity:   1,
-
-		ItemTypes: itemTypeList,
-	},
-	{
-		UUID:       "345",
-		ItemName:   "Haymes elite sash cutter",
-		ItemTypeId: "234",
-		Quantity:   6,
-
-		ItemTypes: itemTypeList,
-	},
-}
 var order = application.PurchaseOrder{}
 
 func (h *Handler) ServePurchaseOrderView() http.Handler {
@@ -86,8 +49,11 @@ func (h *Handler) ServePurchaseOrderView() http.Handler {
 func (h *Handler) ServeItemRow() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			item := application.PurchaseOrderItem{
-				ItemTypes: itemTypeList,
+			order.Reset()
+			order.PopulateItemTypes(h.DB)
+			item := application.PurchaseOrderItem{}
+			if len(order.PurchaseOrderItems) > 0 {
+				item.ItemTypes = order.PurchaseOrderItems[0].ItemTypes
 			}
 			err := executePartialTemplate(purchaseOrderItemRowPath, "purchaseOrderItemRow", item, w)
 			if err != nil {
@@ -152,7 +118,16 @@ func (h *Handler) PostItem() http.Handler {
 			if ok := h.DecodeJson(&itemType, w, r); !ok {
 				return
 			}
-			log.Println(itemType)
+			outItemType, err := application.PostItemType(itemType, h.DB)
+			if err != nil {
+				log.Printf("error posting item type: %v", err)
+				http.Error(w, "error posting item type, bad request", http.StatusBadRequest)
+				return
+			}
+			err = a.ServeSingleTemplate(adminAddItemModalPath, "addItemModal", outItemType, w)
+			if err != nil {
+				return
+			}
 		},
 	)
 }
@@ -164,13 +139,13 @@ func (h *Handler) PostStore() http.Handler {
 			if ok := h.DecodeJson(&store, w, r); !ok {
 				return
 			}
-			err := application.PostStore(store, h.DB)
+			outStore, err := application.PostStore(store, h.DB)
 			if err != nil {
 				log.Printf("error posting store: %v", err)
 				http.Error(w, "error posting store, bad request", http.StatusBadRequest)
 				return
 			}
-			err = a.ServeSingleTemplate(adminAddStoreModalPath, "addStoreModal", nil, w)
+			err = a.ServeSingleTemplate(adminAddStoreModalPath, "addStoreModal", outStore, w)
 			if err != nil {
 				return
 			}
@@ -189,6 +164,11 @@ func (h *Handler) ServeEmployeePOHistory() http.Handler {
 				return
 			}
 			purchaseOrders, err := order.FetchEmployeeHistory(employeeId, h.DB)
+			if err != nil {
+				log.Printf("error fetching employee purchase order history: %v", err)
+				http.Error(w, "error fetching employee purchase order history, status unauthorized", http.StatusUnauthorized)
+				return
+			}
 
 			log.Println(purchaseOrders)
 		},

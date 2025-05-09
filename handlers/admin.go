@@ -405,20 +405,16 @@ func (h *Handler) AdminServeIncidentReportContent() http.Handler {
 	)
 }
 
-var items = []models.ItemType{
-	{
-		Type:        "Enamel",
-		Description: "Oil based paint",
-	},
-	{
-		Type:        "Brushes",
-		Description: "Any type of paint brush",
-	},
-}
-
 func (h *Handler) RenderPurchaseOrderTab() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			itemTypes, err := application.GetItemTypes(h.DB)
+			if err != nil {
+				log.Printf("error getting item types: %v", err)
+				http.Error(w, "error getting item types, internal server error", http.StatusInternalServerError)
+				return
+			}
+
 			tmpl, err := template.ParseFiles(
 				adminPurchaseOrderViewPath,
 				adminItemTypesPath,
@@ -428,7 +424,7 @@ func (h *Handler) RenderPurchaseOrderTab() http.Handler {
 				return
 			}
 
-			err = tmpl.ExecuteTemplate(w, "adminPurchaseOrderView", items)
+			err = tmpl.ExecuteTemplate(w, "adminPurchaseOrderView", itemTypes)
 			if err != nil {
 				log.Printf("Error executing template: %v", err)
 				http.Error(w, "Internal server error", http.StatusInternalServerError)
@@ -461,7 +457,13 @@ var p = application.PurchaseOrder{}
 func (h *Handler) ServeItemTypes() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			err := a.ServeSingleTemplate(adminItemTypesPath, "adminItemTypes", items, w)
+			itemTypes, err := application.GetItemTypes(h.DB)
+			if err != nil {
+				log.Printf("error getting item types: %v", err)
+				http.Error(w, "error getting item types, internal server error", http.StatusInternalServerError)
+				return
+			}
+			err = a.ServeSingleTemplate(adminItemTypesPath, "adminItemTypes", itemTypes, w)
 			if err != nil {
 				return
 			}
