@@ -1,0 +1,80 @@
+{{ define "viewPurchaseOrderModal" }}
+<div class="modal-container">
+	<div class="modal-content-container">
+		<div class="modal-header-container">
+			<p>Purchase Order</p>
+			<button
+			class="close-modal-btn"
+			onclick="toggleModal()">
+				x
+			</button>
+		</div>
+		<div id="po-modal-summary-container">
+			<div class="po-modal-info-container">
+				<p class="po-modal-info-header">Order Information</p>
+				<div class="order-info-container">
+					<div class="order-info-label-col">
+						<div class="order-info-label">
+							Order ID:
+						</div>
+						<div class="order-info-label">
+							Date:
+						</div>
+					</div>
+					<div class="order-info-col">
+						<div class="order-info">
+
+						</div>
+						<div class="order-info">
+							
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="po-modal-info-container">
+				<p class="po-modal-info-header">Employee & Store</p>
+				<div class="order-info-container">
+					<div class="order-info-label-col">
+						<div class="order-info-label">
+							Employee:
+						</div>
+						<div class="order-info-label">
+							Employee ID:
+						</div>
+						<div class="order-info-label">
+							Store:
+						</div>
+					</div>
+					<div class="order-info-col">
+						<div class="order-info">
+
+						</div>
+						<div class="order-info">
+							
+						</div>
+						<div class="order-info">
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="po-modal-item-container">
+			<p class="po-modal-info-header">Order Items</p>
+			<div id="order-items-table">
+				<div class="order-item-row">
+					<div class="item-item-col item-table-headers item-table-items">
+						Item
+					</div>
+					<div class="item-type-col item-table-headers item-table-items">
+						Type
+					</div>
+					<div class="item-quantity-col item-table-headers item-table-items">
+						Quantity
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{{ end }}

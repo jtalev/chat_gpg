@@ -46,6 +46,77 @@ func (h *Handler) ServePurchaseOrderView() http.Handler {
 	)
 }
 
+func (h *Handler) ServePurchaseOrderForm() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			order.Reset()
+			employeeId, err := getEmployeeId(w, r)
+			if err != nil {
+				log.Printf("error fetching employee id: %v", err)
+				http.Error(w, "error fetching employee id, unauthorized", http.StatusUnauthorized)
+				return
+			}
+
+			jobs, err := application.GetJobs(h.DB)
+			if err != nil {
+				log.Printf("error fetching jobs: %v", err)
+				http.Error(w, "error fetching jobs, internal server error", http.StatusInternalServerError)
+				return
+			}
+
+			order.PopulateStores(h.DB)
+
+			data := application.PurchaseOrder{
+				EmployeeId: employeeId,
+
+				Stores: order.Stores,
+				Jobs:   jobs,
+			}
+
+			templatePaths := []string{purchaseOrderFormPath, purchaseOrderItemRowPath}
+			err = h.ServeMultiTemplate(templatePaths, "purchaseOrderForm", data, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) ServeEmployeePOHistory() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			order.Reset()
+			employeeId, err := getEmployeeId(w, r)
+			if err != nil {
+				log.Printf("error fetching employee ID: %v", err)
+				http.Error(w, "error fetching employee ID, unauthorized", http.StatusUnauthorized)
+				return
+			}
+			purchaseOrders, err := order.FetchEmployeeHistory(employeeId, h.DB)
+			if err != nil {
+				log.Printf("error fetching employee purchase order history: %v", err)
+				http.Error(w, "error fetching employee purchase order history, status unauthorized", http.StatusUnauthorized)
+				return
+			}
+			err = h.ServeSingleTemplate(employeePurchaseOrderHistoryPath, "employeePurchaseOrderHistory", purchaseOrders, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) ServePurchaseOrder() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			err := h.ServeSingleTemplate(viewPurchaseOrderModalPath, "viewPurchaseOrderModal", nil, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
 func (h *Handler) ServeItemRow() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -124,7 +195,7 @@ func (h *Handler) PostItem() http.Handler {
 				http.Error(w, "error posting item type, bad request", http.StatusBadRequest)
 				return
 			}
-			err = a.ServeSingleTemplate(adminAddItemModalPath, "addItemModal", outItemType, w)
+			err = h.ServeSingleTemplate(adminAddItemModalPath, "addItemModal", outItemType, w)
 			if err != nil {
 				return
 			}
@@ -145,32 +216,10 @@ func (h *Handler) PostStore() http.Handler {
 				http.Error(w, "error posting store, bad request", http.StatusBadRequest)
 				return
 			}
-			err = a.ServeSingleTemplate(adminAddStoreModalPath, "addStoreModal", outStore, w)
+			err = h.ServeSingleTemplate(adminAddStoreModalPath, "addStoreModal", outStore, w)
 			if err != nil {
 				return
 			}
-		},
-	)
-}
-
-func (h *Handler) ServeEmployeePOHistory() http.Handler {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			order.Reset()
-			employeeId, err := getEmployeeId(w, r)
-			if err != nil {
-				log.Printf("error fetching employee ID: %v", err)
-				http.Error(w, "error fetching employee ID, unauthorized", http.StatusUnauthorized)
-				return
-			}
-			purchaseOrders, err := order.FetchEmployeeHistory(employeeId, h.DB)
-			if err != nil {
-				log.Printf("error fetching employee purchase order history: %v", err)
-				http.Error(w, "error fetching employee purchase order history, status unauthorized", http.StatusUnauthorized)
-				return
-			}
-
-			log.Println(purchaseOrders)
 		},
 	)
 }

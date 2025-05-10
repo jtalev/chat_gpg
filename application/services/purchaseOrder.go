@@ -163,6 +163,11 @@ func (o *PurchaseOrder) initRequiredViewData(db *sql.DB) error {
 func validatePurchaseOrderAndItems(purchaseOrder domain.PurchaseOrder, purchaseOrderItems []domain.PurchaseOrderItem) (domain.PurchaseOrderErrors, domain.PurchaseOrderItemErrors) {
 	purchaseOrderErrors := purchaseOrder.Validate()
 	itemErrors := domain.PurchaseOrderItemErrors{}
+	if len(purchaseOrderItems) == 0 {
+		purchaseOrderErrors.IsSuccessful = false
+		purchaseOrderErrors.PurchaseOrderItemsErr = "*must include at least 1 item to submit"
+		return purchaseOrderErrors, itemErrors
+	}
 	for _, item := range purchaseOrderItems {
 		itemErrors = item.Validate()
 		if itemErrors.IsSuccessful == false {

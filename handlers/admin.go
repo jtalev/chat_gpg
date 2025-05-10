@@ -434,24 +434,6 @@ func (h *Handler) RenderPurchaseOrderTab() http.Handler {
 	)
 }
 
-type AdminHandler struct {
-}
-
-type HttpServer interface {
-	ServeSingleTemplate(templatePath, templateName string, data interface{}, w http.ResponseWriter) error
-}
-
-func (a *AdminHandler) ServeSingleTemplate(templatePath, templateName string, data interface{}, w http.ResponseWriter) error {
-	err := executePartialTemplate(templatePath, templateName, data, w)
-	if err != nil {
-		log.Printf("error executing %s: %v", templatePath, err)
-		http.Error(w, "error exectuting %s, internal server error", http.StatusInternalServerError)
-		return err
-	}
-	return nil
-}
-
-var a = AdminHandler{}
 var p = application.PurchaseOrder{}
 
 func (h *Handler) ServeItemTypes() http.Handler {
@@ -463,7 +445,7 @@ func (h *Handler) ServeItemTypes() http.Handler {
 				http.Error(w, "error getting item types, internal server error", http.StatusInternalServerError)
 				return
 			}
-			err = a.ServeSingleTemplate(adminItemTypesPath, "adminItemTypes", itemTypes, w)
+			err = h.ServeSingleTemplate(adminItemTypesPath, "adminItemTypes", itemTypes, w)
 			if err != nil {
 				return
 			}
@@ -474,7 +456,7 @@ func (h *Handler) ServeItemTypes() http.Handler {
 func (h *Handler) ServeAddItemModal() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			err := a.ServeSingleTemplate(adminAddItemModalPath, "addItemModal", nil, w)
+			err := h.ServeSingleTemplate(adminAddItemModalPath, "addItemModal", nil, w)
 			if err != nil {
 				return
 			}
@@ -491,7 +473,7 @@ func (h *Handler) ServeStores() http.Handler {
 				http.Error(w, "error getting stores, internal server error", http.StatusInternalServerError)
 				return
 			}
-			err = a.ServeSingleTemplate(adminStoresPath, "adminStores", stores, w)
+			err = h.ServeSingleTemplate(adminStoresPath, "adminStores", stores, w)
 			if err != nil {
 				return
 			}
@@ -502,7 +484,7 @@ func (h *Handler) ServeStores() http.Handler {
 func (h *Handler) ServeAddStoreModal() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			err := a.ServeSingleTemplate(adminAddStoreModalPath, "addStoreModal", nil, w)
+			err := h.ServeSingleTemplate(adminAddStoreModalPath, "addStoreModal", nil, w)
 			if err != nil {
 				return
 			}
@@ -513,13 +495,14 @@ func (h *Handler) ServeAddStoreModal() http.Handler {
 func (h *Handler) ServePurchaseOrderHistory() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			p.Reset()
 			purchaseOrders, err := p.GetPurchaseOrders(h.DB)
 			if err != nil {
 				log.Printf("error getting purchase orders: %v", err)
 				http.Error(w, "error getting purchase orders, internal server error", http.StatusInternalServerError)
 				return
 			}
-			err = a.ServeSingleTemplate(adminPurchaseOrderHistoryPath, "adminPurchaseOrderHistory", purchaseOrders, w)
+			err = h.ServeSingleTemplate(adminPurchaseOrderHistoryPath, "adminPurchaseOrderHistory", purchaseOrders, w)
 			if err != nil {
 				return
 			}

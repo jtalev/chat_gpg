@@ -60,3 +60,8 @@ function deleteItemRow(event) {
         row.remove();
     }
 }
+
+function toggleModal() {
+	const modal = document.querySelector(".modal")
+	modal.style.display = modal.style.display === "flex" ? "none" : "flex"
+}

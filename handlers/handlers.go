@@ -68,15 +68,17 @@ const (
 	swmsFormPath                   = "../ui/templates/swmsForm.html"
 	updateSwmsFormPath             = "../ui/templates/updateSwmsForm.html"
 
-	purchaseOrderPath             = "../ui/views/purchaseOrder.html"
-	purchaseOrderFormPath         = "../ui/templates/purchaseOrderForm.html"
-	purchaseOrderItemRowPath      = "../ui/templates/purchaseOrderItemRow.html"
-	adminPurchaseOrderViewPath    = "../ui/templates/adminPurchaseOrderView.html"
-	adminPurchaseOrderHistoryPath = "../ui/templates/adminPurchaseOrderHistory.html"
-	adminItemTypesPath            = "../ui/templates/adminItemTypes.html"
-	adminStoresPath               = "../ui/templates/adminStores.html"
-	adminAddItemModalPath         = "../ui/templates/addItemModal.html"
-	adminAddStoreModalPath        = "../ui/templates/addStoreModal.html"
+	purchaseOrderPath                = "../ui/views/purchaseOrder.html"
+	purchaseOrderFormPath            = "../ui/templates/purchaseOrderForm.html"
+	purchaseOrderItemRowPath         = "../ui/templates/purchaseOrderItemRow.html"
+	viewPurchaseOrderModalPath       = "../ui/templates/viewPurchaseOrderModal.html"
+	employeePurchaseOrderHistoryPath = "../ui/templates/employeePurchaseOrderHistory.html"
+	adminPurchaseOrderViewPath       = "../ui/templates/adminPurchaseOrderView.html"
+	adminPurchaseOrderHistoryPath    = "../ui/templates/adminPurchaseOrderHistory.html"
+	adminItemTypesPath               = "../ui/templates/adminItemTypes.html"
+	adminStoresPath                  = "../ui/templates/adminStores.html"
+	adminAddItemModalPath            = "../ui/templates/addItemModal.html"
+	adminAddStoreModalPath           = "../ui/templates/addStoreModal.html"
 )
 
 func renderTemplate(
@@ -207,6 +209,37 @@ type Handler struct {
 	DB     *sql.DB
 	Store  *sessions.CookieStore
 	Logger *zap.SugaredLogger
+}
+
+type HtmlServer interface {
+	ServeSingleTemplate(templatePath, templateName string, data interface{}, w http.ResponseWriter) error
+}
+
+func (h *Handler) ServeSingleTemplate(templatePath, templateName string, data interface{}, w http.ResponseWriter) error {
+	err := executePartialTemplate(templatePath, templateName, data, w)
+	if err != nil {
+		log.Printf("error executing %s: %v", templatePath, err)
+		http.Error(w, "error exectuting %s, internal server error", http.StatusInternalServerError)
+		return err
+	}
+	return nil
+}
+
+func (h *Handler) ServeMultiTemplate(templatePaths []string, parentTemplateName string, data interface{}, w http.ResponseWriter) error {
+	tmpl, err := template.ParseFiles(templatePaths...)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, "error parsing template files, internal server error", http.StatusInternalServerError)
+		return err
+	}
+
+	err = tmpl.ExecuteTemplate(w, parentTemplateName, data)
+	if err != nil {
+		log.Printf("error executing purchaseOrderForm.html: %v", err)
+		http.Error(w, "error executing purchaseOrderForm.html, internal server error", http.StatusInternalServerError)
+		return err
+	}
+	return nil
 }
 
 func (h *Handler) DecodeJson(out any, w http.ResponseWriter, r *http.Request) bool {

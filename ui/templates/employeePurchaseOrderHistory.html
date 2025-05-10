@@ -1,0 +1,46 @@
+{{ define "employeePurchaseOrderHistory" }}
+<div id="employee-purchase-order-history-container">
+	<div class="admin-po-tab-header-container">
+		<div class="admin-po-tab-header">Purchase Order History</div>
+	</div>
+	<div class="admin-po-tab-list">
+		<div class="admin-po-list-row">
+			<div class="admin-po-history-store-col">
+				Store
+			</div>
+			<div class="admin-po-history-job-col">
+				Job
+			</div>
+			<div class="admin-po-actions-col">
+				Actions
+			</div>
+		</div>
+		{{ range . }}
+		<div class="admin-po-list-row admin-po-list-row-info">
+			<div class="admin-po-history-store-col">
+				{{ .Store }}
+			</div>
+			<div class="admin-po-history-job-col">
+				{{ .Job }}
+			</div>
+			<div class="admin-po-actions-col">
+				<div class="admin-po-actions-container">
+					<button
+					class="admin-po-actions-btn"
+					hx-get="/purchase-order/serve-purchase-order"
+					hx-trigger="click"
+					hx-swap=innerHTML
+					hx-target=".modal"
+					hx-vals='{
+						"uuid": {{ .UUID }}
+					}'
+					onclick="toggleModal()">
+						<img class="admin-po-view-img" src="../static/img/view.svg">
+					</button>
+				</div>
+			</div>
+		</div>
+		{{ end }}
+	</div>
+</div>
+{{ end }}

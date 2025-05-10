@@ -17,6 +17,7 @@ body {
     --light-background-color: #f8f8f8;
     --form-input-border-color: rgb(211, 210, 210);
     --main-color: #474747;
+    --main-color-lighter: #47474790;
     --timesheet-border: #a5a4a4;
 }
 
@@ -475,6 +476,7 @@ form input {
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 }
 
 .view-content {
@@ -514,7 +516,21 @@ form input {
     display: flex;
     justify-content: center;
     align-items: center;
-    max-width: 550px;
+    max-width: 700px;
+    max-height: 600px;
+}
+
+.modal {
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    font-size: smaller;
 }
 
 .modal-content-container {
@@ -529,11 +545,11 @@ form input {
 .modal-header-container {
     width: 100%;
     display: flex;
-    justify-content: center;
     align-items: center;
     font-weight: lighter;
     border-bottom: 1px solid var(--timesheet-border);
     margin-bottom: 20px;
+    padding: none;
 }
 
 .modal-form-container {
@@ -659,7 +675,7 @@ form input {
 
 .form-container {
     width: 100%;
-    height: 95%;
+    height: 100%;
     display: flex;
     max-width: 800px;
     flex-direction: column;
@@ -3914,6 +3930,18 @@ input::-webkit-inner-spin-button {
 }
 
 /* ---- purchase order ---- */
+#employee-purchase-order-history-container {
+    width: 100%;
+    height: 100%;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: smaller;
+    box-sizing: border-box;
+    padding: 10px 0 10px 0;
+}
+
 #purchase-order-content-selector {
     background-color: white;
     border-bottom: none;
@@ -3995,4 +4023,116 @@ input::-webkit-inner-spin-button {
     width: 95%;
     padding: 0;
     margin: 0;
+}
+
+@media screen and (max-width: 900px) {
+    #po-modal-summary-container {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .po-modal-info-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 10px;
+    }
+}
+
+@media screen and (min-width: 901px) {
+    #po-modal-summary-container {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .po-modal-info-container {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+        gap: 10px;
+    }   
+}
+
+.order-info-container {
+    display: flex;
+    gap: 5px;
+    width: 100%;
+}
+
+.po-modal-info-header {
+    font-size: medium;
+    font-weight: bold;
+    padding: 0;
+    margin: 0;
+}
+
+.order-info-label-col {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+}
+
+.order-info-col {
+    width: 45%;
+    display: flex;
+    flex-direction: column;
+}
+
+.order-info-label {
+    width: 100%;
+    height: 30px;
+    color: var(--main-color-lighter);
+}
+
+.order-info {
+    width: 100%;
+    height: 30px;
+}
+
+#po-modal-item-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#order-items-table {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.order-item-row {
+    width: 100%;
+    height: 35px;
+    display: flex;
+}
+
+.item-table-headers {
+    border-bottom: 1px solid var(--main-background-color);
+    color: var(--main-color-lighter);
+}
+
+.item-table-items {
+    display: flex;
+    align-items: flex-end;
+    box-sizing: border-box;
+    padding: 3px 0 3px 0;
+}
+
+.item-item-col {
+    width: 40%;
+    height: 100%;
+}
+
+.item-type-col {
+    width: 30%;
+    height: 100%;
+}
+
+.item-quantity-col {
+    width: 30%;
+    height: 100%;
 }
