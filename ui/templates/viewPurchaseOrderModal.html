@@ -23,10 +23,10 @@
 					</div>
 					<div class="order-info-col">
 						<div class="order-info">
-
+							{{ .UUID }}
 						</div>
 						<div class="order-info">
-							
+							{{ .Date }}
 						</div>
 					</div>
 				</div>
@@ -47,13 +47,13 @@
 					</div>
 					<div class="order-info-col">
 						<div class="order-info">
-
+							{{ .Employee }}
 						</div>
 						<div class="order-info">
-							
+							{{ .EmployeeId }}
 						</div>
 						<div class="order-info">
-							
+							{{ .Store }}
 						</div>
 					</div>
 				</div>
@@ -73,6 +73,19 @@
 						Quantity
 					</div>
 				</div>
+				{{ range .PurchaseOrderItems }}
+				<div class="order-item-row">
+					<div class="item-item-col item-table-items">
+						{{ .ItemName }}
+					</div>
+					<div class="item-type-col item-table-items">
+						{{ .ItemType }}
+					</div>
+					<div class="item-quantity-col item-table-items">
+						{{ .Quantity }}
+					</div>
+				</div>
+				{{ end }}
 			</div>
 		</div>
 	</div>

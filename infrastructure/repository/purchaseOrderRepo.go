@@ -36,6 +36,34 @@ func GetPurchaseOrders(db *sql.DB) ([]models.PurchaseOrder, error) {
 	return purchaseOrders, nil
 }
 
+func GetPurchaseOrderByUuid(uuid string, db *sql.DB) (models.PurchaseOrder, error) {
+	q := `
+	select * from purchase_order where uuid = ?;
+	`
+
+	rows, err := db.Query(q, uuid)
+	if err != nil {
+		return models.PurchaseOrder{}, err
+	}
+	defer rows.Close()
+
+	var p models.PurchaseOrder
+	if rows.Next() {
+		if err := rows.Scan(
+			&p.UUID,
+			&p.EmployeeId,
+			&p.StoreId,
+			&p.JobId,
+			&p.Date,
+			&p.CreatedAt,
+			&p.ModifiedAt,
+		); err != nil {
+			return p, err
+		}
+	}
+	return p, nil
+}
+
 func PostPurchaseOrder(purchaseOrder models.PurchaseOrder, db *sql.DB) error {
 	q := `
 	insert into purchase_order (uuid, employee_id, store_id,

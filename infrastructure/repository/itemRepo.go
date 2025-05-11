@@ -35,6 +35,33 @@ func GetItemTypes(db *sql.DB) ([]models.ItemType, error) {
 	return itemTypes, nil
 }
 
+func GetItemTypeByUuid(uuid string, db *sql.DB) (models.ItemType, error) {
+	q := `
+	select * from item_types where uuid = ?;
+	`
+
+	i := models.ItemType{}
+	rows, err := db.Query(q, uuid)
+	if err != nil {
+		return i, err
+	}
+	defer rows.Close()
+
+	if rows.Next() {
+		if err := rows.Scan(
+			&i.UUID,
+			&i.Type,
+			&i.Description,
+			&i.CreatedAt,
+			&i.ModifiedAt,
+		); err != nil {
+			return i, err
+		}
+	}
+
+	return i, nil
+}
+
 func PostItemType(itemType models.ItemType, db *sql.DB) error {
 	q := `
 	insert into item_types(uuid, type, description)

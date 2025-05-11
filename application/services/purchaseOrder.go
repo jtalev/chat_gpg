@@ -32,7 +32,8 @@ type PurchaseOrderItem struct {
 	UUID       string `json:"uuid"`
 	ItemName   string `json:"item_name"`
 	ItemTypeId string `json:"item_type_id"`
-	Quantity   int    `json:"quantity"`
+	ItemType   string
+	Quantity   int `json:"quantity"`
 
 	ItemTypes []ItemType
 }
@@ -45,8 +46,9 @@ type PurchaseOrder struct {
 	Date               string              `json:"date"`
 	PurchaseOrderItems []PurchaseOrderItem `json:"purchase_order_items"`
 
-	Store string
-	Job   string
+	Employee string
+	Store    string
+	Job      string
 
 	Stores []Store
 	Jobs   []models.Job
@@ -364,4 +366,72 @@ func PostItemType(itemType ItemType, db *sql.DB) (models.ItemType, error) {
 		return models.ItemType{}, err
 	}
 	return modelItemType, nil
+}
+
+func (p *PurchaseOrder) mapModelToPurchaseOrder(model models.PurchaseOrder) {
+	p.EmployeeId = model.EmployeeId
+	p.UUID = model.UUID
+	p.Date = model.Date
+	p.StoreId = model.StoreId
+}
+
+func (p *PurchaseOrder) mapStoreName(db *sql.DB) error {
+	store, err := repo.GetStoreByUuid(p.StoreId, db)
+	if err != nil {
+		return err
+	}
+	p.Store = store.BusinessName
+	return nil
+}
+
+func (p *PurchaseOrder) mapEmployeeName(db *sql.DB) error {
+	employee, err := repo.GetEmployeeByEmployeeId(p.EmployeeId, db)
+	if err != nil {
+		return err
+	}
+	p.Employee = employee.EmployeeId
+	return nil
+}
+
+func (p *PurchaseOrder) mapItems(db *sql.DB) error {
+	items, err := repo.GetItemsByOrderUuid(p.UUID, db)
+	if err != nil {
+		return err
+	}
+	p.PurchaseOrderItems = make([]PurchaseOrderItem, len(items))
+	for i, item := range items {
+		p.PurchaseOrderItems[i].ItemName = item.ItemName
+		p.PurchaseOrderItems[i].ItemTypeId = item.ItemTypeId
+		p.PurchaseOrderItems[i].Quantity = item.Quantity
+	}
+	return nil
+}
+
+func (p *PurchaseOrder) mapItemTypeToItems(db *sql.DB) error {
+	for i, item := range p.PurchaseOrderItems {
+		itemType, err := repo.GetItemTypeByUuid(item.ItemTypeId, db)
+		if err != nil {
+			return err
+		}
+		p.PurchaseOrderItems[i].ItemType = itemType.Type
+	}
+	return nil
+}
+
+func GetPurchaseOrder(uuid string, db *sql.DB) (PurchaseOrder, error) {
+	var p PurchaseOrder
+	pm, err := repo.GetPurchaseOrderByUuid(uuid, db)
+	if err != nil {
+		return p, err
+	}
+
+	p.mapModelToPurchaseOrder(pm)
+	err = p.mapStoreName(db)
+	p.mapEmployeeName(db)
+	p.mapItems(db)
+	p.mapItemTypeToItems(db)
+	if err != nil {
+		return p, err
+	}
+	return p, nil
 }

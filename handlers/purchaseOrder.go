@@ -109,7 +109,22 @@ func (h *Handler) ServeEmployeePOHistory() http.Handler {
 func (h *Handler) ServePurchaseOrder() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			err := h.ServeSingleTemplate(viewPurchaseOrderModalPath, "viewPurchaseOrderModal", nil, w)
+			vals, err := parseRequestValues([]string{"uuid"}, r)
+			if err != nil {
+				log.Printf("error parsing request values: %v", err)
+				http.Error(w, "error parsing request values, bad request", http.StatusBadRequest)
+				return
+			}
+
+			purchaseOrder, err := application.GetPurchaseOrder(vals[0], h.DB)
+			if err != nil {
+				log.Printf("error getting purchase order, :%v", err)
+				http.Error(w, "error getting purchase order, internal server error", http.StatusInternalServerError)
+				return
+
+			}
+
+			err = h.ServeSingleTemplate(viewPurchaseOrderModalPath, "viewPurchaseOrderModal", purchaseOrder, w)
 			if err != nil {
 				return
 			}
