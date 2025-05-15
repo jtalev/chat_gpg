@@ -445,6 +445,7 @@ func (h *Handler) ServeItemTypes() http.Handler {
 				http.Error(w, "error getting item types, internal server error", http.StatusInternalServerError)
 				return
 			}
+			log.Println(itemTypes)
 			err = h.ServeSingleTemplate(adminItemTypesPath, "adminItemTypes", itemTypes, w)
 			if err != nil {
 				return
@@ -456,7 +457,39 @@ func (h *Handler) ServeItemTypes() http.Handler {
 func (h *Handler) ServeAddItemModal() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			err := h.ServeSingleTemplate(adminAddItemModalPath, "addItemModal", nil, w)
+			itemType := application.ItemType{ModalTitle: "Add Item Type"}
+			err := h.ServeSingleTemplate(adminAddItemModalPath, "addItemModal", itemType, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) ServePutItemModal() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			rVals, err := parseRequestValues([]string{"uuid"}, r)
+			if err != nil {
+				log.Printf("error parsing request values: %v", err)
+				http.Error(w, "error parsing request values, bad request", http.StatusBadRequest)
+				return
+			}
+
+			itemType, err := infrastructure.GetItemTypeByUuid(rVals[0], h.DB)
+			if err != nil {
+				log.Printf("error getting store: %v", err)
+				http.Error(w, "error getting store, Not found", http.StatusNotFound)
+			}
+
+			outItemType := application.ItemType{
+				UUID:        itemType.UUID,
+				Type:        itemType.Type,
+				Description: itemType.Description,
+
+				ModalTitle: "Update Item Type",
+			}
+			err = h.ServeSingleTemplate(adminAddItemModalPath, "addItemModal", outItemType, w)
 			if err != nil {
 				return
 			}
@@ -473,6 +506,7 @@ func (h *Handler) ServeStores() http.Handler {
 				http.Error(w, "error getting stores, internal server error", http.StatusInternalServerError)
 				return
 			}
+			log.Println(stores)
 			err = h.ServeSingleTemplate(adminStoresPath, "adminStores", stores, w)
 			if err != nil {
 				return
@@ -484,7 +518,41 @@ func (h *Handler) ServeStores() http.Handler {
 func (h *Handler) ServeAddStoreModal() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			err := h.ServeSingleTemplate(adminAddStoreModalPath, "addStoreModal", nil, w)
+			store := application.Store{ModalTitle: "Add Store"}
+			err := h.ServeSingleTemplate(adminAddStoreModalPath, "addStoreModal", store, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) ServePutStoreModal() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			rVals, err := parseRequestValues([]string{"uuid"}, r)
+			if err != nil {
+				log.Printf("error parsing request values: %v", err)
+				http.Error(w, "error parsing request values, bad request", http.StatusBadRequest)
+				return
+			}
+			store, err := infrastructure.GetStoreByUuid(rVals[0], h.DB)
+			if err != nil {
+				log.Printf("error getting store: %v", err)
+				http.Error(w, "error getting store, Not found", http.StatusNotFound)
+			}
+			outStore := application.Store{
+				UUID:         store.UUID,
+				BusinessName: store.BusinessName,
+				Email:        store.Email,
+				Phone:        store.Phone,
+				Address:      store.Address,
+				Suburb:       store.Suburb,
+				City:         store.City,
+
+				ModalTitle: "Update Store",
+			}
+			err = h.ServeSingleTemplate(adminAddStoreModalPath, "addStoreModal", outStore, w)
 			if err != nil {
 				return
 			}

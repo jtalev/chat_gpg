@@ -2,7 +2,7 @@
 <div class="modal-container store-modal">
 	<div class="modal-content-container">
 		<div class="modal-header-container">
-			<p>Add Store</p>
+			<p>{{ .ModalTitle }}</p>
 			<button
 			class="close-modal-btn"
 			onclick="toggleAdminPurchaseOrderModal()">
@@ -12,11 +12,16 @@
 		<div class="modal-form-container">
 			<form 
 			class="modal-form"
-			id="add-item-form"
-			hx-post="/admin/store/post"
+			id="add-store-form"
+			{{ if eq .ModalTitle "Add Store" }}
+				hx-post="/admin/store/post"
+			{{ else }}
+				hx-put="/admin/store/put"
+			{{ end }}
 			hx-swap="innerHTML"
 			hx-target="#admin-po-modal-container"
 			hx-ext="json-enc">
+				<input type="text" name="uuid" value="{{ .UUID }}" hidden>
 				<div class="modal-form-row">
 					<div class="modal-form-label-container">
 						<label class="modal-form-label"
@@ -30,6 +35,7 @@
 						value="{{ .BusinessName }}">
 					</div>
 					<div class="error-container">
+						{{ .Errors.BusinessNameErr }}
 					</div>
 				</div>
 				<div class="modal-form-row">
@@ -45,6 +51,7 @@
 						value="{{ .Email }}">
 					</div>
 					<div class="error-container">
+						{{ .Errors.EmailErr }}
 					</div>
 				</div>
 				<div class="modal-form-row">
@@ -60,6 +67,7 @@
 						value="{{ .Phone }}">
 					</div>
 					<div class="error-container">
+						{{ .Errors.PhoneErr }}
 					</div>
 				</div>
 				<div class="modal-form-row">
@@ -75,6 +83,7 @@
 						value="{{ .Address }}">
 					</div>
 					<div class="error-container">
+						{{ .Errors.AddressErr }}
 					</div>
 				</div>
 				<div class="modal-form-row">
@@ -90,6 +99,7 @@
 						value="{{ .Suburb }}">
 					</div>
 					<div class="error-container">
+						{{ .Errors.SuburbErr }}
 					</div>
 				</div>
 				<div class="modal-form-row">
@@ -105,10 +115,11 @@
 						value="{{ .City }}">
 					</div>
 					<div class="error-container">
+						{{ .Errors.CityErr }}
 					</div>
 				</div>
 				<div class="success-msg-container">
-					{{ .SuccessMsg }}
+					{{ .Errors.SuccessMsg }}
 				</div>
 				<div class="gpg-form-btn-container">
 					<button class="gpg-submit-btn" type="submit">SUBMIT</button>

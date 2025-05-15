@@ -197,7 +197,29 @@ func (h *Handler) PostPurchaseOrder() http.Handler {
 	)
 }
 
-func (h *Handler) PostItem() http.Handler {
+func (h *Handler) DeletePurchaseOrder() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			p.Reset()
+			rVals, err := parseRequestValues([]string{"uuid"}, r)
+			if err != nil {
+				log.Printf("error parsing request values: %v", err)
+				http.Error(w, "error parsing request values, bad request", http.StatusBadRequest)
+				return
+			}
+			p.UUID = rVals[0]
+
+			err = p.DeletePurchaseOrder(h.DB)
+			if err != nil {
+				log.Printf("error deleting purchase order: %v", err)
+				http.Error(w, "error deleting purchase order, not found", http.StatusNotFound)
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) PostItemType() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			var itemType application.ItemType
@@ -212,6 +234,49 @@ func (h *Handler) PostItem() http.Handler {
 			}
 			err = h.ServeSingleTemplate(adminAddItemModalPath, "addItemModal", outItemType, w)
 			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) PutItemType() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			var itemType application.ItemType
+			if ok := h.DecodeJson(&itemType, w, r); !ok {
+				return
+			}
+
+			outItemType, err := application.PutItemType(itemType, h.DB)
+			if err != nil {
+				log.Printf("error updating store: %v", err)
+				http.Error(w, "error updating store, bad request", http.StatusBadRequest)
+				return
+			}
+
+			err = h.ServeSingleTemplate(adminAddItemModalPath, "addItemModal", outItemType, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) DeleteItemType() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			rVals, err := parseRequestValues([]string{"uuid"}, r)
+			if err != nil {
+				log.Printf("error parsing request values: %v", err)
+				http.Error(w, "error parsing request values, bad request", http.StatusBadRequest)
+				return
+			}
+
+			err = application.DeleteItemType(rVals[0], h.DB)
+			if err != nil {
+				log.Printf("error deleting item type: %v", err)
+				http.Error(w, "error deleting item type, not found", http.StatusNotFound)
 				return
 			}
 		},
@@ -233,6 +298,49 @@ func (h *Handler) PostStore() http.Handler {
 			}
 			err = h.ServeSingleTemplate(adminAddStoreModalPath, "addStoreModal", outStore, w)
 			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) PutStore() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			var store application.Store
+			if ok := h.DecodeJson(&store, w, r); !ok {
+				return
+			}
+
+			outStore, err := application.PutStore(store, h.DB)
+			if err != nil {
+				log.Printf("error updating store: %v", err)
+				http.Error(w, "error updating store, bad request", http.StatusBadRequest)
+				return
+			}
+
+			err = h.ServeSingleTemplate(adminAddStoreModalPath, "addStoreModal", outStore, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) DeleteStore() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			rVals, err := parseRequestValues([]string{"uuid"}, r)
+			if err != nil {
+				log.Printf("error parsing request values: %v", err)
+				http.Error(w, "error parsing request values, bad request", http.StatusBadRequest)
+				return
+			}
+
+			err = application.DeleteStore(rVals[0], h.DB)
+			if err != nil {
+				log.Printf("error deleting store: %v", err)
+				http.Error(w, "error deleting store, not found", http.StatusNotFound)
 				return
 			}
 		},

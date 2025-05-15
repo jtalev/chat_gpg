@@ -75,3 +75,29 @@ func PostItemType(itemType models.ItemType, db *sql.DB) error {
 
 	return nil
 }
+
+func PutItemType(itemType models.ItemType, db *sql.DB) error {
+	q := `
+	update item_types
+	set type = $1, description = $2, modified_at = CURRENT_TIMESTAMP
+	where uuid = $3
+	`
+
+	_, err := db.Exec(q, itemType.Type, itemType.Description, itemType.UUID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteItemType(uuid string, db *sql.DB) error {
+	q := `
+	delete from item_types where uuid = ?;
+	`
+	_, err := db.Exec(q, uuid)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

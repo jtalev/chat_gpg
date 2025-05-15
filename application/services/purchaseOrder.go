@@ -20,12 +20,18 @@ type Store struct {
 	Address      string `json:"address"`
 	Suburb       string `json:"suburb"`
 	City         string `json:"city"`
+
+	Errors     models.StoreErrors
+	ModalTitle string
 }
 
 type ItemType struct {
 	UUID        string `json:"uuid"`
 	Type        string `json:"type"`
 	Description string `json:"description"`
+
+	Errors     models.ItemTypeErrors
+	ModalTitle string
 }
 
 type PurchaseOrderItem struct {
@@ -47,7 +53,7 @@ type PurchaseOrder struct {
 	PurchaseOrderItems []PurchaseOrderItem `json:"purchase_order_items"`
 
 	Employee string
-	Store    string
+	Store    models.Store
 	Job      string
 
 	Stores []Store
@@ -102,7 +108,6 @@ func GetItemTypes(db *sql.DB) ([]models.ItemType, error) {
 	return itemTypes, nil
 }
 
-// TODO: once item repo is functional, get item types
 func (o *PurchaseOrder) PopulateItemTypes(db *sql.DB) error {
 	itemTypeList, err := GetItemTypes(db)
 	if err != nil {
@@ -135,7 +140,6 @@ func GetStores(db *sql.DB) ([]models.Store, error) {
 	return storeList, nil
 }
 
-// TODO: once stores repo is functional, get stores
 func (o *PurchaseOrder) PopulateStores(db *sql.DB) error {
 	storeList, err := GetStores(db)
 	if err != nil {
@@ -251,6 +255,14 @@ func (o *PurchaseOrder) PostPurchaseOrder(db *sql.DB) (domain.PurchaseOrderError
 	return purchaseOrderErrors, nil
 }
 
+func (p *PurchaseOrder) DeletePurchaseOrder(db *sql.DB) error {
+	err := repo.DeletePurchaseOrder(p.UUID, db)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func filterEmployeeOrders(orders []models.PurchaseOrder, employeeId string) []models.PurchaseOrder {
 	filteredOrders := []models.PurchaseOrder{}
 	for _, order := range orders {
@@ -273,7 +285,7 @@ func mapStoreNameToOrder(inOrders []models.PurchaseOrder, outOrders []PurchaseOr
 			log.Println("error getting job")
 			return
 		}
-		outOrders[i].Store = store.BusinessName
+		outOrders[i].Store = store
 	}
 }
 
@@ -340,14 +352,45 @@ func mapStore(store Store, uuid string) models.Store {
 	}
 }
 
-func PostStore(store Store, db *sql.DB) (models.Store, error) {
+func PostStore(store Store, db *sql.DB) (Store, error) {
+	store.ModalTitle = "Add Store"
 	uuid := uuid.New().String()
 	modelStore := mapStore(store, uuid)
+	errors := modelStore.Validate()
+	if !errors.IsSuccessful {
+		store.Errors = errors
+		return store, nil
+	}
 	err := repo.PostStore(modelStore, db)
 	if err != nil {
-		return models.Store{}, err
+		return Store{}, err
 	}
-	return modelStore, nil
+	store.Errors.SuccessMsg = "Store submitted successfully."
+	return store, nil
+}
+
+func PutStore(store Store, db *sql.DB) (Store, error) {
+	store.ModalTitle = "Update Store"
+	modelStore := mapStore(store, store.UUID)
+	errors := modelStore.Validate()
+	if !errors.IsSuccessful {
+		store.Errors = errors
+		return store, nil
+	}
+	err := repo.PutStore(modelStore, db)
+	if err != nil {
+		return store, err
+	}
+	store.Errors.SuccessMsg = "Store updated successfully."
+	return store, nil
+}
+
+func DeleteStore(uuid string, db *sql.DB) error {
+	err := repo.DeleteStore(uuid, db)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func mapItemType(itemType ItemType, uuid string) models.ItemType {
@@ -358,14 +401,44 @@ func mapItemType(itemType ItemType, uuid string) models.ItemType {
 	}
 }
 
-func PostItemType(itemType ItemType, db *sql.DB) (models.ItemType, error) {
+func PostItemType(itemType ItemType, db *sql.DB) (ItemType, error) {
+	itemType.ModalTitle = "Add Item Type"
 	uuid := uuid.New().String()
 	modelItemType := mapItemType(itemType, uuid)
+	itemType.Errors = modelItemType.Validate()
+	if !itemType.Errors.IsSuccessful {
+		return itemType, nil
+	}
 	err := repo.PostItemType(modelItemType, db)
 	if err != nil {
-		return models.ItemType{}, err
+		return ItemType{}, err
 	}
-	return modelItemType, nil
+	itemType.Errors.SuccessMsg = "Item type submitted successfully."
+	return itemType, nil
+}
+
+func PutItemType(itemType ItemType, db *sql.DB) (ItemType, error) {
+	itemType.ModalTitle = "Update Item Type"
+	modelItemType := mapItemType(itemType, itemType.UUID)
+	errors := modelItemType.Validate()
+	if !errors.IsSuccessful {
+		itemType.Errors = errors
+		return itemType, nil
+	}
+	err := repo.PutItemType(modelItemType, db)
+	if err != nil {
+		return itemType, err
+	}
+	itemType.Errors.SuccessMsg = "Item type updated successfully."
+	return itemType, nil
+}
+
+func DeleteItemType(uuid string, db *sql.DB) error {
+	err := repo.DeleteItemType(uuid, db)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *PurchaseOrder) mapModelToPurchaseOrder(model models.PurchaseOrder) {
@@ -375,12 +448,12 @@ func (p *PurchaseOrder) mapModelToPurchaseOrder(model models.PurchaseOrder) {
 	p.StoreId = model.StoreId
 }
 
-func (p *PurchaseOrder) mapStoreName(db *sql.DB) error {
+func (p *PurchaseOrder) mapStoreToOrder(db *sql.DB) error {
 	store, err := repo.GetStoreByUuid(p.StoreId, db)
 	if err != nil {
 		return err
 	}
-	p.Store = store.BusinessName
+	p.Store = store
 	return nil
 }
 
@@ -389,7 +462,7 @@ func (p *PurchaseOrder) mapEmployeeName(db *sql.DB) error {
 	if err != nil {
 		return err
 	}
-	p.Employee = employee.EmployeeId
+	p.Employee = fmt.Sprintf("%s %s", employee.FirstName, employee.LastName)
 	return nil
 }
 
@@ -426,7 +499,7 @@ func GetPurchaseOrder(uuid string, db *sql.DB) (PurchaseOrder, error) {
 	}
 
 	p.mapModelToPurchaseOrder(pm)
-	err = p.mapStoreName(db)
+	err = p.mapStoreToOrder(db)
 	p.mapEmployeeName(db)
 	p.mapItems(db)
 	p.mapItemTypeToItems(db)

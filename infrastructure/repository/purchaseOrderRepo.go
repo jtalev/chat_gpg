@@ -79,3 +79,15 @@ func PostPurchaseOrder(purchaseOrder models.PurchaseOrder, db *sql.DB) error {
 
 	return nil
 }
+
+func DeletePurchaseOrder(uuid string, db *sql.DB) error {
+	q := `
+	delete from purchase_order where uuid = ?;
+	`
+	_, err := db.Exec(q, uuid)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

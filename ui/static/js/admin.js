@@ -187,3 +187,18 @@ function toggleAdminPurchaseOrderModal() {
     const container = document.getElementById("admin-po-modal-container")
     container.style.display = container.style.display === "flex" ? "none" : "flex"
 }
+
+document.body.addEventListener("htmx:afterSwap", function(event) {
+    const srcElementId = event.srcElement.id
+    if (srcElementId === "add-store-form") {
+        htmx.ajax("GET", "/admin/serve-stores-template", {
+            target: "#admin-purchase-order-content",
+            swap: "innerHTML"
+        });
+    } else if (srcElementId === "add-item-form") {
+        htmx.ajax("GET", "/admin/serve-item-types-template", {
+            target: "#admin-purchase-order-content",
+            swap: "innerHTML"
+        });
+    }
+})

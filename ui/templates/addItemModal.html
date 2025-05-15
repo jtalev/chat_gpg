@@ -2,7 +2,7 @@
 <div class="modal-container item-modal">
 	<div class="modal-content-container">
 		<div class="modal-header-container">
-			<p>Add Item</p>
+			<p>{{ .ModalTitle }}</p>
 			<button
 			class="close-modal-btn"
 			onclick="toggleAdminPurchaseOrderModal()">
@@ -13,10 +13,15 @@
 			<form 
 			class="modal-form"
 			id="add-item-form"
-			hx-post="/purchase-order/item/post"
+			{{ if eq .ModalTitle "Add Item Type"}}
+				hx-post="/admin/item-type/post"
+			{{ else }}
+				hx-put="/admin/item-type/put"
+			{{ end }}
 			hx-swap="innerHTML"
 			hx-target="#admin-po-modal-container"
 			hx-ext="json-enc">
+				<input type="text" name="uuid" value="{{ .UUID }}" hidden>
 				<div class="modal-form-row">
 					<div class="modal-form-label-container">
 						<label class="modal-form-label"
@@ -30,6 +35,7 @@
 						value="{{ .Type }}">
 					</div>
 					<div class="error-container">
+						{{ .Errors.TypeErr }}
 					</div>
 				</div>
 				<div class="modal-form-textarea-row">
@@ -44,10 +50,11 @@
 						>{{ .Description }}</textarea>
 					</div>
 					<div class="error-container">
+						{{ .Errors.DescriptionErr }}
 					</div>
 				</div>
 				<div class="success-msg-container">
-					{{ .SuccessMsg }}
+					{{ .Errors.SuccessMsg }}
 				</div>
 				<div class="gpg-form-btn-container">
 					<button class="gpg-submit-btn" type="submit">SUBMIT</button>

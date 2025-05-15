@@ -37,10 +37,26 @@
 			<div class="admin-po-actions-container">
 				<button 
 				class="admin-po-actions-btn"
-				onclick="toggleAdminPurchaseOrderModal()">
+				onclick="toggleAdminPurchaseOrderModal()"
+				hx-get="/admin/serve-put-store-modal"
+				hx-trigger="click"
+				hx-swap="innerHTML"
+				hx-target="#admin-po-modal-container"
+				hx-vals='{
+					"uuid": "{{ .UUID }}"
+				}'>
 					<img class="admin-po-update-img" src="../static/img/update.svg">
 				</button>
-				<button class="admin-po-actions-btn"><img class="admin-po-delete-img" src="../static/img/delete_grey.svg"></button>
+				<button 
+				class="admin-po-actions-btn"
+				hx-delete="/admin/store/delete"
+				hx-target="closest .admin-po-list-row"
+				hx-swap="delete"
+				hx-vals='{
+					"uuid": "{{ .UUID }}"
+				}'>
+					<img class="admin-po-delete-img" src="../static/img/delete_grey.svg">
+				</button>
 			</div>
 		</div>
 	</div>

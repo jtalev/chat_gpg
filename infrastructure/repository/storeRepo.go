@@ -84,3 +84,32 @@ func PostStore(store models.Store, db *sql.DB) error {
 
 	return nil
 }
+
+func PutStore(store models.Store, db *sql.DB) error {
+	q := `
+	update stores
+	set business_name = $1, email = $2, phone = $3,
+		address = $4, suburb = $5, city = $6,
+		modified_at = CURRENT_TIMESTAMP
+	where uuid = $7
+	`
+
+	_, err := db.Exec(q, store.BusinessName, store.Email, store.Phone,
+		store.Address, store.Suburb, store.City, store.UUID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeleteStore(uuid string, db *sql.DB) error {
+	q := `
+	delete from stores where uuid = ?;
+	`
+	_, err := db.Exec(q, uuid)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

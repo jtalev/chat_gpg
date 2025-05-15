@@ -90,7 +90,16 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/admin/serve-purchase-order-history", a.AuthorizeAdmin(h.ServePurchaseOrderHistory()))
 	mux.Handle("/admin/serve-add-item-modal", a.AuthorizeAdmin(h.ServeAddItemModal()))
 	mux.Handle("/admin/serve-add-store-modal", a.AuthorizeAdmin(h.ServeAddStoreModal()))
+	mux.Handle("/admin/serve-put-item-modal", a.AuthorizeAdmin(h.ServePutItemModal()))
+	mux.Handle("/admin/serve-put-store-modal", a.AuthorizeAdmin(h.ServePutStoreModal()))
+
 	mux.Handle("/admin/store/post", a.AuthorizeAdmin(h.PostStore()))
+	mux.Handle("/admin/store/put", a.AuthorizeAdmin(h.PutStore()))
+	mux.Handle("/admin/store/delete", a.AuthorizeAdmin(h.DeleteStore()))
+
+	mux.Handle("/admin/item-type/post", a.AuthorizeAdmin(h.PostItemType()))
+	mux.Handle("/admin/item-type/put", a.AuthorizeAdmin(h.PutItemType()))
+	mux.Handle("/admin/item-type/delete", a.AuthorizeAdmin(h.DeleteItemType()))
 
 	mux.Handle("/admin/safety/serve-incident-report-content", a.AuthorizeAdmin(h.AdminServeIncidentReportContent()))
 
@@ -114,9 +123,10 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 
 	// purchase order
 	mux.Handle("/purchase-order/serve-item-row", a.AuthorizeUser(h.ServeItemRow()))
-	mux.Handle("/purchase-order/post", a.AuthorizeUser(h.PostPurchaseOrder()))
-	mux.Handle("/purchase-order/item/post", a.AuthorizeAdmin(h.PostItem()))
 	mux.Handle("/purchase-order/serve-purchase-order-employee-history", a.AuthorizeUser(h.ServeEmployeePOHistory()))
 	mux.Handle("/purchase-order/serve-form", a.AuthorizeUser(h.ServePurchaseOrderForm()))
 	mux.Handle("/purchase-order/serve-purchase-order", a.AuthorizeUser(h.ServePurchaseOrder()))
+
+	mux.Handle("/purchase-order/post", a.AuthorizeUser(h.PostPurchaseOrder()))
+	mux.Handle("/purchase-order/delete", a.AuthorizeUser(h.DeletePurchaseOrder()))
 }
