@@ -78,11 +78,14 @@ func run(
 	defer logger.Sync()
 	db := domain.InitDb(rootPath, sugar)
 	store := newCookieStore()
+
 	h := handlers.Handler{
 		DB:     db,
 		Store:  store,
 		Logger: sugar,
 	}
+	h.RegisterServices()
+
 	a := infrastructure.Auth{
 		Db:     db,
 		Logger: sugar,

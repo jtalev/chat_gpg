@@ -6,7 +6,12 @@ import (
 
 	"github.com/jtalev/chat_gpg/domain/models"
 	"github.com/jtalev/chat_gpg/infrastructure/repository"
+	"github.com/jtalev/chat_gpg/internal/queue"
 )
+
+type LeaveService struct {
+	TaskProducer queue.Producer
+}
 
 type EmployeeLeaveHistory struct {
 	Pending  []domain.LeaveRequest

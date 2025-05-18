@@ -13,6 +13,7 @@ DROP TABLE IF EXISTS purchase_order;
 DROP TABLE IF EXISTS purchase_order_item;
 DROP TABLE IF EXISTS item_types;
 DROP TABLE IF EXISTS stores;
+DROP TABLE IF EXISTS tasks;
 CREATE TABLE employee (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     employee_id TEXT NOT NULL UNIQUE,
@@ -410,6 +411,17 @@ CREATE TABLE stores(
     city TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     modified_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+DROP TABLE IF EXISTS tasks;
+CREATE TABLE tasks(
+    uuid TEXT PRIMARY KEY,
+    type TEXT NOT NULL,
+    payload TEXT NOT NULL,
+    status TEXT NOT NULL,
+    retries INTEGER DEFAULT 0,
+    max_retries INTEGET DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 DELETE FROM sqlite_sequence;

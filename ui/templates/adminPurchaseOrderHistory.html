@@ -26,7 +26,14 @@
 			<div class="admin-po-actions-container">
 				<button 
 				class="admin-po-actions-btn"
-				onclick="toggleAdminPurchaseOrderModal()">
+				onclick="toggleAdminPurchaseOrderModal()"
+				hx-get="/purchase-order/serve-purchase-order"
+				hx-trigger="click"
+				hx-swap=innerHTML
+				hx-target="#admin-po-modal-container"
+				hx-vals='{
+					"uuid": "{{ .UUID }}"
+				}'>
 					<img class="admin-po-view-img" src="../static/img/view.svg">
 				</button>
 				<button 

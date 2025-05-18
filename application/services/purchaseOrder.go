@@ -238,7 +238,7 @@ func (o *PurchaseOrder) PostPurchaseOrder(db *sql.DB) (domain.PurchaseOrderError
 	// send email to store
 	e := EmailSender{
 		SenderName:       "admin",
-		SenderEmail:      "j.talev@outlook.com",
+		SenderEmail:      "admin@geelongpaintgroup.com.au",
 		RecipientName:    "Josh Talev",
 		RecipientEmail:   "j.talev@outlook.com",
 		Subject:          "test",

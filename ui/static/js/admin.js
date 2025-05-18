@@ -202,3 +202,8 @@ document.body.addEventListener("htmx:afterSwap", function(event) {
         });
     }
 })
+
+function toggleModal() {
+    const modal = document.querySelector("#admin-po-modal-container")
+    modal.style.display = modal.style.display === "flex" ? "none" : "flex"
+}

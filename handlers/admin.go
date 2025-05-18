@@ -445,7 +445,6 @@ func (h *Handler) ServeItemTypes() http.Handler {
 				http.Error(w, "error getting item types, internal server error", http.StatusInternalServerError)
 				return
 			}
-			log.Println(itemTypes)
 			err = h.ServeSingleTemplate(adminItemTypesPath, "adminItemTypes", itemTypes, w)
 			if err != nil {
 				return
@@ -506,7 +505,6 @@ func (h *Handler) ServeStores() http.Handler {
 				http.Error(w, "error getting stores, internal server error", http.StatusInternalServerError)
 				return
 			}
-			log.Println(stores)
 			err = h.ServeSingleTemplate(adminStoresPath, "adminStores", stores, w)
 			if err != nil {
 				return

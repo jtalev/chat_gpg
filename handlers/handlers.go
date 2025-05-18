@@ -15,9 +15,31 @@ import (
 	"github.com/jtalev/chat_gpg/application/services/safety"
 	domain "github.com/jtalev/chat_gpg/domain/models"
 	infrastructure "github.com/jtalev/chat_gpg/infrastructure/repository"
+	"github.com/jtalev/chat_gpg/internal/queue"
 
 	"go.uber.org/zap"
 )
+
+type Handler struct {
+	DB     *sql.DB
+	Store  *sessions.CookieStore
+	Logger *zap.SugaredLogger
+
+	LeaveService *application.LeaveService
+}
+
+func (h *Handler) RegisterServices() {
+	taskQueue := make(chan queue.Task, 100)
+
+	leaveService := application.LeaveService{
+		TaskProducer: &queue.TaskProducer{
+			Db:    h.DB,
+			Queue: taskQueue,
+		},
+	}
+
+	h.LeaveService = &leaveService
+}
 
 const (
 	layoutPath                     = "../ui/layouts/layout.html"
@@ -203,12 +225,6 @@ func executePartialTemplate(filepath string, name string, data interface{}, w ht
 		return err
 	}
 	return nil
-}
-
-type Handler struct {
-	DB     *sql.DB
-	Store  *sessions.CookieStore
-	Logger *zap.SugaredLogger
 }
 
 type HtmlServer interface {
