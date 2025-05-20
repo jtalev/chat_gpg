@@ -6,41 +6,47 @@ import (
 	"log"
 )
 
-func StartWorker(ctx context.Context, taskQueue chan Task, db *sql.DB) error {
+type Worker struct {
+	ctx context.Context
+	db  *sql.DB
+}
+
+func InitWorker(ctx context.Context, db *sql.DB) Worker {
+	return Worker{
+		ctx: ctx,
+		db:  db,
+	}
+}
+
+func (w *Worker) StartWorkerLoop(queue chan Task) {
+	go func() {
+		err := w.StartWorker(queue)
+		if err != nil {
+			log.Printf("worker stopped running: %v", err)
+			go w.StartWorker(queue)
+		}
+	}()
+}
+
+func (w *Worker) StartWorker(queue chan Task) error {
 	for {
 		select {
-		case <-ctx.Done():
+		case <-w.ctx.Done():
 			log.Println("worker shutting down")
 			return nil
-		case task := <-taskQueue:
-			if task.Status == "failed" || task.Status == "complete" {
+		case task := <-queue:
+			// if task.type = one_time
+			handler, ok := HandlerRegistry[task.Handler]
+			if !ok {
+				log.Println("handler required for this task not supported")
 				continue
 			}
-			payload := task.Payload
-			handler := HandlerRegistry[task.Type]
-			err := handler(payload)
+			log.Println("worker running")
+			// if task.Type == scheduled
+			// pass task to scheduler
+			err := handler.ProcessTask(task, queue, w.db)
 			if err != nil {
-				p := TaskProducer{
-					Db:    db,
-					Queue: taskQueue,
-				}
-				task.Retries++
-				if task.Retries > task.MaxRetries {
-					task.Status = "failed"
-					err = UpdateTask(task, db)
-					if err != nil {
-						return err
-					}
-				} else {
-					err = p.Retry(task)
-					if err != nil {
-						return err
-					}
-				}
-			}
-			task.Status = "complete"
-			err = UpdateTask(task, db)
-			if err != nil {
+				log.Printf("error processing task: %v", err)
 				return err
 			}
 		}

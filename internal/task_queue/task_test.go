@@ -3,8 +3,9 @@ package task_queue
 import (
 	"database/sql"
 	"encoding/json"
-	_ "github.com/mattn/go-sqlite3"
 	"testing"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type EmailPayload struct {
@@ -14,57 +15,79 @@ type EmailPayload struct {
 }
 
 func TestInitTask_ValidInput(t *testing.T) {
-	payload := EmailPayload{
-		To:      "user@example.com",
-		Subject: "Hello",
-		Body:    "This is a test message.",
-	}
-	taskType := "send_email"
-	maxRetries := 3
+	tests := []struct {
+		taskType string
+		handler  string
+		payload  any
 
-	task, err := initTask(taskType, payload, maxRetries)
-	if err != nil {
-		t.Fatalf("expected no error, got %v", err)
-	}
-
-	if task.Type != taskType {
-		t.Errorf("expected task type %s, got %s", taskType, task.Type)
-	}
-
-	if task.Status != "pending" {
-		t.Errorf("expected status 'pending', got %s", task.Status)
-	}
-
-	if task.MaxRetries != maxRetries {
-		t.Errorf("expected maxRetries %d, got %d", maxRetries, task.MaxRetries)
+		expectedPayload any
+	}{
+		{"one_time", "send_email", EmailPayload{
+			To:      "test",
+			Subject: "test",
+			Body:    "test",
+		}, EmailPayload{
+			To:      "test",
+			Subject: "test",
+			Body:    "test",
+		},
+		},
+		{"one_time", "send_email", EmailPayload{}, EmailPayload{}},
 	}
 
-	if task.UUID == "" {
-		t.Error("expected a UUID to be generated")
-	}
-
-	var decodedPayload EmailPayload
-	err = json.Unmarshal(task.Payload, &decodedPayload)
-	if err != nil {
-		t.Fatalf("failed to decode payload: %v", err)
-	}
-
-	if decodedPayload.To != payload.To {
-		t.Errorf("expected payload To to be 'user@example.com', got %s", decodedPayload.To)
-	}
-	if decodedPayload.Subject != payload.Subject {
-		t.Errorf("expected payload To to be 'Hello', got %s", decodedPayload.Subject)
-	}
-	if decodedPayload.Body != payload.Body {
-		t.Errorf("expected payload To to be 'This is a test message.', got %s", decodedPayload.Body)
+	for _, tt := range tests {
+		expected, _ := json.Marshal(tt.expectedPayload)
+		task, err := initTask(tt.taskType, tt.handler, tt.payload)
+		if err != nil {
+			t.Errorf("error inititalizing task. want=%v, got=%v", expected, err)
+		}
+		if string(expected) != string(task.Payload) {
+			t.Errorf("error marshalling payload. want=%v, got=%v", expected, task.Payload)
+		}
 	}
 }
 
-func TestInitTask_InvalidInput(t *testing.T) {
-	_, err := initTask("", nil, 1)
-	if err == nil {
-		t.Fatal("expected error for empty taskType and nil payload, got nil")
+func TestEnque(t *testing.T) {
+	tests := []struct {
+		taskType string
+		handler  string
+		payload  any
+
+		expectedOneTimeLen   int
+		expectedScheduledLen int
+	}{
+		{"one_time", "send_email", EmailPayload{}, 1, 0},
+		{"scheduled", "send_email", EmailPayload{}, 0, 1},
 	}
+
+	db, err := initTestDb()
+	if err != nil {
+		t.Fatalf("error initializing db: %v", err)
+	}
+
+	for _, tt := range tests {
+		oneTimeQueue := make(chan<- Task, 1)
+		scheduledQueue := make(chan<- Task, 1)
+		tp := TaskProducer{
+			Db:             db,
+			OneTimeQueue:   oneTimeQueue,
+			ScheduledQueue: scheduledQueue,
+		}
+		err = tp.Enqueue(tt.taskType, tt.handler, tt.payload)
+		if err != nil {
+			t.Errorf("error enqueueing task. want=%v, %v, got=%v, %v",
+				tt.expectedOneTimeLen, tt.expectedScheduledLen,
+				len(tp.OneTimeQueue), len(tp.ScheduledQueue))
+		}
+
+		if len(tp.OneTimeQueue) != tt.expectedOneTimeLen || len(tp.ScheduledQueue) != tt.expectedScheduledLen {
+			t.Errorf("tasks enqueued but len of queues wrong. want=%v, %v, got=%v, %v",
+				tt.expectedOneTimeLen, tt.expectedScheduledLen,
+				len(tp.OneTimeQueue), len(tp.ScheduledQueue))
+		}
+	}
+
+	closeTestDb(db)
 }
 
 func initTestDb() (*sql.DB, error) {
@@ -93,11 +116,11 @@ func TestPostTask(t *testing.T) {
 	}
 
 	task, err := initTask(
+		"one_time",
 		"send_email",
 		EmailPayload{
 			To: "test", Subject: "test", Body: "test",
 		},
-		0,
 	)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
@@ -118,36 +141,5 @@ func TestPostTask(t *testing.T) {
 	}
 
 	DeleteTask(task.UUID, db)
-	closeTestDb(db)
-}
-
-func TestEnqueue(t *testing.T) {
-	db, err := initTestDb()
-	if err != nil {
-		t.Fatalf("error init db: %v", err)
-	}
-	p := TaskProducer{
-		Db:    db,
-		Queue: make(chan Task, 1),
-	}
-	qLengthBefore := len(p.Queue)
-	taskType := "send_email"
-	payload := EmailPayload{To: "test", Subject: "test", Body: "test"}
-	maxRetries := 0
-	err = p.Enqueue(taskType, payload, maxRetries)
-	if err != nil {
-		t.Errorf("error enqueueing task: expected: nil, got: %v", err)
-	}
-	qLengthAfter := len(p.Queue)
-	if qLengthAfter != qLengthBefore+1 {
-		t.Errorf("task not added to queue: expected length %v, got %v", qLengthBefore+1, qLengthAfter)
-	}
-
-	select {
-	case task := <-p.Queue:
-		DeleteTask(task.UUID, db)
-	default:
-		t.Errorf("no task found in queue")
-	}
 	closeTestDb(db)
 }

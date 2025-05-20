@@ -2,8 +2,11 @@ package task_queue
 
 import (
 	"database/sql"
+	"encoding/json"
 	"log"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type Task struct {
@@ -15,6 +18,24 @@ type Task struct {
 	Retries    int       `json:"retries"`
 	MaxRetries int       `json:"max_retries"`
 	CreatedAt  time.Time `json:"created_at"`
+}
+
+func initTask(taskType, handler string, payload any) (Task, error) {
+	var task Task
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return task, err
+	}
+	task = Task{
+		UUID:       uuid.NewString(),
+		Type:       taskType,
+		Handler:    handler,
+		Payload:    data,
+		Retries:    0,
+		MaxRetries: 3,
+	}
+
+	return task, nil
 }
 
 func GetTasks(db *sql.DB) ([]Task, error) {
@@ -35,6 +56,7 @@ func GetTasks(db *sql.DB) ([]Task, error) {
 		if err := rows.Scan(
 			&t.UUID,
 			&t.Type,
+			&t.Handler,
 			&t.Payload,
 			&t.Status,
 			&t.Retries,
@@ -51,10 +73,10 @@ func GetTasks(db *sql.DB) ([]Task, error) {
 
 func PostTask(task Task, db *sql.DB) error {
 	q := `
-	insert into tasks (uuid, type, payload, status, retries, max_retries)
-	values ($1, $2, $3, $4, $5, $6)
+	insert into tasks (uuid, type, handler, payload, status, retries, max_retries)
+	values ($1, $2, $3, $4, $5, $6, $7);
 	`
-	_, err := db.Exec(q, task.UUID, task.Type, task.Payload, task.Status,
+	_, err := db.Exec(q, task.UUID, task.Type, task.Handler, task.Payload, task.Status,
 		task.Retries, task.MaxRetries)
 	if err != nil {
 		log.Printf("error posting task: %v", err)
@@ -64,6 +86,18 @@ func PostTask(task Task, db *sql.DB) error {
 }
 
 func UpdateTask(task Task, db *sql.DB) error {
+	q := `
+	update tasks 
+	set type = $1, handler = $2, payload = $3, status = $4,
+	retries = $5, max_retries = $6
+	where uuid = $7;
+	`
+	_, err := db.Exec(q, task.Type, task.Handler, task.Payload,
+		task.Status, task.Retries, task.MaxRetries, task.UUID)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

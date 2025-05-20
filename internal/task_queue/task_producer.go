@@ -2,11 +2,8 @@ package task_queue
 
 import (
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"log"
-
-	"github.com/google/uuid"
 )
 
 type TaskProducer struct {
@@ -26,6 +23,9 @@ func (t *TaskProducer) InitQueues() error {
 	for _, task := range tasks {
 		switch task.Type {
 		case "one_time":
+			if task.Status != "pending" {
+				continue
+			}
 			t.OneTimeQueue <- task
 		case "scheduled":
 			t.ScheduledQueue <- task
@@ -60,24 +60,6 @@ func (t *TaskProducer) Enqueue(taskType, handler string, payload any) error {
 	}
 
 	return nil
-}
-
-func initTask(taskType, handler string, payload any) (Task, error) {
-	var task Task
-	data, err := json.Marshal(payload)
-	if err != nil {
-		return task, err
-	}
-	task = Task{
-		UUID:       uuid.NewString(),
-		Type:       taskType,
-		Handler:    handler,
-		Payload:    data,
-		Retries:    0,
-		MaxRetries: 3,
-	}
-
-	return task, nil
 }
 
 type EnqueueStrategy interface {

@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/gorilla/sessions"
 	application "github.com/jtalev/chat_gpg/application/services"
@@ -29,31 +30,18 @@ type Handler struct {
 	LeaveService *application.LeaveService
 }
 
-func startWorkerLoop(taskQueue chan task_queue.Task, db *sql.DB) {
-	go func() {
-		err := task_queue.StartWorker(context.Background(), taskQueue, db)
-		if err != nil {
-			log.Printf("worker stopped running: %v", err)
-			go task_queue.StartWorker(context.Background(), taskQueue, db)
-		}
-	}()
-}
-
 func (h *Handler) RegisterServices() {
 	oneTimeQueue := make(chan task_queue.Task, 30)
 	for i := 0; i < 4; i++ {
-		go startWorkerLoop(oneTimeQueue, h.DB)
+		w := task_queue.InitWorker(context.Background(), h.DB)
+		go w.StartWorkerLoop(oneTimeQueue)
 	}
 
 	scheduledQueue := make(chan task_queue.Task, 10)
 	for i := 0; i < 2; i++ {
-		go startWorkerLoop(scheduledQueue, h.DB)
+		w := task_queue.InitWorker(context.Background(), h.DB)
+		go w.StartWorkerLoop(scheduledQueue)
 	}
-
-	// p := queue.TaskProducer{
-	// 	h.DB,
-	// 	taskQueue,
-	// }
 
 	tp := task_queue.TaskProducer{
 		Db:             h.DB,
@@ -64,6 +52,9 @@ func (h *Handler) RegisterServices() {
 	if err != nil {
 		log.Printf("failed to initialize persisted tasks: %v", err)
 	}
+	tp.Enqueue("scheduled", "db_backup", task_queue.DbBackupPayload{
+		NextRunAt: time.Date(2025, time.May, 20, 23, 46, 0, 0, time.Local),
+	})
 
 	leaveService := application.LeaveService{
 		TaskProducer: &tp,

@@ -2,8 +2,8 @@ package task_queue
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -16,8 +16,70 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
+type DbBackupPayload struct {
+	NextRunAt time.Time `json:"next_run_at"`
+}
+
+func CreateDbBackupPayload(nextRunAt time.Time) DbBackupPayload {
+	return DbBackupPayload{
+		NextRunAt: nextRunAt,
+	}
+}
+
+type DbBackupHandler struct {
+}
+
+func init() {
+	RegisterTaskHandler("db_backup", &DbBackupHandler{})
+}
+
+func unmarshalDbBackupPayload(payload []byte) (DbBackupPayload, error) {
+	var d DbBackupPayload
+	err := json.Unmarshal(payload, &d)
+	if err != nil {
+		return DbBackupPayload{}, err
+	}
+	return d, nil
+}
+
+func (d *DbBackupHandler) ProcessTask(task Task, queue chan Task, db *sql.DB) error {
+	p, err := unmarshalDbBackupPayload(task.Payload)
+	if err != nil {
+		return err
+	}
+
+	if p.NextRunAt.After(time.Now()) {
+		queue <- task
+		return nil
+	}
+
+	err = backupDb()
+	if err != nil {
+		return err
+	}
+
+	//TODO: function stopping here somewhere, log statment not being called, worker stops, UpdateTask not happening
+	p.NextRunAt = p.NextRunAt.AddDate(0, 0, 7)
+	log.Println(p.NextRunAt)
+	payload, err := json.Marshal(p)
+	if err != nil {
+		return err
+	}
+	task.Payload = payload
+
+	err = UpdateTask(task, db)
+	if err != nil {
+		return err
+	}
+	queue <- task
+
+	log.Println("db backed up successfully")
+
+	return nil
+}
+
 const (
-	sourceDb   = "../chat_gpg/infrastructure/db/prod.db"
+	sourceDb   = "../../chat_gpg/infrastructure/db/dev.db"
 	backupDir  = "backups"
 	bucketName = "db-backup-chat-gpg"
 	region     = "ap-southeast-2"
@@ -26,8 +88,6 @@ const (
 type backup struct {
 	BackupFile     *os.File
 	BackupFileName string
-
-	NextRunAt time.Time
 }
 
 func (b *backup) createBackup() error {
@@ -99,26 +159,18 @@ func (b *backup) uploadToS3() error {
 	return nil
 }
 
-func BackupDb(data []byte) error {
+func backupDb() error {
 	var b backup
-	err := json.Unmarshal(data, &b)
+
+	err := b.createBackup()
 	if err != nil {
 		return err
 	}
-	if b.NextRunAt.After(time.Now()) {
-		return errors.New("task not scheduled to run yet")
-	}
-	err = b.createBackup()
-	if err != nil {
-		return err
-	}
+
 	err = b.uploadToS3()
 	if err != nil {
 		return err
 	}
-	return nil
-}
 
-func init() {
-	HandlerRegistry["backup_db"] = BackupDb
+	return nil
 }

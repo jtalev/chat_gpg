@@ -1,7 +1,13 @@
 package task_queue
 
-var HandlerRegistry = map[string]func([]byte) error{}
+import "database/sql"
 
-func Register(taskType string, handler func([]byte) error) {
+type HandlerStrategy interface {
+	ProcessTask(task Task, queue chan Task, db *sql.DB) error
+}
+
+var HandlerRegistry = map[string]HandlerStrategy{}
+
+func RegisterTaskHandler(taskType string, handler HandlerStrategy) {
 	HandlerRegistry[taskType] = handler
 }
