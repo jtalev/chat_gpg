@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"errors"
@@ -15,7 +16,7 @@ import (
 	"github.com/jtalev/chat_gpg/application/services/safety"
 	domain "github.com/jtalev/chat_gpg/domain/models"
 	infrastructure "github.com/jtalev/chat_gpg/infrastructure/repository"
-	"github.com/jtalev/chat_gpg/internal/queue"
+	"github.com/jtalev/chat_gpg/internal/task_queue"
 
 	"go.uber.org/zap"
 )
@@ -28,14 +29,44 @@ type Handler struct {
 	LeaveService *application.LeaveService
 }
 
+func startWorkerLoop(taskQueue chan task_queue.Task, db *sql.DB) {
+	go func() {
+		err := task_queue.StartWorker(context.Background(), taskQueue, db)
+		if err != nil {
+			log.Printf("worker stopped running: %v", err)
+			go task_queue.StartWorker(context.Background(), taskQueue, db)
+		}
+	}()
+}
+
 func (h *Handler) RegisterServices() {
-	taskQueue := make(chan queue.Task, 100)
+	oneTimeQueue := make(chan task_queue.Task, 30)
+	for i := 0; i < 4; i++ {
+		go startWorkerLoop(oneTimeQueue, h.DB)
+	}
+
+	scheduledQueue := make(chan task_queue.Task, 10)
+	for i := 0; i < 2; i++ {
+		go startWorkerLoop(scheduledQueue, h.DB)
+	}
+
+	// p := queue.TaskProducer{
+	// 	h.DB,
+	// 	taskQueue,
+	// }
+
+	tp := task_queue.TaskProducer{
+		Db:             h.DB,
+		OneTimeQueue:   oneTimeQueue,
+		ScheduledQueue: scheduledQueue,
+	}
+	err := tp.InitQueues()
+	if err != nil {
+		log.Printf("failed to initialize persisted tasks: %v", err)
+	}
 
 	leaveService := application.LeaveService{
-		TaskProducer: &queue.TaskProducer{
-			Db:    h.DB,
-			Queue: taskQueue,
-		},
+		TaskProducer: &tp,
 	}
 
 	h.LeaveService = &leaveService
