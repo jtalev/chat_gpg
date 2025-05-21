@@ -10,7 +10,6 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
-	"time"
 
 	"github.com/gorilla/sessions"
 	application "github.com/jtalev/chat_gpg/application/services"
@@ -27,10 +26,11 @@ type Handler struct {
 	Store  *sessions.CookieStore
 	Logger *zap.SugaredLogger
 
+	TaskProducer *task_queue.TaskProducer
 	LeaveService *application.LeaveService
 }
 
-func (h *Handler) RegisterServices() {
+func (h *Handler) StartWorkers() error {
 	oneTimeQueue := make(chan task_queue.Task, 30)
 	for i := 0; i < 4; i++ {
 		w := task_queue.InitWorker(context.Background(), h.DB)
@@ -48,16 +48,25 @@ func (h *Handler) RegisterServices() {
 		OneTimeQueue:   oneTimeQueue,
 		ScheduledQueue: scheduledQueue,
 	}
-	err := tp.InitQueues()
+
+	err := tp.InitDbBackupTask()
+	if err != nil {
+		return err
+	}
+
+	err = tp.InitQueues()
 	if err != nil {
 		log.Printf("failed to initialize persisted tasks: %v", err)
+		return err
 	}
-	tp.Enqueue("scheduled", "db_backup", task_queue.DbBackupPayload{
-		NextRunAt: time.Date(2025, time.May, 20, 23, 46, 0, 0, time.Local),
-	})
 
+	h.TaskProducer = &tp
+	return nil
+}
+
+func (h *Handler) RegisterServices() {
 	leaveService := application.LeaveService{
-		TaskProducer: &tp,
+		TaskProducer: h.TaskProducer,
 	}
 
 	h.LeaveService = &leaveService

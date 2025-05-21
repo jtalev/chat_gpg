@@ -33,17 +33,9 @@ func init() {
 	RegisterTaskHandler("db_backup", &DbBackupHandler{})
 }
 
-func unmarshalDbBackupPayload(payload []byte) (DbBackupPayload, error) {
-	var d DbBackupPayload
-	err := json.Unmarshal(payload, &d)
-	if err != nil {
-		return DbBackupPayload{}, err
-	}
-	return d, nil
-}
-
 func (d *DbBackupHandler) ProcessTask(task Task, queue chan Task, db *sql.DB) error {
-	p, err := unmarshalDbBackupPayload(task.Payload)
+	var p DbBackupPayload
+	err := json.Unmarshal(task.Payload, &p)
 	if err != nil {
 		return err
 	}
@@ -58,9 +50,8 @@ func (d *DbBackupHandler) ProcessTask(task Task, queue chan Task, db *sql.DB) er
 		return err
 	}
 
-	//TODO: function stopping here somewhere, log statment not being called, worker stops, UpdateTask not happening
 	p.NextRunAt = p.NextRunAt.AddDate(0, 0, 7)
-	log.Println(p.NextRunAt)
+
 	payload, err := json.Marshal(p)
 	if err != nil {
 		return err

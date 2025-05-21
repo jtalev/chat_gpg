@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"log"
+	"time"
 )
 
 type TaskProducer struct {
@@ -12,6 +13,31 @@ type TaskProducer struct {
 	ScheduledQueue chan<- Task
 
 	enqueueStrategy EnqueueStrategy
+}
+
+func (t *TaskProducer) InitDbBackupTask() error {
+	tasks, err := GetTasks(t.Db)
+	if err != nil {
+		return err
+	}
+
+	isDbBackupTask := false
+	for _, t := range tasks {
+		if t.Handler == "db_backup" {
+			isDbBackupTask = true
+		}
+	}
+
+	if !isDbBackupTask {
+		payload := CreateDbBackupPayload(time.Now())
+		err = t.Enqueue("scheduled", "db_backup", payload)
+		if err != nil {
+			return err
+		}
+		log.Println("db_backup enqueued")
+	}
+
+	return nil
 }
 
 func (t *TaskProducer) InitQueues() error {

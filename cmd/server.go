@@ -20,31 +20,6 @@ import (
 	"go.uber.org/zap"
 )
 
-func newCookieStore() *sessions.CookieStore {
-	var (
-		key = []byte(os.Getenv("SESSION_HMAC_KEY"))
-		// encryptionKey = []byte(os.Getenv("SESSION_ENC_KEY"))
-		store = sessions.NewCookieStore(key, nil)
-	)
-
-	env := os.Getenv("ENV")
-	if env == "production" {
-		store.Options = &sessions.Options{
-			Secure:   false,
-			HttpOnly: true,
-			SameSite: http.SameSiteLaxMode,
-		}
-	} else if env == "development" {
-		store.Options = &sessions.Options{
-			Secure:   false,
-			HttpOnly: true,
-			SameSite: http.SameSiteLaxMode,
-		}
-	}
-
-	return store
-}
-
 func new_server(
 	ctx context.Context,
 	h *handlers.Handler,
@@ -66,16 +41,19 @@ func run(
 	if err != nil {
 		log.Fatalf("Error determinging root path: %v", err)
 	}
+
 	envPath := filepath.Join(rootPath, ".env")
 	if err := godotenv.Load(envPath); err != nil {
 		fmt.Printf("Error loading .env file: %v", err)
 	}
+
 	logger, err := zap.NewProduction()
 	if err != nil {
 		log.Fatal(err)
 	}
 	sugar := logger.Sugar()
 	defer logger.Sync()
+
 	db := domain.InitDb(rootPath, sugar)
 	store := newCookieStore()
 
@@ -83,6 +61,11 @@ func run(
 		DB:     db,
 		Store:  store,
 		Logger: sugar,
+	}
+
+	err = h.StartWorkers()
+	if err != nil {
+		return err
 	}
 	h.RegisterServices()
 
@@ -123,4 +106,29 @@ func run(
 	wg.Wait()
 	return nil
 
+}
+
+func newCookieStore() *sessions.CookieStore {
+	var (
+		key = []byte(os.Getenv("SESSION_HMAC_KEY"))
+		// encryptionKey = []byte(os.Getenv("SESSION_ENC_KEY"))
+		store = sessions.NewCookieStore(key, nil)
+	)
+
+	env := os.Getenv("ENV")
+	if env == "production" {
+		store.Options = &sessions.Options{
+			Secure:   false,
+			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode,
+		}
+	} else if env == "development" {
+		store.Options = &sessions.Options{
+			Secure:   false,
+			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode,
+		}
+	}
+
+	return store
 }
