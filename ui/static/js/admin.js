@@ -207,3 +207,40 @@ function toggleModal() {
     const modal = document.querySelector("#admin-po-modal-container")
     modal.style.display = modal.style.display === "flex" ? "none" : "flex"
 }
+
+document.addEventListener("htmx:afterSwap", function(event) {
+    const modalId = event.srcElement.children[0].id
+
+    if (modalId === "item-modal") {
+        fetch('/admin/serve-item-types-template')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(html => {
+            const container = document.querySelector('#admin-purchase-order-content')
+            container.innerHTML = html;
+        })
+        .catch(error => {
+          console.error('Error fetching item types template:', error);
+        });
+    } else if (modalId === "store-modal") {
+        fetch('/admin/serve-stores-template')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then(html => {
+            const container = document.querySelector('#admin-purchase-order-content')
+            container.innerHTML = html;
+        })
+        .catch(error => {
+          console.error('Error fetching item types template:', error);
+        });
+    }
+
+})

@@ -434,8 +434,6 @@ func (h *Handler) RenderPurchaseOrderTab() http.Handler {
 	)
 }
 
-var p = application.PurchaseOrder{}
-
 func (h *Handler) ServeItemTypes() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
@@ -561,7 +559,7 @@ func (h *Handler) ServePutStoreModal() http.Handler {
 func (h *Handler) ServePurchaseOrderHistory() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			p.Reset()
+			p := application.PurchaseOrder{}
 			purchaseOrders, err := p.GetPurchaseOrders(h.DB)
 			if err != nil {
 				log.Printf("error getting purchase orders: %v", err)

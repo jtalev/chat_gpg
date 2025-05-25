@@ -130,16 +130,24 @@ type ItemTypeErrors struct {
 	SuccessMsg   string
 }
 
-func (i *ItemType) Validate() ItemTypeErrors {
+func (i *ItemType) Validate(existingTypes []ItemType) ItemTypeErrors {
 	errors := &ItemTypeErrors{IsSuccessful: true}
-	i.validateType(errors).validateDescription(errors)
+	i.validateType(errors, existingTypes).validateDescription(errors)
 	return *errors
 }
 
-func (i *ItemType) validateType(errors *ItemTypeErrors) *ItemType {
+func (i *ItemType) validateType(errors *ItemTypeErrors, existingTypes []ItemType) *ItemType {
 	if i.Type == "" {
 		errors.TypeErr = "*required"
 		errors.IsSuccessful = false
+		return i
+	}
+	for _, t := range existingTypes {
+		if t.Type == i.Type {
+			errors.TypeErr = "*Item type already exists"
+			errors.IsSuccessful = false
+			return i
+		}
 	}
 	return i
 }

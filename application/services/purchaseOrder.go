@@ -10,6 +10,7 @@ import (
 	domain "github.com/jtalev/chat_gpg/domain/models"
 	models "github.com/jtalev/chat_gpg/domain/models"
 	repo "github.com/jtalev/chat_gpg/infrastructure/repository"
+	"github.com/jtalev/chat_gpg/internal/task_queue"
 )
 
 type Store struct {
@@ -60,30 +61,28 @@ type PurchaseOrder struct {
 	Jobs   []models.Job
 
 	Errors domain.PurchaseOrderErrors
+
+	TaskProducer *task_queue.TaskProducer
 }
 
-func (o *PurchaseOrder) Reset() {
-	o = &PurchaseOrder{}
-}
-
-func (o *PurchaseOrder) mapPurchaseOrder() domain.PurchaseOrder {
-	o.UUID = uuid.New().String()
+func (p *PurchaseOrder) mapPurchaseOrder() domain.PurchaseOrder {
+	p.UUID = uuid.New().String()
 	return domain.PurchaseOrder{
-		UUID:       o.UUID,
-		EmployeeId: o.EmployeeId,
-		StoreId:    o.StoreId,
-		JobId:      o.JobId,
-		Date:       o.Date,
+		UUID:       p.UUID,
+		EmployeeId: p.EmployeeId,
+		StoreId:    p.StoreId,
+		JobId:      p.JobId,
+		Date:       p.Date,
 	}
 }
 
-func (o *PurchaseOrder) mapPurchaseOrderItems() []domain.PurchaseOrderItem {
-	items := make([]domain.PurchaseOrderItem, len(o.PurchaseOrderItems))
-	for i, item := range o.PurchaseOrderItems {
+func (p *PurchaseOrder) mapPurchaseOrderItems() []domain.PurchaseOrderItem {
+	items := make([]domain.PurchaseOrderItem, len(p.PurchaseOrderItems))
+	for i, item := range p.PurchaseOrderItems {
 		item.UUID = uuid.New().String()
 		items[i] = domain.PurchaseOrderItem{
 			UUID:            item.UUID,
-			PurchaseOrderId: o.UUID,
+			PurchaseOrderId: p.UUID,
 			ItemName:        item.ItemName,
 			ItemTypeId:      item.ItemTypeId,
 			Quantity:        item.Quantity,
@@ -108,7 +107,7 @@ func GetItemTypes(db *sql.DB) ([]models.ItemType, error) {
 	return itemTypes, nil
 }
 
-func (o *PurchaseOrder) PopulateItemTypes(db *sql.DB) error {
+func (p *PurchaseOrder) PopulateItemTypes(db *sql.DB) error {
 	itemTypeList, err := GetItemTypes(db)
 	if err != nil {
 		return err
@@ -119,13 +118,13 @@ func (o *PurchaseOrder) PopulateItemTypes(db *sql.DB) error {
 		outItemTypes[i].Type = itemType.Type
 		outItemTypes[i].Description = itemType.Description
 	}
-	if len(o.PurchaseOrderItems) == 0 {
-		o.PurchaseOrderItems = append(o.PurchaseOrderItems, PurchaseOrderItem{
+	if len(p.PurchaseOrderItems) == 0 {
+		p.PurchaseOrderItems = append(p.PurchaseOrderItems, PurchaseOrderItem{
 			ItemTypes: outItemTypes,
 		})
 		return nil
 	}
-	for _, item := range o.PurchaseOrderItems {
+	for _, item := range p.PurchaseOrderItems {
 		item.ItemTypes = outItemTypes
 	}
 	return nil
@@ -140,7 +139,7 @@ func GetStores(db *sql.DB) ([]models.Store, error) {
 	return storeList, nil
 }
 
-func (o *PurchaseOrder) PopulateStores(db *sql.DB) error {
+func (p *PurchaseOrder) PopulateStores(db *sql.DB) error {
 	storeList, err := GetStores(db)
 	if err != nil {
 		return err
@@ -151,18 +150,18 @@ func (o *PurchaseOrder) PopulateStores(db *sql.DB) error {
 		outStores[i].BusinessName = store.BusinessName
 		outStores[i].Address = store.Address
 	}
-	o.Stores = outStores
+	p.Stores = outStores
 	return nil
 }
 
-func (o *PurchaseOrder) initRequiredViewData(db *sql.DB) error {
+func (p *PurchaseOrder) initRequiredViewData(db *sql.DB) error {
 	jobs, err := getJobs(db)
 	if err != nil {
 		return err
 	}
-	o.Jobs = jobs
-	o.PopulateItemTypes(db)
-	o.PopulateStores(db)
+	p.Jobs = jobs
+	p.PopulateItemTypes(db)
+	p.PopulateStores(db)
 	return nil
 }
 
@@ -210,14 +209,14 @@ func parallelPostPurchaseOrder(purchaseOrder domain.PurchaseOrder, purchaseOrder
 	return errChan
 }
 
-func (o *PurchaseOrder) PostPurchaseOrder(db *sql.DB) (domain.PurchaseOrderErrors, error) {
-	purchaseOrder := o.mapPurchaseOrder()
-	purchaseOrderItems := o.mapPurchaseOrderItems()
+func (p *PurchaseOrder) PostPurchaseOrder(db *sql.DB) (domain.PurchaseOrderErrors, error) {
+	purchaseOrder := p.mapPurchaseOrder()
+	purchaseOrderItems := p.mapPurchaseOrderItems()
 
 	purchaseOrderErrors, _ := validatePurchaseOrderAndItems(purchaseOrder, purchaseOrderItems)
 
 	// the data initialised here is required to allow view features
-	err := o.initRequiredViewData(db)
+	err := p.initRequiredViewData(db)
 	if err != nil {
 		return purchaseOrderErrors, err
 	}
@@ -235,21 +234,16 @@ func (o *PurchaseOrder) PostPurchaseOrder(db *sql.DB) (domain.PurchaseOrderError
 		}
 	}
 
-	// send email to store
-	e := EmailSender{
-		SenderName:       "admin",
-		SenderEmail:      "admin@geelongpaintgroup.com.au",
-		RecipientName:    "Josh Talev",
-		RecipientEmail:   "j.talev@outlook.com",
-		Subject:          "test",
-		PlainTextContent: "hello from chat_gpg",
-	}
-	err = e.SendEmail()
-	if err != nil {
-		purchaseOrderErrors.IsSuccessful = false
-		purchaseOrderErrors.SuccessMsg = err.Error()
-		return purchaseOrderErrors, err
-	}
+	e := task_queue.CreateEmailPayload(
+		"admin",
+		"admin@geelongpaintgroup.com.au",
+		"Josh Talev",
+		"j.talev@outlook.com",
+		"test",
+		"hello from chat_gpg",
+		"")
+
+	p.TaskProducer.Enqueue("one_time", "send_email", e)
 
 	purchaseOrderErrors.SuccessMsg = "Purchase order submitted successfully."
 	return purchaseOrderErrors, nil
@@ -314,7 +308,7 @@ func mapUUIDToOrder(inOrders []models.PurchaseOrder, outOrders []PurchaseOrder, 
 	}
 }
 
-func (o *PurchaseOrder) FetchEmployeeHistory(employeeId string, db *sql.DB) ([]PurchaseOrder, error) {
+func (p *PurchaseOrder) FetchEmployeeHistory(employeeId string, db *sql.DB) ([]PurchaseOrder, error) {
 	purchaseOrders, err := repo.GetPurchaseOrders(db)
 	if err != nil {
 		return nil, err
@@ -328,7 +322,7 @@ func (o *PurchaseOrder) FetchEmployeeHistory(employeeId string, db *sql.DB) ([]P
 	return outOrders, nil
 }
 
-func (o *PurchaseOrder) GetPurchaseOrders(db *sql.DB) ([]PurchaseOrder, error) {
+func (p *PurchaseOrder) GetPurchaseOrders(db *sql.DB) ([]PurchaseOrder, error) {
 	purchaseOrders, err := repo.GetPurchaseOrders(db)
 	if err != nil {
 		return nil, err
@@ -405,11 +399,15 @@ func PostItemType(itemType ItemType, db *sql.DB) (ItemType, error) {
 	itemType.ModalTitle = "Add Item Type"
 	uuid := uuid.New().String()
 	modelItemType := mapItemType(itemType, uuid)
-	itemType.Errors = modelItemType.Validate()
+	existingTypes, err := repo.GetItemTypes(db)
+	if err != nil {
+		return itemType, err
+	}
+	itemType.Errors = modelItemType.Validate(existingTypes)
 	if !itemType.Errors.IsSuccessful {
 		return itemType, nil
 	}
-	err := repo.PostItemType(modelItemType, db)
+	err = repo.PostItemType(modelItemType, db)
 	if err != nil {
 		return ItemType{}, err
 	}
@@ -420,12 +418,16 @@ func PostItemType(itemType ItemType, db *sql.DB) (ItemType, error) {
 func PutItemType(itemType ItemType, db *sql.DB) (ItemType, error) {
 	itemType.ModalTitle = "Update Item Type"
 	modelItemType := mapItemType(itemType, itemType.UUID)
-	errors := modelItemType.Validate()
+	existingTypes, err := repo.GetItemTypes(db)
+	if err != nil {
+		return itemType, err
+	}
+	errors := modelItemType.Validate(existingTypes)
 	if !errors.IsSuccessful {
 		itemType.Errors = errors
 		return itemType, nil
 	}
-	err := repo.PutItemType(modelItemType, db)
+	err = repo.PutItemType(modelItemType, db)
 	if err != nil {
 		return itemType, err
 	}

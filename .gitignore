@@ -1,5 +1,10 @@
 .env
 gpg-dev-keypair.pem
+gpg_test_keypair.pem
 deploy
 deploy.sh
 infrastructure/db
+accts.txt
+deploy_test.sh
+leaveReqTests.sh
+cmds.txt

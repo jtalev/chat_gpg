@@ -10,12 +10,10 @@ import (
 	application "github.com/jtalev/chat_gpg/application/services"
 )
 
-var order = application.PurchaseOrder{}
-
 func (h *Handler) ServePurchaseOrderView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			order.Reset()
+			order := application.PurchaseOrder{}
 			employeeId, err := getEmployeeId(w, r)
 			if err != nil {
 				log.Printf("error fetching employee id: %v", err)
@@ -49,7 +47,7 @@ func (h *Handler) ServePurchaseOrderView() http.Handler {
 func (h *Handler) ServePurchaseOrderForm() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			order.Reset()
+			order := application.PurchaseOrder{}
 			employeeId, err := getEmployeeId(w, r)
 			if err != nil {
 				log.Printf("error fetching employee id: %v", err)
@@ -85,7 +83,7 @@ func (h *Handler) ServePurchaseOrderForm() http.Handler {
 func (h *Handler) ServeEmployeePOHistory() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			order.Reset()
+			order := application.PurchaseOrder{}
 			employeeId, err := getEmployeeId(w, r)
 			if err != nil {
 				log.Printf("error fetching employee ID: %v", err)
@@ -135,12 +133,14 @@ func (h *Handler) ServePurchaseOrder() http.Handler {
 func (h *Handler) ServeItemRow() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			order.Reset()
+			order := application.PurchaseOrder{}
+			log.Println(order)
 			order.PopulateItemTypes(h.DB)
 			item := application.PurchaseOrderItem{}
 			if len(order.PurchaseOrderItems) > 0 {
 				item.ItemTypes = order.PurchaseOrderItems[0].ItemTypes
 			}
+			// log.Println(item)
 			err := executePartialTemplate(purchaseOrderItemRowPath, "purchaseOrderItemRow", item, w)
 			if err != nil {
 				log.Printf("error executing purchaseOrderItemRow.html: %v", err)
@@ -154,7 +154,6 @@ func (h *Handler) ServeItemRow() http.Handler {
 func (h *Handler) PostPurchaseOrder() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			order.Reset()
 			body, err := io.ReadAll(r.Body)
 			if err != nil {
 				log.Printf("error reading request body: %v", err)
@@ -162,20 +161,20 @@ func (h *Handler) PostPurchaseOrder() http.Handler {
 				return
 			}
 
-			err = json.Unmarshal(body, &order)
+			err = json.Unmarshal(body, &h.PurchaseOrderService)
 			if err != nil {
 				log.Printf("error unmarshalling json: %v", err)
 				http.Error(w, "error unmarshalling json, bad request", http.StatusBadRequest)
 				return
 			}
 
-			purchaseOrderErrors, err := order.PostPurchaseOrder(h.DB)
+			purchaseOrderErrors, err := h.PurchaseOrderService.PostPurchaseOrder(h.DB)
 			if err != nil {
 				log.Printf("error posting purchase order: %v", err)
 				http.Error(w, "error posting purchase order, internal server error", http.StatusInternalServerError)
 				return
 			}
-			order.Errors = purchaseOrderErrors
+			h.PurchaseOrderService.Errors = purchaseOrderErrors
 
 			tmpl, err := template.ParseFiles(
 				purchaseOrderFormPath,
@@ -187,7 +186,7 @@ func (h *Handler) PostPurchaseOrder() http.Handler {
 				return
 			}
 
-			err = tmpl.ExecuteTemplate(w, "purchaseOrderForm", order)
+			err = tmpl.ExecuteTemplate(w, "purchaseOrderForm", h.PurchaseOrderService)
 			if err != nil {
 				log.Printf("error executing purchaseOrderForm.html: %v", err)
 				http.Error(w, "error executing purchaseOrderForm.html, internal server error", http.StatusInternalServerError)
@@ -200,7 +199,7 @@ func (h *Handler) PostPurchaseOrder() http.Handler {
 func (h *Handler) DeletePurchaseOrder() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			p.Reset()
+			p := application.PurchaseOrder{}
 			rVals, err := parseRequestValues([]string{"uuid"}, r)
 			if err != nil {
 				log.Printf("error parsing request values: %v", err)

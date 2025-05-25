@@ -26,8 +26,9 @@ type Handler struct {
 	Store  *sessions.CookieStore
 	Logger *zap.SugaredLogger
 
-	TaskProducer *task_queue.TaskProducer
-	LeaveService *application.LeaveService
+	TaskProducer         *task_queue.TaskProducer
+	LeaveService         *application.LeaveService
+	PurchaseOrderService *application.PurchaseOrder
 }
 
 func (h *Handler) StartWorkers() error {
@@ -69,7 +70,12 @@ func (h *Handler) RegisterServices() {
 		TaskProducer: h.TaskProducer,
 	}
 
+	purchaseOrderService := application.PurchaseOrder{
+		TaskProducer: h.TaskProducer,
+	}
+
 	h.LeaveService = &leaveService
+	h.PurchaseOrderService = &purchaseOrderService
 }
 
 const (
