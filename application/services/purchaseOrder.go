@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
 	"sync"
 
 	"github.com/google/uuid"
@@ -209,6 +210,67 @@ func parallelPostPurchaseOrder(purchaseOrder domain.PurchaseOrder, purchaseOrder
 	return errChan
 }
 
+func generateEmailBody(purchaseOrder models.PurchaseOrder, purchaseOrderItems []models.PurchaseOrderItem, db *sql.DB) (string, error) {
+	employee, err := repo.GetEmployeeByEmployeeId(purchaseOrder.EmployeeId, db)
+	if err != nil {
+		return "", err
+	}
+	store, err := repo.GetStoreByUuid(purchaseOrder.StoreId, db)
+	if err != nil {
+		return "", err
+	}
+	job, err := repo.GetJobById(purchaseOrder.JobId, db)
+	if err != nil {
+		return "", err
+	}
+	emailBody := fmt.Sprintf(
+		"Purchase Order - Geelong Paint Group\n"+
+			"Date: %s\n"+
+			"Store: %s\n"+
+			"Ordered By: %s %s\n"+
+			"Reference: %s\n"+
+			"\n"+
+			"Items:\n",
+		purchaseOrder.Date,
+		store.BusinessName,
+		employee.FirstName, employee.LastName,
+		job.Address,
+	)
+	for _, item := range purchaseOrderItems {
+		emailBody += fmt.Sprintf("%v x %s\n", item.Quantity, item.ItemName)
+	}
+	return emailBody, nil
+}
+
+func generateEmailPayload(purchaseOrder models.PurchaseOrder, purchaseOrderItems []models.PurchaseOrderItem, db *sql.DB) (task_queue.EmailHandler, error) {
+	e := task_queue.EmailHandler{}
+	store, err := repo.GetStoreByUuid(purchaseOrder.StoreId, db)
+	if err != nil {
+		return e, err
+	}
+	emailBody, err := generateEmailBody(purchaseOrder, purchaseOrderItems, db)
+	if err != nil {
+		return e, err
+	}
+	env := os.Getenv("ENV")
+	recipientEmail := ""
+	if env == "development" {
+		recipientEmail = "j.talev@outlook.com"
+	} else if env == "production" {
+		recipientEmail = store.Email
+	}
+	e = task_queue.CreateEmailPayload(
+		"Admin@GeelongPaintGroup",
+		"admin@geelongpaintgroup.com.au",
+		store.BusinessName,
+		recipientEmail,
+		"Purchase Order - Geelong Paint Group",
+		emailBody,
+		"",
+	)
+	return e, nil
+}
+
 func (p *PurchaseOrder) PostPurchaseOrder(db *sql.DB) (domain.PurchaseOrderErrors, error) {
 	purchaseOrder := p.mapPurchaseOrder()
 	purchaseOrderItems := p.mapPurchaseOrderItems()
@@ -234,14 +296,10 @@ func (p *PurchaseOrder) PostPurchaseOrder(db *sql.DB) (domain.PurchaseOrderError
 		}
 	}
 
-	e := task_queue.CreateEmailPayload(
-		"admin",
-		"admin@geelongpaintgroup.com.au",
-		"Josh Talev",
-		"j.talev@outlook.com",
-		"test",
-		"hello from chat_gpg",
-		"")
+	e, err := generateEmailPayload(purchaseOrder, purchaseOrderItems, db)
+	if err != nil {
+		return purchaseOrderErrors, err
+	}
 
 	p.TaskProducer.Enqueue("one_time", "send_email", e)
 
