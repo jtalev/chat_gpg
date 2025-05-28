@@ -6,5 +6,5 @@ deploy.sh
 infrastructure/db
 accts.txt
 deploy_test.sh
-leaveReqTests.sh
-cmds.txt
+tmp
+cmd/tmp

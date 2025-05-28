@@ -134,13 +134,11 @@ func (h *Handler) ServeItemRow() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
 			order := application.PurchaseOrder{}
-			log.Println(order)
 			order.PopulateItemTypes(h.DB)
 			item := application.PurchaseOrderItem{}
 			if len(order.PurchaseOrderItems) > 0 {
 				item.ItemTypes = order.PurchaseOrderItems[0].ItemTypes
 			}
-			// log.Println(item)
 			err := executePartialTemplate(purchaseOrderItemRowPath, "purchaseOrderItemRow", item, w)
 			if err != nil {
 				log.Printf("error executing purchaseOrderItemRow.html: %v", err)
@@ -175,6 +173,12 @@ func (h *Handler) PostPurchaseOrder() http.Handler {
 				return
 			}
 			h.PurchaseOrderService.Errors = purchaseOrderErrors
+			err = h.PurchaseOrderService.PopulateItemTypes(h.DB)
+			if err != nil {
+				log.Printf("error populating item types: %v", err)
+				http.Error(w, "error populating item types, internal server error", http.StatusInternalServerError)
+				return
+			}
 
 			tmpl, err := template.ParseFiles(
 				purchaseOrderFormPath,

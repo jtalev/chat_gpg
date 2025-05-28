@@ -125,8 +125,8 @@ func (p *PurchaseOrder) PopulateItemTypes(db *sql.DB) error {
 		})
 		return nil
 	}
-	for _, item := range p.PurchaseOrderItems {
-		item.ItemTypes = outItemTypes
+	for i := range p.PurchaseOrderItems {
+		p.PurchaseOrderItems[i].ItemTypes = outItemTypes
 	}
 	return nil
 }

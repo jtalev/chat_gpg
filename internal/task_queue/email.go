@@ -50,7 +50,6 @@ func (e *EmailHandler) ProcessTask(task Task, queue chan Task, db *sql.DB) error
 		log.Printf("error unmarshalling payload: %v", err)
 		return err
 	}
-	log.Println(e)
 	err = e.SendEmail()
 	if err != nil {
 		task.Retries++
