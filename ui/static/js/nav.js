@@ -28,7 +28,7 @@ function onNavLinkClick() {
 
     if (windowWidth < 1030) {
         navLinksText.forEach(element => {
-            if ("/" + element.firstChild.textContent === currentUrl) {
+            if ("/" + element.firstChild.textContent === currentUrl || (element.firstChild.textContent === "purchase order" && currentUrl === "/purchase-order")) {
                 element.style.color = "var(--gpg-green)"
             } else {
                 element.style.color = "var(--gpg-grey)"
@@ -36,7 +36,7 @@ function onNavLinkClick() {
         })
     } else {
         navLinks.forEach(element => {
-            if ("/" + element.firstChild.textContent === currentUrl) {
+            if ("/" + element.firstChild.textContent === currentUrl || (element.firstChild.textContent === "purchase order" && currentUrl === "/purchase-order")) {
                 element.style.borderLeft = "var(--gpg-green) solid 3px"
                 element.style.backgroundColor = "#00969C50"
             } else {

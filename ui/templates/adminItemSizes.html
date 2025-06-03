@@ -1,0 +1,65 @@
+{{ define "adminItemSizes" }}
+<div class="admin-po-tab-header-container">
+	<div class="admin-po-tab-header">Item Sizes Management</div>
+	<div class="admin-po-tab-add-btn-container">
+		<button 
+		class="admin-po-tab-add-btn"
+		hx-get="/admin/serve-add-size-modal"
+		hx-trigger="click"
+		hx-swap="innerHTML"
+		hx-target="#admin-po-modal-container"
+		onclick="toggleAdminPurchaseOrderModal()">
+			+ Add Size
+		</button>
+	</div>
+</div>
+<div class="admin-po-tab-list">
+	<div class="admin-po-list-row">
+		<div class="admin-po-item-name-col">
+			Name
+		</div>
+		<div class="admin-po-item-description-col">
+			Description
+		</div>
+		<div class="admin-po-actions-col">
+			Actions
+		</div>
+	</div>
+	{{ range . }}
+	<div class="admin-po-list-row admin-po-list-row-info">
+		<div class="admin-po-item-name-col">
+			{{ .Size }}
+		</div>
+		<div class="admin-po-item-description-col">
+			{{ .Description }}
+		</div>
+		<div class="admin-po-actions-col">
+			<div class="admin-po-actions-container">
+				<button 
+				class="admin-po-actions-btn"
+				onclick="toggleAdminPurchaseOrderModal()"
+				hx-get="/admin/serve-put-size-modal"
+				hx-trigger="click"
+				hx-swap="innerHTML"
+				hx-target="#admin-po-modal-container"
+				hx-vals='{
+					"uuid": "{{ .UUID }}"
+				}'>
+					<img class="admin-po-update-img" src="../static/img/update.svg">
+				</button>
+				<button 
+				class="admin-po-actions-btn"
+				hx-delete="/admin/item-size/delete"
+				hx-target="closest .admin-po-list-row"
+				hx-swap="delete"
+				hx-vals='{
+					"uuid": "{{ .UUID }}"
+				}'>
+					<img class="admin-po-delete-img" src="../static/img/delete_grey.svg">
+				</button>
+			</div>
+		</div>
+	</div>
+	{{ end }}
+</div>
+{{ end }}

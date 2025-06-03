@@ -1,5 +1,7 @@
 package domain
 
+import "log"
+
 type PurchaseOrder struct {
 	UUID       string `json:"uuid"`
 	EmployeeId string `json:"employee_id"`
@@ -71,6 +73,7 @@ type PurchaseOrderItem struct {
 	PurchaseOrderId string `json:"purchase_order_id"`
 	ItemName        string `json:"item_name"`
 	ItemTypeId      string `json:"item_type_id"`
+	ItemSizeId      string `json:"item_size_id"`
 	Quantity        int    `json:"quantity"`
 	CreatedAt       string `json:"created_at"`
 	ModifiedAt      string `json:"modified_at"`
@@ -80,17 +83,19 @@ type PurchaseOrderItemErrors struct {
 	ItemNameErr   string
 	QuantityErr   string
 	ItemTypeIdErr string
+	ItemSizeIdErr string
 
 	IsSuccessful bool
 }
 
 func (p *PurchaseOrderItem) Validate() PurchaseOrderItemErrors {
-	errors := PurchaseOrderItemErrors{IsSuccessful: true}
-	p.validateItemName(errors).validateQuantity(errors).validateItemTypeId(errors)
-	return errors
+	errors := &PurchaseOrderItemErrors{IsSuccessful: true}
+	p.validateItemName(errors).validateQuantity(errors).validateItemTypeId(errors).validateItemSizeId(errors)
+	log.Println(errors.IsSuccessful)
+	return *errors
 }
 
-func (p *PurchaseOrderItem) validateItemName(errors PurchaseOrderItemErrors) *PurchaseOrderItem {
+func (p *PurchaseOrderItem) validateItemName(errors *PurchaseOrderItemErrors) *PurchaseOrderItem {
 	if p.ItemName == "" {
 		errors.ItemNameErr = "*required"
 		errors.IsSuccessful = false
@@ -98,7 +103,7 @@ func (p *PurchaseOrderItem) validateItemName(errors PurchaseOrderItemErrors) *Pu
 	return p
 }
 
-func (p *PurchaseOrderItem) validateQuantity(errors PurchaseOrderItemErrors) *PurchaseOrderItem {
+func (p *PurchaseOrderItem) validateQuantity(errors *PurchaseOrderItemErrors) *PurchaseOrderItem {
 	if p.Quantity == 0 {
 		errors.QuantityErr = "*required"
 		errors.IsSuccessful = false
@@ -106,12 +111,59 @@ func (p *PurchaseOrderItem) validateQuantity(errors PurchaseOrderItemErrors) *Pu
 	return p
 }
 
-func (p *PurchaseOrderItem) validateItemTypeId(errors PurchaseOrderItemErrors) *PurchaseOrderItem {
+func (p *PurchaseOrderItem) validateItemTypeId(errors *PurchaseOrderItemErrors) *PurchaseOrderItem {
 	if p.ItemTypeId == "" {
 		errors.ItemTypeIdErr = "*required"
 		errors.IsSuccessful = false
 	}
 	return p
+}
+
+func (p *PurchaseOrderItem) validateItemSizeId(errors *PurchaseOrderItemErrors) *PurchaseOrderItem {
+	if p.ItemSizeId == "" {
+		errors.ItemSizeIdErr = "*required"
+		errors.IsSuccessful = false
+	}
+	return p
+}
+
+type ItemSize struct {
+	UUID        string `json:"uuid"`
+	Size        string `json:"size"`
+	Description string `json:"description"`
+	CreatedAt   string `json:"created_at"`
+	ModifiedAt  string `json:"modified_at"`
+}
+
+type ItemSizeErrors struct {
+	SizeErr        string
+	DescriptionErr string
+
+	IsSuccessful bool
+	SuccessMsg   string
+}
+
+func (i *ItemSize) Validate(existingSizes []ItemSize) ItemSizeErrors {
+	errors := &ItemSizeErrors{IsSuccessful: true}
+	i.validateSize(errors, existingSizes).validateDescription(errors)
+	return *errors
+}
+
+func (i *ItemSize) validateSize(errors *ItemSizeErrors, existingSizes []ItemSize) *ItemSize {
+	if i.Size == "" {
+		errors.SizeErr = "*required"
+		errors.IsSuccessful = false
+		return i
+	}
+	return i
+}
+
+func (i *ItemSize) validateDescription(errors *ItemSizeErrors) *ItemSize {
+	if i.Description == "" {
+		errors.DescriptionErr = "*required"
+		errors.IsSuccessful = false
+	}
+	return i
 }
 
 type ItemType struct {
@@ -142,13 +194,6 @@ func (i *ItemType) validateType(errors *ItemTypeErrors, existingTypes []ItemType
 		errors.IsSuccessful = false
 		return i
 	}
-	for _, t := range existingTypes {
-		if t.Type == i.Type {
-			errors.TypeErr = "*Item type already exists"
-			errors.IsSuccessful = false
-			return i
-		}
-	}
 	return i
 }
 
@@ -168,6 +213,7 @@ type Store struct {
 	Address      string `json:"address"`
 	Suburb       string `json:"suburb"`
 	City         string `json:"city"`
+	AccountCode  string `json:"account_code"`
 	CreatedAt    string `json:"created_at"`
 	ModifiedAt   string `json:"modified_at"`
 }
@@ -179,6 +225,7 @@ type StoreErrors struct {
 	AddressErr      string
 	SuburbErr       string
 	CityErr         string
+	AccountCodeErr  string
 
 	IsSuccessful bool
 	SuccessMsg   string
@@ -191,7 +238,8 @@ func (s *Store) Validate() StoreErrors {
 		validatePhone(errors).
 		validateAddress(errors).
 		validateSuburb(errors).
-		validateCity(errors)
+		validateCity(errors).
+		validateAccountCode(errors)
 	return *errors
 }
 
@@ -238,6 +286,14 @@ func (s *Store) validateAddress(errors *StoreErrors) *Store {
 func (s *Store) validateCity(errors *StoreErrors) *Store {
 	if s.City == "" {
 		errors.CityErr = "*required"
+		errors.IsSuccessful = false
+	}
+	return s
+}
+
+func (s *Store) validateAccountCode(errors *StoreErrors) *Store {
+	if s.AccountCode == "" {
+		errors.AccountCodeErr = "*required"
 		errors.IsSuccessful = false
 	}
 	return s

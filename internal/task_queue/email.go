@@ -1,13 +1,13 @@
 package task_queue
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"log"
 	"os"
 
-	"github.com/sendgrid/sendgrid-go"
-	"github.com/sendgrid/sendgrid-go/helpers/mail"
+	"github.com/mrz1836/postmark"
 )
 
 type EmailHandler struct {
@@ -80,15 +80,18 @@ func (e *EmailHandler) ProcessTask(task Task, queue chan Task, db *sql.DB) error
 }
 
 func (e *EmailHandler) SendEmail() error {
-	from := mail.NewEmail(e.SenderName, e.SenderEmail)
-	to := mail.NewEmail(e.RecipientName, e.RecipientEmail)
-	message := mail.NewSingleEmail(from, e.Subject, to, e.PlainTextContent, e.HtmlContent)
-	client := sendgrid.NewSendClient(os.Getenv("SENDGRID_API_KEY"))
-	response, err := client.Send(message)
+	serverToken := os.Getenv("POSTMARK_SERVER_TOKEN")
+	client := postmark.NewClient(serverToken, "")
+	email := postmark.Email{
+		From:     e.SenderEmail,
+		To:       e.RecipientEmail,
+		Subject:  e.Subject,
+		TextBody: e.PlainTextContent,
+	}
+
+	_, err := client.SendEmail(context.Background(), email)
 	if err != nil {
 		return err
-	} else {
-		log.Printf("Successfully sent email: %v", response.StatusCode)
-		return nil
 	}
+	return nil
 }

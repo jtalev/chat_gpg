@@ -466,6 +466,7 @@ func (h *Handler) ServeAddItemModal() http.Handler {
 func (h *Handler) ServePutItemModal() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
+			log.Println("updating item")
 			rVals, err := parseRequestValues([]string{"uuid"}, r)
 			if err != nil {
 				log.Printf("error parsing request values: %v", err)
@@ -487,6 +488,66 @@ func (h *Handler) ServePutItemModal() http.Handler {
 				ModalTitle: "Update Item Type",
 			}
 			err = h.ServeSingleTemplate(adminAddItemModalPath, "addItemModal", outItemType, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) ServeItemSizes() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			itemSizes, err := infrastructure.GetItemSizes(h.DB)
+			if err != nil {
+				log.Printf("error getting item types: %v", err)
+				http.Error(w, "error getting item types, internal server error", http.StatusInternalServerError)
+				return
+			}
+			err = h.ServeSingleTemplate(adminItemSizesPath, "adminItemSizes", itemSizes, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) ServeAddSizeModal() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			itemSize := application.ItemSize{ModalTitle: "Add Item Size"}
+			err := h.ServeSingleTemplate(adminAddSizeModalPath, "addSizeModal", itemSize, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) ServePutSizeModal() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			rVals, err := parseRequestValues([]string{"uuid"}, r)
+			if err != nil {
+				log.Printf("error parsing request values: %v", err)
+				http.Error(w, "error parsing request values, bad request", http.StatusBadRequest)
+				return
+			}
+
+			itemType, err := infrastructure.GetItemSizeByUuid(rVals[0], h.DB)
+			if err != nil {
+				log.Printf("error getting store: %v", err)
+				http.Error(w, "error getting store, Not found", http.StatusNotFound)
+			}
+
+			outItemSize := application.ItemSize{
+				UUID:        itemType.UUID,
+				Size:        itemType.Size,
+				Description: itemType.Description,
+
+				ModalTitle: "Update Item Size",
+			}
+			err = h.ServeSingleTemplate(adminAddSizeModalPath, "addSizeModal", outItemSize, w)
 			if err != nil {
 				return
 			}
@@ -545,6 +606,7 @@ func (h *Handler) ServePutStoreModal() http.Handler {
 				Address:      store.Address,
 				Suburb:       store.Suburb,
 				City:         store.City,
+				AccountCode:  store.AccountCode,
 
 				ModalTitle: "Update Store",
 			}

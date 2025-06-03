@@ -1,0 +1,70 @@
+{{ define "addSizeModal" }}
+<div class="modal-container size-modal" id="size-modal">
+	<div class="modal-content-container">
+		<div class="modal-header-container">
+			<p>{{ .ModalTitle }}</p>
+			<button
+			class="close-modal-btn"
+			hx-get="/admin/serve-item-sizes-template"
+			hx-target="#admin-purchase-order-content"
+			hx-swap="innerHTML"
+			hx-trigger="click"
+			onclick="toggleAdminPurchaseOrderModal()">
+				x
+			</button>
+		</div>
+		<div class="modal-form-container">
+			<form 
+			class="modal-form"
+			id="add-size-form"
+			{{ if eq .ModalTitle "Add Item Size"}}
+				hx-post="/admin/item-size/post"
+			{{ else }}
+				hx-put="/admin/item-size/put"
+			{{ end }}
+			hx-swap="innerHTML"
+			hx-target="#admin-po-modal-container"
+			hx-ext="json-enc">
+				<input type="text" name="uuid" value="{{ .UUID }}" hidden>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label"
+						for="size">Size:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input
+						class="modal-form-input" 
+						type="text" 
+						name="size"
+						value="{{ .Size }}">
+					</div>
+					<div class="error-container">
+						{{ .Errors.SizeErr }}
+					</div>
+				</div>
+				<div class="modal-form-textarea-row">
+					<div class="modal-form-textarea-label-container">
+						<label class="modal-form-label"
+						for="description">Description:</label>
+					</div>
+					<div class="modal-form-textarea-container">
+						<textarea
+						class="modal-form-textarea" 
+						name="description"
+						>{{ .Description }}</textarea>
+					</div>
+					<div class="error-container">
+						{{ .Errors.DescriptionErr }}
+					</div>
+				</div>
+				<div class="success-msg-container">
+					{{ .Errors.SuccessMsg }}
+				</div>
+				<div class="gpg-form-btn-container">
+					<button class="gpg-submit-btn" type="submit">SUBMIT</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{{ end }}

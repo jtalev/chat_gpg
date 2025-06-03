@@ -22,6 +22,7 @@ type Store struct {
 	Address      string `json:"address"`
 	Suburb       string `json:"suburb"`
 	City         string `json:"city"`
+	AccountCode  string `json:"account_code"`
 
 	Errors     models.StoreErrors
 	ModalTitle string
@@ -36,14 +37,25 @@ type ItemType struct {
 	ModalTitle string
 }
 
+type ItemSize struct {
+	UUID        string `json:"uuid"`
+	Size        string `json:"size"`
+	Description string `json:"description"`
+
+	Errors     models.ItemSizeErrors
+	ModalTitle string
+}
+
 type PurchaseOrderItem struct {
 	UUID       string `json:"uuid"`
 	ItemName   string `json:"item_name"`
 	ItemTypeId string `json:"item_type_id"`
+	ItemSizeId string `json:"item_size_id"`
 	ItemType   string
 	Quantity   int `json:"quantity"`
 
 	ItemTypes []ItemType
+	ItemSizes []models.ItemSize
 }
 
 type PurchaseOrder struct {
@@ -86,6 +98,7 @@ func (p *PurchaseOrder) mapPurchaseOrderItems() []domain.PurchaseOrderItem {
 			PurchaseOrderId: p.UUID,
 			ItemName:        item.ItemName,
 			ItemTypeId:      item.ItemTypeId,
+			ItemSizeId:      item.ItemSizeId,
 			Quantity:        item.Quantity,
 		}
 	}
@@ -131,6 +144,23 @@ func (p *PurchaseOrder) PopulateItemTypes(db *sql.DB) error {
 	return nil
 }
 
+func (p *PurchaseOrder) PopulateItemSizes(db *sql.DB) error {
+	itemSizeList, err := repo.GetItemSizes(db)
+	if err != nil {
+		return err
+	}
+	if len(p.PurchaseOrderItems) == 0 {
+		p.PurchaseOrderItems = append(p.PurchaseOrderItems, PurchaseOrderItem{
+			ItemSizes: itemSizeList,
+		})
+		return nil
+	}
+	for i := range p.PurchaseOrderItems {
+		p.PurchaseOrderItems[i].ItemSizes = itemSizeList
+	}
+	return nil
+}
+
 func GetStores(db *sql.DB) ([]models.Store, error) {
 	storeList, err := repo.GetStores(db)
 	if err != nil {
@@ -162,6 +192,7 @@ func (p *PurchaseOrder) initRequiredViewData(db *sql.DB) error {
 	}
 	p.Jobs = jobs
 	p.PopulateItemTypes(db)
+	p.PopulateItemSizes(db)
 	p.PopulateStores(db)
 	return nil
 }
@@ -229,15 +260,25 @@ func generateEmailBody(purchaseOrder models.PurchaseOrder, purchaseOrderItems []
 			"Store: %s\n"+
 			"Ordered By: %s %s\n"+
 			"Reference: %s\n"+
+			"Account Code: %s\n"+
 			"\n"+
 			"Items:\n",
 		purchaseOrder.Date,
 		store.BusinessName,
 		employee.FirstName, employee.LastName,
 		job.Address,
+		store.AccountCode,
 	)
 	for _, item := range purchaseOrderItems {
-		emailBody += fmt.Sprintf("%v x %s\n", item.Quantity, item.ItemName)
+		itemType, err := repo.GetItemTypeByUuid(item.ItemTypeId, db)
+		if err != nil {
+			return "", err
+		}
+		itemSize, err := repo.GetItemSizeByUuid(item.ItemSizeId, db)
+		if err != nil {
+			return "", err
+		}
+		emailBody += fmt.Sprintf("%v x %s %s %s\n", item.Quantity, itemSize.Size, itemType.Type, item.ItemName)
 	}
 	return emailBody, nil
 }
@@ -260,7 +301,7 @@ func generateEmailPayload(purchaseOrder models.PurchaseOrder, purchaseOrderItems
 		recipientEmail = store.Email
 	}
 	e = task_queue.CreateEmailPayload(
-		"Admin@GeelongPaintGroup",
+		"Geelong Paint Group Admin",
 		"admin@geelongpaintgroup.com.au",
 		store.BusinessName,
 		recipientEmail,
@@ -401,6 +442,7 @@ func mapStore(store Store, uuid string) models.Store {
 		Address:      store.Address,
 		Suburb:       store.Suburb,
 		City:         store.City,
+		AccountCode:  store.AccountCode,
 	}
 }
 
@@ -465,6 +507,13 @@ func PostItemType(itemType ItemType, db *sql.DB) (ItemType, error) {
 	if !itemType.Errors.IsSuccessful {
 		return itemType, nil
 	}
+	for _, t := range existingTypes {
+		if t.Type == itemType.Type {
+			itemType.Errors.TypeErr = "*item type already exists"
+			itemType.Errors.IsSuccessful = false
+			return itemType, nil
+		}
+	}
 	err = repo.PostItemType(modelItemType, db)
 	if err != nil {
 		return ItemType{}, err
@@ -495,6 +544,69 @@ func PutItemType(itemType ItemType, db *sql.DB) (ItemType, error) {
 
 func DeleteItemType(uuid string, db *sql.DB) error {
 	err := repo.DeleteItemType(uuid, db)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func mapItemSize(itemSize ItemSize, uuid string) models.ItemSize {
+	return models.ItemSize{
+		UUID:        uuid,
+		Size:        itemSize.Size,
+		Description: itemSize.Description,
+	}
+}
+
+func PostItemSize(itemSize ItemSize, db *sql.DB) (ItemSize, error) {
+	itemSize.ModalTitle = "Add Item Size"
+	uuid := uuid.New().String()
+	modelItemSize := mapItemSize(itemSize, uuid)
+	existingSizes, err := repo.GetItemSizes(db)
+	if err != nil {
+		return itemSize, err
+	}
+	itemSize.Errors = modelItemSize.Validate(existingSizes)
+	if !itemSize.Errors.IsSuccessful {
+		return itemSize, nil
+	}
+	for _, s := range existingSizes {
+		if s.Size == itemSize.Size {
+			itemSize.Errors.SizeErr = "*item size already exists"
+			itemSize.Errors.IsSuccessful = false
+			return itemSize, nil
+		}
+	}
+	err = repo.PostItemSize(modelItemSize, db)
+	if err != nil {
+		return ItemSize{}, err
+	}
+	itemSize.Errors.SuccessMsg = "Item size submitted successfully."
+	return itemSize, nil
+}
+
+func PutItemSize(itemSize ItemSize, db *sql.DB) (ItemSize, error) {
+	itemSize.ModalTitle = "Update Item Size"
+	modelItemSize := mapItemSize(itemSize, itemSize.UUID)
+	existingSizes, err := repo.GetItemSizes(db)
+	if err != nil {
+		return itemSize, err
+	}
+	errors := modelItemSize.Validate(existingSizes)
+	if !errors.IsSuccessful {
+		itemSize.Errors = errors
+		return itemSize, nil
+	}
+	err = repo.PutItemSize(modelItemSize, db)
+	if err != nil {
+		return itemSize, err
+	}
+	itemSize.Errors.SuccessMsg = "Item size updated successfully."
+	return itemSize, nil
+}
+
+func DeleteItemSize(uuid string, db *sql.DB) error {
+	err := repo.DeleteItemSize(uuid, db)
 	if err != nil {
 		return err
 	}

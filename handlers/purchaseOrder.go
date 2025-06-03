@@ -135,9 +135,11 @@ func (h *Handler) ServeItemRow() http.Handler {
 		func(w http.ResponseWriter, r *http.Request) {
 			order := application.PurchaseOrder{}
 			order.PopulateItemTypes(h.DB)
+			order.PopulateItemSizes(h.DB)
 			item := application.PurchaseOrderItem{}
 			if len(order.PurchaseOrderItems) > 0 {
 				item.ItemTypes = order.PurchaseOrderItems[0].ItemTypes
+				item.ItemSizes = order.PurchaseOrderItems[0].ItemSizes
 			}
 			err := executePartialTemplate(purchaseOrderItemRowPath, "purchaseOrderItemRow", item, w)
 			if err != nil {
@@ -280,6 +282,70 @@ func (h *Handler) DeleteItemType() http.Handler {
 			if err != nil {
 				log.Printf("error deleting item type: %v", err)
 				http.Error(w, "error deleting item type, not found", http.StatusNotFound)
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) PostItemSize() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			var itemSize application.ItemSize
+			if ok := h.DecodeJson(&itemSize, w, r); !ok {
+				return
+			}
+			outItemSize, err := application.PostItemSize(itemSize, h.DB)
+			if err != nil {
+				log.Printf("error posting item size: %v", err)
+				http.Error(w, "error posting item size, bad request", http.StatusBadRequest)
+				return
+			}
+			err = h.ServeSingleTemplate(adminAddSizeModalPath, "addSizeModal", outItemSize, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) PutItemSize() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			var itemSize application.ItemSize
+			if ok := h.DecodeJson(&itemSize, w, r); !ok {
+				return
+			}
+
+			outItemSize, err := application.PutItemSize(itemSize, h.DB)
+			if err != nil {
+				log.Printf("error updating size: %v", err)
+				http.Error(w, "error updating item size, bad request", http.StatusBadRequest)
+				return
+			}
+
+			err = h.ServeSingleTemplate(adminAddSizeModalPath, "addSizeModal", outItemSize, w)
+			if err != nil {
+				return
+			}
+		},
+	)
+}
+
+func (h *Handler) DeleteItemSize() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			rVals, err := parseRequestValues([]string{"uuid"}, r)
+			if err != nil {
+				log.Printf("error parsing request values: %v", err)
+				http.Error(w, "error parsing request values, bad request", http.StatusBadRequest)
+				return
+			}
+
+			err = application.DeleteItemSize(rVals[0], h.DB)
+			if err != nil {
+				log.Printf("error deleting item size: %v", err)
+				http.Error(w, "error deleting item size, not found", http.StatusNotFound)
 				return
 			}
 		},

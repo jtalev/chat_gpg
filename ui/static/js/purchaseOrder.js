@@ -1,3 +1,4 @@
+
 function toggleContentSelector(event) {
 	const contentSelectors = document.querySelectorAll(".view-content-selector")
 	contentSelectors.forEach(selector => {
@@ -25,9 +26,11 @@ async function sendPurchaseOrder(event) {
 	  .map(row => {
 	    const quantity = parseInt(row.querySelector('input[name="quantity"]')?.value);
 	    const item_type_id = row.querySelector('select[name="item_type_id"]')?.value;
+	    const item_size_id = row.querySelector('select[name="item_size_id"]')?.value;
 	    const item_name = row.querySelector('input[name="item_name"]')?.value;
-	    return { quantity, item_type_id, item_name };
+	    return { quantity, item_type_id, item_size_id, item_name };
     });
+    console.log(itemRows)
 
 	const payload = {
 		employee_id: employeeId,
@@ -64,4 +67,22 @@ function deleteItemRow(event) {
 function toggleModal() {
 	const modal = document.querySelector(".modal")
 	modal.style.display = modal.style.display === "flex" ? "none" : "flex"
+}
+
+function toggleSubmitBtn(event) {
+	const submitBtn = event.target
+	const btnText = submitBtn.textContent
+
+	if (btnText === "SUBMIT") {
+		submitBtn.textContent = "CONFIRM ORDER"
+		submitBtn.style.backgroundColor = "green"
+		submitBtn.style.width = "auto"
+	} else if (btnText === "CONFIRM ORDER") {
+		sendPurchaseOrder(event)
+	} else if (btnText === "Cancel") {
+		const btn = document.querySelector("#purchase-order-submit-btn")
+		btn.textContent = "SUBMIT"
+		btn.style.backgroundColor = "var(--gpg-green)"
+		btn.style.width = "80px"
+	}
 }

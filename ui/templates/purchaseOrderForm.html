@@ -90,7 +90,8 @@
 			<div class="purchase-order-item-row">
 				<div class="purchase-order-qty-col">Qty:</div>
 				<div class="purchase-order-type-col">Type:</div>
-				<div class="purchase-order-name-col">Name:</div>
+				<div class="purchase-order-size-col">Size:</div>
+				<div class="purchase-order-name-col">Description:</div>
 				<div class="purchase-order-delete-col"></div>
 			</div>
 			{{ range .PurchaseOrderItems }}
@@ -104,8 +105,8 @@
             <p id="leave-form-success-msg">{{ .Errors.SuccessMsg }}</p>
         </div>
 		<div class="form-btn-container">
-            <button type="reset" id="purchase-order-cancel-btn" class="gpg-close-btn" form="purchase-order-form">Cancel</button>
-            <button type="submit" id="purchase-order-submit-btn" class="gpg-submit-btn" form="purchase-order-form">SUBMIT</button>
+            <button type="reset" id="purchase-order-cancel-btn" class="gpg-close-btn" form="purchase-order-form" onclick="toggleSubmitBtn(event)">Cancel</button>
+            <button type="button" id="purchase-order-submit-btn" class="gpg-submit-btn" onclick="toggleSubmitBtn(event)">SUBMIT</button>
         </div>
 	</form>
 </div>

@@ -384,6 +384,7 @@ CREATE TABLE purchase_order_item(
     purchase_order_id TEXT NOT NULL,
     item_name TEXT NOT NULL,
     item_type_id TEXT NOT NULL,
+    item_size_id TEXT NOT NULL,
     quantity INTEGER NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     modified_at DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -400,6 +401,15 @@ CREATE TABLE item_types(
     modified_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+DROP TABLE IF EXISTS item_size;
+CREATE TABLE item_size(
+    uuid TEXT PRIMARY KEY,
+    size TEXT NOT NULL UNIQUE,
+    description TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    modified_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 DROP TABLE IF EXISTS stores;
 CREATE TABLE stores(
     uuid TEXT PRIMARY KEY,
@@ -409,6 +419,7 @@ CREATE TABLE stores(
     address TEXT NOT NULL,
     suburb TEXT NOT NULL,
     city TEXT NOT NULL,
+    account_code TEXT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     modified_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );

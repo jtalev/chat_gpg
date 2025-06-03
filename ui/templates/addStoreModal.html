@@ -5,6 +5,10 @@
 			<p>{{ .ModalTitle }}</p>
 			<button
 			class="close-modal-btn"
+			hx-get="/admin/serve-stores-template"
+			hx-target="#admin-purchase-order-content"
+			hx-swap="innerHTML"
+			hx-trigger="click"
 			onclick="toggleAdminPurchaseOrderModal()">
 				x
 			</button>
@@ -116,6 +120,22 @@
 					</div>
 					<div class="error-container">
 						{{ .Errors.CityErr }}
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label"
+						for="account_code">Account Code:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input
+						class="modal-form-input" 
+						type="text" 
+						name="account_code"
+						value="{{ .AccountCode }}">
+					</div>
+					<div class="error-container">
+						{{ .Errors.AccountCodeErr }}
 					</div>
 				</div>
 				<div class="success-msg-container">

@@ -11,6 +11,16 @@
 		hx-swap="innerHTML">
 			Item Types
 		</div>
+		<div 
+		class="admin-purchase-order-content-selector"
+		style="border-left: none;" 
+		onclick="togglePurchaseOrderContentSelector(event)"
+		hx-get="/admin/serve-item-sizes-template"
+		hx-trigger="click"
+		hx-target="#admin-purchase-order-content"
+		hx-swap="innerHTML">
+			Item Sizes
+		</div>
 		<div
 		class="admin-purchase-order-content-selector"
 		style="border-left: none;"

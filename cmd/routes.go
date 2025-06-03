@@ -85,13 +85,19 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/admin/render-safety-tab", a.AuthorizeAdmin(h.RenderSafetyTab()))
 
 	mux.Handle("/admin/render-purchase-order-tab", a.AuthorizeAdmin(h.RenderPurchaseOrderTab()))
-	mux.Handle("/admin/serve-item-types-template", a.AuthorizeAdmin(h.ServeItemTypes()))
-	mux.Handle("/admin/serve-stores-template", a.AuthorizeAdmin(h.ServeStores()))
 	mux.Handle("/admin/serve-purchase-order-history", a.AuthorizeAdmin(h.ServePurchaseOrderHistory()))
-	mux.Handle("/admin/serve-add-item-modal", a.AuthorizeAdmin(h.ServeAddItemModal()))
+
+	mux.Handle("/admin/serve-stores-template", a.AuthorizeAdmin(h.ServeStores()))
 	mux.Handle("/admin/serve-add-store-modal", a.AuthorizeAdmin(h.ServeAddStoreModal()))
-	mux.Handle("/admin/serve-put-item-modal", a.AuthorizeAdmin(h.ServePutItemModal()))
 	mux.Handle("/admin/serve-put-store-modal", a.AuthorizeAdmin(h.ServePutStoreModal()))
+
+	mux.Handle("/admin/serve-item-sizes-template", a.AuthorizeAdmin(h.ServeItemSizes()))
+	mux.Handle("/admin/serve-add-size-modal", a.AuthorizeAdmin(h.ServeAddSizeModal()))
+	mux.Handle("/admin/serve-put-size-modal", a.AuthorizeAdmin(h.ServePutSizeModal()))
+
+	mux.Handle("/admin/serve-item-types-template", a.AuthorizeAdmin(h.ServeItemTypes()))
+	mux.Handle("/admin/serve-add-item-modal", a.AuthorizeAdmin(h.ServeAddItemModal()))
+	mux.Handle("/admin/serve-put-item-modal", a.AuthorizeAdmin(h.ServePutItemModal()))
 
 	mux.Handle("/admin/store/post", a.AuthorizeAdmin(h.PostStore()))
 	mux.Handle("/admin/store/put", a.AuthorizeAdmin(h.PutStore()))
@@ -100,6 +106,10 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/admin/item-type/post", a.AuthorizeAdmin(h.PostItemType()))
 	mux.Handle("/admin/item-type/put", a.AuthorizeAdmin(h.PutItemType()))
 	mux.Handle("/admin/item-type/delete", a.AuthorizeAdmin(h.DeleteItemType()))
+
+	mux.Handle("/admin/item-size/post", a.AuthorizeAdmin(h.PostItemSize()))
+	mux.Handle("/admin/item-size/put", a.AuthorizeAdmin(h.PutItemSize()))
+	mux.Handle("/admin/item-size/delete", a.AuthorizeAdmin(h.DeleteItemSize()))
 
 	mux.Handle("/admin/safety/serve-incident-report-content", a.AuthorizeAdmin(h.AdminServeIncidentReportContent()))
 

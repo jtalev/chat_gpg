@@ -135,8 +135,10 @@ const (
 	adminPurchaseOrderViewPath       = "../ui/templates/adminPurchaseOrderView.html"
 	adminPurchaseOrderHistoryPath    = "../ui/templates/adminPurchaseOrderHistory.html"
 	adminItemTypesPath               = "../ui/templates/adminItemTypes.html"
+	adminItemSizesPath               = "../ui/templates/adminItemSizes.html"
 	adminStoresPath                  = "../ui/templates/adminStores.html"
 	adminAddItemModalPath            = "../ui/templates/addItemModal.html"
+	adminAddSizeModalPath            = "../ui/templates/addSizeModal.html"
 	adminAddStoreModalPath           = "../ui/templates/addStoreModal.html"
 )
 

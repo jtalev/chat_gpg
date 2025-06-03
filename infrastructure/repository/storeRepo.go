@@ -28,6 +28,7 @@ func GetStores(db *sql.DB) ([]models.Store, error) {
 			&s.Address,
 			&s.Suburb,
 			&s.City,
+			&s.AccountCode,
 			&s.CreatedAt,
 			&s.ModifiedAt,
 		); err != nil {
@@ -59,6 +60,7 @@ func GetStoreByUuid(uuid string, db *sql.DB) (models.Store, error) {
 			&s.Address,
 			&s.Suburb,
 			&s.City,
+			&s.AccountCode,
 			&s.CreatedAt,
 			&s.ModifiedAt,
 		)
@@ -72,12 +74,12 @@ func GetStoreByUuid(uuid string, db *sql.DB) (models.Store, error) {
 func PostStore(store models.Store, db *sql.DB) error {
 	q := `
 	insert into stores(uuid, business_name, email,
-		phone, address, suburb, city)
-	values ($1, $2, $3, $4, $5, $6, $7);
+		phone, address, suburb, city, account_code)
+	values ($1, $2, $3, $4, $5, $6, $7, $8);
 	`
 
 	_, err := db.Exec(q, store.UUID, store.BusinessName, store.Email,
-		store.Phone, store.Address, store.Suburb, store.City)
+		store.Phone, store.Address, store.Suburb, store.City, store.AccountCode)
 	if err != nil {
 		return err
 	}
@@ -89,13 +91,13 @@ func PutStore(store models.Store, db *sql.DB) error {
 	q := `
 	update stores
 	set business_name = $1, email = $2, phone = $3,
-		address = $4, suburb = $5, city = $6,
+		address = $4, suburb = $5, city = $6, account_code = $7,
 		modified_at = CURRENT_TIMESTAMP
-	where uuid = $7
+	where uuid = $8
 	`
 
 	_, err := db.Exec(q, store.BusinessName, store.Email, store.Phone,
-		store.Address, store.Suburb, store.City, store.UUID)
+		store.Address, store.Suburb, store.City, store.AccountCode, store.UUID)
 	if err != nil {
 		return err
 	}

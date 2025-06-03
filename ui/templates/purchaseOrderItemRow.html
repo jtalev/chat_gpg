@@ -13,7 +13,17 @@
 		class="form-input">
 		<option value="">--Select an option--</option>
 		{{ range .ItemTypes }}
-			<option value="{{ .UUID }}" {{ if eq $.ItemTypeId .UUID }} selected {{ end }}>{{ .Type }}</option>
+			<option value="{{ .UUID }}" {{ if eq $.ItemTypeId .UUID }} selected {{ end }}>{{ .Type }} - {{ .Description }}</option>
+		{{ end }}
+		</select>
+	</div>
+	<div class="purchase-order-size-col">
+		<select 
+		name="item_size_id"
+		class="form-input">
+		<option value="">--Select an option--</option>
+		{{ range .ItemSizes }}
+			<option value="{{ .UUID }}" {{ if eq $.ItemSizeId .UUID }} selected {{ end }}>{{ .Size }} - {{ .Description }}</option>
 		{{ end }}
 		</select>
 	</div>
