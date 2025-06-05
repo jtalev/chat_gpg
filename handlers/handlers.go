@@ -13,6 +13,7 @@ import (
 
 	"github.com/gorilla/sessions"
 	application "github.com/jtalev/chat_gpg/application/services"
+	"github.com/jtalev/chat_gpg/application/services/jobnotes"
 	"github.com/jtalev/chat_gpg/application/services/safety"
 	domain "github.com/jtalev/chat_gpg/domain/models"
 	infrastructure "github.com/jtalev/chat_gpg/infrastructure/repository"
@@ -29,6 +30,9 @@ type Handler struct {
 	TaskProducer         *task_queue.TaskProducer
 	LeaveService         *application.LeaveService
 	PurchaseOrderService *application.PurchaseOrder
+	jobnotes             *jobnotes.Jobnotes
+
+	jobnotesRepo jobnotes.JobnotesRepo
 }
 
 func (h *Handler) StartWorkers() error {
@@ -65,6 +69,13 @@ func (h *Handler) StartWorkers() error {
 	return nil
 }
 
+func (h *Handler) RegisterRepos() {
+	jobnotesRepo := infrastructure.JobnotesRepo{
+		Db: h.DB,
+	}
+	h.jobnotesRepo = &jobnotesRepo
+}
+
 func (h *Handler) RegisterServices() {
 	leaveService := application.LeaveService{
 		TaskProducer: h.TaskProducer,
@@ -74,8 +85,13 @@ func (h *Handler) RegisterServices() {
 		TaskProducer: h.TaskProducer,
 	}
 
+	jobnotes := jobnotes.Jobnotes{
+		Repo: h.jobnotesRepo,
+	}
+
 	h.LeaveService = &leaveService
 	h.PurchaseOrderService = &purchaseOrderService
+	h.jobnotes = &jobnotes
 }
 
 const (

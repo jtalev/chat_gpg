@@ -67,6 +67,7 @@ func run(
 	if err != nil {
 		return err
 	}
+	h.RegisterRepos()
 	h.RegisterServices()
 
 	a := infrastructure.Auth{
