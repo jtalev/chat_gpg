@@ -10,7 +10,7 @@ type JobnotesRepo struct {
 	Db *sql.DB
 }
 
-func (j *JobnotesRepo) GetJobnotesByJobId(jobId int) ([]jobnotes.Note, error) {
+func (j *JobnotesRepo) GetNotesByJobId(jobId int) ([]jobnotes.Note, error) {
 	q := `
 	select * from note where job_id = ?
 	`
@@ -36,4 +36,42 @@ func (j *JobnotesRepo) GetJobnotesByJobId(jobId int) ([]jobnotes.Note, error) {
 		out = append(out, n)
 	}
 	return out, nil
+}
+
+func (j *JobnotesRepo) PostNote(note jobnotes.Note) error {
+	q := `
+	INSERT INTO note (uuid, job_id, note_type, note)
+	VALUES ($1, $2, $3, %4);
+	`
+
+	_, err := j.Db.Exec(q, note.Uuid, note.JobId, note.NoteType, note.Note)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (j *JobnotesRepo) PutNote(note jobnotes.Note) error {
+	q := `
+	UPDATE note
+	SET note = $1
+	WHERE uuid = $2;
+	`
+
+	_, err := j.Db.Exec(q, note.Note, note.Uuid)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (j *JobnotesRepo) DeleteNote(uuid string) error {
+	q := `
+	DELETE FROM note WHERE uuid = ?;
+	`
+	_, err := j.Db.Exec(q, uuid)
+	if err != nil {
+		return err
+	}
 }

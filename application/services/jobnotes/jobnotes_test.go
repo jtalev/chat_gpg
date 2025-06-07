@@ -29,7 +29,7 @@ func TestDecodePaintnote(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		p, err := decodePaintnote(tt.note)
+		p, err := unmarshalPaintnote(tt.note)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -39,20 +39,6 @@ func TestDecodePaintnote(t *testing.T) {
 		}
 	}
 }
-
-// func TestDecodeTasknote(t *testing.T) {
-// 	tests := []struct {
-// 		note     Note
-// 		expected interface{}
-// 	}{}
-// }
-
-// func TestDecodeImagenote(t *testing.T) {
-// 	tests := []struct {
-// 		note     Note
-// 		expected interface{}
-// 	}{}
-// }
 
 func TestDecodeJobnotes(t *testing.T) {
 	tests := []struct {
@@ -110,11 +96,44 @@ func TestDecodeJobnotes(t *testing.T) {
 
 	for _, tt := range tests {
 		j := Jobnotes{}
-		j.decodeJobNotes(tt.jobnotes)
+		j.unmarshalNotes(tt.jobnotes)
 		if !reflect.DeepEqual(j.Paintnotes, tt.expected.Paintnotes) ||
 			!reflect.DeepEqual(j.Tasknotes, tt.expected.Tasknotes) ||
 			!reflect.DeepEqual(j.Imagenotes, tt.expected.Imagenotes) {
 			t.Errorf("decodeJobNotes() = %v, expected %v", j, tt.expected)
+		}
+	}
+}
+
+func TestMarshalNote(t *testing.T) {
+	tests := []struct {
+		notetype string
+		jobnote  Jobnotes
+		expected string
+	}{
+		{
+			"task_note",
+			Jobnotes{
+				Tasknote: tasknote{
+					NoteUuid:    "123abc",
+					Title:       "Task",
+					Description: "Description",
+					Status:      "Pending",
+					Priority:    "High",
+					Notes:       "",
+				},
+			},
+			`{"note_uuid":"123abc","title":"Task","description":"Description","status":"Pending","priority":"High","notes":""}`,
+		},
+	}
+
+	for _, tt := range tests {
+		note, err := tt.jobnote.marshalNote(tt.notetype)
+		if err != nil {
+			t.Fatalf("error marshaling note: %v", err)
+		}
+		if note != tt.expected {
+			t.Errorf("error marshaling note: expected = %v, got = %v", tt.expected, note)
 		}
 	}
 }

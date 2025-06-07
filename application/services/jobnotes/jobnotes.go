@@ -2,11 +2,17 @@ package jobnotes
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
+
+	"github.com/google/uuid"
 )
 
 type JobnotesRepo interface {
-	GetJobnotesByJobId(jobId int) ([]Note, error)
+	GetNotesByJobId(jobId int) ([]Note, error)
+	PostNote(note Note) error
+	PutNote(note Note) error
+	DeleteNote(uuid string) error
 }
 
 type Jobnotes struct {
@@ -20,6 +26,8 @@ type Jobnotes struct {
 	Paintnotes []paintnote
 	Tasknotes  []tasknote
 	Imagenotes []imagenote
+
+	NoteErrors interface{}
 
 	Repo JobnotesRepo
 }
@@ -62,7 +70,7 @@ type imagenote struct {
 	Notes    string `json:"notes"`
 }
 
-func decodePaintnote(n Note) (paintnote, error) {
+func unmarshalPaintnote(n Note) (paintnote, error) {
 	var p paintnote
 	err := json.Unmarshal([]byte(n.Note), &p)
 	if err != nil {
@@ -71,7 +79,7 @@ func decodePaintnote(n Note) (paintnote, error) {
 	return p, nil
 }
 
-func decodeTasknote(n Note) (tasknote, error) {
+func unmarshalTasknote(n Note) (tasknote, error) {
 	var t tasknote
 	err := json.Unmarshal([]byte(n.Note), &t)
 	if err != nil {
@@ -80,7 +88,7 @@ func decodeTasknote(n Note) (tasknote, error) {
 	return t, nil
 }
 
-func decodeImagenote(n Note) (imagenote, error) {
+func unmarshalImagenote(n Note) (imagenote, error) {
 	var i imagenote
 	err := json.Unmarshal([]byte(n.Note), &i)
 	if err != nil {
@@ -89,16 +97,16 @@ func decodeImagenote(n Note) (imagenote, error) {
 	return i, nil
 }
 
-func (j *Jobnotes) decodeJobNotes(jobnotes []Note) {
-	type decoderFunc func(Note) (interface{}, error)
-	decoders := map[string]decoderFunc{
-		"paint_note": func(n Note) (interface{}, error) { return decodePaintnote(n) },
-		"task_note":  func(n Note) (interface{}, error) { return decodeTasknote(n) },
-		"image_note": func(n Note) (interface{}, error) { return decodeImagenote(n) },
+func (j *Jobnotes) unmarshalNotes(jobnotes []Note) {
+	type unmarshalerFunc func(Note) (interface{}, error)
+	unmarshalers := map[string]unmarshalerFunc{
+		"paint_note": func(n Note) (interface{}, error) { return unmarshalPaintnote(n) },
+		"task_note":  func(n Note) (interface{}, error) { return unmarshalTasknote(n) },
+		"image_note": func(n Note) (interface{}, error) { return unmarshalImagenote(n) },
 	}
 
 	for _, jn := range jobnotes {
-		decoder, ok := decoders[jn.NoteType]
+		decoder, ok := unmarshalers[jn.NoteType]
 		if !ok {
 			log.Printf("note type %s not supported", jn.NoteType)
 			continue
@@ -124,13 +132,131 @@ func (j *Jobnotes) decodeJobNotes(jobnotes []Note) {
 }
 
 func (j *Jobnotes) GetJobNotes(jobId int) error {
-	notes, err := j.Repo.GetJobnotesByJobId(jobId)
+	notes, err := j.Repo.GetNotesByJobId(jobId)
 	if err != nil {
 		log.Printf("error getting notes for job %v: %v", jobId, err)
 		return err
 	}
 
-	j.decodeJobNotes(notes)
+	j.unmarshalNotes(notes)
 
+	return nil
+}
+
+func (j *Jobnotes) validateNote(noteType string) bool {
+	validatorFuncs := map[string]validatorFunc{
+		"paint_note": func() (interface{}, bool) { return j.Paintnote.validate() },
+		"task_note":  func() (interface{}, bool) { return j.Tasknote.validate() },
+		"image_note": func() (interface{}, bool) { return j.Imagenote.validate() },
+	}
+
+	var isSuccess bool
+	if validator, ok := validatorFuncs[noteType]; ok {
+		j.NoteErrors, isSuccess = validator()
+	}
+
+	return isSuccess
+}
+
+func (j *Jobnotes) marshalNote(noteType string) (string, error) {
+	note := ""
+	switch noteType {
+	case "paint_note":
+		n, err := json.Marshal(j.Paintnote)
+		if err != nil {
+			return note, err
+		}
+		note = string(n)
+	case "task_note":
+		n, err := json.Marshal(j.Tasknote)
+		if err != nil {
+			return note, err
+		}
+		note = string(n)
+	case "image_note":
+		n, err := json.Marshal(j.Imagenote)
+		if err != nil {
+			return note, err
+		}
+		note = string(n)
+	default:
+		return "", fmt.Errorf("note type %s not supported", noteType)
+	}
+	return note, nil
+}
+
+func (j *Jobnotes) PostNote(noteType string) error {
+	isSuccess := j.validateNote(noteType)
+	if !isSuccess {
+		// simply return, j.NoteErrors will be present
+		return nil
+	} else {
+		n, err := j.marshalNote(noteType)
+		if err != nil {
+			return err
+		}
+
+		uuid := uuid.NewString()
+		note := Note{
+			Uuid:     uuid,
+			JobId:    j.JobId,
+			NoteType: noteType,
+			Note:     n,
+		}
+		err = j.Repo.PostNote(note)
+		if err != nil {
+			log.Printf("error posting note %v: %v", note, err)
+			return err
+		}
+		return nil
+	}
+}
+
+func (j *Jobnotes) getNoteUuid(noteType string) (string, error) {
+	switch noteType {
+	case "paint_note":
+		return j.Paintnote.NoteUuid, nil
+	case "task_note":
+		return j.Tasknote.NoteUuid, nil
+	case "image_note":
+		return j.Imagenote.NoteUuid, nil
+	default:
+		return "", fmt.Errorf("note type %s not supported", noteType)
+	}
+}
+
+func (j *Jobnotes) PutNote(noteType string) error {
+	isSuccess := j.validateNote(noteType)
+	if !isSuccess {
+		// simply return, j.NoteErrors will be present
+		return nil
+	} else {
+		n, err := j.marshalNote(noteType)
+		if err != nil {
+			return err
+		}
+
+		noteUuid, err := j.getNoteUuid(noteType)
+		if err != nil {
+			return err
+		}
+		note := Note{
+			Uuid: noteUuid,
+			Note: n,
+		}
+		err = j.Repo.PutNote(note)
+		if err != nil {
+			log.Printf("error posting note %v: %v", note, err)
+			return err
+		}
+		return nil
+	}
+}
+
+func (j *Jobnotes) DeleteNote(uuid string) error {
+	err := j.Repo.DeleteNote(uuid)
+	if err != nil {
+		return err
+	}
 	return nil
 }
