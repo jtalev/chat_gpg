@@ -41,7 +41,7 @@ func (j *JobnotesRepo) GetNotesByJobId(jobId int) ([]jobnotes.Note, error) {
 func (j *JobnotesRepo) PostNote(note jobnotes.Note) error {
 	q := `
 	INSERT INTO note (uuid, job_id, note_type, note)
-	VALUES ($1, $2, $3, %4);
+	VALUES ($1, $2, $3, $4);
 	`
 
 	_, err := j.Db.Exec(q, note.Uuid, note.JobId, note.NoteType, note.Note)
@@ -74,4 +74,5 @@ func (j *JobnotesRepo) DeleteNote(uuid string) error {
 	if err != nil {
 		return err
 	}
+	return nil
 }

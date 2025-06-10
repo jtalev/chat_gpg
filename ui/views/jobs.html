@@ -1,5 +1,14 @@
 {{ define "jobs" }}
-<h1>
-    jobs
-</h1>
+<div class="view-container">
+    <div class="view-header-container">
+        <h2 class="view-header">
+            Jobs
+        </h2>
+    </div>
+    <div class="jobs-view-content-container">
+        <div id="jobnotes-content-container">
+            {{ template "jobnoteTiles" .Data }}
+        </div>
+    </div>
+</div>
 {{ end }}

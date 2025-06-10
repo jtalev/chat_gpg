@@ -8,7 +8,7 @@ import (
 	"github.com/google/uuid"
 )
 
-type JobnotesRepo interface {
+type NoteRepo interface {
 	GetNotesByJobId(jobId int) ([]Note, error)
 	PostNote(note Note) error
 	PutNote(note Note) error
@@ -16,8 +16,7 @@ type JobnotesRepo interface {
 }
 
 type Jobnotes struct {
-	NoteUuid string
-	JobId    int
+	JobId int
 
 	Paintnote paintnote
 	Tasknote  tasknote
@@ -27,9 +26,10 @@ type Jobnotes struct {
 	Tasknotes  []tasknote
 	Imagenotes []imagenote
 
+	Note       Note
 	NoteErrors interface{}
 
-	Repo JobnotesRepo
+	Repo NoteRepo
 }
 
 type Note struct {
@@ -158,31 +158,33 @@ func (j *Jobnotes) validateNote(noteType string) bool {
 	return isSuccess
 }
 
-func (j *Jobnotes) marshalNote(noteType string) (string, error) {
-	note := ""
+func (j *Jobnotes) marshalNote(noteType, uuid string) error {
 	switch noteType {
 	case "paint_note":
+		j.Paintnote.NoteUuid = uuid
 		n, err := json.Marshal(j.Paintnote)
 		if err != nil {
-			return note, err
+			return err
 		}
-		note = string(n)
+		j.Note.Note = string(n)
 	case "task_note":
+		j.Tasknote.NoteUuid = uuid
 		n, err := json.Marshal(j.Tasknote)
 		if err != nil {
-			return note, err
+			return err
 		}
-		note = string(n)
+		j.Note.Note = string(n)
 	case "image_note":
+		j.Imagenote.NoteUuid = uuid
 		n, err := json.Marshal(j.Imagenote)
 		if err != nil {
-			return note, err
+			return err
 		}
-		note = string(n)
+		j.Note.Note = string(n)
 	default:
-		return "", fmt.Errorf("note type %s not supported", noteType)
+		return fmt.Errorf("note type %s not supported", noteType)
 	}
-	return note, nil
+	return nil
 }
 
 func (j *Jobnotes) PostNote(noteType string) error {
@@ -191,37 +193,20 @@ func (j *Jobnotes) PostNote(noteType string) error {
 		// simply return, j.NoteErrors will be present
 		return nil
 	} else {
-		n, err := j.marshalNote(noteType)
+		uuid := uuid.NewString()
+		err := j.marshalNote(noteType, uuid)
 		if err != nil {
 			return err
 		}
 
-		uuid := uuid.NewString()
-		note := Note{
-			Uuid:     uuid,
-			JobId:    j.JobId,
-			NoteType: noteType,
-			Note:     n,
-		}
-		err = j.Repo.PostNote(note)
+		j.Note.Uuid = uuid
+
+		err = j.Repo.PostNote(j.Note)
 		if err != nil {
-			log.Printf("error posting note %v: %v", note, err)
+			log.Printf("error posting note %v: %v", j.Note, err)
 			return err
 		}
 		return nil
-	}
-}
-
-func (j *Jobnotes) getNoteUuid(noteType string) (string, error) {
-	switch noteType {
-	case "paint_note":
-		return j.Paintnote.NoteUuid, nil
-	case "task_note":
-		return j.Tasknote.NoteUuid, nil
-	case "image_note":
-		return j.Imagenote.NoteUuid, nil
-	default:
-		return "", fmt.Errorf("note type %s not supported", noteType)
 	}
 }
 
@@ -231,22 +216,14 @@ func (j *Jobnotes) PutNote(noteType string) error {
 		// simply return, j.NoteErrors will be present
 		return nil
 	} else {
-		n, err := j.marshalNote(noteType)
+		err := j.marshalNote(noteType, j.Note.Uuid)
 		if err != nil {
 			return err
 		}
 
-		noteUuid, err := j.getNoteUuid(noteType)
+		err = j.Repo.PutNote(j.Note)
 		if err != nil {
-			return err
-		}
-		note := Note{
-			Uuid: noteUuid,
-			Note: n,
-		}
-		err = j.Repo.PutNote(note)
-		if err != nil {
-			log.Printf("error posting note %v: %v", note, err)
+			log.Printf("error posting note %v: %v", j.Note, err)
 			return err
 		}
 		return nil

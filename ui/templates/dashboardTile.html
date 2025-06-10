@@ -17,6 +17,9 @@
 	{{ else if eq . "PURCHASE ORDER" }}
 	<div class="dashboard-tile-container">
 		<a class="dashboard-tile-content" href="/purchase-order">
+	{{ else if eq . "JOBS" }}
+	<div class="dashboard-tile-container">
+		<a class="dashboard-tile-content" href="/jobs">
 	{{ end }}	
 			<div id="dashboard-tile-icon-container">
 				{{ if eq . "TIMESHEETS" }}
@@ -31,6 +34,8 @@
 				<img src="../static/img/safety.svg">
 				{{ else if eq . "PURCHASE ORDER" }}
 				<img src="../static/img/purchase_order.svg">
+				{{ else if eq . "JOBS" }}
+				<img src="../static/img/job_notes.svg">
 				{{ end }}
 			</div>
 			<div id="dashboard-tile-title-container">

@@ -1,0 +1,18 @@
+{{ define "jobnoteTiles" }}
+	active jobs = {{ .JobCount }}
+	{{ range .Summaries }}
+		<div class="jobnote-tile-container">
+			<div class="jobnote-icon-container">
+				<img src="../static/img/job_notes.svg">
+			</div>
+			<div class="jobnote-header-container">
+				{{ .Name }}
+			</div>
+			<div class="jobnote-address-container">
+				<img src="../static/img/location.svg">{{ .Address }}				
+			</div>
+			<div class="note-count-container">
+			</div>
+		</div>
+	{{ end }}
+{{ end }}

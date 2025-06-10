@@ -479,6 +479,17 @@ form input {
     position: relative;
 }
 
+.jobs-view-content-container {
+    width: 100%;
+    height: 93%;
+    border: solid var(--gpg-green) 1px;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
 .view-content {
     width: 95%;
     height: 100%;
@@ -3309,7 +3320,7 @@ input::-webkit-inner-spin-button {
 
 @media screen and (max-width: 1030px) {
     #dashboard-content-container {
-        height: 95%;
+        height: 100%;
         width: 100%;
         border: var(--gpg-green) solid 1px;
         background-color: white;
@@ -3318,7 +3329,8 @@ input::-webkit-inner-spin-button {
         align-items: flex-start;
         position: relative;
         box-sizing: border-box; 
-        padding: 15px 5px 0 5px;   
+        padding: 15px 5px 15px 5px;  
+        overflow-y: auto; 
     }
 
     #dashboard-content {
@@ -4158,4 +4170,51 @@ input::-webkit-inner-spin-button {
     width: 20%;
     height: 100%;
     justify-content: flex-end;
+}
+
+/* ----- job notes ----- */
+#jobnotes-content-container {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 5px;
+}
+
+.jobnote-tile-container {
+    width: 100%;
+    background-color: var(--light-background-color);
+    border: solid 1px var(--gpg-green);
+    margin-bottom: 5px;
+    box-sizing: border-box;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.jobnote-icon-container{
+    width: 20px;
+    height: 20px;
+}
+
+.jobnote-icon-container img {
+    width: 100%;
+    height: 100%;
+}
+
+.jobnote-header-container {
+    color: black;
+}
+
+.jobnote-address-container {
+    font-size: smaller;
+    display: flex;
+    align-items: center;
+}
+.jobnote-address-container img {
+    width: 12px;
+    height: 12px;
 }

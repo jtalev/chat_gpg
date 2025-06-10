@@ -32,7 +32,7 @@ type Handler struct {
 	PurchaseOrderService *application.PurchaseOrder
 	jobnotes             *jobnotes.Jobnotes
 
-	jobnotesRepo jobnotes.JobnotesRepo
+	noteRepo jobnotes.NoteRepo
 }
 
 func (h *Handler) StartWorkers() error {
@@ -73,7 +73,7 @@ func (h *Handler) RegisterRepos() {
 	jobnotesRepo := infrastructure.JobnotesRepo{
 		Db: h.DB,
 	}
-	h.jobnotesRepo = &jobnotesRepo
+	h.noteRepo = &jobnotesRepo
 }
 
 func (h *Handler) RegisterServices() {
@@ -86,7 +86,7 @@ func (h *Handler) RegisterServices() {
 	}
 
 	jobnotes := jobnotes.Jobnotes{
-		Repo: h.jobnotesRepo,
+		Repo: h.noteRepo,
 	}
 
 	h.LeaveService = &leaveService
@@ -156,6 +156,8 @@ const (
 	adminAddItemModalPath            = "../ui/templates/addItemModal.html"
 	adminAddSizeModalPath            = "../ui/templates/addSizeModal.html"
 	adminAddStoreModalPath           = "../ui/templates/addStoreModal.html"
+
+	jobnoteTilesPath = "../ui/templates/jobnoteTiles.html"
 )
 
 func renderTemplate(
@@ -209,6 +211,7 @@ func renderTemplate(
 		purchaseOrderPath,
 		purchaseOrderFormPath,
 		purchaseOrderItemRowPath,
+		jobnoteTilesPath,
 	)
 
 	if err != nil {
@@ -383,17 +386,6 @@ func (h *Handler) ServeSafetyView() http.Handler {
 
 			component := "safety"
 			title := "Safety - GPG"
-			renderTemplate(w, r, component, title, data)
-		},
-	)
-}
-
-func (h *Handler) ServeJobsView() http.Handler {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-			data := getJobsData()
-			component := "jobs"
-			title := "Jobs - GPG"
 			renderTemplate(w, r, component, title, data)
 		},
 	)
