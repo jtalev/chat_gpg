@@ -6,6 +6,7 @@ import (
 	"log"
 
 	"github.com/google/uuid"
+	models "github.com/jtalev/chat_gpg/domain/models"
 )
 
 type NoteRepo interface {
@@ -13,23 +14,6 @@ type NoteRepo interface {
 	PostNote(note Note) error
 	PutNote(note Note) error
 	DeleteNote(uuid string) error
-}
-
-type Jobnotes struct {
-	JobId int
-
-	Paintnote paintnote
-	Tasknote  tasknote
-	Imagenote imagenote
-
-	Paintnotes []paintnote
-	Tasknotes  []tasknote
-	Imagenotes []imagenote
-
-	Note       Note
-	NoteErrors interface{}
-
-	Repo NoteRepo
 }
 
 type Note struct {
@@ -70,6 +54,64 @@ type imagenote struct {
 	Notes    string `json:"notes"`
 }
 
+type jobnoteSummary struct {
+	Id             int
+	Name           string
+	Address        string
+	PaintnoteCount int
+	TasknoteCount  int
+	ImagenoteCount int
+}
+
+type jobnoteViewData struct {
+	JobCount  int
+	Summaries []jobnoteSummary
+}
+
+type Jobnotes struct {
+	JobnoteViewData jobnoteViewData
+
+	JobId int
+
+	Paintnote paintnote
+	Tasknote  tasknote
+	Imagenote imagenote
+
+	Paintnotes []paintnote
+	Tasknotes  []tasknote
+	Imagenotes []imagenote
+
+	Note Note
+
+	NoteErrors interface{}
+
+	Repo NoteRepo
+}
+
+func (j *Jobnotes) InitialJobnoteViewData(jobs []models.Job) error {
+	var data jobnoteViewData
+	data.JobCount = len(jobs)
+
+	for _, job := range jobs {
+		err := j.GetJobNotes(job.ID)
+		if err != nil {
+			return err
+		}
+		data.Summaries = append(data.Summaries, jobnoteSummary{
+			Id:             job.ID,
+			Name:           job.Name,
+			Address:        fmt.Sprintf("%d %s", job.Number, job.Address),
+			PaintnoteCount: len(j.Paintnotes),
+			TasknoteCount:  len(j.Tasknotes),
+			ImagenoteCount: len(j.Imagenotes),
+		})
+	}
+
+	j.JobnoteViewData = data
+
+	return nil
+}
+
 func unmarshalPaintnote(n Note) (paintnote, error) {
 	var p paintnote
 	err := json.Unmarshal([]byte(n.Note), &p)
@@ -98,6 +140,10 @@ func unmarshalImagenote(n Note) (imagenote, error) {
 }
 
 func (j *Jobnotes) unmarshalNotes(jobnotes []Note) {
+	j.Paintnotes = []paintnote{}
+	j.Tasknotes = []tasknote{}
+	j.Imagenotes = []imagenote{}
+
 	type unmarshalerFunc func(Note) (interface{}, error)
 	unmarshalers := map[string]unmarshalerFunc{
 		"paint_note": func(n Note) (interface{}, error) { return unmarshalPaintnote(n) },

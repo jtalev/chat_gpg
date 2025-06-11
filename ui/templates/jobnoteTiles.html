@@ -1,18 +1,32 @@
 {{ define "jobnoteTiles" }}
-	active jobs = {{ .JobCount }}
-	{{ range .Summaries }}
-		<div class="jobnote-tile-container">
-			<div class="jobnote-icon-container">
-				<img src="../static/img/job_notes.svg">
+	<div id="active-job-count-container">
+		<p id="active-job-header">Active Jobs</p>
+		<p id="active-job-count">{{ .JobCount }} jobs in progress</p>
+	</div>
+	<div class="jobnote-tiles">
+		{{ range .Summaries }}
+			<div class="jobnote-tile-container">
+				<div class="jobnote-icon-container">
+					<img src="../static/img/job_notes.svg">
+				</div>
+				<div class="jobnote-header-container">
+					{{ .Name }}
+				</div>
+				<div class="jobnote-address-container">
+					<img src="../static/img/location.svg">{{ .Address }}				
+				</div>
+				<div class="note-count-container">
+					<div class="note-count">
+						<img src="../static/img/paint.svg"> {{ .PaintnoteCount }}
+					</div>
+					<div class="note-count">
+						<img src="../static/img/task.svg"> {{ .TasknoteCount }}
+					</div>
+					<div class="note-count">
+						<img src="../static/img/img.svg"> {{ .ImagenoteCount }}
+					</div>
+				</div>
 			</div>
-			<div class="jobnote-header-container">
-				{{ .Name }}
-			</div>
-			<div class="jobnote-address-container">
-				<img src="../static/img/location.svg">{{ .Address }}				
-			</div>
-			<div class="note-count-container">
-			</div>
-		</div>
-	{{ end }}
+		{{ end }}
+	</div>
 {{ end }}

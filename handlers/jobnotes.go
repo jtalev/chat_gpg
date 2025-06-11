@@ -12,41 +12,22 @@ import (
 	"github.com/jtalev/chat_gpg/application/services/jobnotes"
 )
 
-type jobnoteSummary struct {
-	Name           string
-	Address        string
-	PaintnoteCount int
-	TasknoteCount  int
-	ImagenoteCount int
-}
-
-type jobnoteViewData struct {
-	JobCount  int
-	Summaries []jobnoteSummary
-}
-
-func (h *Handler) initialiseJobnoteViewData() (jobnoteViewData, error) {
-	var data jobnoteViewData
+func (h *Handler) initialiseJobnoteViewData() error {
 	jobs, err := application.GetJobs(h.DB)
 	if err != nil {
-		return data, err
+		return err
 	}
-	data.JobCount = len(jobs)
-
-	for _, j := range jobs {
-		data.Summaries = append(data.Summaries, jobnoteSummary{
-			Name:    j.Name,
-			Address: fmt.Sprintf("%d %s", j.Number, j.Address),
-		})
+	err = h.jobnotes.InitialJobnoteViewData(jobs)
+	if err != nil {
+		return err
 	}
-	return data, nil
+	return nil
 }
 
 func (h *Handler) ServeJobsView() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-
-			data, err := h.initialiseJobnoteViewData()
+			err := h.initialiseJobnoteViewData()
 			if err != nil {
 				log.Printf("error initialising view data: %v", err)
 				http.Error(w, "error initialising view data", http.StatusInternalServerError)
@@ -55,7 +36,7 @@ func (h *Handler) ServeJobsView() http.Handler {
 
 			component := "jobs"
 			title := "Jobs - GPG"
-			renderTemplate(w, r, component, title, data)
+			renderTemplate(w, r, component, title, h.jobnotes.JobnoteViewData)
 		},
 	)
 }

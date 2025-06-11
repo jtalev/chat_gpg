@@ -4180,19 +4180,76 @@ input::-webkit-inner-spin-button {
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    padding: 5px;
+    padding: 10px;
 }
 
-.jobnote-tile-container {
-    width: 100%;
-    background-color: var(--light-background-color);
-    border: solid 1px var(--gpg-green);
-    margin-bottom: 5px;
-    box-sizing: border-box;
-    padding: 10px;
+#active-job-count-container {
+    height: 60px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    justify-content: center;
+}
+
+#active-job-header {
+    padding: 0;
+    margin: 0;
+    color: black;
+    height: 30px;
+    display: flex;
+    align-items: center;
+}
+
+#active-job-count {
+    padding: 0;
+    margin: 0;
+    font-size: smaller;
+    flex-grow: 1;
+}
+
+@media screen and (max-width: 680px) {
+    .jobnote-tiles {
+        width: 100%;
+        flex-grow: 1;
+        overflow-y: auto;
+    }
+
+    .jobnote-tile-container {
+        width: 100%;
+        background-color: var(--light-background-color);
+        border: solid 1px var(--gpg-green);
+        margin-bottom: 5px;
+        box-sizing: border-box;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        cursor: pointer;
+    }
+}
+
+@media screen and (min-width: 681px) {
+    .jobnote-tiles {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 300px);
+        gap: 15px;
+    }
+
+    .jobnote-tile-container {
+        width: 300px;
+        min-width: 300px;
+        height: 130px;
+        min-height: 130px;
+        background-color: var(--light-background-color);
+        border: solid 1px var(--gpg-green);
+        margin-bottom: 5px;
+        box-sizing: border-box;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        cursor: pointer;
+    }
 }
 
 .jobnote-icon-container{
@@ -4217,4 +4274,24 @@ input::-webkit-inner-spin-button {
 .jobnote-address-container img {
     width: 12px;
     height: 12px;
+}
+
+.note-count-container {
+    display: flex;
+    height: 20px;
+    gap: 15px;
+    align-items: center;
+}
+
+.note-count {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: smaller;
+    gap: 3px;
+}
+
+.note-count img {
+    height: 100%;
 }
