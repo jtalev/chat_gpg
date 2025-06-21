@@ -1,0 +1,113 @@
+{{ define "jobNotes" }}
+<div class="job-notes-header-container">
+	<div id="job-notes-back-container">
+		<img
+		hx-get="/job-notes/serve-jobnote-tiles"
+		hx-target="#jobnotes-content-container"
+		hx-swap="innerHtml"
+		hx-trigger="click"
+		src="../static/img/back-arrow.svg">
+	</div>
+	<div id="job-notes-header">
+		<span id="job-notes-title">
+			{{ .JobSummary.Name }}
+		</span>
+		<span id="job-notes-subtitle">
+			<span><span id="job-notes-location-img"><img src="../static/img/location.svg"></span>{{ .JobSummary.Address }}</span> <span>&#x2022;</span> <span id="in-progress">In Progress</span>
+		</span>
+	</div>
+</div>
+<div id="notes">
+	<div class="notes-content-container">
+		<div class="notes-header">
+			<img src="../static/img/paint.svg">
+			<span>
+				Paint Notes
+			</span>
+			<span class="note-counter">
+				{{ .JobSummary.PaintnoteCount }}
+			</span>
+			<span class="add-note-btn-container">
+				<button
+				hx-get="/job-notes/serve-note-form"
+				hx-trigger="click"
+				hx-swap="innerHtml"
+				hx-target="#note-modal"
+				hx-vals='{
+					"note_type": "paint_note",
+					"job_id": "{{ .JobSummary.ID }}"
+				}'
+				onclick="toggleNoteModal()"
+				class="add-note-btn">
+					+
+				</button>
+			</span>
+		</div>
+		<div class="notes-container">
+			{{ range .Paintnotes }}
+				{{ template "paintNote" . }}
+			{{ end }}
+		</div>
+	</div>
+	<div class="notes-content-container">
+		<div class="notes-header">
+			<img src="../static/img/task.svg">
+			<span>
+				Task Notes
+			</span>
+			<span class="note-counter">
+				{{ .JobSummary.TasknoteCount }}
+			</span>
+			<span class="add-note-btn-container">
+				<button
+				hx-get="/job-notes/serve-note-form"
+				hx-trigger="click"
+				hx-swap="innerHtml"
+				hx-target="#note-modal"
+				hx-vals='{
+					"note_type": "task_note"
+				}'
+				onclick="toggleNoteModal()"
+				class="add-note-btn">
+					+
+				</button>
+			</span>
+		</div>
+		<div class="task-notes-container">
+			{{ range .Tasknotes }}
+				{{ template "taskNote" . }}
+			{{ end }}
+		</div>
+	</div>
+	<div class="notes-content-container">
+		<div class="notes-header">
+			<img src="../static/img/img.svg">
+			<span>
+				Image Notes
+			</span>
+			<span class="note-counter">
+				{{ .JobSummary.ImagenoteCount }}
+			</span>
+			<span class="add-note-btn-container">
+				<button
+				hx-get="/job-notes/serve-note-form"
+				hx-trigger="click"
+				hx-swap="innerHtml"
+				hx-target="#note-modal"
+				hx-vals='{
+					"note_type": "image_note"
+				}'
+				onclick="toggleNoteModal()"
+				class="add-note-btn">
+					+
+				</button>
+			</span>
+		</div>
+		<div class="notes-container">
+			{{ range .Imagenotes }}
+				{{ template "imageNote" . }}
+			{{ end }}
+		</div>
+	</div>
+</div>
+{{ end }}

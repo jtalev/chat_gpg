@@ -141,6 +141,9 @@ func add_routes(mux *http.ServeMux, ctx context.Context, h *handlers.Handler, a 
 	mux.Handle("/purchase-order/delete", a.AuthorizeUser(h.DeletePurchaseOrder()))
 
 	// job notes
+	mux.Handle("/job-notes/serve-jobnote-tiles", a.AuthorizeUser(h.ServeJobnoteTiles()))
+	mux.Handle("/job-notes/serve-note-form", a.AuthorizeUser(h.ServeNoteForm()))
+
 	mux.Handle("/job-notes/get", a.AuthorizeUser(h.GetJobNotes()))
 	mux.Handle("/job-notes/post", a.AuthorizeUser(h.PostNote()))
 	mux.Handle("/job-notes/put", a.AuthorizeUser(h.PutNote()))

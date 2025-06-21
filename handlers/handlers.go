@@ -157,7 +157,14 @@ const (
 	adminAddSizeModalPath            = "../ui/templates/addSizeModal.html"
 	adminAddStoreModalPath           = "../ui/templates/addStoreModal.html"
 
-	jobnoteTilesPath = "../ui/templates/jobnoteTiles.html"
+	jobnoteTilesPath  = "../ui/templates/jobnoteTiles.html"
+	jobNotesPath      = "../ui/templates/jobNotes.html"
+	paintNotePath     = "../ui/templates/paintNote.html"
+	taskNotePath      = "../ui/templates/taskNote.html"
+	imageNotePath     = "../ui/templates/imageNote.html"
+	paintNoteFormPath = "../ui/templates/paintNoteForm.html"
+	taskNoteFormPath  = "../ui/templates/taskNoteForm.html"
+	imageNoteFormPath = "../ui/templates/imageNoteForm.html"
 )
 
 func renderTemplate(

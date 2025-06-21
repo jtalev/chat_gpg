@@ -5,7 +5,15 @@
 	</div>
 	<div class="jobnote-tiles">
 		{{ range .Summaries }}
-			<div class="jobnote-tile-container">
+			<div
+			hx-get="/job-notes/get"
+			hx-trigger="click"
+			hx-swap="innerHtml"
+			hx-target="#jobnotes-content-container"
+			hx-vals='{
+				"job_id": "{{ .Id }}"
+			}'
+			class="jobnote-tile-container">
 				<div class="jobnote-icon-container">
 					<img src="../static/img/job_notes.svg">
 				</div>

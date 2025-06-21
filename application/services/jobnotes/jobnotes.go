@@ -68,10 +68,44 @@ type jobnoteViewData struct {
 	Summaries []jobnoteSummary
 }
 
-type Jobnotes struct {
-	JobnoteViewData jobnoteViewData
+type jobSummary struct {
+	ID             int
+	Name           string
+	Address        string
+	PaintnoteCount int
+	TasknoteCount  int
+	ImagenoteCount int
+}
 
-	JobId int
+type PaintnoteFormData struct {
+	FormType  string
+	JobId     int
+	Paintnote paintnote
+	Errors    paintnoteerrors
+}
+
+type TasknoteFormData struct {
+	FormType string
+	JobId    int
+	Tasknote tasknote
+	Errors   tasknoteerrors
+}
+
+type ImagenoteFormData struct {
+	FormType  string
+	JobId     int
+	Imagenote imagenote
+	Errors    imagenoteerrors
+}
+
+type Jobnotes struct {
+	JobnoteViewData   jobnoteViewData
+	PaintnoteFormData PaintnoteFormData
+	TasknoteFormData  TasknoteFormData
+	ImagenoteFormData ImagenoteFormData
+
+	JobId      int
+	JobSummary jobSummary
 
 	Paintnote paintnote
 	Tasknote  tasknote
@@ -199,6 +233,17 @@ func (j *Jobnotes) validateNote(noteType string) bool {
 	var isSuccess bool
 	if validator, ok := validatorFuncs[noteType]; ok {
 		j.NoteErrors, isSuccess = validator()
+		switch errors := j.NoteErrors.(type) {
+		case paintnoteerrors:
+			j.PaintnoteFormData.Errors = errors
+		case tasknoteerrors:
+			j.TasknoteFormData.Errors = errors
+		case imagenoteerrors:
+			j.ImagenoteFormData.Errors = errors
+		default:
+			log.Println("note type %s note supported", noteType)
+			return false
+		}
 	}
 
 	return isSuccess

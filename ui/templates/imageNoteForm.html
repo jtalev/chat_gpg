@@ -1,0 +1,30 @@
+{{ define "imageNoteForm" }}
+<div class="modal-container">
+	<div class="modal-content-container">
+		<div class="modal-header-container">
+			{{ if eq .FormType "post" }}
+				<p>Add Image Note</p>
+			{{ else }}
+				<p>Update Image Note</p>
+			{{ end }}
+				<button class="note-modal-close-btn" onclick="toggleNoteModal()">X</button>
+		</div>
+		<div class="modal-form-container">
+			<form
+			class="modal-form"
+			id="imagenote-form"
+			{{ if eq .FormType "post" }}
+			hx-post="/job-notes/post"
+			{{ else }}
+			hx-put="/job-notes/put"
+			{{ end }}
+			hx-target="#note-modal"
+			hx-swap="innerHtml">
+				<div class="gpg-form-btn-container">
+					<button class="gpg-submit-btn" form="imagenote-form" type="submit">SUBMIT</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{{ end }}

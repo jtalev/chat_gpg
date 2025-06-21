@@ -1,0 +1,137 @@
+{{ define "paintNoteForm" }}
+<div class="modal-container">
+	<div class="modal-content-container">
+		<div class="modal-header-container">
+			{{ if eq .FormType "post" }}
+				<p>Add Paint Note</p>
+			{{ else }}
+				<p>Update Paint Note</p>
+			{{ end }}
+				<button class="note-modal-close-btn" onclick="toggleNoteModal()">X</button>
+		</div>
+		<div class="modal-form-container">
+			<form
+			class="modal-form"
+			id="paintnote-form"
+			data-form-type="{{ .FormType }}"
+			onsubmit="return submitPaintnote(event)">
+				<input hidden type="text" name="note_type" value="paint_note">
+				<input hidden type="number" name="job_id" value="{{ .JobId }}">
+				<input hidden type="text" name="note_uuid" value="{{ .Paintnote.NoteUuid }}">
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="brand">Brand:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="brand" value="{{ .Paintnote.Brand }}">
+					</div>
+					<div class="error-container">
+						{{ .Errors.BrandErr }}
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="product">Product:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="product" value="{{ .Paintnote.Product }}">
+					</div>
+					<div class="error-container">
+						{{ .Errors.ProductErr }}
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="colour">Colour:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="colour" value="{{ .Paintnote.Colour }}">
+					</div>
+					<div class="error-container">
+						{{ .Errors.ColourErr }}
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="finish">Finish:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="finish" value="{{ .Paintnote.Finish }}">
+					</div>
+					<div class="error-container">
+						{{ .Errors.FinishErr }}
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="area">Area:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="area" value="{{ .Paintnote.Area }}">
+					</div>
+					<div class="error-container">
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="coats">Coats:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input
+						class="modal-form-input"
+						type="number"
+						name="coats"
+						style="width: 100px; text-align: center; display: flex; justify-content: center; align-items: center;"
+						value={{ if eq .Paintnote.Coats 0 }} "" {{ else }} "{{ .Paintnote.Coats }}" {{ end }}>
+					</div>
+					<div class="error-container">
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="surfaces">Surfaces:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="surfaces" value="{{ .Paintnote.Surfaces }}">
+					</div>
+					<div class="error-container">
+					</div>
+				</div>
+				<div class="modal-form-textarea-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="notes">Notes:</label>
+					</div>
+					<div class="modal-form-textarea-container">
+						<textarea class="modal-form-textarea" name="notes">{{ .Paintnote.Notes }}</textarea>
+					</div>
+					<div class="error-container">
+					</div>
+				</div>
+				<div class="gpg-form-btn-container">
+					<button class="gpg-submit-btn" form="paintnote-form" type="submit">SUBMIT</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+{{ end }}
+type paintnote struct {
+	NoteUuid string `json:"note_uuid"`
+	Brand    string `json:"brand"`
+	Product  string `json:"product"`
+	Colour   string `json:"colour"`
+	Finish   string `json:"finish"`
+	Area     string `json:"area"`
+	Coats    int    `json:"coats"`
+	Surfaces string `json:"surfaces"`
+	Notes    string `json:"notes"`
+}
+type paintnoteerrors struct {
+	brandErr   string
+	productErr string
+	colourErr  string
+	finishErr  string
+
+	isSuccess  bool
+	successMsg string
+}

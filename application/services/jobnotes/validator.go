@@ -3,26 +3,26 @@ package jobnotes
 type validatorFunc func() (interface{}, bool)
 
 type paintnoteerrors struct {
-	brandErr   string
-	productErr string
-	colourErr  string
-	finishErr  string
+	BrandErr   string
+	ProductErr string
+	ColourErr  string
+	FinishErr  string
 
-	isSuccess  bool
-	successMsg string
+	IsSuccess  bool
+	SuccessMsg string
 }
 
 func (p *paintnote) validate() (paintnoteerrors, bool) {
-	return paintnoteerrors{}, true
+	return paintnoteerrors{BrandErr: "*required", IsSuccess: false}, false
 }
 
 type tasknoteerrors struct {
-	titleErr       string
-	descriptionErr string
-	statusErr      string
+	TitleErr       string
+	DescriptionErr string
+	StatusErr      string
 
-	isSuccess  bool
-	successMsg string
+	IsSuccess  bool
+	SuccessMsg string
 }
 
 func (t *tasknote) validate() (tasknoteerrors, bool) {
@@ -30,14 +30,14 @@ func (t *tasknote) validate() (tasknoteerrors, bool) {
 }
 
 type imagenoteerrors struct {
-	isSuccess  bool
-	successMsg string
+	IsSuccess  bool
+	SuccessMsg string
 }
 
 func (i *imagenote) validate() (imagenoteerrors, bool) {
 	errors := imagenoteerrors{
-		isSuccess:  true,
-		successMsg: "Image note submitted successfully",
+		IsSuccess:  true,
+		SuccessMsg: "Image note submitted successfully",
 	}
-	return errors, errors.isSuccess
+	return errors, errors.IsSuccess
 }

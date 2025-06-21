@@ -1,0 +1,27 @@
+{{ define "taskNote" }}
+<div class="task-note-container">
+	<div class="task-note-header-container">
+		<div class="task-note-header">
+			{{ .Title }}
+		</div>
+		<div class="task-note-progress-container">
+			{{ if eq .Status "pending" }}
+				<img src="../static/img/pending.svg" class="task-note-pending-img"><span class="task-note-pending">Pending</span>
+			{{ else }}
+				<img src="../static/img/approved.svg" class="task-note-completed-img"><span class="task-note-completed">Completed</span>
+			{{ end }}
+		</div>
+	</div>
+	<div class="task-note-description-container">
+		{{ .Description }}
+	</div>
+	<div class="task-note-priority-container">
+		<span class="bold">Priority:</span>
+		<span>{{ .Priority }}</span>
+	</div>
+	<div class="task-note-notes-container">
+		<span class="bold" class="task-note-notes-header">Notes:</span>
+		<span class="task-note-notes">{{ .Notes }}</span>
+	</div>
+</div>
+{{ end }}

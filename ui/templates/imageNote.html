@@ -1,0 +1,20 @@
+{{ define "imageNote" }}
+<div class="image-note-container">
+	<div class="image-note-img-container">
+		
+	</div>
+	<div class="image-note-info-container">
+		<div class="image-note-caption-container">
+			{{ .Caption }}
+		</div>
+		<div class="image-note-area-container">
+			<span class="bold">Area:</span>
+			{{ .Area }}
+		</div>
+		<div class="image-note-notes-container">
+			<span class="bold image-note-notes-header">Notes:</span>
+			<span class="image-note-notes">{{ .Notes }}</span>
+		</div>
+	</div>
+</div>
+{{ end }}
