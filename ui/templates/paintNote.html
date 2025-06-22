@@ -3,6 +3,17 @@
 	<div class="paint-note-header-container">
 		<span class="paint-note-product">
 			{{ .Colour }} - {{ .Product }}
+			<button
+			hx-delete="/job-notes/delete"
+			hx-trigger="click"
+			hx-target="closest .paint-note-container"
+			hx-swap="delete"
+			hx-vals='{
+				"note_uuid": "{{ .NoteUuid }}"
+			}' 
+			class="paint-note-delete-btn">
+				X
+			</button>
 		</span>
 		<span class="paint-note-brand">
 			{{ .Brand }}

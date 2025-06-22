@@ -14,7 +14,7 @@ func TestDecodePaintnote(t *testing.T) {
 			Note{
 				Note: `{"note_uuid":"123abc","brand":"Haymes","product":"Expressions","colour":"Natural White","finish":"Low Sheen","area":"Living Room","coats":2,"surfaces":"Walls","notes":""}`,
 			},
-			paintnote{
+			Paintnote{
 				NoteUuid: "123abc",
 				Brand:    "Haymes",
 				Product:  "Expressions",
@@ -61,7 +61,7 @@ func TestDecodeJobnotes(t *testing.T) {
 				},
 			},
 			Jobnotes{
-				Paintnotes: []paintnote{
+				Paintnotes: []Paintnote{
 					{
 						NoteUuid: "123abc",
 						Brand:    "Haymes",
@@ -73,7 +73,7 @@ func TestDecodeJobnotes(t *testing.T) {
 						Surfaces: "Walls",
 					},
 				},
-				Tasknotes: []tasknote{
+				Tasknotes: []Tasknote{
 					{
 						NoteUuid:    "123abc",
 						Title:       "Paint Walls",
@@ -82,7 +82,7 @@ func TestDecodeJobnotes(t *testing.T) {
 						Priority:    "low",
 					},
 				},
-				Imagenotes: []imagenote{
+				Imagenotes: []Imagenote{
 					{
 						NoteUuid: "123abc",
 						S3uuid:   "123abc",
@@ -114,7 +114,7 @@ func TestMarshalNote(t *testing.T) {
 		{
 			"task_note",
 			Jobnotes{
-				Tasknote: tasknote{
+				Tasknote: Tasknote{
 					NoteUuid:    "123abc",
 					Title:       "Task",
 					Description: "Description",

@@ -4478,6 +4478,19 @@ input::-webkit-inner-spin-button {
     font-weight: 500;
     font-size: 15px;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+}
+
+.paint-note-delete-btn {
+    margin-left: auto;
+    color: var(--gpg-green);
+    border: none;
+    border-radius: 5px;
+    background-color: var(--gpg-light-green-background);
+    box-sizing: border-box;
+    padding: 4px;
+    font-size: x-small;
 }
 
 .paint-note-brand {

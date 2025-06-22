@@ -25,7 +25,7 @@ type Note struct {
 	ModifiedAt string `json:"modified_at"`
 }
 
-type paintnote struct {
+type Paintnote struct {
 	NoteUuid string `json:"note_uuid"`
 	Brand    string `json:"brand"`
 	Product  string `json:"product"`
@@ -37,7 +37,7 @@ type paintnote struct {
 	Notes    string `json:"notes"`
 }
 
-type tasknote struct {
+type Tasknote struct {
 	NoteUuid    string `json:"note_uuid"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
@@ -46,7 +46,7 @@ type tasknote struct {
 	Notes       string `json:"notes"`
 }
 
-type imagenote struct {
+type Imagenote struct {
 	NoteUuid string `json:"note_uuid"`
 	S3uuid   string `json:"s3uuid"`
 	Caption  string `json:"caption"`
@@ -80,21 +80,21 @@ type jobSummary struct {
 type PaintnoteFormData struct {
 	FormType  string
 	JobId     int
-	Paintnote paintnote
+	Paintnote Paintnote
 	Errors    paintnoteerrors
 }
 
 type TasknoteFormData struct {
 	FormType string
 	JobId    int
-	Tasknote tasknote
+	Tasknote Tasknote
 	Errors   tasknoteerrors
 }
 
 type ImagenoteFormData struct {
 	FormType  string
 	JobId     int
-	Imagenote imagenote
+	Imagenote Imagenote
 	Errors    imagenoteerrors
 }
 
@@ -107,13 +107,13 @@ type Jobnotes struct {
 	JobId      int
 	JobSummary jobSummary
 
-	Paintnote paintnote
-	Tasknote  tasknote
-	Imagenote imagenote
+	Paintnote Paintnote
+	Tasknote  Tasknote
+	Imagenote Imagenote
 
-	Paintnotes []paintnote
-	Tasknotes  []tasknote
-	Imagenotes []imagenote
+	Paintnotes []Paintnote
+	Tasknotes  []Tasknote
+	Imagenotes []Imagenote
 
 	Note Note
 
@@ -146,8 +146,8 @@ func (j *Jobnotes) InitialJobnoteViewData(jobs []models.Job) error {
 	return nil
 }
 
-func unmarshalPaintnote(n Note) (paintnote, error) {
-	var p paintnote
+func unmarshalPaintnote(n Note) (Paintnote, error) {
+	var p Paintnote
 	err := json.Unmarshal([]byte(n.Note), &p)
 	if err != nil {
 		return p, err
@@ -155,8 +155,8 @@ func unmarshalPaintnote(n Note) (paintnote, error) {
 	return p, nil
 }
 
-func unmarshalTasknote(n Note) (tasknote, error) {
-	var t tasknote
+func unmarshalTasknote(n Note) (Tasknote, error) {
+	var t Tasknote
 	err := json.Unmarshal([]byte(n.Note), &t)
 	if err != nil {
 		return t, err
@@ -164,8 +164,8 @@ func unmarshalTasknote(n Note) (tasknote, error) {
 	return t, nil
 }
 
-func unmarshalImagenote(n Note) (imagenote, error) {
-	var i imagenote
+func unmarshalImagenote(n Note) (Imagenote, error) {
+	var i Imagenote
 	err := json.Unmarshal([]byte(n.Note), &i)
 	if err != nil {
 		return i, err
@@ -174,9 +174,9 @@ func unmarshalImagenote(n Note) (imagenote, error) {
 }
 
 func (j *Jobnotes) unmarshalNotes(jobnotes []Note) {
-	j.Paintnotes = []paintnote{}
-	j.Tasknotes = []tasknote{}
-	j.Imagenotes = []imagenote{}
+	j.Paintnotes = []Paintnote{}
+	j.Tasknotes = []Tasknote{}
+	j.Imagenotes = []Imagenote{}
 
 	type unmarshalerFunc func(Note) (interface{}, error)
 	unmarshalers := map[string]unmarshalerFunc{
@@ -199,11 +199,11 @@ func (j *Jobnotes) unmarshalNotes(jobnotes []Note) {
 		}
 
 		switch n := note.(type) {
-		case paintnote:
+		case Paintnote:
 			j.Paintnotes = append(j.Paintnotes, n)
-		case tasknote:
+		case Tasknote:
 			j.Tasknotes = append(j.Tasknotes, n)
-		case imagenote:
+		case Imagenote:
 			j.Imagenotes = append(j.Imagenotes, n)
 		default:
 			log.Printf("note type %s not supported", jn.NoteType)

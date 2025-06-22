@@ -106,6 +106,7 @@ func (h *Handler) ServeNoteForm() http.Handler {
 					path = paintNoteFormPath
 					h.jobnotes.PaintnoteFormData.FormType = "post"
 					h.jobnotes.PaintnoteFormData.JobId = jobId
+					h.jobnotes.PaintnoteFormData.Paintnote = jobnotes.Paintnote{}
 					if err := servePaintNoteForm(path, h.jobnotes.PaintnoteFormData, w); err != nil {
 						return
 					}
@@ -113,6 +114,7 @@ func (h *Handler) ServeNoteForm() http.Handler {
 					path = taskNoteFormPath
 					h.jobnotes.TasknoteFormData.FormType = "post"
 					h.jobnotes.TasknoteFormData.JobId = jobId
+					h.jobnotes.TasknoteFormData.Tasknote = jobnotes.Tasknote{}
 					if err := serveTaskNoteForm(path, h.jobnotes.TasknoteFormData, w); err != nil {
 						return
 					}
@@ -120,6 +122,7 @@ func (h *Handler) ServeNoteForm() http.Handler {
 					path = imageNoteFormPath
 					h.jobnotes.ImagenoteFormData.FormType = "post"
 					h.jobnotes.ImagenoteFormData.JobId = jobId
+					h.jobnotes.ImagenoteFormData.Imagenote = jobnotes.Imagenote{}
 					if err := serveImageNoteForm(path, h.jobnotes.ImagenoteFormData, w); err != nil {
 						return
 					}
@@ -265,14 +268,20 @@ func (h *Handler) PostNote() http.Handler {
 
 			switch h.jobnotes.Note.NoteType {
 			case "paint_note":
+				h.jobnotes.PaintnoteFormData.Paintnote = h.jobnotes.Paintnote
+				h.jobnotes.PaintnoteFormData.Errors.SuccessMsg = "Paint note submitted successfully."
 				if err := servePaintNoteForm(paintNoteFormPath, h.jobnotes.PaintnoteFormData, w); err != nil {
 					return
 				}
 			case "task_note":
+				h.jobnotes.TasknoteFormData.Tasknote = h.jobnotes.Tasknote
+				h.jobnotes.TasknoteFormData.Errors.SuccessMsg = "Task note submitted successfully."
 				if err := serveTaskNoteForm(taskNoteFormPath, h.jobnotes.TasknoteFormData, w); err != nil {
 					return
 				}
 			case "image_note":
+				h.jobnotes.ImagenoteFormData.Imagenote = h.jobnotes.Imagenote
+				h.jobnotes.ImagenoteFormData.Errors.SuccessMsg = "Image note submitted successfully."
 				if err := serveImageNoteForm(imageNoteFormPath, h.jobnotes.ImagenoteFormData, w); err != nil {
 					return
 				}
@@ -321,11 +330,16 @@ func (h *Handler) PutNote() http.Handler {
 func (h *Handler) DeleteNote() http.Handler {
 	return http.HandlerFunc(
 		func(w http.ResponseWriter, r *http.Request) {
-			if ok := h.DecodeJson(&h.jobnotes.Note, w, r); !ok {
+			err := r.ParseForm()
+			if err != nil {
+				log.Printf("error parsing request values: %v", err)
+				http.Error(w, "error parsing request values, bad request", http.StatusBadRequest)
 				return
 			}
 
-			err := h.jobnotes.DeleteNote(h.jobnotes.Note.Uuid)
+			uuid := r.FormValue("note_uuid")
+
+			err = h.jobnotes.DeleteNote(uuid)
 			if err != nil {
 				log.Printf("error deleting note: %v", err)
 				http.Error(w, "error deleting note", http.StatusInternalServerError)

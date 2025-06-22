@@ -70,6 +70,7 @@
 						<input class="modal-form-input" type="text" name="area" value="{{ .Paintnote.Area }}">
 					</div>
 					<div class="error-container">
+						{{ .Errors.AreaErr }}
 					</div>
 				</div>
 				<div class="modal-form-row">
@@ -95,6 +96,7 @@
 						<input class="modal-form-input" type="text" name="surfaces" value="{{ .Paintnote.Surfaces }}">
 					</div>
 					<div class="error-container">
+						{{ .Errors.SurfacesErr }}
 					</div>
 				</div>
 				<div class="modal-form-textarea-row">
