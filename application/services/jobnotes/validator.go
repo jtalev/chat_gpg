@@ -95,6 +95,10 @@ func (t *Tasknote) validate() (tasknoteerrors, bool) {
 }
 
 type imagenoteerrors struct {
+	ImageErr   string
+	CaptionErr string
+	AreaErr    string
+
 	IsSuccess  bool
 	SuccessMsg string
 }

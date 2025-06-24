@@ -65,7 +65,8 @@
 				hx-swap="innerHtml"
 				hx-target="#note-modal"
 				hx-vals='{
-					"note_type": "task_note"
+					"note_type": "task_note",
+					"job_id": "{{ .JobSummary.ID }}"
 				}'
 				onclick="toggleNoteModal()"
 				class="add-note-btn">
@@ -95,7 +96,8 @@
 				hx-swap="innerHtml"
 				hx-target="#note-modal"
 				hx-vals='{
-					"note_type": "image_note"
+					"note_type": "image_note",
+					"job_id": "{{ .JobSummary.ID }}"
 				}'
 				onclick="toggleNoteModal()"
 				class="add-note-btn">

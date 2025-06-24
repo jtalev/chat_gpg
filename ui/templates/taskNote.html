@@ -11,6 +11,17 @@
 				<img src="../static/img/approved.svg" class="task-note-completed-img"><span class="task-note-completed">Completed</span>
 			{{ end }}
 		</div>
+		<button
+			hx-delete="/job-notes/delete"
+			hx-trigger="click"
+			hx-target="closest .task-note-container"
+			hx-swap="delete"
+			hx-vals='{
+				"note_uuid": "{{ .NoteUuid }}"
+			}' 
+			class="note-delete-btn">
+				X
+			</button>
 	</div>
 	<div class="task-note-description-container">
 		{{ .Description }}

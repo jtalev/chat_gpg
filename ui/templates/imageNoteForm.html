@@ -13,13 +13,54 @@
 			<form
 			class="modal-form"
 			id="imagenote-form"
-			{{ if eq .FormType "post" }}
-			hx-post="/job-notes/post"
-			{{ else }}
-			hx-put="/job-notes/put"
-			{{ end }}
-			hx-target="#note-modal"
-			hx-swap="innerHtml">
+			data-form-type="{{ .FormType }}"
+			onsubmit="return submitImagenote(event)">
+				<input hidden type="text" name="note_type" value="image_note">
+				<input hidden type="number" name="job_id" value="{{ .JobId }}">
+				<input hidden type="text" name="note_uuid" value="{{ .Imagenote.NoteUuid }}">
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="image_base64">Image File:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-file" type="file" name="image_base64" value="{{ .Imagenote.ImageBase64 }}">
+					</div>
+					<div class="error-container">
+						{{ .Errors.ImageErr }}
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="caption">Caption:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="caption" value="{{ .Imagenote.Caption }}">
+					</div>
+					<div class="error-container">
+						{{ .Errors.CaptionErr }}
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="area">Area:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="area" value="{{ .Imagenote.Area }}">
+					</div>
+					<div class="error-container">
+						{{ .Errors.AreaErr }}
+					</div>
+				</div>
+				<div class="modal-form-textarea-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="notes">Notes:</label>
+					</div>
+					<div class="modal-form-textarea-container">
+						<textarea class="modal-form-textarea" name="notes">{{ .Imagenote.Notes }}</textarea>
+					</div>
+					<div class="error-container">
+					</div>
+				</div>
 				<div class="gpg-form-btn-container">
 					<button class="gpg-submit-btn" form="imagenote-form" type="submit">SUBMIT</button>
 				</div>

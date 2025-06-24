@@ -1,8 +1,10 @@
 package jobnotes
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 
 	"github.com/google/uuid"
@@ -47,11 +49,12 @@ type Tasknote struct {
 }
 
 type Imagenote struct {
-	NoteUuid string `json:"note_uuid"`
-	S3uuid   string `json:"s3uuid"`
-	Caption  string `json:"caption"`
-	Area     string `json:"area"`
-	Notes    string `json:"notes"`
+	NoteUuid    string `json:"note_uuid"`
+	S3uuid      string `json:"s3uuid"`
+	ImageBase64 string `json:"image_base64"`
+	Caption     string `json:"caption"`
+	Area        string `json:"area"`
+	Notes       string `json:"notes"`
 }
 
 type jobnoteSummary struct {
@@ -278,6 +281,20 @@ func (j *Jobnotes) marshalNote(noteType, uuid string) error {
 	return nil
 }
 
+func writeImg(imgBase64 string) error {
+	decoded, err := base64.StdEncoding.DecodeString(imgBase64)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile("../ui/static/jobnotes/temp_img.jpg", decoded, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (j *Jobnotes) PostNote(noteType string) error {
 	isSuccess := j.validateNote(noteType)
 	if !isSuccess {
@@ -285,6 +302,14 @@ func (j *Jobnotes) PostNote(noteType string) error {
 		return nil
 	} else {
 		uuid := uuid.NewString()
+
+		if noteType == "image_note" {
+			err := writeImg(j.Imagenote.ImageBase64)
+			if err != nil {
+				return err
+			}
+		}
+
 		err := j.marshalNote(noteType, uuid)
 		if err != nil {
 			return err
@@ -292,11 +317,11 @@ func (j *Jobnotes) PostNote(noteType string) error {
 
 		j.Note.Uuid = uuid
 
-		err = j.Repo.PostNote(j.Note)
-		if err != nil {
-			log.Printf("error posting note %v: %v", j.Note, err)
-			return err
-		}
+		// err = j.Repo.PostNote(j.Note)
+		// if err != nil {
+		// 	log.Printf("error posting note %v: %v", j.Note, err)
+		// 	return err
+		// }
 		return nil
 	}
 }

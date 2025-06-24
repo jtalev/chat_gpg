@@ -1,5 +1,16 @@
 {{ define "imageNote" }}
 <div class="image-note-container">
+	<button
+			hx-delete="/job-notes/delete"
+			hx-trigger="click"
+			hx-target="closest .image-note-container"
+			hx-swap="delete"
+			hx-vals='{
+				"note_uuid": "{{ .NoteUuid }}"
+			}' 
+			class="note-delete-btn">
+				X
+	</button>
 	<div class="image-note-img-container">
 		
 	</div>

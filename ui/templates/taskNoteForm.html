@@ -20,6 +20,69 @@
 			{{ end }}
 			hx-target="#note-modal"
 			hx-swap="innerHtml">
+				<input hidden type="text" name="note_type" value="task_note">
+				<input hidden type="number" name="job_id" value="{{ .JobId }}">
+				<input hidden type="text" name="note_uuid" value="{{ .Tasknote.NoteUuid }}">
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="title">Title:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="title" value="{{ .Tasknote.Title }}">
+					</div>
+					<div class="error-container">
+						{{ .Errors.TitleErr }}
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="description">Description:</label>
+					</div>
+					<div class="modal-form-input-container">
+						<input class="modal-form-input" type="text" name="description" value="{{ .Tasknote.Description }}">
+					</div>
+					<div class="error-container">
+						{{ .Errors.DescriptionErr }}
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="status">Status:</label>
+					</div>
+					<div class="form-input-container">
+		                <select name="status" class="form-input">
+		                    <option type="text" value="pending" {{ if eq $.Tasknote.Status "pending" }} selected {{ end }}>pending</option>
+		                	<option type="text" value="completed" {{ if eq $.Tasknote.Status "completed" }} selected {{ end }}>completed</option>
+		                </select>
+		            </div>
+					<div class="error-container">
+					</div>
+				</div>
+				<div class="modal-form-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="priority">Priority:</label>
+					</div>
+					<div class="form-input-container">
+		                <select name="priority" class="form-input">
+		                	<option type="text" value="n/a" {{ if eq $.Tasknote.Priority "n/a" }} selected {{ end }}>n/a</option>
+		                    <option type="text" value="high" {{ if eq $.Tasknote.Priority "high" }} selected {{ end }}>high</option>
+		                    <option type="text" value="medium" {{ if eq $.Tasknote.Priority "medium" }} selected {{ end }}>medium</option>
+		                    <option type="text" value="low" {{ if eq $.Tasknote.Priority "low" }} selected {{ end }}>low</option>
+		                </select>
+		            </div>
+					<div class="error-container">
+					</div>
+				</div>
+				<div class="modal-form-textarea-row">
+					<div class="modal-form-label-container">
+						<label class="modal-form-label" for="notes">Notes:</label>
+					</div>
+					<div class="modal-form-textarea-container">
+						<textarea class="modal-form-textarea" name="notes">{{ .Tasknote.Notes }}</textarea>
+					</div>
+					<div class="error-container">
+					</div>
+				</div>
 				<div class="gpg-form-btn-container">
 					<button class="gpg-submit-btn" form="tasknote-form" type="submit">SUBMIT</button>
 				</div>
