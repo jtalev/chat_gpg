@@ -4,11 +4,14 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"log"
+	"path/filepath"
 
 	"github.com/google/uuid"
 	models "github.com/jtalev/chat_gpg/domain/models"
+	"github.com/jtalev/chat_gpg/infrastructure/img"
 )
 
 type NoteRepo interface {
@@ -55,6 +58,7 @@ type Imagenote struct {
 	Caption     string `json:"caption"`
 	Area        string `json:"area"`
 	Notes       string `json:"notes"`
+	S3Url       template.HTML
 }
 
 type jobnoteSummary struct {
@@ -214,6 +218,16 @@ func (j *Jobnotes) unmarshalNotes(jobnotes []Note) {
 	}
 }
 
+func getImgUrl(imgNote *Imagenote, imgStore *img.ImgStore) error {
+	url, err := imgStore.GetImgUrl(imgNote.S3uuid, "paint-note")
+	if err != nil {
+		return err
+	}
+
+	imgNote.S3Url = template.HTML(url)
+	return nil
+}
+
 func (j *Jobnotes) GetJobNotes(jobId int) error {
 	notes, err := j.Repo.GetNotesByJobId(jobId)
 	if err != nil {
@@ -222,6 +236,14 @@ func (j *Jobnotes) GetJobNotes(jobId int) error {
 	}
 
 	j.unmarshalNotes(notes)
+
+	imgStore := img.InitImgStore()
+	for i := range j.Imagenotes {
+		err = getImgUrl(&j.Imagenotes[i], &imgStore)
+		if err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
@@ -295,6 +317,22 @@ func writeImg(imgBase64 string) error {
 	return nil
 }
 
+func storeImg(imgBase64, uuid string) error {
+	err := writeImg(imgBase64)
+	if err != nil {
+		return err
+	}
+
+	imgStore := img.InitImgStore()
+	path := filepath.Join("..", "ui", "static", "jobnotes", "temp_img.jpg")
+	err = imgStore.Store(path, uuid, "paint-note")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (j *Jobnotes) PostNote(noteType string) error {
 	isSuccess := j.validateNote(noteType)
 	if !isSuccess {
@@ -304,7 +342,8 @@ func (j *Jobnotes) PostNote(noteType string) error {
 		uuid := uuid.NewString()
 
 		if noteType == "image_note" {
-			err := writeImg(j.Imagenote.ImageBase64)
+			j.Imagenote.S3uuid = uuid
+			err := storeImg(j.Imagenote.ImageBase64, uuid)
 			if err != nil {
 				return err
 			}
@@ -317,11 +356,11 @@ func (j *Jobnotes) PostNote(noteType string) error {
 
 		j.Note.Uuid = uuid
 
-		// err = j.Repo.PostNote(j.Note)
-		// if err != nil {
-		// 	log.Printf("error posting note %v: %v", j.Note, err)
-		// 	return err
-		// }
+		err = j.Repo.PostNote(j.Note)
+		if err != nil {
+			log.Printf("error posting note %v: %v", j.Note, err)
+			return err
+		}
 		return nil
 	}
 }

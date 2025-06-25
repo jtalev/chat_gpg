@@ -104,9 +104,38 @@ type imagenoteerrors struct {
 }
 
 func (i *Imagenote) validate() (imagenoteerrors, bool) {
-	errors := imagenoteerrors{
-		IsSuccess:  true,
-		SuccessMsg: "Image note submitted successfully",
-	}
+	errors := imagenoteerrors{IsSuccess: true}
+
+	errors = i.validateImage(errors)
+	errors = i.validateCaption(errors)
+	errors = i.validateArea(errors)
+
 	return errors, errors.IsSuccess
+}
+
+func (i *Imagenote) validateImage(errors imagenoteerrors) imagenoteerrors {
+	if i.ImageBase64 == "" {
+		errors.ImageErr = "*required"
+		errors.IsSuccess = false
+		return errors
+	}
+	return errors
+}
+
+func (i *Imagenote) validateCaption(errors imagenoteerrors) imagenoteerrors {
+	if i.Caption == "" {
+		errors.CaptionErr = "*required"
+		errors.IsSuccess = false
+		return errors
+	}
+	return errors
+}
+
+func (i *Imagenote) validateArea(errors imagenoteerrors) imagenoteerrors {
+	if i.Area == "" {
+		errors.AreaErr = "*required"
+		errors.IsSuccess = false
+		return errors
+	}
+	return errors
 }

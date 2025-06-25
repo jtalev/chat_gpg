@@ -266,30 +266,30 @@ func (h *Handler) PostNote() http.Handler {
 				return
 			}
 
-			// switch h.jobnotes.Note.NoteType {
-			// case "paint_note":
-			// 	h.jobnotes.PaintnoteFormData.Paintnote = h.jobnotes.Paintnote
-			// 	h.jobnotes.PaintnoteFormData.Errors.SuccessMsg = "Paint note submitted successfully."
-			// 	if err := servePaintNoteForm(paintNoteFormPath, h.jobnotes.PaintnoteFormData, w); err != nil {
-			// 		return
-			// 	}
-			// case "task_note":
-			// 	h.jobnotes.TasknoteFormData.Tasknote = h.jobnotes.Tasknote
-			// 	h.jobnotes.TasknoteFormData.Errors.SuccessMsg = "Task note submitted successfully."
-			// 	if err := serveTaskNoteForm(taskNoteFormPath, h.jobnotes.TasknoteFormData, w); err != nil {
-			// 		return
-			// 	}
-			// case "image_note":
-			// 	h.jobnotes.ImagenoteFormData.Imagenote = h.jobnotes.Imagenote
-			// 	h.jobnotes.ImagenoteFormData.Errors.SuccessMsg = "Image note submitted successfully."
-			// 	if err := serveImageNoteForm(imageNoteFormPath, h.jobnotes.ImagenoteFormData, w); err != nil {
-			// 		return
-			// 	}
-			// default:
-			// 	log.Printf("note type %s not supported", h.jobnotes.Note.NoteType)
-			// 	http.Error(w, "note type not supported, bad request", http.StatusBadRequest)
-			// 	return
-			// }
+			switch h.jobnotes.Note.NoteType {
+			case "paint_note":
+				h.jobnotes.PaintnoteFormData.Paintnote = h.jobnotes.Paintnote
+				h.jobnotes.PaintnoteFormData.Errors.SuccessMsg = "Paint note submitted successfully."
+				if err := servePaintNoteForm(paintNoteFormPath, h.jobnotes.PaintnoteFormData, w); err != nil {
+					return
+				}
+			case "task_note":
+				h.jobnotes.TasknoteFormData.Tasknote = h.jobnotes.Tasknote
+				h.jobnotes.TasknoteFormData.Errors.SuccessMsg = "Task note submitted successfully."
+				if err := serveTaskNoteForm(taskNoteFormPath, h.jobnotes.TasknoteFormData, w); err != nil {
+					return
+				}
+			case "image_note":
+				h.jobnotes.ImagenoteFormData.Imagenote = h.jobnotes.Imagenote
+				h.jobnotes.ImagenoteFormData.Errors.SuccessMsg = "Image note submitted successfully."
+				if err := serveImageNoteForm(imageNoteFormPath, h.jobnotes.ImagenoteFormData, w); err != nil {
+					return
+				}
+			default:
+				log.Printf("note type %s not supported", h.jobnotes.Note.NoteType)
+				http.Error(w, "note type not supported, bad request", http.StatusBadRequest)
+				return
+			}
 		},
 	)
 }

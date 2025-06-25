@@ -4658,6 +4658,12 @@ input::-webkit-inner-spin-button {
     height: 200px;
     background-color: var(--light-background-color);
     border-radius: 10px;
+    overflow-y: hidden;
+}
+
+.image-note-img-container img {
+    height: 100%;
+    width: 100%;
 }
 
 .image-note-info-container {

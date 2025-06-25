@@ -86,9 +86,9 @@ async function submitImagenote(event) {
 		})
 
 		jsonData.image_base64 = base64
+	} else {
+		jsonData.image_base64 = ""
 	}
-
-	console.log(jsonData.image_base64)
 
 	const formType = form.getAttribute("data-form-type")
 	const endpoint = formType === "post" 

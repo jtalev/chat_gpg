@@ -13,13 +13,8 @@
 			<form
 			class="modal-form"
 			id="tasknote-form"
-			{{ if eq .FormType "post" }}
-			hx-post="/job-notes/post"
-			{{ else }}
-			hx-put="/job-notes/put"
-			{{ end }}
-			hx-target="#note-modal"
-			hx-swap="innerHtml">
+			data-form-type="{{ .FormType }}"
+			onsubmit="return submitTasknote(event)">
 				<input hidden type="text" name="note_type" value="task_note">
 				<input hidden type="number" name="job_id" value="{{ .JobId }}">
 				<input hidden type="text" name="note_uuid" value="{{ .Tasknote.NoteUuid }}">
