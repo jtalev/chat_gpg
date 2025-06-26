@@ -4,6 +4,19 @@ function toggleNoteModal() {
 	modal.style.display = display == "none" ? "flex" : "none";
 }
 
+function closeModalAndReloadNotes(jobId) {
+    toggleNoteModal(); // Close the modal
+    
+    // Manually trigger HTMX request
+    htmx.ajax('GET', '/job-notes/get', {
+        target: '#jobnotes-content-container',
+        swap: 'innerHTML',
+        values: {
+            job_id: jobId
+        }
+    });
+}
+
 async function submitPaintnote(event) {
 	event.preventDefault()
 
@@ -120,6 +133,55 @@ async function submitImagenote(event) {
 	} catch (err) {
 		console.error(err)
 		alert("Error occurred while submitting image note")
+		return false
+	}
+}
+
+async function submitTasknote(event) {
+	event.preventDefault()
+
+	const form = document.getElementById("tasknote-form")
+	const formData = new FormData(form)
+	const jsonData = {}
+
+	formData.forEach((value, key) => {
+		jsonData[key] = value
+	})
+
+	if (jsonData.job_id) {
+		jsonData.job_id = parseInt(jsonData.job_id)
+	}
+
+	const formType = form.getAttribute("data-form-type")
+	const endpoint = formType === "post"
+		? "/job-notes/post"
+		: "/job-notes/put"
+	const method = formType === "post"
+		? "POST"
+		: "PUT"
+
+	try {
+		const response = await fetch(endpoint, {
+			method: method,
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify(jsonData)
+		})
+
+		if (!response.ok) {
+			const errorText = await response.text()
+			console.error("server error:", errorText)
+			alert("failed to submit paint note")
+			return false
+		}
+
+		const html = await response.text()
+		document.getElementById("note-modal").innerHTML = html
+		return false
+	} catch (err) {
+		console.log(err)
+		alert("error occurred while submitting paint note")
 		return false
 	}
 }

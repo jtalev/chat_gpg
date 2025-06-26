@@ -7,7 +7,7 @@
 			{{ else }}
 				<p>Update Paint Note</p>
 			{{ end }}
-				<button class="note-modal-close-btn" onclick="toggleNoteModal()">X</button>
+				<button class="note-modal-close-btn" onclick="closeModalAndReloadNotes({{ .JobId }})">X</button>
 		</div>
 		<div class="modal-form-container">
 			<form
@@ -109,6 +109,9 @@
 					<div class="error-container">
 					</div>
 				</div>
+				<div class="success-msg-container">
+	                <p>{{ .Errors.SuccessMsg }}</p>
+		        </div>
 				<div class="gpg-form-btn-container">
 					<button class="gpg-submit-btn" form="paintnote-form" type="submit">SUBMIT</button>
 				</div>
@@ -117,23 +120,3 @@
 	</div>
 </div>
 {{ end }}
-type paintnote struct {
-	NoteUuid string `json:"note_uuid"`
-	Brand    string `json:"brand"`
-	Product  string `json:"product"`
-	Colour   string `json:"colour"`
-	Finish   string `json:"finish"`
-	Area     string `json:"area"`
-	Coats    int    `json:"coats"`
-	Surfaces string `json:"surfaces"`
-	Notes    string `json:"notes"`
-}
-type paintnoteerrors struct {
-	brandErr   string
-	productErr string
-	colourErr  string
-	finishErr  string
-
-	isSuccess  bool
-	successMsg string
-}

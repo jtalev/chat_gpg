@@ -10,6 +10,32 @@ type JobnotesRepo struct {
 	Db *sql.DB
 }
 
+func (j *JobnotesRepo) GetNoteByUuid(uuid string) (jobnotes.Note, error) {
+	q := `
+	select * from note where uuid = ?
+	`
+	rows, err := j.Db.Query(q, uuid)
+	if err != nil {
+		return jobnotes.Note{}, err
+	}
+	defer rows.Close()
+
+	n := jobnotes.Note{}
+	for rows.Next() {
+		if err := rows.Scan(
+			&n.Uuid,
+			&n.JobId,
+			&n.NoteType,
+			&n.Note,
+			&n.CreatedAt,
+			&n.ModifiedAt,
+		); err != nil {
+			return n, err
+		}
+	}
+	return n, nil
+}
+
 func (j *JobnotesRepo) GetNotesByJobId(jobId int) ([]jobnotes.Note, error) {
 	q := `
 	select * from note where job_id = ?

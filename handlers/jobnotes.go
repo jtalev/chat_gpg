@@ -51,6 +51,8 @@ func (h *Handler) ServeJobsView() http.Handler {
 }
 
 func servePaintNoteForm(path string, data jobnotes.PaintnoteFormData, w http.ResponseWriter) error {
+	log.Println(data.JobId)
+	log.Println(data.Errors.SuccessMsg)
 	err := executePartialTemplate(path, "paintNoteForm", data, w)
 	if err != nil {
 		log.Printf("error executing template paintNoteForm: %v", err)
@@ -269,18 +271,21 @@ func (h *Handler) PostNote() http.Handler {
 			switch h.jobnotes.Note.NoteType {
 			case "paint_note":
 				h.jobnotes.PaintnoteFormData.Paintnote = h.jobnotes.Paintnote
+				h.jobnotes.PaintnoteFormData.JobId = h.jobnotes.Note.JobId
 				h.jobnotes.PaintnoteFormData.Errors.SuccessMsg = "Paint note submitted successfully."
 				if err := servePaintNoteForm(paintNoteFormPath, h.jobnotes.PaintnoteFormData, w); err != nil {
 					return
 				}
 			case "task_note":
 				h.jobnotes.TasknoteFormData.Tasknote = h.jobnotes.Tasknote
+				h.jobnotes.TasknoteFormData.JobId = h.jobnotes.Note.JobId
 				h.jobnotes.TasknoteFormData.Errors.SuccessMsg = "Task note submitted successfully."
 				if err := serveTaskNoteForm(taskNoteFormPath, h.jobnotes.TasknoteFormData, w); err != nil {
 					return
 				}
 			case "image_note":
 				h.jobnotes.ImagenoteFormData.Imagenote = h.jobnotes.Imagenote
+				h.jobnotes.ImagenoteFormData.JobId = h.jobnotes.Note.JobId
 				h.jobnotes.ImagenoteFormData.Errors.SuccessMsg = "Image note submitted successfully."
 				if err := serveImageNoteForm(imageNoteFormPath, h.jobnotes.ImagenoteFormData, w); err != nil {
 					return

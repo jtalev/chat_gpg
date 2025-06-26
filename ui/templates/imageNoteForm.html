@@ -7,7 +7,7 @@
 			{{ else }}
 				<p>Update Image Note</p>
 			{{ end }}
-				<button class="note-modal-close-btn" onclick="toggleNoteModal()">X</button>
+				<button class="note-modal-close-btn" onclick="closeModalAndReloadNotes({{ .JobId }})">X</button>
 		</div>
 		<div class="modal-form-container">
 			<form
@@ -61,6 +61,9 @@
 					<div class="error-container">
 					</div>
 				</div>
+				<div class="success-msg-container">
+	                <p>{{ .Errors.SuccessMsg }}</p>
+		        </div>
 				<div class="gpg-form-btn-container">
 					<button class="gpg-submit-btn" form="imagenote-form" type="submit">SUBMIT</button>
 				</div>

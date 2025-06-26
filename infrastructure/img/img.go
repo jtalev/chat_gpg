@@ -100,3 +100,24 @@ func (i *ImgStore) GetImgUrl(uuid, s3Dir string) (string, error) {
 
 	return req.URL, nil
 }
+
+func (i *ImgStore) Delete(uuid, s3Dir string) error {
+	s3FileName := fmt.Sprintf("%s.jpg", uuid)
+	s3Key := fmt.Sprintf("%s/%s", s3Dir, s3FileName)
+
+	cfg, err := setConfig()
+	if err != nil {
+		return err
+	}
+
+	client := s3.NewFromConfig(cfg)
+
+	_, err = client.DeleteObject(context.TODO(), &s3.DeleteObjectInput{
+		Bucket: aws.String(i.bucketName),
+		Key:    aws.String(s3Key),
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}

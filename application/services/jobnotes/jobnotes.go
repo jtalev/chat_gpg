@@ -15,6 +15,7 @@ import (
 )
 
 type NoteRepo interface {
+	GetNoteByUuid(uuid string) (Note, error)
 	GetNotesByJobId(jobId int) ([]Note, error)
 	PostNote(note Note) error
 	PutNote(note Note) error
@@ -219,7 +220,7 @@ func (j *Jobnotes) unmarshalNotes(jobnotes []Note) {
 }
 
 func getImgUrl(imgNote *Imagenote, imgStore *img.ImgStore) error {
-	url, err := imgStore.GetImgUrl(imgNote.S3uuid, "paint-note")
+	url, err := imgStore.GetImgUrl(imgNote.S3uuid, "image-note")
 	if err != nil {
 		return err
 	}
@@ -325,7 +326,7 @@ func storeImg(imgBase64, uuid string) error {
 
 	imgStore := img.InitImgStore()
 	path := filepath.Join("..", "ui", "static", "jobnotes", "temp_img.jpg")
-	err = imgStore.Store(path, uuid, "paint-note")
+	err = imgStore.Store(path, uuid, "image-note")
 	if err != nil {
 		return err
 	}
@@ -386,7 +387,20 @@ func (j *Jobnotes) PutNote(noteType string) error {
 }
 
 func (j *Jobnotes) DeleteNote(uuid string) error {
-	err := j.Repo.DeleteNote(uuid)
+	note, err := j.Repo.GetNoteByUuid(uuid)
+	if err != nil {
+		return err
+	}
+
+	if note.NoteType == "image_note" {
+		imgStore := img.InitImgStore()
+		err = imgStore.Delete(uuid, "image-note")
+		if err != nil {
+			return err
+		}
+	}
+
+	err = j.Repo.DeleteNote(uuid)
 	if err != nil {
 		return err
 	}
