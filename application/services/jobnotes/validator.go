@@ -105,7 +105,7 @@ func (t *Tasknote) validate() (tasknoteerrors, bool) {
 		errors.SuccessMsg = ""
 	}
 
-	return tasknoteerrors{}, true
+	return errors, errors.IsSuccess
 }
 
 func (t *Tasknote) validateTitle(errors tasknoteerrors) tasknoteerrors {

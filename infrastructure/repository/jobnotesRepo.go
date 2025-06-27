@@ -27,6 +27,7 @@ func (j *JobnotesRepo) GetNoteByUuid(uuid string) (jobnotes.Note, error) {
 			&n.JobId,
 			&n.NoteType,
 			&n.Note,
+			&n.IsArchived,
 			&n.CreatedAt,
 			&n.ModifiedAt,
 		); err != nil {
@@ -38,7 +39,7 @@ func (j *JobnotesRepo) GetNoteByUuid(uuid string) (jobnotes.Note, error) {
 
 func (j *JobnotesRepo) GetNotesByJobId(jobId int) ([]jobnotes.Note, error) {
 	q := `
-	select * from note where job_id = ?
+	select * from note where job_id = ? and is_archived = 0;
 	`
 	rows, err := j.Db.Query(q, jobId)
 	if err != nil {
@@ -54,6 +55,7 @@ func (j *JobnotesRepo) GetNotesByJobId(jobId int) ([]jobnotes.Note, error) {
 			&n.JobId,
 			&n.NoteType,
 			&n.Note,
+			&n.IsArchived,
 			&n.CreatedAt,
 			&n.ModifiedAt,
 		); err != nil {
@@ -97,6 +99,25 @@ func (j *JobnotesRepo) DeleteNote(uuid string) error {
 	DELETE FROM note WHERE uuid = ?;
 	`
 	_, err := j.Db.Exec(q, uuid)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (j *JobnotesRepo) ArchiveNote(uuid string, isArchived bool) error {
+	q := `
+	UPDATE note
+	SET is_archived = $1
+	WHERE uuid = $2;
+	`
+
+	isArchivedInt := 0
+	if isArchived {
+		isArchivedInt = 1
+	}
+
+	_, err := j.Db.Exec(q, isArchivedInt, uuid)
 	if err != nil {
 		return err
 	}

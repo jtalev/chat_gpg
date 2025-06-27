@@ -1,8 +1,14 @@
 {{ define "paintNote" }}
 <div class="paint-note-container">
 	<div class="paint-note-header-container">
-		<span class="paint-note-product">
-			{{ .Colour }} - {{ .Product }}
+		<div class="paint-note-btn-container">
+			<span class="paint-note-archive-container">
+				<button
+				onclick="archiveNote('paint-note', {{ .NoteUuid }})"
+				class="note-archive-btn">
+					<img src="../static/img/archive.svg">
+				</button>
+			</span>
 			<button
 			hx-get="/job-notes/serve-note-form"
 			hx-trigger="click"
@@ -15,13 +21,16 @@
 			}'
 			onclick="toggleNoteModal()"
 			class="update-note-button">
-				<img src="../static/img/update_green.svg">
+				<img src="../static/img/update_green.svg" alt="update paint note button">
 			</button>
 			<button
 			onclick="deleteNote('paint-note', {{ .NoteUuid }})"
 			class="note-delete-btn">
 				X
 			</button>
+		</div>
+		<span class="paint-note-product">
+			{{ .Colour }} - {{ .Product }}
 		</span>
 		<span class="paint-note-brand">
 			{{ .Brand }}

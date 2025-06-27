@@ -35,6 +35,18 @@ function deleteNote(noteType, noteUuid) {
 	updateNoteCount(noteType)
 }
 
+function archiveNote(noteType, noteUuid) {
+	htmx.ajax('PUT', '/job-notes/archive', {
+		target: htmx.closest(htmx.find(`.${noteType}-container`), 'div'),
+		swap: 'delete',
+		values: {
+			uuid: noteUuid
+		}
+	})
+
+	updateNoteCount(noteType)
+}
+
 async function submitPaintnote(event) {
 	event.preventDefault()
 

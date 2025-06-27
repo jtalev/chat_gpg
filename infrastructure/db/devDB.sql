@@ -58,10 +58,20 @@ CREATE TABLE note(
     job_id INTEGER NOT NULL,
     note_type TEXT NOT NULL,
     note TEXT NOT NULL,
+    is_archived INTEGER NOT NULL DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
-INSERT INTO note VALUES('123','1','paint_note','hello','sddf','sdfsd');
+INSERT INTO note VALUES('f83b9618-b73b-471c-beae-d1f574023055',1,'paint_note','{"note_uuid":"123abc","brand":"Haymes","product":"Expressions","colour":"Natural White","finish":"Low Sheen","area":"Living Room","coats":2,"surfaces":"Walls","notes":""}',0,'2025-06-10 06:41:39','2025-06-10 06:41:39');
+INSERT INTO note VALUES('6b804426-281d-4d59-b6cc-e4de6c98ebc4',2,'paint_note','{"brand":"Haymes","product":"Ultratrim","colour":"Natural White","finish":"Semi-gloss","area":"Living Room","coats":2,"surfaces":"Woodwork","notes":""}',0,'2025-06-10 06:55:55','2025-06-10 06:55:55');
+INSERT INTO note VALUES('667fa8d9-c50f-4d66-b694-52082b4956ca',2,'paint_note','{"note_uuid":"667fa8d9-c50f-4d66-b694-52082b4956ca","brand":"Haymes","product":"Ultratrim","colour":"Natural White","finish":"Semi-gloss","area":"Living Room","coats":2,"surfaces":"Woodwork","notes":""}',0,'2025-06-10 07:12:46','2025-06-10 07:12:46');
+INSERT INTO note VALUES('9a09bc18-85e7-492f-91bd-386b31f531f8',24,'paint_note','{"note_uuid":"9a09bc18-85e7-492f-91bd-386b31f531f8","brand":"Haymes","product":"Ultratrim","colour":"Natural White","finish":"Semi-gloss","area":"Living Room","coats":2,"surfaces":"Woodwork","notes":""}',0,'2025-06-11 09:31:55','2025-06-11 09:31:55');
+INSERT INTO note VALUES('043b9c51-7500-415a-8551-a614838c5f79',24,'paint_note','{"note_uuid":"043b9c51-7500-415a-8551-a614838c5f79","brand":"Haymes","product":"Ultratrim","colour":"Natural White","finish":"Semi-gloss","area":"Living Room","coats":2,"surfaces":"Woodwork","notes":""}',0,'2025-06-11 09:32:01','2025-06-11 09:32:01');
+INSERT INTO note VALUES('6eb7f2f0-92d6-4955-a896-447b6ad74440',18,'paint_note','{"note_uuid":"6eb7f2f0-92d6-4955-a896-447b6ad74440","brand":"Haymes","product":"Expressions","colour":"Antique White","finish":"lkjg","area":"lkjgl","coats":0,"surfaces":"kjglkjg","notes":"lkjglk\n","JobId":0}',0,'2025-06-27 12:18:45','2025-06-27 12:18:45');
+INSERT INTO note VALUES('087d6df0-e4a0-432d-8812-c60400d78916',18,'task_note','{"note_uuid":"087d6df0-e4a0-432d-8812-c60400d78916","title":"updated","description":"lkn;ln","status":"pending","priority":"low","notes":"ln;ln;ln;","JobId":0}',0,'2025-06-27 12:18:54','2025-06-27 12:18:54');
+INSERT INTO note VALUES('ca6decbc-d309-4c06-afc0-148efed064bd',18,'task_note','{"note_uuid":"ca6decbc-d309-4c06-afc0-148efed064bd","title":"test","description":"updated description","status":"pending","priority":"n/a","notes":"test\n","JobId":0}',0,'2025-06-27 12:29:05','2025-06-27 12:29:05');
+INSERT INTO note VALUES('7ba8fedf-ac50-4b8f-95f1-48327b695fa8',18,'task_note','{"note_uuid":"7ba8fedf-ac50-4b8f-95f1-48327b695fa8","title":"update","description":"","status":"pending","priority":"n/a","notes":"","JobId":0}',0,'2025-06-27 12:43:05','2025-06-27 12:43:05');
+INSERT INTO note VALUES('5586903e-fd74-4a11-b3b8-0b9255911195',18,'paint_note','{"note_uuid":"5586903e-fd74-4a11-b3b8-0b9255911195","brand":"update","product":"update","colour":"update","finish":"lkh","area":"lkhj","coats":98,"surfaces":"kjlkjh","notes":"lkhk","JobId":0}',0,'2025-06-27 12:47:48','2025-06-27 12:47:48');
 CREATE TABLE job (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -75,21 +85,8 @@ CREATE TABLE job (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 INSERT INTO job VALUES(1,'Natts House',1,'Trewheela Ave','Manifold Heights','3218','Geelong',0,'2025-03-23 06:53:39','2025-03-23 06:53:39');
-INSERT INTO job VALUES(2,'saddsf',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:20:53','2025-03-26 04:20:53');
-INSERT INTO job VALUES(3,'sdfadsfsd',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:20:57','2025-03-26 04:20:57');
-INSERT INTO job VALUES(4,'sdfadsfsd',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:20:58','2025-03-26 04:20:58');
-INSERT INTO job VALUES(5,'sdfadsfsd',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:20:59','2025-03-26 04:20:59');
-INSERT INTO job VALUES(6,'sadfasdf',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:21:02','2025-03-26 04:21:02');
-INSERT INTO job VALUES(7,'sadfasdf',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:21:03','2025-03-26 04:21:03');
-INSERT INTO job VALUES(8,'sadfasdf',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:21:03','2025-03-26 04:21:03');
-INSERT INTO job VALUES(9,'sadfasdf',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:21:03','2025-03-26 04:21:03');
-INSERT INTO job VALUES(10,'sadfasdf',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:21:03','2025-03-26 04:21:03');
-INSERT INTO job VALUES(11,'sadfasdf',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:21:03','2025-03-26 04:21:03');
-INSERT INTO job VALUES(12,'dsafds',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:21:30','2025-03-26 04:21:30');
-INSERT INTO job VALUES(13,'dsafds',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:21:31','2025-03-26 04:21:31');
-INSERT INTO job VALUES(14,'dsafds',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:21:31','2025-03-26 04:21:31');
-INSERT INTO job VALUES(15,'dsafds',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:21:31','2025-03-26 04:21:31');
-INSERT INTO job VALUES(16,'dsafds',0,'n/a','n/a','n/a','n/a',0,'2025-03-26 04:21:31','2025-03-26 04:21:31');
+INSERT INTO job VALUES(17,'COGG - Dunes Toilet Block',12,'Ocean Rd','Ocean Grove','3214','Geelong',0,'2025-06-10 10:01:25','2025-06-10 10:01:25');
+INSERT INTO job VALUES(18,'Will''s Inlaws',24,'Seventh Ave','Anglesea','3214','Anglesea',0,'2025-06-11 09:05:54','2025-06-21 02:09:53');
 CREATE TABLE timesheet_week (
     timesheet_week_id INTEGER PRIMARY KEY AUTOINCREMENT,
     employee_id TEXT NOT NULL,
@@ -432,7 +429,7 @@ DELETE FROM sqlite_sequence;
 INSERT INTO sqlite_sequence VALUES('employee',4);
 INSERT INTO sqlite_sequence VALUES('employee_auth',4);
 INSERT INTO sqlite_sequence VALUES('leave_request',11);
-INSERT INTO sqlite_sequence VALUES('job',16);
+INSERT INTO sqlite_sequence VALUES('job',18);
 INSERT INTO sqlite_sequence VALUES('timesheet_week',8);
 INSERT INTO sqlite_sequence VALUES('timesheet',56);
 COMMIT;

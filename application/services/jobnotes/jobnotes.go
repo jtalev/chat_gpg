@@ -20,6 +20,7 @@ type NoteRepo interface {
 	PostNote(note Note) error
 	PutNote(note Note) error
 	DeleteNote(uuid string) error
+	ArchiveNote(uuid string, isArchived bool) error
 }
 
 type Note struct {
@@ -27,6 +28,7 @@ type Note struct {
 	JobId      int    `json:"job_id"`
 	NoteType   string `json:"note_type"` // eg. 'paintnote', 'tasknote', 'imagenote'
 	Note       string `json:"note"`      // going to be serialized json, deserialized to note type
+	IsArchived bool   `json:"is_archived"`
 	CreatedAt  string `json:"created_at"`
 	ModifiedAt string `json:"modified_at"`
 }
@@ -413,5 +415,24 @@ func (j *Jobnotes) DeleteNote(uuid string) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (j *Jobnotes) ArchiveNote(uuid string) error {
+	note, err := j.Repo.GetNoteByUuid(uuid)
+	if err != nil {
+		return err
+	}
+
+	isArchived := true
+	if note.IsArchived {
+		isArchived = false
+	}
+
+	err = j.Repo.ArchiveNote(uuid, isArchived)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

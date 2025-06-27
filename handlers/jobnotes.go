@@ -440,3 +440,25 @@ func (h *Handler) DeleteNote() http.Handler {
 		},
 	)
 }
+
+func (h *Handler) ArchiveJobNote() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			err := r.ParseForm()
+			if err != nil {
+				log.Printf("error parsing request form: %v", err)
+				http.Error(w, "error parsing form, bad request", http.StatusBadRequest)
+				return
+			}
+
+			uuid := r.FormValue("uuid")
+
+			err = h.jobnotes.ArchiveNote(uuid)
+			if err != nil {
+				log.Printf("error archiving note: %v", err)
+				http.Error(w, "error arching note, not modified", http.StatusNotModified)
+				return
+			}
+		},
+	)
+}

@@ -1,6 +1,13 @@
 {{ define "imageNote" }}
 <div class="image-note-container">
 	<div class="image-note-btn-container">
+		<span class="image-note-archive-container">
+			<button
+			onclick="archiveNote('image-note', {{ .NoteUuid }})"
+			class="note-archive-btn">
+				<img src="../static/img/archive.svg">
+			</button>
+		</span>
 		<button
 		hx-get="/job-notes/serve-note-form"
 		hx-trigger="click"
@@ -13,7 +20,7 @@
 		}'
 		onclick="toggleNoteModal()"
 		class="update-note-button">
-			<img src="../static/img/update_green.svg">
+			<img src="../static/img/update_green.svg" alt="update image note button">
 		</button>
 		<button
 		onclick="deleteNote('image-note', {{ .NoteUuid }})"

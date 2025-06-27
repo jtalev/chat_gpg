@@ -4490,6 +4490,13 @@ input::-webkit-inner-spin-button {
     gap: 5px;
 }
 
+.paint-note-btn-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 30px;
+}
+
 .paint-note-product {
     color: black;
     font-weight: 500;
@@ -4514,7 +4521,7 @@ input::-webkit-inner-spin-button {
 }
 
 .update-note-button {
-    margin-left: auto;
+    margin-left: 15px;
     color: var(--gpg-green);
     border: none;
     border-radius: 5px;
@@ -4793,4 +4800,41 @@ input::-webkit-inner-spin-button {
     font-size: x-small;
     font-weight: bold;
     cursor: pointer;
+}
+
+.paint-note-archive-container {
+    flex-grow: 1;
+    display: flex;
+    height: 100%;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.task-note-archive-container {
+    margin-left: auto;
+}
+
+.image-note-archive-container {
+    margin-right: auto;
+    flex-grow: 1;
+    display: flex;
+    height: 100%;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.note-archive-btn {
+    height: 20px;
+    width: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background-color: var(--gpg-light-green-background);
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.note-archive-btn img {
+    height: 80%;
 }

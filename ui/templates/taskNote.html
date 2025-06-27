@@ -8,6 +8,13 @@
 				<img src="../static/img/approved.svg" class="task-note-completed-img"><span class="task-note-completed">Completed</span>
 			{{ end }}
 		</div>
+		<div class="task-note-archive-container">
+			<button
+			onclick="archiveNote('task-note', {{ .NoteUuid }})"
+			class="note-archive-btn">
+				<img src="../static/img/archive.svg">
+			</button>
+		</div>
 		<button
 		hx-get="/job-notes/serve-note-form"
 		hx-trigger="click"
@@ -20,7 +27,7 @@
 		}'
 		class="update-note-button"
 		onclick="toggleNoteModal()">
-			<img src="../static/img/update_green.svg">
+			<img src="../static/img/update_green.svg" alt="update task note button">
 		</button>
 		<button
 		onclick="deleteNote('task-note', {{ .NoteUuid }})"
