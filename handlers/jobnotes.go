@@ -91,6 +91,7 @@ func (h *Handler) ServeNoteForm() http.Handler {
 			}
 
 			uuid, noteType := reqVals[0], reqVals[1]
+			log.Println(uuid)
 			jobIdStr := reqVals[2]
 			jobId, err := strconv.Atoi(jobIdStr)
 			if err != nil {
@@ -135,7 +136,70 @@ func (h *Handler) ServeNoteForm() http.Handler {
 					return
 				}
 			} else {
-
+				path := ""
+				switch noteType {
+				case "paint_note":
+					path = paintNoteFormPath
+					h.jobnotes.PaintnoteFormData.FormType = "put"
+					note, err := h.jobnotes.Repo.GetNoteByUuid(uuid)
+					if err != nil {
+						http.Error(w, "error getting note", http.StatusNotFound)
+						return
+					}
+					err = json.Unmarshal([]byte(note.Note), &h.jobnotes.Paintnote)
+					if err != nil {
+						http.Error(w, "error unmarshaling note", http.StatusNotFound)
+						return
+					}
+					h.jobnotes.PaintnoteFormData.Paintnote = h.jobnotes.Paintnote
+					h.jobnotes.PaintnoteFormData.JobId = jobId
+					h.jobnotes.PaintnoteFormData.Errors.SuccessMsg = ""
+					if err := servePaintNoteForm(path, h.jobnotes.PaintnoteFormData, w); err != nil {
+						return
+					}
+				case "task_note":
+					path = taskNoteFormPath
+					h.jobnotes.TasknoteFormData.FormType = "put"
+					note, err := h.jobnotes.Repo.GetNoteByUuid(uuid)
+					if err != nil {
+						http.Error(w, "error getting note", http.StatusNotFound)
+						return
+					}
+					err = json.Unmarshal([]byte(note.Note), &h.jobnotes.Tasknote)
+					if err != nil {
+						http.Error(w, "error unmarshaling note", http.StatusNotFound)
+						return
+					}
+					h.jobnotes.TasknoteFormData.Tasknote = h.jobnotes.Tasknote
+					h.jobnotes.TasknoteFormData.JobId = jobId
+					h.jobnotes.TasknoteFormData.Errors.SuccessMsg = ""
+					if err := serveTaskNoteForm(path, h.jobnotes.TasknoteFormData, w); err != nil {
+						return
+					}
+				case "image_note":
+					path = imageNoteFormPath
+					h.jobnotes.ImagenoteFormData.FormType = "put"
+					note, err := h.jobnotes.Repo.GetNoteByUuid(uuid)
+					if err != nil {
+						http.Error(w, "error getting note", http.StatusNotFound)
+						return
+					}
+					err = json.Unmarshal([]byte(note.Note), &h.jobnotes.Imagenote)
+					if err != nil {
+						http.Error(w, "error unmarshaling note", http.StatusNotFound)
+						return
+					}
+					h.jobnotes.ImagenoteFormData.Imagenote = h.jobnotes.Imagenote
+					h.jobnotes.ImagenoteFormData.JobId = jobId
+					h.jobnotes.ImagenoteFormData.Errors.SuccessMsg = ""
+					if err := serveImageNoteForm(path, h.jobnotes.ImagenoteFormData, w); err != nil {
+						return
+					}
+				default:
+					log.Printf("note type %s not supported", noteType)
+					http.Error(w, "note type not supported, bad request", http.StatusBadRequest)
+					return
+				}
 			}
 		},
 	)
@@ -210,7 +274,6 @@ func (h *Handler) GetJobNotes() http.Handler {
 }
 
 func unmarshalNote(requestBody []byte, j *jobnotes.Jobnotes) error {
-	log.Printf("jobnotes: %v", j.Note)
 	if err := json.Unmarshal(requestBody, &j.Note); err != nil {
 		return err
 	}
@@ -273,21 +336,18 @@ func (h *Handler) PostNote() http.Handler {
 			case "paint_note":
 				h.jobnotes.PaintnoteFormData.Paintnote = h.jobnotes.Paintnote
 				h.jobnotes.PaintnoteFormData.JobId = h.jobnotes.Note.JobId
-				h.jobnotes.PaintnoteFormData.Errors.SuccessMsg = "Paint note submitted successfully."
 				if err := servePaintNoteForm(paintNoteFormPath, h.jobnotes.PaintnoteFormData, w); err != nil {
 					return
 				}
 			case "task_note":
 				h.jobnotes.TasknoteFormData.Tasknote = h.jobnotes.Tasknote
 				h.jobnotes.TasknoteFormData.JobId = h.jobnotes.Note.JobId
-				h.jobnotes.TasknoteFormData.Errors.SuccessMsg = "Task note submitted successfully."
 				if err := serveTaskNoteForm(taskNoteFormPath, h.jobnotes.TasknoteFormData, w); err != nil {
 					return
 				}
 			case "image_note":
 				h.jobnotes.ImagenoteFormData.Imagenote = h.jobnotes.Imagenote
 				h.jobnotes.ImagenoteFormData.JobId = h.jobnotes.Note.JobId
-				h.jobnotes.ImagenoteFormData.Errors.SuccessMsg = "Image note submitted successfully."
 				if err := serveImageNoteForm(imageNoteFormPath, h.jobnotes.ImagenoteFormData, w); err != nil {
 					return
 				}
@@ -327,6 +387,31 @@ func (h *Handler) PutNote() http.Handler {
 			if err != nil {
 				log.Printf("error udating note: %v", err)
 				http.Error(w, "error updating note", http.StatusInternalServerError)
+				return
+			}
+
+			switch h.jobnotes.Note.NoteType {
+			case "paint_note":
+				h.jobnotes.PaintnoteFormData.Paintnote = h.jobnotes.Paintnote
+				h.jobnotes.PaintnoteFormData.JobId = h.jobnotes.Note.JobId
+				if err := servePaintNoteForm(paintNoteFormPath, h.jobnotes.PaintnoteFormData, w); err != nil {
+					return
+				}
+			case "task_note":
+				h.jobnotes.TasknoteFormData.Tasknote = h.jobnotes.Tasknote
+				h.jobnotes.TasknoteFormData.JobId = h.jobnotes.Note.JobId
+				if err := serveTaskNoteForm(taskNoteFormPath, h.jobnotes.TasknoteFormData, w); err != nil {
+					return
+				}
+			case "image_note":
+				h.jobnotes.ImagenoteFormData.Imagenote = h.jobnotes.Imagenote
+				h.jobnotes.ImagenoteFormData.JobId = h.jobnotes.Note.JobId
+				if err := serveImageNoteForm(imageNoteFormPath, h.jobnotes.ImagenoteFormData, w); err != nil {
+					return
+				}
+			default:
+				log.Printf("note type %s not supported", h.jobnotes.Note.NoteType)
+				http.Error(w, "note type not supported, bad request", http.StatusBadRequest)
 				return
 			}
 		},

@@ -9,6 +9,20 @@
 			{{ end }}
 		</div>
 		<button
+		hx-get="/job-notes/serve-note-form"
+		hx-trigger="click"
+		hx-swap="innerHtml"
+		hx-target="#note-modal"
+		hx-vals='{
+			"uuid": "{{ .NoteUuid }}",
+			"note_type": "task_note",
+			"job_id": "{{ .JobId }}"
+		}'
+		class="update-note-button"
+		onclick="toggleNoteModal()">
+			<img src="../static/img/update_green.svg">
+		</button>
+		<button
 		onclick="deleteNote('task-note', {{ .NoteUuid }})"
 		class="note-delete-btn">
 			X

@@ -69,7 +69,7 @@ func (p *Paintnote) validateSurfaces(errors paintnoteerrors) paintnoteerrors {
 }
 
 func (p *Paintnote) validate() (paintnoteerrors, bool) {
-	errors := paintnoteerrors{IsSuccess: true}
+	errors := paintnoteerrors{SuccessMsg: "Paint note submitted successfully.", IsSuccess: true}
 
 	errors = p.validateBrand(errors)
 	errors = p.validateProduct(errors)
@@ -77,6 +77,10 @@ func (p *Paintnote) validate() (paintnoteerrors, bool) {
 	errors = p.validateFinish(errors)
 	errors = p.validateArea(errors)
 	errors = p.validateSurfaces(errors)
+
+	if !errors.IsSuccess {
+		errors.SuccessMsg = ""
+	}
 
 	return errors, errors.IsSuccess
 }
@@ -91,7 +95,41 @@ type tasknoteerrors struct {
 }
 
 func (t *Tasknote) validate() (tasknoteerrors, bool) {
+	errors := tasknoteerrors{SuccessMsg: "Task note submitted successfully.", IsSuccess: true}
+
+	errors = t.validateTitle(errors)
+	errors = t.validateDescription(errors)
+	errors = t.validateStatus(errors)
+
+	if !errors.IsSuccess {
+		errors.SuccessMsg = ""
+	}
+
 	return tasknoteerrors{}, true
+}
+
+func (t *Tasknote) validateTitle(errors tasknoteerrors) tasknoteerrors {
+	if t.Title == "" {
+		errors.TitleErr = "*required"
+		return errors
+	}
+	return errors
+}
+
+func (t *Tasknote) validateDescription(errors tasknoteerrors) tasknoteerrors {
+	if t.Description == "" {
+		errors.DescriptionErr = "*required"
+		return errors
+	}
+	return errors
+}
+
+func (t *Tasknote) validateStatus(errors tasknoteerrors) tasknoteerrors {
+	if t.Status == "" {
+		errors.StatusErr = "*required"
+		return errors
+	}
+	return errors
 }
 
 type imagenoteerrors struct {
@@ -104,11 +142,15 @@ type imagenoteerrors struct {
 }
 
 func (i *Imagenote) validate() (imagenoteerrors, bool) {
-	errors := imagenoteerrors{IsSuccess: true}
+	errors := imagenoteerrors{SuccessMsg: "Image note submitted successfully.", IsSuccess: true}
 
 	errors = i.validateImage(errors)
 	errors = i.validateCaption(errors)
 	errors = i.validateArea(errors)
+
+	if !errors.IsSuccess {
+		errors.SuccessMsg = ""
+	}
 
 	return errors, errors.IsSuccess
 }

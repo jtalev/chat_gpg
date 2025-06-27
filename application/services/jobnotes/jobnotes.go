@@ -23,7 +23,7 @@ type NoteRepo interface {
 }
 
 type Note struct {
-	Uuid       string `json:"uuid"`
+	Uuid       string `json:"note_uuid"`
 	JobId      int    `json:"job_id"`
 	NoteType   string `json:"note_type"` // eg. 'paintnote', 'tasknote', 'imagenote'
 	Note       string `json:"note"`      // going to be serialized json, deserialized to note type
@@ -41,6 +41,7 @@ type Paintnote struct {
 	Coats    int    `json:"coats"`
 	Surfaces string `json:"surfaces"`
 	Notes    string `json:"notes"`
+	JobId    int
 }
 
 type Tasknote struct {
@@ -50,6 +51,7 @@ type Tasknote struct {
 	Status      string `json:"status"`
 	Priority    string `json:"priority"`
 	Notes       string `json:"notes"`
+	JobId       int
 }
 
 type Imagenote struct {
@@ -60,6 +62,7 @@ type Imagenote struct {
 	Area        string `json:"area"`
 	Notes       string `json:"notes"`
 	S3Url       template.HTML
+	JobId       int
 }
 
 type jobnoteSummary struct {
@@ -181,7 +184,7 @@ func unmarshalImagenote(n Note) (Imagenote, error) {
 	return i, nil
 }
 
-func (j *Jobnotes) unmarshalNotes(jobnotes []Note) {
+func (j *Jobnotes) unmarshalNotes(jobnotes []Note, jobId int) {
 	j.Paintnotes = []Paintnote{}
 	j.Tasknotes = []Tasknote{}
 	j.Imagenotes = []Imagenote{}
@@ -208,10 +211,13 @@ func (j *Jobnotes) unmarshalNotes(jobnotes []Note) {
 
 		switch n := note.(type) {
 		case Paintnote:
+			n.JobId = jobId
 			j.Paintnotes = append(j.Paintnotes, n)
 		case Tasknote:
+			n.JobId = jobId
 			j.Tasknotes = append(j.Tasknotes, n)
 		case Imagenote:
+			n.JobId = jobId
 			j.Imagenotes = append(j.Imagenotes, n)
 		default:
 			log.Printf("note type %s not supported", jn.NoteType)
@@ -236,7 +242,7 @@ func (j *Jobnotes) GetJobNotes(jobId int) error {
 		return err
 	}
 
-	j.unmarshalNotes(notes)
+	j.unmarshalNotes(notes, jobId)
 
 	imgStore := img.InitImgStore()
 	for i := range j.Imagenotes {
@@ -372,10 +378,13 @@ func (j *Jobnotes) PutNote(noteType string) error {
 		// simply return, j.NoteErrors will be present
 		return nil
 	} else {
+		log.Println(j.Note.Uuid)
 		err := j.marshalNote(noteType, j.Note.Uuid)
 		if err != nil {
 			return err
 		}
+
+		log.Println(j.Note)
 
 		err = j.Repo.PutNote(j.Note)
 		if err != nil {

@@ -4426,7 +4426,6 @@ input::-webkit-inner-spin-button {
         display: flex;
         flex-direction: column;
         gap: 8px;
-        cursor: pointer;
     }
 
     .image-note-container {
@@ -4439,7 +4438,6 @@ input::-webkit-inner-spin-button {
         display: flex;
         flex-direction: column;
         gap: 8px;
-        cursor: pointer;
     }
 }
 
@@ -4469,7 +4467,6 @@ input::-webkit-inner-spin-button {
         display: flex;
         flex-direction: column;
         gap: 8px;
-        cursor: pointer;
     }
 
     .image-note-container {
@@ -4503,6 +4500,20 @@ input::-webkit-inner-spin-button {
 }
 
 .note-delete-btn {
+    margin-left: 15px;
+    color: var(--gpg-green);
+    border: none;
+    border-radius: 5px;
+    background-color: var(--gpg-light-green-background);
+    box-sizing: border-box;
+    padding: 4px;
+    font-size: x-small;
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
+}
+
+.update-note-button {
     margin-left: auto;
     color: var(--gpg-green);
     border: none;
@@ -4514,6 +4525,14 @@ input::-webkit-inner-spin-button {
     height: 20px;
     width: 20px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.update-note-button img {
+    width: 90%;
+    height: 90%;
 }
 
 .paint-note-brand {
@@ -4667,6 +4686,13 @@ input::-webkit-inner-spin-button {
     flex-grow: 1;
     width: 100%;
     display: flex;
+}
+
+.image-note-btn-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 30px;
 }
 
 @media screen and (max-width: 680px) {
