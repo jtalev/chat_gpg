@@ -24,7 +24,7 @@
 			<span>
 				Paint Notes
 			</span>
-			<span class="note-counter">
+			<span class="note-counter" id="paint-note-counter">
 				{{ .JobSummary.PaintnoteCount }}
 			</span>
 			<span class="add-note-btn-container">
@@ -55,7 +55,7 @@
 			<span>
 				Task Notes
 			</span>
-			<span class="note-counter">
+			<span class="note-counter" id="task-note-counter">
 				{{ .JobSummary.TasknoteCount }}
 			</span>
 			<span class="add-note-btn-container">
@@ -86,7 +86,7 @@
 			<span>
 				Image Notes
 			</span>
-			<span class="note-counter">
+			<span class="note-counter" id="image-note-counter">
 				{{ .JobSummary.ImagenoteCount }}
 			</span>
 			<span class="add-note-btn-container">
@@ -105,7 +105,7 @@
 				</button>
 			</span>
 		</div>
-		<div class="notes-container">
+		<div class="image-notes-container">
 			{{ range .Imagenotes }}
 				{{ template "imageNote" . }}
 			{{ end }}

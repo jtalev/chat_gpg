@@ -1,9 +1,6 @@
 {{ define "taskNote" }}
 <div class="task-note-container">
 	<div class="task-note-header-container">
-		<div class="task-note-header">
-			{{ .Title }}
-		</div>
 		<div class="task-note-progress-container">
 			{{ if eq .Status "pending" }}
 				<img src="../static/img/pending.svg" class="task-note-pending-img"><span class="task-note-pending">Pending</span>
@@ -12,16 +9,15 @@
 			{{ end }}
 		</div>
 		<button
-			hx-delete="/job-notes/delete"
-			hx-trigger="click"
-			hx-target="closest .task-note-container"
-			hx-swap="delete"
-			hx-vals='{
-				"note_uuid": "{{ .NoteUuid }}"
-			}' 
-			class="note-delete-btn">
-				X
-			</button>
+		onclick="deleteNote('task-note', {{ .NoteUuid }})"
+		class="note-delete-btn">
+			X
+		</button>
+	</div>
+	<div class="task-note-title-container">
+		<div class="task-note-title">
+			{{ .Title }}
+		</div>
 	</div>
 	<div class="task-note-description-container">
 		{{ .Description }}

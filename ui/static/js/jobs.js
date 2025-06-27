@@ -5,16 +5,34 @@ function toggleNoteModal() {
 }
 
 function closeModalAndReloadNotes(jobId) {
-    toggleNoteModal(); // Close the modal
+    toggleNoteModal()
     
-    // Manually trigger HTMX request
     htmx.ajax('GET', '/job-notes/get', {
         target: '#jobnotes-content-container',
         swap: 'innerHTML',
         values: {
             job_id: jobId
         }
-    });
+    })
+}
+
+function updateNoteCount(noteType) {
+	const id = `${noteType}-counter`
+	const countContainer = document.getElementById(id)
+	let count = parseInt(countContainer.innerHTML)
+	countContainer.innerHTML = count - 1
+}
+
+function deleteNote(noteType, noteUuid) {
+	htmx.ajax('DELETE', '/job-notes/delete', {
+		target: htmx.closest(htmx.find(`.${noteType}-container`), 'div'),
+		swap: "delete",
+		values: {
+			note_uuid: noteUuid
+		}
+	})
+
+	updateNoteCount(noteType)
 }
 
 async function submitPaintnote(event) {

@@ -51,8 +51,6 @@ func (h *Handler) ServeJobsView() http.Handler {
 }
 
 func servePaintNoteForm(path string, data jobnotes.PaintnoteFormData, w http.ResponseWriter) error {
-	log.Println(data.JobId)
-	log.Println(data.Errors.SuccessMsg)
 	err := executePartialTemplate(path, "paintNoteForm", data, w)
 	if err != nil {
 		log.Printf("error executing template paintNoteForm: %v", err)
@@ -109,6 +107,7 @@ func (h *Handler) ServeNoteForm() http.Handler {
 					h.jobnotes.PaintnoteFormData.FormType = "post"
 					h.jobnotes.PaintnoteFormData.JobId = jobId
 					h.jobnotes.PaintnoteFormData.Paintnote = jobnotes.Paintnote{}
+					h.jobnotes.PaintnoteFormData.Errors.SuccessMsg = ""
 					if err := servePaintNoteForm(path, h.jobnotes.PaintnoteFormData, w); err != nil {
 						return
 					}
@@ -117,6 +116,7 @@ func (h *Handler) ServeNoteForm() http.Handler {
 					h.jobnotes.TasknoteFormData.FormType = "post"
 					h.jobnotes.TasknoteFormData.JobId = jobId
 					h.jobnotes.TasknoteFormData.Tasknote = jobnotes.Tasknote{}
+					h.jobnotes.TasknoteFormData.Errors.SuccessMsg = ""
 					if err := serveTaskNoteForm(path, h.jobnotes.TasknoteFormData, w); err != nil {
 						return
 					}
@@ -125,6 +125,7 @@ func (h *Handler) ServeNoteForm() http.Handler {
 					h.jobnotes.ImagenoteFormData.FormType = "post"
 					h.jobnotes.ImagenoteFormData.JobId = jobId
 					h.jobnotes.ImagenoteFormData.Imagenote = jobnotes.Imagenote{}
+					h.jobnotes.ImagenoteFormData.Errors.SuccessMsg = ""
 					if err := serveImageNoteForm(path, h.jobnotes.ImagenoteFormData, w); err != nil {
 						return
 					}
@@ -343,6 +344,7 @@ func (h *Handler) DeleteNote() http.Handler {
 			}
 
 			uuid := r.FormValue("note_uuid")
+			log.Println(uuid)
 
 			err = h.jobnotes.DeleteNote(uuid)
 			if err != nil {
