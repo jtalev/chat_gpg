@@ -258,6 +258,18 @@ func (h *Handler) PostLeaveRequest() http.Handler {
 				return
 			}
 
+			postNotifyHandler := application.LeavePostNotificationHandler{
+				TaskProducer: h.TaskProducer,
+			}
+			err = postNotifyHandler.Send()
+			if err != nil {
+				log.Printf("error sending email: %v", err)
+				http.Error(w, "error sending post notification, internal server errro", http.StatusInternalServerError)
+				return
+			}
+
+			log.Println("email send")
+
 			err = executePartialTemplate(leaveFormPath, "leaveForm", leaveDto, w)
 			if err != nil {
 				log.Println("Error executing template:", err)

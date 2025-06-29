@@ -2,6 +2,7 @@ package application
 
 import (
 	"database/sql"
+	"log"
 	"strconv"
 
 	"github.com/jtalev/chat_gpg/domain/models"
@@ -240,4 +241,43 @@ func PostLeaveRequest(leaveFormDto LeaveFormDto, db *sql.DB) (LeaveFormDto, erro
 		leaveFormDto.SuccessMsg = "Leave request submitted successfully."
 		return leaveFormDto, nil
 	}
+}
+
+func (l *LeaveService) SendEmailNotification(notificationHandler LeaveNotificationHandler) error {
+	err := notificationHandler.Send()
+	if err != nil {
+		log.Printf("error sending leave notification: %v", err)
+		return err
+	}
+	return nil
+}
+
+type LeaveNotificationHandler interface {
+	Send() error
+}
+
+type LeavePostNotificationHandler struct {
+	TaskProducer *task_queue.TaskProducer
+}
+
+func (l *LeavePostNotificationHandler) Send() error {
+	emailHandler := task_queue.CreateEmailPayload(
+		"admin",
+		"admin@geelongpaintgroup.com.au",
+		"admin",
+		"admin@geelongpaintgroup.com.au",
+		"Leave Request Submitted",
+		"A new leave request has been submitted and is pending a decision, view in app.",
+		"",
+	)
+
+	err := l.TaskProducer.Enqueue("one_time", "send_email", emailHandler)
+	if err != nil {
+		log.Printf("error enqueueing task: %v", err)
+		return err
+	}
+
+	log.Println("email task enqueued")
+
+	return nil
 }
