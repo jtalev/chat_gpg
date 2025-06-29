@@ -259,6 +259,7 @@ func generateEmailBody(purchaseOrder models.PurchaseOrder, purchaseOrderItems []
 			"Date: %s\n"+
 			"Store: %s\n"+
 			"Ordered By: %s %s\n"+
+			"Contact Number: %s"+
 			"Reference: %s\n"+
 			"Account Code: %s\n"+
 			"\n"+
@@ -266,6 +267,7 @@ func generateEmailBody(purchaseOrder models.PurchaseOrder, purchaseOrderItems []
 		purchaseOrder.Date,
 		store.BusinessName,
 		employee.FirstName, employee.LastName,
+		employee.PhoneNumber,
 		job.Address,
 		store.AccountCode,
 	)
