@@ -258,15 +258,7 @@ func (h *Handler) PostLeaveRequest() http.Handler {
 				return
 			}
 
-			postNotifyHandler := application.LeavePostNotificationHandler{
-				TaskProducer: h.TaskProducer,
-			}
-			err = postNotifyHandler.Send()
-			if err != nil {
-				log.Printf("error sending email: %v", err)
-				http.Error(w, "error sending post notification, internal server errro", http.StatusInternalServerError)
-				return
-			}
+			h.LeaveService.SendEmailNotification(&application.LeavePostNotificationHandler{})
 
 			log.Println("email send")
 

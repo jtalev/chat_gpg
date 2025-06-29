@@ -244,7 +244,7 @@ func PostLeaveRequest(leaveFormDto LeaveFormDto, db *sql.DB) (LeaveFormDto, erro
 }
 
 func (l *LeaveService) SendEmailNotification(notificationHandler LeaveNotificationHandler) error {
-	err := notificationHandler.Send()
+	err := notificationHandler.Send(l.TaskProducer)
 	if err != nil {
 		log.Printf("error sending leave notification: %v", err)
 		return err
@@ -253,14 +253,12 @@ func (l *LeaveService) SendEmailNotification(notificationHandler LeaveNotificati
 }
 
 type LeaveNotificationHandler interface {
-	Send() error
+	Send(*task_queue.TaskProducer) error
 }
 
-type LeavePostNotificationHandler struct {
-	TaskProducer *task_queue.TaskProducer
-}
+type LeavePostNotificationHandler struct{}
 
-func (l *LeavePostNotificationHandler) Send() error {
+func (l *LeavePostNotificationHandler) Send(taskProducer *task_queue.TaskProducer) error {
 	emailHandler := task_queue.CreateEmailPayload(
 		"admin",
 		"admin@geelongpaintgroup.com.au",
@@ -271,7 +269,7 @@ func (l *LeavePostNotificationHandler) Send() error {
 		"",
 	)
 
-	err := l.TaskProducer.Enqueue("one_time", "send_email", emailHandler)
+	err := taskProducer.Enqueue("one_time", "send_email", emailHandler)
 	if err != nil {
 		log.Printf("error enqueueing task: %v", err)
 		return err
