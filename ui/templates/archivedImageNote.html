@@ -1,0 +1,29 @@
+{{ define "archivedImageNote" }}
+<div class="image-note-container">
+	<div class="image-note-btn-container">
+		<span class="image-note-archive-container">
+			<button
+			onclick="archiveNote('image-note', {{ .NoteUuid }})"
+			class="note-archive-btn">
+				<img src="../static/img/archive.svg">
+			</button>
+		</span>
+	</div>
+	<div class="image-note-img-container">
+		<img src="{{ .S3Url}}" />
+	</div>
+	<div class="image-note-info-container">
+		<div class="image-note-caption-container">
+			{{ .Caption }}
+		</div>
+		<div class="image-note-area-container">
+			<span class="bold">Area:</span>
+			{{ .Area }}
+		</div>
+		<div class="image-note-notes-container">
+			<span class="bold image-note-notes-header">Notes:</span>
+			<span class="image-note-notes">{{ .Notes }}</span>
+		</div>
+	</div>
+</div>
+{{ end }}

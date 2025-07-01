@@ -1,4 +1,4 @@
-{{ define "jobNotes" }}
+{{ define "archivedJobNotes" }}
 <div class="job-notes-header-container">
 	<div id="job-notes-back-container">
 		<img
@@ -13,14 +13,14 @@
 			{{ .JobSummary.Name }}
 		</span>
 		<span id="job-notes-subtitle">
-			<span><span id="job-notes-location-img"><img src="../static/img/location.svg"></span>{{ .JobSummary.Address }}</span> <span>&#x2022;</span> <span id="in-progress">In Progress</span>
+			<span><span id="job-notes-location-img"><img src="../static/img/location.svg"></span>{{ .JobSummary.Address }}</span> <span>&#x2022;</span> <span class="task-note-completed">Completed</span>
 		</span>
 	</div>
 </div>
 <div id="notes">
 	<div id="archived-notes-btn-container">
 		<button
-		hx-get="/job-notes/get-archive"
+		hx-get="/job-notes/get"
 		hx-target="#jobnotes-content-container"
 		hx-swap="innerHtml"
 		hx-trigger="click"
@@ -28,7 +28,7 @@
 			"job_id": "{{ .JobSummary.ID }}"
 		}'
 		class="archived-notes-btn">
-			View Archived Notes
+			View Current Notes
 		</button>
 	</div>
 	<div class="notes-content-container">
@@ -40,25 +40,10 @@
 			<span class="note-counter" id="paint-note-counter">
 				{{ .JobSummary.PaintnoteCount }}
 			</span>
-			<span class="add-note-btn-container">
-				<button
-				hx-get="/job-notes/serve-note-form"
-				hx-trigger="click"
-				hx-swap="innerHtml"
-				hx-target="#note-modal"
-				hx-vals='{
-					"note_type": "paint_note",
-					"job_id": "{{ .JobSummary.ID }}"
-				}'
-				onclick="toggleNoteModal()"
-				class="add-note-btn">
-					+
-				</button>
-			</span>
 		</div>
 		<div class="notes-container">
 			{{ range .Paintnotes }}
-				{{ template "paintNote" .}}
+				{{ template "archivedPaintNote" .}}
 			{{ end }}
 		</div>
 	</div>
@@ -71,25 +56,10 @@
 			<span class="note-counter" id="task-note-counter">
 				{{ .JobSummary.TasknoteCount }}
 			</span>
-			<span class="add-note-btn-container">
-				<button
-				hx-get="/job-notes/serve-note-form"
-				hx-trigger="click"
-				hx-swap="innerHtml"
-				hx-target="#note-modal"
-				hx-vals='{
-					"note_type": "task_note",
-					"job_id": "{{ .JobSummary.ID }}"
-				}'
-				onclick="toggleNoteModal()"
-				class="add-note-btn">
-					+
-				</button>
-			</span>
 		</div>
 		<div class="task-notes-container">
 			{{ range .Tasknotes }}
-				{{ template "taskNote" . }}
+				{{ template "archivedTaskNote" . }}
 			{{ end }}
 		</div>
 	</div>
@@ -102,25 +72,10 @@
 			<span class="note-counter" id="image-note-counter">
 				{{ .JobSummary.ImagenoteCount }}
 			</span>
-			<span class="add-note-btn-container">
-				<button
-				hx-get="/job-notes/serve-note-form"
-				hx-trigger="click"
-				hx-swap="innerHtml"
-				hx-target="#note-modal"
-				hx-vals='{
-					"note_type": "image_note",
-					"job_id": "{{ .JobSummary.ID }}"
-				}'
-				onclick="toggleNoteModal()"
-				class="add-note-btn">
-					+
-				</button>
-			</span>
 		</div>
 		<div class="image-notes-container">
 			{{ range .Imagenotes }}
-				{{ template "imageNote" . }}
+				{{ template "archivedImageNote" . }}
 			{{ end }}
 		</div>
 	</div>

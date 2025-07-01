@@ -1,0 +1,47 @@
+{{ define "archivedPaintNote" }}
+<div class="paint-note-container">
+	<div class="paint-note-header-container">
+		<div class="paint-note-btn-container">
+			<span class="paint-note-archive-container">
+				<button
+				onclick="archiveNote('paint-note', {{ .NoteUuid }})"
+				class="note-archive-btn">
+					<img src="../static/img/archive.svg">
+				</button>
+			</span>
+		</div>
+		<span class="paint-note-product">
+			{{ .Colour }} - {{ .Product }}
+		</span>
+		<span class="paint-note-brand">
+			{{ .Brand }}
+		</span>
+	</div>
+	<div class="paint-note-details-container">
+		<div class="paint-note-detail">
+			<span class="paint-note-detail-header">Finish:</span>
+			<span>{{ .Finish }}</span>
+		</div>
+		<div class="paint-note-detail">
+			<span class="paint-note-detail-header">Area:</span>
+			<span>{{ .Area }}</span>
+		</div>
+		<div class="paint-note-detail">
+			<span class="paint-note-detail-header">Coats:</span>
+			<span>{{ .Coats }}</span>
+		</div>
+		<div class="paint-note-detail">
+			<span class="paint-note-detail-header">Surfaces:</span>
+			<span>{{ .Surfaces }}</span>
+		</div>
+	</div>
+	<div class="paint-note-note-container">
+		<span class="paint-note-note-header">
+			Note:
+		</span>
+		<span class="paint-note-note">
+			{{ .Notes }}
+		</span>
+	</div>
+</div>
+{{ end }}

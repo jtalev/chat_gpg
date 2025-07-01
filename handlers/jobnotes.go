@@ -273,6 +273,54 @@ func (h *Handler) GetJobNotes() http.Handler {
 	)
 }
 
+func (h *Handler) GetArchivedJobNotes() http.Handler {
+	return http.HandlerFunc(
+		func(w http.ResponseWriter, r *http.Request) {
+			reqVals, err := parseRequestValues([]string{"job_id"}, r)
+			if err != nil {
+				log.Printf("error parsing request values: %v", err)
+				http.Error(w, "error parsing request values, bad request", http.StatusBadRequest)
+				return
+			}
+
+			jobid, err := strconv.Atoi(reqVals[0])
+			if err != nil {
+				log.Printf("error converting request value to int: %v", err)
+				http.Error(w, "error converting request value to int, bad request", http.StatusBadRequest)
+				return
+			}
+
+			err = h.jobnotes.GetArchivedJobNotes(jobid)
+			if err != nil {
+				log.Printf("error getting notes by job: %v", err)
+				http.Error(w, "error getting notes by job, bad request", http.StatusBadRequest)
+				return
+			}
+
+			job, err := application.GetJobById(jobid, h.DB)
+			if err != nil {
+				log.Printf("error getting job: %v", err)
+				http.Error(w, "error getting job", http.StatusInternalServerError)
+				return
+			}
+
+			h.jobnotes.JobSummary.ID = job.ID
+			h.jobnotes.JobSummary.Name = job.Name
+			h.jobnotes.JobSummary.Address = fmt.Sprintf("%d %s", job.Number, job.Address)
+			h.jobnotes.JobSummary.PaintnoteCount = len(h.jobnotes.Paintnotes)
+			h.jobnotes.JobSummary.TasknoteCount = len(h.jobnotes.Tasknotes)
+			h.jobnotes.JobSummary.ImagenoteCount = len(h.jobnotes.Imagenotes)
+
+			templatePaths := []string{archivedJobNotesPath, archivedPaintNotePath, archivedTaskNotePath, archivedImageNotePath}
+			err = h.ServeMultiTemplate(templatePaths, "archivedJobNotes", h.jobnotes, w)
+			if err != nil {
+				log.Printf("error serving html: %v", err)
+				return
+			}
+		},
+	)
+}
+
 func unmarshalNote(requestBody []byte, j *jobnotes.Jobnotes) error {
 	if err := json.Unmarshal(requestBody, &j.Note); err != nil {
 		return err

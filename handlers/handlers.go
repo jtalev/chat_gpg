@@ -157,14 +157,18 @@ const (
 	adminAddSizeModalPath            = "../ui/templates/addSizeModal.html"
 	adminAddStoreModalPath           = "../ui/templates/addStoreModal.html"
 
-	jobnoteTilesPath  = "../ui/templates/jobnoteTiles.html"
-	jobNotesPath      = "../ui/templates/jobNotes.html"
-	paintNotePath     = "../ui/templates/paintNote.html"
-	taskNotePath      = "../ui/templates/taskNote.html"
-	imageNotePath     = "../ui/templates/imageNote.html"
-	paintNoteFormPath = "../ui/templates/paintNoteForm.html"
-	taskNoteFormPath  = "../ui/templates/taskNoteForm.html"
-	imageNoteFormPath = "../ui/templates/imageNoteForm.html"
+	jobnoteTilesPath      = "../ui/templates/jobnoteTiles.html"
+	jobNotesPath          = "../ui/templates/jobNotes.html"
+	archivedJobNotesPath  = "../ui/templates/archivedJobNotes.html"
+	archivedPaintNotePath = "../ui/templates/archivedPaintNote.html"
+	archivedTaskNotePath  = "../ui/templates/archivedTaskNote.html"
+	archivedImageNotePath = "../ui/templates/archivedImageNote.html"
+	paintNotePath         = "../ui/templates/paintNote.html"
+	taskNotePath          = "../ui/templates/taskNote.html"
+	imageNotePath         = "../ui/templates/imageNote.html"
+	paintNoteFormPath     = "../ui/templates/paintNoteForm.html"
+	taskNoteFormPath      = "../ui/templates/taskNoteForm.html"
+	imageNoteFormPath     = "../ui/templates/imageNoteForm.html"
 )
 
 func renderTemplate(

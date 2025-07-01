@@ -17,6 +17,7 @@ import (
 type NoteRepo interface {
 	GetNoteByUuid(uuid string) (Note, error)
 	GetNotesByJobId(jobId int) ([]Note, error)
+	GetArchivedNotesByJobId(jobId int) ([]Note, error)
 	PostNote(note Note) error
 	PutNote(note Note) error
 	DeleteNote(uuid string) error
@@ -239,6 +240,26 @@ func getImgUrl(imgNote *Imagenote, imgStore *img.ImgStore) error {
 
 func (j *Jobnotes) GetJobNotes(jobId int) error {
 	notes, err := j.Repo.GetNotesByJobId(jobId)
+	if err != nil {
+		log.Printf("error getting notes for job %v: %v", jobId, err)
+		return err
+	}
+
+	j.unmarshalNotes(notes, jobId)
+
+	imgStore := img.InitImgStore()
+	for i := range j.Imagenotes {
+		err = getImgUrl(&j.Imagenotes[i], &imgStore)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (j *Jobnotes) GetArchivedJobNotes(jobId int) error {
+	notes, err := j.Repo.GetArchivedNotesByJobId(jobId)
 	if err != nil {
 		log.Printf("error getting notes for job %v: %v", jobId, err)
 		return err
